@@ -89,7 +89,7 @@ import html2canvas from "html2canvas";
 import WorkFlowLayout from "@/app/apiflow_components/WorkflowComponents/WorkFlowLayout";
 
 import dynamic from "next/dynamic";
-import { updateSessionPopup } from "@/app/Redux/commonReducer";
+import { CommonReducer, updateSessionPopup } from "@/app/Redux/commonReducer";
 import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
 
 const WorkflowHeader = dynamic(
