@@ -1,0 +1,18 @@
+directories:
+  output: dist
+  buildResources: assets
+files:
+  - filter:
+      - build/**/*
+extraMetadata:
+  main: build/electron.js
+appId: UPS01
+productName: UniProStudio
+win:
+  target: nsis
+mac:
+  target: dmg
+linux:
+  target: AppImage
+extends: react-cra
+electronVersion: 25.3.2

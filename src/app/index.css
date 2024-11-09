@@ -1,0 +1,214 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "inter", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+/* font-family */
+/* FiraSans */
+@font-face {
+  font-family: "FiraSans-extrabold";
+  src: url("../app/Assests/fonts/FiraSans-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: "FiraSans-bold";
+  src: url("../app/Assests/fonts/FiraSans-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "FiraSans-semibold";
+  src: url("../app/Assests/fonts/FiraSans-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "FiraSans-medium";
+  src: url("../app/Assests/fonts/FiraSans-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "FiraSans-regular";
+  src: url("../app/Assests/fonts/FiraSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "FiraSans-extralight";
+  src: url("../app/Assests/fonts/FiraSans-ExtraLight.ttf") format("truetype");
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: "FiraSans-light";
+  src: url("../app/Assests/fonts/FiraSans-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+* {
+  /* font-family: "FiraSans"; */
+  padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+}
+body {
+  height: 100vh;
+  overflow: hidden;
+  background: url("../../public/global/Bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* common scroll style */
+
+/* Style the scrollbar track */
+::-webkit-scrollbar {
+  width: 5px;
+  background-color: #f6f9ff;
+  border-radius: 10px;
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+}
+
+/* Optionally, you can style the scrollbar track on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #f6f9ff;
+  /* Change this to the hover color */
+}
+
+.otp-input {
+  font-family: "Inter-Regular";
+  width: 1.8rem !important;
+  height: 2.5rem;
+  border-radius: 4px;
+  border: 1px solid #eeeded;
+  margin-right: 0.8rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #1376dd;
+}
+
+.otp-input:focus {
+  outline: 1.5px solid #1376dd;
+}
+
+/* react flow */
+.react-flow .react-flow__handle {
+  width: 16px;
+  height: 5px;
+  border-radius: 3px;
+  background-color: #784be8;
+}
+
+.react-flow .react-flow__handle-top {
+  /* top: -10px; */
+}
+
+.react-flow .react-flow__handle-bottom {
+  /* bottom: -10px; */
+}
+
+.react-flow .react-flow__node {
+  /* height: 40px;
+  width: 150px; */
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  border-width: 2px;
+}
+
+.react-flow .react-flow__edge path,
+.react-flow__connectionline path {
+  stroke-width: 1;
+}
+
+.wrapper {
+  flex-grow: 1;
+  height: 100%;
+}
+
+.animated-flow .react-flow__edge-path {
+  transition: stroke-dashoffset 0.5s ease-in-out;
+  /* Example transition for stroke-dashoffset */
+}
+
+.animated-flow .react-flow__edge-path:hover {
+  stroke-dashoffset: 50;
+  /* Example change in stroke-dashoffset on hover */
+}
+
+/* @keyframes changeBackground {
+  0% { background-color: red; }
+  50% { background-color: blue; }
+  100% { background-color: green; }
+} */
+
+.scrollableProjectSidebar {
+  height: 560px;
+  overflow-y: auto;
+}
+
+.MuiPopover-root {
+  /* background-color: red; */
+  z-index: 9999999999999;
+}
+
+@media (min-width: 1440px) {
+  .scrollableProjectSidebar {
+    min-height: 410px;
+  }
+}
+
+.container {
+  border-left: 1px solid;
+  height: 5vh;
+  overflow-y: auto;
+  margin-left: -30px;
+  margin-top: 13px;
+}
+
+@media (min-width: 1440px) {
+  .container {
+    height: 3vh;
+  }
+}
+
+@keyframes blinkShadow {
+  0% {
+    box-shadow: 0px 0px 5px rgba(255, 165, 0, 0.75);
+  }
+
+  /* Orange color with a small shadow */
+  50% {
+    box-shadow: 0px 0px 15px rgba(255, 165, 0, 0.75);
+  }
+
+  /* Orange color with a larger shadow */
+  100% {
+    box-shadow: none;
+  }
+
+  /* No shadow */
+}

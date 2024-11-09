@@ -1,0 +1,176 @@
+{
+  "APP_FULL_NAME": "UnifyPro Studio",
+  "APP_SHORT_NAME": "UPS",
+  "TERMSLABEL": "By clicking continue, you agree to UnifyPro's",
+  "TERMSLINKLABEL": "Terms and Conditions of Use",
+  "PRIVACYPOLICYLABEL": "To learn more about how UnifyPro collects, uses, shares, and protects your personal data, please see UnifyPro's",
+  "PRIVACYPOLICYLINKLABEL": "Privacy Policy",
+  "SIGNINUPTEXTCONSTANTS": {
+    "appName": "UnifyPro",
+    "subtile": "Sign in or create an account",
+    "signInHead": "Sign in",
+    "signInSub": "New User?",
+    "signInLinkLabel": "Go to sign up",
+    "forgotPasswordLabel": "Forgot Password",
+    "signInButtonLabel": "Continue",
+    "signUpHead": "Sign up",
+    "signUpSub": "Existing user?",
+    "signUpLinkLabel": "Go to sign in",
+    "signUpButtonLabel": "Continue",
+    "signUpOtpHead": "Verify your identity",
+    "signUpOtpEmailLabel": "Enter the code we've sent to",
+    "signUpOtpResendLabel": "Resend Code",
+    "signUpOtpAlternativeLabel": "Use a different method to receive the code",
+    "signUpOtpDiffAccountLabel": "Sign in to a different account",
+    "signUpOtpButtonLabel": "Continue"
+  },
+  "pricing": {
+    "PRICINGHEADLABEL": "UnifyPro Plans & Pricing",
+    "PRICINGSUBLABEL": "Everything you need for design & development. And more..",
+    "PAYMENTLABEL": "By Clicking buy, you agree to UnifyPro's",
+    "PAYMENTLINKLABEL": "Payment Terms"
+  },
+  "menus": {
+    "MENU_ITEMS": {
+      "HOME": "Home",
+      "APPS": "Apps",
+      "INTEGRATION": "Integration",
+      "DISCOVER": "Discover",
+      "MARKETPLACE": "Marketplace"
+    }
+  },
+  "globalSearchBar": {
+    "GLOBALSEARCHBARPLACEHOLDER": "Search Apps, Integration API, CMS"
+  },
+  "homeText": {
+    "HOMETEXTCONSTANTS": {
+      "RECENT": "Recent",
+      "ALL_APPS": "All Apps in your workspace",
+      "NEW_APP": "New App",
+      "SUGGESTIONS": "Suggestions",
+      "SUGGESSTIONS_LABEL": "Suggestions to help you succeed",
+      "SUGGESSTIONS_SUB_LABEL": "Based on your plan and activity, we'll give you suggestions that will help you get the most out of your membership",
+      "CREATE_APP": "Create Mobile & Web Apps",
+      "CREATE_APP_SUB_LABEL": "Mobile, Web, Pre-build, Pre-design templates. Create easier with the new platform",
+      "MANAGE_CONTENTS": "Manage Contents & API",
+      "MANAGE_CONTENTS_SUB_LABEL": "SOAP, REST, CMS, Media, Pre-design & Build. Create easier with the new platform Integration",
+      "APP_STORE": "Apps store ready apps",
+      "APP_STORE_SUB_LABEL": "Mobile Apps with backend ready. Start browsing and using the apps in the platform Marketplace",
+      "GET_STARTED": "",
+      "BROWSE_TEMPLATES": "Browse Templates",
+      "MANAGE_ACCOUNT": "Manage Account",
+      "YOUR_PLAN": "Your plan",
+      "INDIVIDUAL_BASIC_PLAN": "Individual Basic Plan",
+      "CHANGE_PLAN": "Change Plan"
+    },
+    "HOMESIDEBARTEXTS": {
+      "APPS": "Apps",
+      "APPS_SUB_LABEL": "View your apps",
+      "INTEGRATION": "Integrations",
+      "INTEGRATION_SUB_LABEL": "Your API & CMS",
+      "THEMES": "Themes",
+      "THEMES_SUB_LABEL": "Your Installed Themes",
+      "PLATFORM": "Platform Stock",
+      "PLATFORM_SUB_LABEL": "Your licensed Assets",
+      "TUTORIALS": "Tutorials",
+      "TUTORIALS_SUB_LABEL": "Tutorials for all apps"
+    }
+  },
+  "appsText": {
+    "APPSTEXTCONSTANTS": {
+      "RECENT": "Recent",
+      "FILTER": "Filter",
+      "SORT": "Sort",
+      "SEARCHPLACEHOLDER": "Enter Keyword"
+    },
+    "APPSSIDEBARTEXTS": {
+      "NEW_PROJECT": "New Project",
+      "IMPORT_FIGMA": "Import Figma",
+      "IMPORT_SKETCH": "Import Sketch",
+      "HOME": "Home",
+      "TEMPLATES": "Templates",
+      "PROJECTS": "Projects",
+      "YOUR_PROJECTS": "Your Projects",
+      "SHARED_WITH_YOU": "Shared with You",
+      "DELETED": "Deleted",
+      "TEAMS": "Teams",
+      "CREATE_TEAM": "Create Team"
+    }
+  },
+  "integrationText": {
+    "INTEGRATIONSSIDEBARTEXTS": {
+      "NEW_API": "New API",
+      "IMPORT_SWAGGER": "Import Swagger",
+      "IMPORT_POSTMAN": "Import Postman",
+      "HOME": "Home",
+      "APIMANAGEMENT": "API Management",
+      "CONTENTMANAGEMENT": "Content Management",
+      "CONTENTMANAGER": "Content Manager",
+      "CONTENTTEMPLATES": "Content Templates",
+      "MEDIAMANAGER": "Media Manager",
+      "TEAMS": "Teams",
+      "CREATE_TEAM": "Create team",
+      "POPULARTEMPLATES": "Popular Templates"
+    },
+    "INTEGRATIONACCORDIANDETAILS": {
+      "ERPMOBILETEAM": "ERP Mobile Team",
+      "INTRANETWEBAPP": "Intra net web app"
+    },
+    "INTEGRATIONHOMETEXTS": {
+      "RECENT": "Recent",
+      "SEARCHPLACEHOLDER": "Enter Keyword",
+      "FILTER": "Filter",
+      "SORT": "Sort",
+      "CREATE_API_COL": "Create Api Collection",
+      "CREATE_API_CONTENT": "Create new API Collection and add SOAP & REST.Manage the Collection & manage API flows Export & import collections.",
+      "CREATE_CONTENT_COLLECTION": "Create Content Collection",
+      "CREATE_CONTENT_CONTENT": "Create new content Collection and add media like images & videos,Export & import collections."
+    }
+  },
+  "apiText": {
+    "APICALL": {
+      "CREATEAPICALL": "Create API Call",
+      "APISUMMARY": "Provide the name and configuration for this API call.",
+      "CALLDEFINITION": "Call Definition",
+      "RESPONSETEST": "Response & Test",
+      "APICALLNAME": "API Call Name",
+      "METHODTYPE": "Method Type",
+      "APIURL": "API URL",
+      "HEADERS": "Headers",
+      "QUERYPARAMETERS": "Query Parameters",
+      "VARIABLES": "Variables",
+      "PREREQUESTSCRIPT": "Pre-request Script",
+      "TESTS": "Tests",
+      "ADVANCEDSETTINGS": "Advanced Settings",
+      "NAME": "Name",
+      "VALUESOURCE": "Value Source",
+      "TYPE": "Type",
+      "SELECTVARIABLE": "Select Variable",
+      "VALUE": "Value",
+      "ISLIST": "IsList",
+      "DEFAULTVALUE": "Default Value",
+      "ADVANCEDSETTINGSUMMARY": "Provide more advanced configuration for your API call",
+      "MAKEPRIVATE": "Make Private",
+      "MAKEPRIVATESUMMARY": "This will route this API Call Securely via a Cloud Function",
+      "REQUIREAUTHENTICATION": "Require Authentication"
+    }
+  },
+  "cmsText": {
+    "CONTENT_MANAGEMENT_TEXT": {
+      "STUDIO": "Studio",
+      "COLLECTION_TYPES": "Collection Types",
+      "USERS": "Users",
+      "PLUGINS": "Plugins",
+      "CONTENT_TYPE_BUILDER": "Content Type Builder",
+      "MEDIA_LIBRARY": "Media Library",
+      "GENERAL": "General",
+      "SETTINGS": "Settings",
+
+      "MEDIA_LIBRARY_INSIDE_TEXT": {
+        "ASSETS": "Asset",
+        "DELETE": "Delete",
+        "UPLOAD_ASSETS": "Upload Assets"
+      }
+    }
+  }
+}
