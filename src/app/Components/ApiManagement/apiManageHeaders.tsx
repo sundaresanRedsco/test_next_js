@@ -1229,7 +1229,7 @@ export default function ApiManageHeaders(props: any) {
   const [apiGateway, setApiGateway] = useState({
     Secreatkey: "",
     name: "mari",
-    description: "This is api gateway",
+    description: " is api gateway",
     region: "ap-south-1",
     accessKey: "",
   });
