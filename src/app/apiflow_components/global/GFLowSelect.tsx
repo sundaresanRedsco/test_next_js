@@ -36,7 +36,7 @@ export default function GFlowSelect(props: any) {
 
   const [open, setOpen] = useState(false);
 
-  const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleSelectChange = (event: any) => {
     const selectedValue = event.target.value;
     console.log("Selected Value:", selectedValue);
 
