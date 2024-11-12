@@ -1230,7 +1230,7 @@ export default function ApiManageHeaders(props: any) {
     Secreatkey: "",
     name: "mari",
     description: "This is api gateway",
-    region: "",
+    region: "ap-south-1",
     accessKey: "",
   });
 

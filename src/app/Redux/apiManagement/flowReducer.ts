@@ -5,6 +5,25 @@ import { apiMangeDahboardCountInterface } from "../../Utilities/interface/projec
 import { SingleApiDesignFlowInterface } from "../../Utilities/interface/apiDesignFlowInterace";
 import * as Y from "yjs";
 
+export const GetDesignflowMinamlInfoFlowoffset = createAsyncThunk(
+  "apiFlowDesign/GetDesignflowMinamlInfoFlowoffset",
+  async (value: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        `Api/Api_design_flow_service/get_designflow_minaml_info_flowoffset?project_id=${value.project_id}&start=0&end=${value.end}`,
+        null,
+        null
+      );
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
+      throw new Error(errorHandling(error));
+      // console.log("Error Occured: ", error)
+    }
+  }
+);
 export const GetApiDesignFlowByWorkspaceId = createAsyncThunk(
   "apiFlowDesign/GetApiDesignFlowByWorkspaceId",
   async (value: any) => {
@@ -694,6 +713,7 @@ type InitialStateType = {
   flowLoading: boolean;
   getDesignFlowOffsetLoading: boolean;
   recentModifications: any[];
+  getRecentModificationsLoading: boolean;
 };
 
 const initialState: InitialStateType = {
@@ -740,6 +760,7 @@ const initialState: InitialStateType = {
   flowLoading: false,
   getDesignFlowOffsetLoading: false,
   recentModifications: [],
+  getRecentModificationsLoading: false,
 };
 
 export const flowSlice = createSlice({
@@ -820,6 +841,27 @@ export const flowSlice = createSlice({
     },
   },
   extraReducers(builder) {
+    builder.addCase(
+      GetDesignflowMinamlInfoFlowoffset.pending,
+      (state, action) => {
+        state.getDesignFlowOffsetLoading = true;
+      }
+    );
+
+    builder.addCase(
+      GetDesignflowMinamlInfoFlowoffset.fulfilled,
+      (state, action) => {
+        state.getDesignFlowOffsetLoading = false;
+        state.flowList = action.payload;
+      }
+    );
+
+    builder.addCase(
+      GetDesignflowMinamlInfoFlowoffset.rejected,
+      (state, action) => {
+        state.getDesignFlowOffsetLoading = false;
+      }
+    );
     builder.addCase(GetApiDesignFlowByWorkspaceId.pending, (state, action) => {
       state.loading = true;
     });
@@ -1224,16 +1266,16 @@ export const flowSlice = createSlice({
     });
 
     builder.addCase(GetRecentModification.pending, (state, action) => {
-      state.DesignFlowloading = true;
+      state.getRecentModificationsLoading = true;
     });
 
     builder.addCase(GetRecentModification.fulfilled, (state, action) => {
-      state.DesignFlowloading = false;
+      state.getRecentModificationsLoading = false;
       state.recentModifications = action.payload;
     });
 
     builder.addCase(GetRecentModification.rejected, (state, action) => {
-      state.DesignFlowloading = false;
+      state.getRecentModificationsLoading = false;
     });
 
     builder.addCase(PostRecentModification.pending, (state, action) => {

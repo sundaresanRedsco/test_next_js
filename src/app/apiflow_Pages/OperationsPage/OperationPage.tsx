@@ -176,13 +176,11 @@ const StyledNavItem = styled(Button)`
 
 const CardContainer = styled(Box)`
   box-sizing: border-box;
-  height: 95vh;
   left: 0px;
   top: 0px;
   margin: 25px 15px 10px 0px;
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 20px;
-  overflow-y: auto;
   background: rgba(18, 18, 18, 0.5);
 `;
 
@@ -226,6 +224,7 @@ export default function OperationsPage(props: any) {
     operationLists,
     saveAndGetResponseLoading,
     operationByIdLoading,
+    testLoading,
   } = useSelector<RootStateType, projectReducer>(
     (state) => state.apiManagement.projects
   );
@@ -831,11 +830,11 @@ export default function OperationsPage(props: any) {
     setGenerateMockDate(val);
   };
 
-  const handleCancelBtn = () => {
-    router.push(
-      `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}`
-    );
-  };
+  // const handleCancelBtn = () => {
+  //   router.push(
+  //     `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}`
+  //   );
+  // };
 
   const handleCollectionValidation = (type: any) => {
     if (type === "collectionName") {
@@ -1011,9 +1010,9 @@ export default function OperationsPage(props: any) {
               res?.collection_id,
               userProfile?.user?.expiration_time
             );
-            router.push(
-              `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${res?.collection_id}`
-            );
+            // router.push(
+            //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${res?.collection_id}`
+            // );
           })
           .catch((error: any) => {
             toast.error(error?.message);
@@ -1075,9 +1074,9 @@ export default function OperationsPage(props: any) {
               setWsdlPop(true);
               setAnchorElWsdl(wsdlPopRef?.current);
             } else {
-              router.push(
-                `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${res?.collection_id}/operations`
-              );
+              // router.push(
+              //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${res?.collection_id}/operations`
+              // );
             }
           })
           .catch((error: any) => {
@@ -1192,9 +1191,9 @@ export default function OperationsPage(props: any) {
               setWsdlPop(true);
               handleWsdlOperations(collectionIdVal);
             } else {
-              router.push(
-                `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations`
-              );
+              // router.push(
+              //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations`
+              // );
             }
 
             let getOperationValues = {
@@ -1277,9 +1276,9 @@ export default function OperationsPage(props: any) {
               setAnchorElWsdl(wsdlPopRef?.current);
               handleWsdlOperations(res?.collection_id);
             } else {
-              router.push(
-                `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${res?.collection_id}/operations`
-              );
+              // router.push(
+              //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${res?.collection_id}/operations`
+              // );
             }
 
             setRowsBody([]);
@@ -1326,13 +1325,13 @@ export default function OperationsPage(props: any) {
     }
   };
 
-  const handleCancelOperation = () => {
-    setSaveGetResponseClicked(false);
-    setOperationDetails({});
-    // router.push(
-    //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}`
-    // );
-  };
+  // const handleCancelOperation = () => {
+  //   setSaveGetResponseClicked(false);
+  //   setOperationDetails({});
+  //   // router.push(
+  //   //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}`
+  //   // );
+  // };
 
   const handleSaveOperationBtn = () => {
     if (currentLocation === location) {
@@ -1443,9 +1442,9 @@ export default function OperationsPage(props: any) {
             res?.id,
             userProfile?.user?.expiration_time
           );
-          router.push(
-            `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations/${res?.id}`
-          );
+          // router.push(
+          //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations/${res?.id}`
+          // );
 
           let getOperationValues = {
             project_id: currentEnvironment,
@@ -1763,8 +1762,6 @@ export default function OperationsPage(props: any) {
   const formattedResponse =
     formatWithLineNumbers(JSON.stringify(responsePart, null, 2)) || "";
 
-  useEffect(() => {}, [saveGetResponseData]);
-
   const handleAddRowButton = (val: any) => {
     let newRows = {
       name: "",
@@ -1937,9 +1934,9 @@ export default function OperationsPage(props: any) {
         .then((createSoapRes: any) => {
           console.log("CreateSoapRes: ", createSoapRes);
           if (createSoapRes === "wsdl operation status updated successfully.") {
-            router.push(
-              `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations`
-            );
+            // router.push(
+            //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations`
+            // );
           } else {
             toast?.error("An error occured in the Soap Creation");
           }
@@ -2384,7 +2381,7 @@ export default function OperationsPage(props: any) {
             padding: "30px",
           }}
         >
-          {operationByIdLoading && <GlobalLoader/>}
+          {operationByIdLoading && <GlobalLoader />}
           <HeadingTypography>Application / Get Application</HeadingTypography>
 
           <Grid
@@ -3778,7 +3775,7 @@ export default function OperationsPage(props: any) {
                 marginTop: "10px",
               }}
             >
-              <GButton
+              {/* <GButton
                 buttonType="primary"
                 fontSize="13px"
                 color={`#FFFFFF`}
@@ -3786,13 +3783,15 @@ export default function OperationsPage(props: any) {
                 margin={"10px"}
                 background="transparent"
                 onClickHandler={handleCancelOperation}
-              />
+              /> */}
               <GButton
                 buttonType="primary"
                 // background={`${theme.palette.v2PrimaryColor.main}`}
                 fontSize="13px"
                 label={`${translate("apiManagement.SAVE")}`}
                 margin={"10px"}
+                radius="8px"
+                padding="5px 10px"
                 onClickHandler={handleSaveOperationBtn}
               />
               <div
@@ -3805,13 +3804,18 @@ export default function OperationsPage(props: any) {
                   fontSize="13px"
                   label={`${translate("apiManagement.SAVE_GET_RESPONSE")}`}
                   margin={"10px"}
+                  radius="8px"
+                  padding="5px 15px"
                   onClickHandler={handleSaveGetResponseBtn}
                 />
               </div>
             </div>
           </Grid>
           <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
-            {saveAndGetResponseLoading && <GlobalLoader />}
+            {(saveAndGetResponseLoading || testLoading) && <GlobalLoader />}
+            {/* {testLoading && (
+              <GlobalCircularLoader open={testLoading} isBackdrop={true} />
+            )} */}
             <div ref={scrollableContentRef}>
               {saveGetResponseClicked === true && (
                 <div className="api_operation_saveGetResponse">

@@ -13,6 +13,9 @@ import { RootStateType } from "@/app/Redux/store";
 
 import dynamic from "next/dynamic";
 import { environmentReducer } from "../Redux/apiManagement/environmentReducer";
+import EnvironmentPageSkeleton from "../apiflow_components/skeletons/EnvironmentPageSkeleton";
+import EnviromentTableSkeleton from "../apiflow_components/skeletons/EnviromentTableSkeleton";
+import LinearSkeleton from "../apiflow_components/skeletons/LinearSkeleton";
 
 const ButtonPlusIcon = dynamic(
   () => import("@/app/Assests/icons/ButtonIcon.svg")
@@ -25,17 +28,27 @@ const MinimizeNewIcon = dynamic(
 );
 
 const GlobalGraphData = dynamic(
-  () => import("@/app/apiflow_components/global/GlobalGraphData")
+  () => import("@/app/apiflow_components/global/GlobalGraphData"), // Add comma here
+  {
+    loading: () => <EnvironmentPageSkeleton />, // Skeleton displayed during loading
+  }
 );
+
 const ThreatHeader = dynamic(
   () => import("@/app/apiflow_components/Threat/ThreatHeader")
 );
 const ThreatTable = dynamic(
-  () => import("@/app/apiflow_components/Threat/ThreatTable")
+  () => import("@/app/apiflow_components/Threat/ThreatTable"),
+  {
+    loading: () => <EnviromentTableSkeleton />, // Skeleton displayed during loading
+  }
 );
 
 const GlobalProgressBar = dynamic(
-  () => import("@/app/apiflow_components/global/GlobalProgressBar")
+  () => import("@/app/apiflow_components/global/GlobalProgressBar"),
+  {
+    loading: () => <LinearSkeleton />, // Skeleton displayed during loading
+  }
 );
 
 const GlobalButton = dynamic(

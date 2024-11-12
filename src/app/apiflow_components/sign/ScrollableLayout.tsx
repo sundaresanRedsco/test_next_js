@@ -77,7 +77,7 @@ export default function ScrollableLayout({
       <div
         ref={scrollToEnd}
         style={{
-          height: isxs ? "auto" : showBackButton ? "68vh" : "70vh",
+          height: isxs ? "auto" : showBackButton ? "400px" : "400px",
           overflowY: isxs ? "hidden" : "auto",
           background: "#12121280",
           borderRadius: "10px",

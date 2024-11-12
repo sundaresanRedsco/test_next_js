@@ -13,6 +13,7 @@ type Props = {
   fullWidth?: boolean;
   width?: string;
   height?: string;
+  padding?: string;
   color?: string;
   background?: string;
   secondarybackground?: string;
@@ -60,6 +61,7 @@ export default function GInput(props: Props) {
     fullWidth,
     width,
     height,
+    padding,
     color,
     background,
     secondarybackground,
@@ -187,6 +189,7 @@ export default function GInput(props: Props) {
           "& .MuiInputBase-root": {
             paddingRight: type == "password" ? "3px" : "auto",
             paddingLeft: smallInput ? 0 : "auto",
+            padding: padding,
             height: height,
             border: border ? border : "1.5px solid #F3F3F340",
           },

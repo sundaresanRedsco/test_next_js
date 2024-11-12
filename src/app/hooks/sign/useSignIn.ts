@@ -24,6 +24,7 @@ import { EncrouptionLogic } from "@/app/Helpers/helpersFunctions";
 import { loginRequest } from "@/app/Services/azureServices";
 import { useSignUpStore } from "./signZustand";
 import { setCurrentStage } from "@/app/Redux/apiManagement/projectReducer";
+import { removeItem, setItem } from "@/app/Services/localstorage";
 
 interface loginInfoType {
   email: string;
@@ -96,7 +97,8 @@ export default function useSignIn() {
         }
       `;
     document.head.appendChild(style);
-
+    // setFormDataStore("currentPage", "Sign Up");
+    // setactiveStep(2);
     // Cleanup function to remove the style when the component is unmounted
     return () => {
       document.head.removeChild(style);
@@ -130,9 +132,11 @@ export default function useSignIn() {
             sameSite: "Strict",
             secure: true,
           });
+          setItem(`userId/${res?.user?.user_id}`, "onboarding");
           setFormDataStore("currentPage", "Sign Up");
           setactiveStep(1);
         } else {
+          removeItem(`userId/${res?.user?.user_id}`);
           router.push(`/userId/${res?.user?.user_id}`);
 
           const encryptedWsidId = EncrouptionLogic(res?.user?.workspace_id);
@@ -190,11 +194,12 @@ export default function useSignIn() {
                     sameSite: "Strict",
                     secure: true,
                   });
+                  setItem(`userId/${res?.user?.user_id}`, "onboarding");
                   setactiveStep(1);
                   setFormDataStore("currentPage", "Sign Up");
                 } else {
+                  removeItem(`userId/${res?.user?.user_id}`);
                   router.push(`/userId/${res?.user?.user_id}`);
-
                   //encrypt wsid
                   const encryptedWsidId = EncrouptionLogic(
                     res?.user?.workspace_id
@@ -269,6 +274,7 @@ export default function useSignIn() {
         .then((res: any) => {
           setuserData(res);
           handleStep();
+          setItem(`userId/${res?.user?.user_id}`, "onboarding");
           setIsLoading(false);
         })
         .catch((err: any) => {
@@ -298,27 +304,23 @@ export default function useSignIn() {
         )
           .unwrap()
           .then((res: any) => {
-            // const catchedData = Cookies.get("isOnboarding");
-            // const isOnboarding = catchedData ? JSON.parse(catchedData) : false;
-            // if (isOnboarding) {
-            //   setactiveStep(1);
-            // } else {
             if (res) {
               // router.push(
               //   `/userId/${res?.user?.user_id}/workspaceId/${res?.user?.workspace_id}`
               // );
+              // removeItem(`userId/${res?.user?.user_id}`);
+
               router.push(`/userId/${res?.user?.user_id}`);
               // setactiveStep(2);
               setIsLoading(false);
+              // setItem(`userId/${res?.user?.user_id}`, "onboarding");
               // setFormDataStore("currentPage", "Sign Up");
             }
-            // router.push(
-            //   `/userId/${res?.user?.user_id}/workspaceId/${res?.user?.workspace_id}`
-            // );
-            router.push(`/userId/${res?.user?.user_id}`);
-            // setactiveStep(2);
+
+            // router.push(`/userId/${res?.user?.user_id}`);
+            setactiveStep(2);
             setIsLoading(false);
-            // setFormDataStore("currentPage", "Sign Up");
+            setFormDataStore("currentPage", "Sign Up");
 
             // }
 

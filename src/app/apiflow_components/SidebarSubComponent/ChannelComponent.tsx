@@ -68,7 +68,9 @@ function ChannelComponent() {
         <ChannelPlusIcon
           style={{ cursor: "pointer" }}
           onClick={() => {
-            router.push(`/userId/${userProfile?.user?.user_id}/channel`);
+            router.push(
+              `/userId/${userProfile?.user?.user_id}/channel/createChannel`
+            );
           }}
         />
       ),
@@ -144,13 +146,12 @@ function ChannelComponent() {
             # Project Announcement
           </SecondaryTextTypography> */}
               {/* Project Section */}
-              <Box sx={{ marginTop: "30px" }}>
+              {/* <Box sx={{ marginTop: "30px" }}>
                 <PrimaryTextTypography>Project</PrimaryTextTypography>
-                {/* <SecondaryTextTypography># CMP Project</SecondaryTextTypography>
-          <SecondaryTextTypography># SCM Project</SecondaryTextTypography> */}
-              </Box>
-              {/* Personal Section */}
-              <Box sx={{ marginTop: "30px" }}>
+            
+              </Box> */}
+
+              {/* <Box sx={{ marginTop: "30px" }}>
                 <Box
                   sx={{
                     display: "flex",
@@ -159,7 +160,7 @@ function ChannelComponent() {
                     flexDirection: "row",
                   }}
                 >
-                  <PrimaryTextTypography>Personal</PrimaryTextTypography>
+                  <PrimaryTextTypography>Personals</PrimaryTextTypography>
                   <ChannelPlusIcon
                     style={{ margin: "10px", cursor: "pointer" }}
                     onClick={() => {
@@ -169,7 +170,7 @@ function ChannelComponent() {
                     }}
                   />
                 </Box>
-              </Box>
+              </Box> */}
               {/* <SecondaryTextTypography># My Team Channel</SecondaryTextTypography>
               {/* <SecondaryTextTypography># My Team Channel</SecondaryTextTypography>
           <SecondaryTextTypography># My Environment</SecondaryTextTypography> */}

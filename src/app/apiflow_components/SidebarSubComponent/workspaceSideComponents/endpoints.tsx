@@ -2,7 +2,10 @@ import {
   environmentReducer,
   GetAllStagesByProjectId,
 } from "@/app/Redux/apiManagement/environmentReducer";
-import { GetCollectionOperationTree } from "@/app/Redux/apiManagement/projectReducer";
+import {
+  GetCollectionOperationTree,
+  GetMinimalCollectionOperationTree,
+} from "@/app/Redux/apiManagement/projectReducer";
 import { RootStateType } from "@/app/Redux/store";
 import { setAddTabs, setRemoveTabs, tabsReducer } from "@/app/Redux/tabReducer";
 import {
@@ -27,6 +30,7 @@ import { CommonReducer, setCurrentTreeActive } from "@/app/Redux/commonReducer";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
 import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
 import { getItems, setItem } from "@/app/Services/localstorage";
+import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
 
 const accordionCollectionStyles = {
   elevation: 0,
@@ -52,7 +56,7 @@ const Endpoints = () => {
 
   const pathname = usePathname();
 
-  const { getCollOperTreeLoading } = useSelector<
+  const { getMinimalCollOperTreeLoading } = useSelector<
     RootStateType,
     endpointReducer
   >((state) => state.apiManagement.endpoint);
@@ -111,7 +115,7 @@ const Endpoints = () => {
         offsetStart: 0,
         offsetEnd: page,
       };
-      dispatch(GetCollectionOperationTree(requestData))
+      dispatch(GetMinimalCollectionOperationTree(requestData))
         .unwrap()
         .then((res: any) => {
           console.log("treeRes: ", res);
@@ -120,7 +124,7 @@ const Endpoints = () => {
             (filterStatus: any) => filterStatus?.status === "ACTIVE"
           );
           console.log("GetOperationTreeRes: ", res?.collections);
-          setCollOperDetails(filterStatusVal);
+          setCollOperDetails(res?.collections);
           setIsLoading(false);
         })
         .catch((error: any) => {
@@ -131,18 +135,14 @@ const Endpoints = () => {
   };
 
   const handleScroll = () => {
-    if (containerRef?.current) {
-      const { scrollTop, clientHeight, scrollHeight } = containerRef?.current;
-      if (
-        scrollTop + clientHeight >= scrollHeight - 100 &&
-        !getCollOperTreeLoading
-      ) {
-        setCurrentPage((prevPage) => prevPage + 5);
+    if (containerRef.current) {
+      const bottom = containerRef.current.getBoundingClientRect().bottom;
+      if (bottom <= window.innerHeight) {
+        setIsLoading(true);
+        setCurrentPage((prev) => prev + 5);
       }
     }
   };
-
-  console.log("Tabs: ", tabs);
 
   const onSelectCurrentCollection = (collId: string) => {
     if (tabs.includes("Coll_" + collId)) {
@@ -157,49 +157,24 @@ const Endpoints = () => {
     dispatch(setAddTabs(collectionTab));
   };
 
-  console.log(tabs, "state.tabs");
-
-  // useEffect(() => {
-  //   if (currentEnvironment && currentStage) {
-  //     let getOperationValues = {
-  //       project_id: currentEnvironment,
-  //       stage_id: currentStage,
-  //     };
-  //     dispatch(GetOperations(getOperationValues))
-  //       .unwrap()
-  //       .then((operRes: any) => {
-  //         console.log(operRes, "operResoperRes");
-  //         setCollOperVal(operRes);
-  //       })
-  //       .catch((error: any) => {
-  //         console.log("Error: ", error);
-  //       });
-  //   }
-  // }, [currentEnvironment, currentStage]);
-
-  useEffect(() => {
-    // const container = document.getElementById(maninContainer);
-    const container = document.getElementById("scrollable-container");
-    container?.addEventListener("scroll", handleScroll);
-    setSearchVal("");
-
-    return () => {
-      container?.removeEventListener("scroll", handleScroll);
-      setSearchVal("");
-    };
-    // }, [maninContainer]); // Include maninContainer as a dependency
-  }, []);
-
   useEffect(() => {
     if (currentEnvironment && currentStage) {
       fetchPageData(currentPage);
-      setIsLoading(false);
     } else {
       setCollOperDetails([]);
       setCollOperTreeCount(0);
     }
   }, [currentPage, currentEnvironment, currentStage]);
+  useEffect(() => {
+    const conatiner = document.getElementById("envContainer");
 
+    if (conatiner) {
+      conatiner.addEventListener("scroll", handleScroll);
+      return () => {
+        conatiner.removeEventListener("scroll", handleScroll);
+      };
+    }
+  }, []);
   useEffect(() => {
     if (currentEnvironment) {
       dispatch(GetAllStagesByProjectId(currentEnvironment));
@@ -236,6 +211,8 @@ const Endpoints = () => {
     } else {
     }
   }, [dispatch]);
+  console.log(collOperDetails, "collOperDetails");
+
   return (
     <>
       {collOperDetails.map((col, index) => (
@@ -288,8 +265,8 @@ const Endpoints = () => {
                   position: "relative",
                 }}
               >
-                {getCollOperTreeLoading && (
-                  <GlobalCircularLoader open={getCollOperTreeLoading} />
+                {getMinimalCollOperTreeLoading && (
+                  <GlobalCircularLoader open={getMinimalCollOperTreeLoading} />
                 )}
                 <ExpandMoreIcon
                   sx={{
@@ -311,11 +288,12 @@ const Endpoints = () => {
                     fontSize: "12px",
                   }}
                 >
-                  {col.collection_name}
+                  {col.name}
                 </TeritaryTextTypography>
               </Box>
             </AccordionSummary>
             <AccordionDetails
+              id="envContainer"
               sx={{
                 background: theme.palette.sidebarMainBackground.main,
                 height: "150px",
@@ -323,6 +301,8 @@ const Endpoints = () => {
                 width: "100%",
                 "&.MuiAccordionDetails-root": {
                   padding: "0px !important",
+                  display: "flex",
+                  flexDirection: "column",
                 },
               }}
             >
@@ -351,12 +331,14 @@ const Endpoints = () => {
                     dispatch(setCurrentTreeActive(op?.id));
                     router.push(
                       // `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/operations/${op?.id}`
-                      `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/operations/${op?.operation_id}`
+                      `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/operations/${op?.id}`
                     );
                   }}
                 >
-                  {getCollOperTreeLoading && (
-                    <GlobalCircularLoader open={getCollOperTreeLoading} />
+                  {getMinimalCollOperTreeLoading && (
+                    <GlobalCircularLoader
+                      open={getMinimalCollOperTreeLoading}
+                    />
                   )}
                   <Box
                     sx={{
@@ -382,10 +364,31 @@ const Endpoints = () => {
                       cursor: "pointer",
                     }}
                   >
-                    {op.operation_name}
+                    {op.name}
                   </TeritaryTextTypography>
                 </Box>
               ))}
+              {isLoading &&
+                [1, 2, 3, 4].map((elem, index) => {
+                  return (
+                    <div
+                      key={index}
+                      style={{
+                        padding: "10px 0 10px 50px",
+                        position: "relative",
+                        marginBottom: 2,
+                      }}
+                    >
+                      <GSkeletonLoader
+                        secondary={true}
+                        open={true}
+                        width="60%"
+                        height="15px"
+                      />
+                    </div>
+                  );
+                })}
+              <div ref={containerRef}></div>
             </AccordionDetails>
           </Accordion>
         </div>

@@ -38,7 +38,21 @@ export const GetCollectionOperationTree = createAsyncThunk(
     }
   }
 );
-
+export const GetMinimalCollectionOperationTree = createAsyncThunk(
+  "projects/GetMinimalCollectionOperationTree",
+  async (values: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        `api/Operations/get_minimal_collection_operation_tree?project_id=${values?.project_id}&offsetStart=${values?.offsetStart}&offsetEnd=${values?.offsetEnd}`,
+        null,
+        null
+      );
+    } catch (error) {
+      throw new Error(errorHandling(error));
+    }
+  }
+);
 export const GetCollectionOperationTreeFlow = createAsyncThunk(
   "projects/GetCollectionOperationTreeFlow",
   async (values: any) => {
@@ -197,6 +211,7 @@ type InitialStateType = {
   getTreeFlowLoading: boolean;
   operationLists: operationInterface[];
   getCollOperTreeLoading: boolean;
+  getMinimalCollOperTreeLoading: boolean;
   getCollOperTreeData: GetCollecOperTreeInterface;
   getCollOperTreeFlowData: GetCollecOperTreeInterface;
 };
@@ -206,6 +221,7 @@ const initialState: InitialStateType = {
   getTreeFlowLoading: false,
   operationLists: [],
   getCollOperTreeLoading: false,
+  getMinimalCollOperTreeLoading: false,
   getCollOperTreeData: {
     count: 0,
     collections: [],
@@ -246,6 +262,27 @@ export const endpointSlice = createSlice({
     builder.addCase(GetCollectionOperationTree.rejected, (state, action) => {
       state.getTreeFlowLoading = false;
     });
+    builder.addCase(
+      GetMinimalCollectionOperationTree.pending,
+      (state, action) => {
+        state.getMinimalCollOperTreeLoading = true;
+      }
+    );
+
+    builder.addCase(
+      GetMinimalCollectionOperationTree.fulfilled,
+      (state, action) => {
+        state.getMinimalCollOperTreeLoading = false;
+        state.getCollOperTreeData = action.payload;
+      }
+    );
+
+    builder.addCase(
+      GetMinimalCollectionOperationTree.rejected,
+      (state, action) => {
+        state.getTreeFlowLoading = false;
+      }
+    );
 
     builder.addCase(GetCollectionOperationTreeFlow.pending, (state, action) => {
       state.getTreeFlowLoading = true;

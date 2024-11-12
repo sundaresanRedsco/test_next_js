@@ -2,7 +2,6 @@ import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AdminServices } from "../../Services/services";
 import { errorHandling } from "../../Services/errorHandling";
 import { workspaceInterface } from "../../../interface/workspaceInterface";
-import { X } from "@mui/icons-material";
 
 export const CreateWorkspace = createAsyncThunk(
   "workspace/CreateWorkspace",
@@ -72,8 +71,8 @@ export const UpdateWorkspace = createAsyncThunk(
         "post",
         `Api/Workspace_/update_workspace?workspace_id=${data?.workspace_id}`,
         data?.details,
-        null,
-      )
+        null
+      );
     } catch (error: any) {
       if (error?.response && error?.response?.status === 401) {
         throw new Error("UNAUTHORIZED");
@@ -81,7 +80,7 @@ export const UpdateWorkspace = createAsyncThunk(
       throw new Error(errorHandling(error));
     }
   }
-)
+);
 
 export const resetWorkspaceState = createAction("workspace/resetState");
 
@@ -89,6 +88,7 @@ type InitialStateType = {
   loading: boolean;
   workspaceList: workspaceInterface[];
   getWsidLoading: boolean;
+  totalCount: number;
   currentWorkspace: workspaceInterface | null;
   workSpaceResponce: any;
   updateWorkspaceLoading: boolean;
@@ -101,6 +101,7 @@ const initialState: InitialStateType = {
   getWsidLoading: false,
   currentWorkspace: null,
   updateWorkspaceLoading: false,
+  totalCount: 0,
 };
 
 export const workspaceSlice = createSlice({
@@ -153,7 +154,6 @@ export const workspaceSlice = createSlice({
       if (action.payload && action.payload.id) {
         state.currentWorkspace = action.payload;
 
-        // Check if the workspace with the same id is already in the workspaceList
         const workspaceExists = state.workspaceList.some(
           (workspace) => workspace.id === action.payload?.id
         );
@@ -175,8 +175,8 @@ export const workspaceSlice = createSlice({
 
     builder.addCase(GetWorkspacesByUserId.fulfilled, (state, action) => {
       state.getWsidLoading = false;
-      const newWorkspaceList = action.payload;
-
+      const newWorkspaceList = action.payload.workspaces;
+      state.totalCount = action.payload.total_count;
       // Create a set of IDs from the new workspace list for quick lookup
       const newWorkspaceIds = new Set(newWorkspaceList.map((nw: any) => nw.id));
 
@@ -200,13 +200,12 @@ export const workspaceSlice = createSlice({
     });
 
     builder.addCase(UpdateWorkspace.fulfilled, (state, action) => {
-      state.updateWorkspaceLoading = false; 
+      state.updateWorkspaceLoading = false;
     });
 
     builder.addCase(UpdateWorkspace.rejected, (state, action) => {
       state.updateWorkspaceLoading = false;
     });
-
   },
 });
 

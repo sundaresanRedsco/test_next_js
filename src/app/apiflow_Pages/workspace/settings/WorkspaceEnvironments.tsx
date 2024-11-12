@@ -20,10 +20,13 @@ import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularL
 import { PrimaryTypography } from "@/app/Styles/signInUp";
 import Grid from "@mui/material/Grid2";
 import dynamic from "next/dynamic";
+import WorkspaceProjectSkeleton from "@/app/apiflow_components/skeletons/WorkspaceProjectSkeleton";
 
 const GlobalIntegartionData = dynamic(
   () => import("@/app/apiflow_components/global/GlobalIntegartionData"),
-  { ssr: false }
+  {
+    loading: () => <WorkspaceProjectSkeleton />, // Skeleton displayed during loading
+  }
 );
 
 const LeftArrowIcon = dynamic(

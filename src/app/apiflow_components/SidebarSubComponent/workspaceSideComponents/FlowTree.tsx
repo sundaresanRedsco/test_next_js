@@ -4,6 +4,7 @@ import {
   clearFlowList,
   FlowReducer,
   GetApiDesignFlowByProjectIdStageId,
+  GetDesignflowMinamlInfoFlowoffset,
   GetDesignFlowOffset,
 } from "@/app/Redux/apiManagement/flowReducer";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
@@ -95,7 +96,7 @@ export const FlowTree = () => {
       name: "",
     };
 
-    dispatch(GetDesignFlowOffset(requestData))
+    dispatch(GetDesignflowMinamlInfoFlowoffset(requestData))
       .unwrap()
       .then((flowRes: any) => {
         console.log(flowRes, "flowResflowRes");
@@ -123,7 +124,7 @@ export const FlowTree = () => {
     //   // Fetch additional data when scrolling
     //   fetchPageData(currentPage);
     // }
-    fetchPageData(currentPage);
+    if (currentEnvironment) fetchPageData(currentPage);
   }, [currentPage, currentEnvironment, currentEnvironmentDetails?.project_id]);
 
   // useEffect(() => {
@@ -170,9 +171,9 @@ export const FlowTree = () => {
             // });
           }}
         >
-          {getDesignFlowOffsetLoading && (
+          {/* {getDesignFlowOffsetLoading && (
             <GlobalCircularLoader open={getDesignFlowOffsetLoading} />
-          )}
+          )} */}
           <TeritaryTextTypography
             style={{
               color: currentTreeActive === flow.id ? "#FFFFFF" : "#FFFFFF80",

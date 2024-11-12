@@ -508,7 +508,7 @@ export default function WorkflowSidebar(props: any) {
                     fontSize: recentlyModifiedProp === true ? "6px" : "",
                   }}
                 >
-                  {item?.collection_name}
+                  {item?.collection_name}s
                 </SecondaryTypography>
               </Box>
             </AccordionSummary>

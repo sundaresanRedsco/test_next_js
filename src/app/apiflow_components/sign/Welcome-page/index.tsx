@@ -13,6 +13,7 @@ import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 
 export default function WelcomePage() {
   const { handleStep } = useSignUpStore();
+  localStorage.clear();
   return (
     <Stack
       sx={{
@@ -25,7 +26,7 @@ export default function WelcomePage() {
     >
       <Box
         component={"img"}
-        src={"/sign/StyledLayerImg.png"}
+        src={"/sign/StyledLayerImg.webp"}
         alt="Apiflow-logo"
         style={{
           bottom: 0,
@@ -37,7 +38,7 @@ export default function WelcomePage() {
       <Image
         height={50}
         width={50}
-        src={"/global/logo.png"}
+        src={"/global/logo.webp"}
         alt="Apiflow-logo"
       />
       <PrimarySignInUPTypography
@@ -47,7 +48,7 @@ export default function WelcomePage() {
           textAlign: "center",
         }}
       >
-        Welcome to API Flow
+        Welcome to API Flows
       </PrimarySignInUPTypography>
       <TertiarySignInUPTypography
         sx={{

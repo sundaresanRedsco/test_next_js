@@ -7,6 +7,8 @@ export default function GSkeletonLoader({
   open,
   secondary,
   width,
+  animation,
+  height,
 }: any) {
   return (
     <div>
@@ -23,11 +25,11 @@ export default function GSkeletonLoader({
           variant="rectangular"
           sx={{
             width: width ? width : secondary ? "100%" : "90%",
-            height: "25px",
+            height: height || "25px",
             borderRadius: "5px",
             background: secondary ? "#2f2935" : "#473d51",
           }}
-          animation="wave"
+          animation={animation ? animation : "wave"}
         ></Skeleton>
       </Backdrop>
     </div>

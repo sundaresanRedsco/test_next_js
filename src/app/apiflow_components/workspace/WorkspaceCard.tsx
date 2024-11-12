@@ -126,11 +126,12 @@ function WorkspaceCard({
             background="#7A43FE"
             label="View Workspace"
             color="#FFFFFF"
-            width="100%"
+            width="250px"
             padding="8px"
             border="none"
             fontSize="0.8rem"
             fontWeight="600"
+            radius="10px"
             onClickHandler={onClickHandler}
           />
         </div>

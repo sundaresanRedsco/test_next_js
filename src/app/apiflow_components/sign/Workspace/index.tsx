@@ -91,9 +91,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
     setmethodErr,
   } = useWorkspace(clientSession?.data);
   // console.log(axios?.defaults, "test-axios");
-  if (!isWorkflowModal) {
-    setItem(`userId/${clientSession?.user?.user_id}`, "onboarding");
-  }
+
   const [visibility, setvisibility] = useState(formData.visibility == "TEAM");
   const handleVisibilityChange = (e: any) => {
     if (e.target.checked) {

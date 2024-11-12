@@ -866,6 +866,21 @@ export const GetCollectionOperationTree = createAsyncThunk(
     }
   }
 );
+export const GetMinimalCollectionOperationTree = createAsyncThunk(
+  "projects/GetMinimalCollectionOperationTree",
+  async (values: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        `api/Operations/get_minimal_collection_operation_tree?project_id=${values?.project_id}&offsetStart=${values?.offsetStart}&offsetEnd=${values?.offsetEnd}`,
+        null,
+        null
+      );
+    } catch (error) {
+      throw new Error(errorHandling(error));
+    }
+  }
+);
 
 export const resetGatewayStateProject = createAction("Gateway/resetState");
 
@@ -893,9 +908,11 @@ type InitialStateType = {
   projectsListSolrPagination: projectSolrPaginationInterface[];
   projectsListSolrCount: number;
   getCollOperTreeLoading: boolean;
+  getMinimalCollOperTreeLoading: boolean;
   getCollOperTreeData: GetCollecOperTreeInterface;
   saveAndGetResponseLoading: boolean;
   operationByIdLoading: boolean;
+  testLoading: boolean;
 };
 
 const initialState: InitialStateType = {
@@ -1288,12 +1305,14 @@ const initialState: InitialStateType = {
   projectsListSolrPagination: [],
   projectsListSolrCount: 0,
   getCollOperTreeLoading: false,
+  getMinimalCollOperTreeLoading: false,
   getCollOperTreeData: {
     count: 0,
     collections: [],
   },
   saveAndGetResponseLoading: false,
   operationByIdLoading: false,
+  testLoading: false,
 };
 
 export const projectSlice = createSlice({
@@ -1526,16 +1545,16 @@ export const projectSlice = createSlice({
     });
 
     builder.addCase(GetOpertionTest.pending, (state, action) => {
-      state.saveAndGetResponseLoading = true;
+      state.testLoading = true;
     });
 
     builder.addCase(GetOpertionTest.fulfilled, (state, action) => {
-      state.loading = false;
-      state.saveAndGetResponseLoading = action.payload;
+      state.testLoading = false;
+      state.saveGetResponseData = action.payload;
     });
 
     builder.addCase(GetOpertionTest.rejected, (state, action) => {
-      state.saveAndGetResponseLoading = false;
+      state.testLoading = false;
     });
 
     builder.addCase(SoapOperationById.pending, (state, action) => {
@@ -1931,6 +1950,27 @@ export const projectSlice = createSlice({
     builder.addCase(GetCollectionOperationTree.rejected, (state, action) => {
       state.getCollOperTreeLoading = false;
     });
+    builder.addCase(
+      GetMinimalCollectionOperationTree.pending,
+      (state, action) => {
+        state.getMinimalCollOperTreeLoading = true;
+      }
+    );
+
+    builder.addCase(
+      GetMinimalCollectionOperationTree.fulfilled,
+      (state, action) => {
+        state.getMinimalCollOperTreeLoading = false;
+        state.getCollOperTreeData = action.payload;
+      }
+    );
+
+    builder.addCase(
+      GetMinimalCollectionOperationTree.rejected,
+      (state, action) => {
+        state.getMinimalCollOperTreeLoading = false;
+      }
+    );
 
     builder.addCase(resetGatewayStateProject, (state, action) => {
       return initialState; // Reset state to initial values

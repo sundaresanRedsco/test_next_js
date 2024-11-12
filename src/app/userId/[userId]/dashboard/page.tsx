@@ -17,7 +17,8 @@ export default function Dashboard({}: Props) {
         style={{ fontSize: "1.7rem", margin: "1.5rem 0rem", color: "white" }}
       >
         <span style={{ color: "#FFFFFFBF" }}>Welcome</span>,{" "}
-        {userProfile.user.first_name ? (
+        {userProfile.user.first_name &&
+        userProfile.user.first_name != "null" ? (
           userProfile.user.first_name + " " + userProfile.user.last_name
         ) : (
           <>User</>

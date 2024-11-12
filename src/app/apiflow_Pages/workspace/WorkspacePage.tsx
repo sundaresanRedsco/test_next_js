@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // import WorkspaceCard from "../../apiflow_components/workspace/WorkspaceCard";
-import { Grid, Typography } from "@mui/material";
+import { Box, Grid, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 // import PostCard from "../../apiflow_components/channels/post/PostCard";
 // import WorkspaceCreateCard from "../../apiflow_components/workspace/workspaceCreateCard";
@@ -22,11 +22,13 @@ import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularL
 import { useSideBarStore } from "@/app/hooks/sideBarStore";
 import { setItem } from "@/app/Services/localstorage";
 import dynamic from "next/dynamic";
+import WorkspacePageSkeleton from "@/app/apiflow_components/skeletons/WorkspacePageSkeleton";
 
 const WorkspaceCard = dynamic(
   () => import("../../apiflow_components/workspace/WorkspaceCard"),
   {
     ssr: false, // Optionally disable SSR if you don't need it during SSR
+    loading: () => <WorkspacePageSkeleton />,
   }
 );
 
@@ -47,10 +49,12 @@ const TextTypography = styled(Typography)`
 function WorkspacePage() {
   const dispatch = useDispatch<any>();
   const router = useRouter();
-  const { workspaceList, currentWorkspace, getWsidLoading } = useSelector<
-    RootStateType,
-    workspaceReducer
-  >((state) => state.apiManagement.workspace);
+  const [offsetVal, setoffsetVal] = useState<number>(0);
+
+  const { workspaceList, currentWorkspace, getWsidLoading, totalCount } =
+    useSelector<RootStateType, workspaceReducer>(
+      (state) => state.apiManagement.workspace
+    );
 
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
@@ -85,7 +89,7 @@ function WorkspacePage() {
     const data = {
       user_id: userProfile?.user.user_id,
       offset: offsetVal,
-      limit: 5,
+      limit: 8,
     };
 
     dispatch(GetWorkspacesByUserId(data))
@@ -97,23 +101,47 @@ function WorkspacePage() {
   };
 
   useEffect(() => {
-    fetchPageData(0);
-  }, [userProfile?.user.user_id]);
-
-  useEffect(() => {
     dispatch(initializeSession());
   }, []);
+  const containerRef = useRef<any>();
+  const handleScroll = () => {
+    if (containerRef.current) {
+      const bottom = containerRef.current.getBoundingClientRect().bottom;
+      if (bottom <= window.innerHeight) {
+        setoffsetVal((prev) => prev + 5);
+      }
+    }
+  };
+  useEffect(() => {
+    fetchPageData(offsetVal);
+  }, [userProfile?.user.user_id]);
+  useEffect(() => {
+    if (offsetVal <= totalCount) fetchPageData(offsetVal);
+  }, [userProfile?.user.user_id, offsetVal]);
 
+  // Hook to handle scroll events
+  useEffect(() => {
+    const conatiner = document.getElementById("mainContainer");
+
+    if (conatiner) {
+      conatiner.addEventListener("scroll", handleScroll);
+      return () => {
+        conatiner.removeEventListener("scroll", handleScroll);
+      };
+    }
+  }, []);
   return (
     <div>
       <TextTypography style={{ fontSize: "1.7rem", margin: "1.5rem 0rem" }}>
         <span style={{ color: "#FFFFFFBF" }}>Welcome</span>,{" "}
-        {userProfile.user.first_name ? (
+        {userProfile.user.first_name &&
+        userProfile.user.first_name != "null" ? (
           userProfile.user.first_name + " " + userProfile.user.last_name
         ) : (
           <>User</>
         )}
       </TextTypography>
+
       <Grid container spacing={3}>
         {workspaceList?.map((workspace: any) => (
           <Grid
@@ -135,17 +163,45 @@ function WorkspacePage() {
               },
             }}
           >
-            <WorkspaceCard
-              membersCount={workspace?.members_count}
-              syncTime={"2 mins ago"}
-              riskCount={2}
-              projectCount={workspace?.group_count}
-              title={workspace?.name}
-              onClickHandler={() => handleSelectedTeam(workspace.id)}
-            />
+            <React.Suspense fallback={<WorkspacePageSkeleton />}>
+              <WorkspaceCard
+                membersCount={workspace?.members_count}
+                syncTime={"2 mins ago"}
+                riskCount={2}
+                projectCount={workspace?.group_count}
+                title={workspace?.name}
+                onClickHandler={() => handleSelectedTeam(workspace.id)}
+              />
+            </React.Suspense>
           </Grid>
         ))}
-        {getWsidLoading && (
+        {getWsidLoading &&
+          workspaceList?.length > 1 &&
+          [1, 2, 3, 4].map((elem, index) => {
+            return (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                lg={4}
+                xl={4}
+                sx={{
+                  display: "flex",
+                  position: "relative",
+                  minHeight: "300px",
+                  "@media (min-width: 1600px)": {
+                    // Change '1920px' to any custom breakpoint
+                    flexBasis: "25%", // Adjust as per your needs
+                    maxWidth: "25%", // Same as the flexBasis for proper alignment
+                  },
+                }}
+              >
+                <WorkspacePageSkeleton key={index} />
+              </Grid>
+            );
+          })}
+        {/* {getWsidLoading && (
           <Grid
             item
             xs={12}
@@ -166,7 +222,7 @@ function WorkspacePage() {
           >
             <GlobalCircularLoader open={true} noBackdrop={true} />
           </Grid>
-        )}
+        )} */}
 
         {/* )} */}
 
@@ -192,6 +248,7 @@ function WorkspacePage() {
         {/* {getWsidLoading && ( */}
       </Grid>
 
+      <div ref={containerRef}></div>
       {/* <PostCard /> */}
     </div>
   );

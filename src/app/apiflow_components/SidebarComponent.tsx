@@ -445,7 +445,7 @@ function SidebarComponent(props: any) {
           flexDirection: "column",
           height: "100%",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "space-evenly",
         }}
       >
         {/* Top section with the first 3 icons */}
@@ -460,18 +460,18 @@ function SidebarComponent(props: any) {
             sx={{
               borderRadius: link?.id === selectedLink ? "6px" : "0px",
               width: {
-                xl: "45px",
+                xl: "40px",
                 lg: "40px",
                 md: "40px",
-                sm: "35px",
-                xs: "35px",
+                sm: "37px",
+                xs: "37px",
               },
               height: {
-                xl: "45px",
+                xl: "40px",
                 lg: "40px",
                 md: "40px",
-                sm: "35px",
-                xs: "35px",
+                sm: "37px",
+                xs: "37px",
               },
               display: "flex",
               justifyContent: "center",
@@ -499,18 +499,18 @@ function SidebarComponent(props: any) {
             sx={{
               borderRadius: link?.id === selectedLink ? "6px" : "0px",
               width: {
-                xl: "45px",
+                xl: "40px",
                 lg: "40px",
                 md: "40px",
-                sm: "35px",
-                xs: "35px",
+                sm: "37px",
+                xs: "37px",
               },
               height: {
-                xl: "45px",
+                xl: "40px",
                 lg: "40px",
                 md: "40px",
-                sm: "35px",
-                xs: "35px",
+                sm: "37px",
+                xs: "37px",
               },
               display: "flex",
               justifyContent: "center",
@@ -538,18 +538,18 @@ function SidebarComponent(props: any) {
             sx={{
               borderRadius: link?.id === selectedLink ? "6px" : "0px",
               width: {
-                xl: "45px",
+                xl: "40px",
                 lg: "40px",
                 md: "40px",
-                sm: "35px",
-                xs: "35px",
+                sm: "37px",
+                xs: "37px",
               },
               height: {
-                xl: "45px",
+                xl: "40px",
                 lg: "40px",
                 md: "40px",
-                sm: "35px",
-                xs: "35px",
+                sm: "37px",
+                xs: "37px",
               },
               display: "flex",
               justifyContent: "center",

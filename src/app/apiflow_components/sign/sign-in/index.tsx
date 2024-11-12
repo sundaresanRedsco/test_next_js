@@ -38,7 +38,7 @@ export default function SignIn({ clientSession }: any) {
     formData,
     CLIENT_ID,
   } = useSignIn();
-  removeItem(`userId/${clientSession?.user?.user_id}`);
+
   const InputArray = [
     {
       id: 1,
@@ -233,7 +233,7 @@ export default function SignIn({ clientSession }: any) {
                     onClick: googleLogin,
                   },
                   {
-                    label: "Continue with Azure",
+                    label: "Continue with Microsoft",
                     icon: <AzureIcon />,
                     onClick: handleAuthentication,
                   },

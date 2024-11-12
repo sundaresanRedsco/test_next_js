@@ -40,8 +40,10 @@ import { BottomBar } from "./BottomBar";
 import { usePathname, useRouter } from "next/navigation";
 import WorkspaceSettings from "./workspaceSideComponents/WorkspaceSettings";
 import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
-import { getItems, setItem } from "@/app/Services/localstorage";
+import { getItems, removeItem, setItem } from "@/app/Services/localstorage";
 import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
+import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
+import { endpointReducer } from "@/app/Redux/apiManagement/endpointReducer";
 
 const accordionCollectionStyles = {
   elevation: 0,
@@ -82,6 +84,14 @@ const EnvironmentTree = () => {
     (state) => state.apiManagement.environment
   );
 
+  const { getDesignFlowOffsetLoading, flowList } = useSelector<
+    RootStateType,
+    FlowReducer
+  >((state) => state.apiManagement.apiFlowDesign);
+  // const { getCollOperTreeLoading } = useSelector<
+  //   RootStateType,
+  //   endpointReducer
+  // >((state) => state.apiManagement.apiFlowDesign);
   const { currentProject } = useSelector<RootStateType, projectApiReducer>(
     (state) => state.apiManagement.apiProjects
   );
@@ -89,8 +99,6 @@ const EnvironmentTree = () => {
   const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
     (state) => state.apiManagement.workspace
   );
-
-  console.log("currentEnvironmentVal: ", currentEnvironment);
 
   const { tabs } = useSelector<RootStateType, tabsReducer>(
     (state) => state.tabs
@@ -165,13 +173,7 @@ const EnvironmentTree = () => {
     }
   };
 
-  console.log(enviProjectsListSolrOffset, "enviProjectsListSolrOffsetsdsdsd");
-
-  const onSelectCurrentProject = (
-    projectId: string,
-    workspaceId: string,
-    notToLoad?: boolean
-  ) => {
+  const onSelectCurrentProject = (projectId: string, workspaceId: string) => {
     if (expanded == projectId) {
       setExpanded("");
       return;
@@ -186,7 +188,6 @@ const EnvironmentTree = () => {
     //   return !tab.startsWith("pro_");
     // });
 
-    console.log(projectId, "projectId");
     dispatch(
       GetProjectById({ project_id: projectId, workspace_id: workspaceId })
     )
@@ -206,13 +207,11 @@ const EnvironmentTree = () => {
     );
 
     // let tempArr = [projecTab, ...filteredTabs];
-
+    dispatch(setCurrentTreeActive(projectId));
     dispatch(setCurrentEnvironment(projectId));
     // dispatch(setTabs(tempArr));
     dispatch(GetAllStagesByProjectId(projectId));
-    if (!notToLoad) {
-      dispatch(setCurrentTreeActive(projectId));
-    }
+
     // Update the browser's URL without reloading the page
     // window.history.pushState({}, "", newUrl);
     setExpanded(projectId);
@@ -236,8 +235,6 @@ const EnvironmentTree = () => {
     });
   };
 
-  console.log(tabs, "state.tabs");
-
   React.useEffect(() => {
     // const container = document.getElementById(maninContainer);
     const container = document.getElementById("scrollable-container");
@@ -252,38 +249,33 @@ const EnvironmentTree = () => {
   }, []);
 
   React.useEffect(() => {
-    // fetchPageData(currentPage);
     fetchPageData(projectEndValue);
   }, [projectEndValue, searchVal, currentProject]);
-
-  console.log(
-    projectValues,
-    projectStartValue,
-    projectEndValue,
-    "projectValuesprojectValues"
-  );
 
   const handleOpenMainMenu = async () => {
     const data = await getItems(`/first/${userProfile?.user?.user_id}`);
     setExpanded(data ? data : "");
-    onSelectCurrentProject(data, pathname.split("/")[4], true);
+
     const nestedcookies = await getItems(
       `/nested/${userProfile?.user?.user_id}`
     );
     setNestedExpandedIndexes(nestedcookies ? nestedcookies : {});
-    if (pathname.split("/")[6]) {
-      await dispatch(setCurrentTreeActive(pathname.split("/")[6]));
-    } else if (pathname.split("/")[5]) {
+    onSelectCurrentProject(data, pathname.split("/")[4]);
+
+    if (pathname.includes("/workflow") && !pathname.split("/")[6]) {
       await dispatch(setCurrentTreeActive(data + "_workflow"));
+    } else if (pathname.includes("/workflow") && pathname.split("/")[6]) {
+      await dispatch(setCurrentTreeActive(pathname.split("/")[6]));
+    } else {
+      await dispatch(setCurrentTreeActive(data));
     }
   };
 
   React.useEffect(() => {
-    if (pathname.includes("/workflow") || pathname.includes("/operations")) {
+    if (!expanded) {
       handleOpenMainMenu();
-    } else {
     }
-  }, [dispatch]);
+  }, [dispatch, getProjectWsidLoading, pathname]);
 
   return (
     <>
@@ -310,7 +302,7 @@ const EnvironmentTree = () => {
             sx={{
               minHeight: "34px",
               background:
-                currentTreeActive === env.project_id
+                currentTreeActive === env.project_id && !getProjectWsidLoading
                   ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
                   : theme.palette.sidebarMainBackground.main,
               color:
@@ -326,53 +318,69 @@ const EnvironmentTree = () => {
               "& .MuiAccordionSummary-content.Mui-expanded": {
                 margin: "0px",
               },
-              "&:hover": {
-                background: "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
-                color: "#FFFFFF", // Change text color on hover
-              },
+              "&:hover": getProjectWsidLoading
+                ? {}
+                : {
+                    background:
+                      "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
+                    color: "#FFFFFF", // Change text color on hover
+                  },
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                cursor: "pointer",
-                width: "100%",
-              }}
-            >
-              <ExpandMoreIcon
-                sx={{
-                  transform:
-                    expanded === env.project_id
-                      ? "rotate(0deg)"
-                      : "rotate(-90deg)",
-                  transition: "transform 0.3s",
-                  color: expanded === env.project_id ? "#FFFFFF" : "#FFFFFF80",
-                  fontSize: "23px",
-                }}
+            {getProjectWsidLoading ? (
+              <GSkeletonLoader
+                secondary={true}
+                open={getProjectWsidLoading}
+                width="80%"
               />
-              <div
-                style={{
+            ) : (
+              <Box
+                sx={{
                   display: "flex",
-                  width: "100%",
                   alignItems: "center",
-                  position: "relative",
+                  cursor: "pointer",
+                  width: "100%",
                 }}
               >
-                <TeritaryTextTypography
-                  style={{
+                <ExpandMoreIcon
+                  sx={{
+                    transform:
+                      expanded === env.project_id
+                        ? "rotate(0deg)"
+                        : "rotate(-90deg)",
+                    transition: "transform 0.3s",
                     color:
                       expanded === env.project_id ? "#FFFFFF" : "#FFFFFF80",
-                    fontSize: "15px",
+                    fontSize: "23px",
+                  }}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    alignItems: "center",
+                    position: "relative",
                   }}
                 >
-                  {env.name}
-                </TeritaryTextTypography>
-                {/* {nestedAccordion?.badge === "true" && ( */}
-                <GBadge badgeContent={"0"} color="#F68E1E" iconRight={"10px"} />
-                {/* )} */}
-              </div>
-            </Box>
+                  <TeritaryTextTypography
+                    style={{
+                      color:
+                        expanded === env.project_id ? "#FFFFFF" : "#FFFFFF80",
+                      fontSize: "15px",
+                    }}
+                  >
+                    {env.name}
+                  </TeritaryTextTypography>
+                  {/* {nestedAccordion?.badge === "true" && ( */}
+                  <GBadge
+                    badgeContent={"0"}
+                    color="#F68E1E"
+                    iconRight={"10px"}
+                  />
+                  {/* )} */}
+                </div>
+              </Box>
+            )}
           </AccordionSummary>
           <AccordionDetails
             sx={{
@@ -450,56 +458,47 @@ const EnvironmentTree = () => {
                   {/* {getProjectWsidLoading && (
                     <GlobalCircularLoader open={getProjectWsidLoading} />
                   )} */}
-                  {getProjectWsidLoading && (
-                    <GSkeletonLoader
-                      secondary={true}
-                      open={getProjectWsidLoading}
-                      width="90%"
-                    />
-                  )}
-                  {!getProjectWsidLoading && (
-                    <ExpandMoreIcon
-                      sx={{
-                        transform: nestedExpandedIndexes[`${index}_flows`]
-                          ? "rotate(0deg)"
-                          : "rotate(-90deg)",
-                        transition: "transform 0.3s",
+
+                  <ExpandMoreIcon
+                    sx={{
+                      transform: nestedExpandedIndexes[`${index}_flows`]
+                        ? "rotate(0deg)"
+                        : "rotate(-90deg)",
+                      transition: "transform 0.3s",
+                      color: nestedExpandedIndexes[`${index}_flows`]
+                        ? "#FFFFFF"
+                        : "#FFFFFF80",
+                      fontSize: "20px",
+                    }}
+                  />
+
+                  <div
+                    className="d-flex"
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TeritaryTextTypography
+                      style={{
                         color: nestedExpandedIndexes[`${index}_flows`]
                           ? "#FFFFFF"
                           : "#FFFFFF80",
-                        fontSize: "20px",
-                      }}
-                    />
-                  )}
-                  {!getProjectWsidLoading && (
-                    <div
-                      className="d-flex"
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        alignItems: "center",
+                        fontSize: "13px",
+                        cursor: "pointer",
                       }}
                     >
-                      <TeritaryTextTypography
-                        style={{
-                          color: nestedExpandedIndexes[`${index}_flows`]
-                            ? "#FFFFFF"
-                            : "#FFFFFF80",
-                          fontSize: "13px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        WorkFlows
-                      </TeritaryTextTypography>
-                      {/* {nestedAccordion?.badge === "true" && ( */}
-                      <GBadge
-                        badgeContent={"0"}
-                        color="#FD0101"
-                        iconRight="15px"
-                      />
-                      {/* )} */}
-                    </div>
-                  )}
+                      WorkFlows
+                    </TeritaryTextTypography>
+                    {/* {nestedAccordion?.badge === "true" && ( */}
+                    <GBadge
+                      badgeContent={"0"}
+                      color="#FD0101"
+                      iconRight="15px"
+                    />
+                    {/* )} */}
+                  </div>
                 </Box>
               </AccordionSummary>
               <AccordionDetails
@@ -507,10 +506,33 @@ const EnvironmentTree = () => {
                   width: "100%",
                   "&.MuiAccordionDetails-root": {
                     padding: "0px !important",
+                    display: "flex",
+                    flexDirection: "column",
                   },
+                  height: flowList?.length > 5 ? "150px" : "auto",
+                  overflowY: "auto",
                 }}
               >
                 <FlowTree />
+                {getDesignFlowOffsetLoading &&
+                  [1, 2, 3, 4].map((elem, index) => {
+                    return (
+                      <div
+                        key={index}
+                        style={{
+                          padding: "10px 0 10px 50px",
+                          position: "relative",
+                          width: "auto",
+                        }}
+                      >
+                        <GSkeletonLoader
+                          secondary={true}
+                          open={true}
+                          width="90%"
+                        />
+                      </div>
+                    );
+                  })}
               </AccordionDetails>
             </Accordion>
 
@@ -614,11 +636,11 @@ const EnvironmentTree = () => {
               <AccordionDetails
                 sx={{
                   width: "100%",
-                  "&.MuiAccordionDetails-root": {
-                    padding: "0px !important",
-                  },
                   "& .MuiButtonBase-root": {
                     paddingLeft: 6,
+                  },
+                  "&.MuiAccordionDetails-root": {
+                    padding: "0px !important",
                   },
                 }}
               >
@@ -713,14 +735,14 @@ const ProjectTree = () => {
       setCurrentProjectDetails(projectsList?.find((x) => x.group_id == id))
     );
     await dispatch(setCurrentProject(id));
+    if (pathname.includes("/project") && id) {
+      dispatch(setCurrentTreeActive(id));
+    }
   };
 
   React.useEffect(() => {
-    if (pathname.includes("/workflow") || pathname.includes("/operations")) {
-      handleOpenMainMenu();
-    } else {
-    }
-  }, [pathname, dispatch, getWsidLoading, getProjectLoading]);
+    handleOpenMainMenu();
+  }, [pathname, dispatch, getProjectLoading]);
 
   return (
     <>
@@ -746,14 +768,15 @@ const ProjectTree = () => {
                     },
 
                 background:
-                  currentTreeActive === accordion?.group_id
+                  currentTreeActive === accordion?.group_id &&
+                  !getProjectLoading
                     ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
                     : theme.palette.sidebarMainBackground.main,
                 color:
                   currentTreeActive === accordion?.group_id
                     ? "#FFFFFF"
                     : "#FFFFFF80",
-                // padding: "5px 10px",
+                padding: "0px 10px",
                 alignItems: "center",
                 height: "45px",
                 "&.Mui-expanded": {
@@ -798,7 +821,7 @@ const ProjectTree = () => {
                         ? "rotate(0deg)"
                         : "rotate(-90deg)",
                     transition: "transform 0.3s",
-                    marginRight: "10px",
+                    // marginRight: "10px",
                     color:
                       accordion?.group_id === selectedLink
                         ? "#FFFFFF"

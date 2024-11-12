@@ -82,30 +82,41 @@ import theme from "@/Theme/theme";
 import { GetCollectionOperationTree } from "@/app/Redux/apiManagement/endpointReducer";
 // import FLowBg from "../../Assests/images/FlowBg.png";
 // import WorkflowDrawer from "@/app/apiflow_components/WorkflowComponents/workflowDrawer";
-// // import GlobalCircularLoader from "@/app/Components/Global/GlobalCircularLoader";
 // import GDialogBox from "@/app/Components/Global/GDialogBox";
 // import DesignerImportPopup from "@/app/ApiFlowComponents/ApiDesigner/DesignerImportPopup";
 import html2canvas from "html2canvas";
 import WorkFlowLayout from "@/app/apiflow_components/WorkflowComponents/WorkFlowLayout";
+import GLoader from "@/app/apiflow_components/global/GLoader";
+import GlobalLoader from "@/app/Components/Global/GlobalLoader";
 
 import dynamic from "next/dynamic";
 import { CommonReducer, updateSessionPopup } from "@/app/Redux/commonReducer";
 import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
+import WorkFlowHeaderSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkFlowHeaderSkeleton";
+import WorkflowDrawerSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkflowDrawerSkeleton";
+import WorkflowSidebarSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkflowSidebarSkeleton";
 
 const WorkflowHeader = dynamic(
   () => import("@/app/apiflow_components/WorkflowComponents/workflowHeader"),
-  { ssr: false }
+
+  {
+    loading: () => <WorkFlowHeaderSkeleton />,
+  }
 );
 
 const WorkflowSidebar = dynamic(
   () => import("@/app/apiflow_components/WorkflowComponents/workflowSidebar"),
-  { ssr: false }
+  {
+    loading: () => <WorkflowSidebarSkeleton />,
+  }
 );
 
 // Dynamically import WorkflowDrawer
 const WorkflowDrawer = dynamic(
   () => import("@/app/apiflow_components/WorkflowComponents/workflowDrawer"),
-  { ssr: false }
+  {
+    loading: () => <WorkflowDrawerSkeleton />,
+  }
 );
 
 // Dynamically import GDialogBox
@@ -867,6 +878,8 @@ const WorkflowDesigner = (props: any) => {
   //-------------------------------------variable declarations-------------------------------------------
   const { recentlyModifiedProp } = props;
 
+  const boxRef = useRef<HTMLDivElement>(null);
+
   // const apiFlow_Id = "5409b548a1854ddfa9b297ad9d102488";
   const dispatch = useDispatch<any>();
   const { deleteElements, getEdges, getNode, getNodes } = useReactFlow();
@@ -918,9 +931,10 @@ const WorkflowDesigner = (props: any) => {
     (state) => state.common
   );
 
-  const { operationLists } = useSelector<RootStateType, projectReducer>(
-    (state) => state.apiManagement.projects
-  );
+  const { operationLists, operationByIdLoading } = useSelector<
+    RootStateType,
+    projectReducer
+  >((state) => state.apiManagement.projects);
 
   const { currentEnvironment, currentStage } = useSelector<
     RootStateType,
@@ -1070,20 +1084,39 @@ const WorkflowDesigner = (props: any) => {
   };
 
   const captureSnapshot = async () => {
-    if (dropContainer1.current) {
-      const canvas = await html2canvas(dropContainer1.current, {
-        backgroundColor: null, // Retain background transparency if any
-        useCORS: true, // Enables cross-origin image loading
-        scale: 2, // Higher scale for better quality (optional)
+    // if (dropContainer1.current) {
+    //   const canvas = await html2canvas(dropContainer1.current, {
+    //     backgroundColor: null, // Retain background transparency if any
+    //     useCORS: true, // Enables cross-origin image loading
+    //     scale: 2, // Higher scale for better quality (optional)
+    //   });
+
+    //   // Convert the canvas to an image URL (Base64 format)
+    //   const imageURL = canvas.toDataURL("image/png");
+
+    //   // Return the Base64 string
+    //   return imageURL;
+    // }
+    // return null; // Return null if container is not found
+
+    if (boxRef.current) {
+      const canvas = await html2canvas(boxRef.current, {
+        backgroundColor: null, // Retain transparency
+        useCORS: true, // Allow cross-origin images
+        scale: 2, // Optional: Higher quality
       });
 
-      // Convert the canvas to an image URL (Base64 format)
+      // Convert canvas to Base64 image URL
       const imageURL = canvas.toDataURL("image/png");
-
-      // Return the Base64 string
+      console.log("Screenshot captured:", imageURL);
       return imageURL;
+
+      // // Optionally: Download the image
+      // const link = document.createElement("a");
+      // link.href = imageURL;
+      // link.download = "screenshot.png";
+      // link.click();
     }
-    return null; // Return null if container is not found
   };
 
   function isValidConnection(connection: Connection) {
@@ -1499,8 +1532,19 @@ const WorkflowDesigner = (props: any) => {
 
       let tempData: any = item;
       console.log(tempData, "tempDataDrop");
-
+      let count = 0;
       if (isEditable) {
+        for (const node of nodes) {
+          if (node.data) {
+            const nodeDataV2 = JSON.parse(node.data);
+            console.log(nodeDataV2, "nodeDataV2");
+            if (nodeDataV2.operation_id === tempData?.id) {
+              count++;
+            }
+          }
+        }
+        let name: string = tempData?.name;
+        let node_name = name + (count == 0 ? "" : "_" + count);
         dispatch(
           GetOperationById({
             operation_id: tempData?.id,
@@ -1512,9 +1556,9 @@ const WorkflowDesigner = (props: any) => {
             console.log("OperRes: ", operRes);
 
             if (tempData?.type === "operations" && isEditable) {
-              let name: string = tempData?.name;
+              // let name: string = tempData?.name;
               let id: string = uuidv4();
-              let node_name = generateUniqueNodeName();
+              // let node_name = generateUniqueNodeName();
               let matchedPaths = extractPlaceholdersFromPath(
                 operRes?.[0]?.full_url || null
               );
@@ -1982,7 +2026,7 @@ const WorkflowDesigner = (props: any) => {
         })
       )
         .unwrap()
-        .then(() => {
+        .then((res: any) => {
           let updateData = {
             action: "USER_ACTION",
             flow_id: apiFlow_Id,
@@ -1998,7 +2042,26 @@ const WorkflowDesigner = (props: any) => {
               flow_id: apiFlow_Id,
               project_id: currentFlowDetails?.project_id,
             })
-          );
+          )
+            .unwrap()
+            .then((res: any) => {
+              const activeVersion = res.find(
+                (version: any) => version.is_active === true
+              );
+
+              if (activeVersion) {
+                setVersionValue(activeVersion.id);
+                sessionStorage.setItem("versionValue", activeVersion.id);
+                setCookies(
+                  process.env.NEXT_PUBLIC_COOKIE_VERSIONVALUE ?? "",
+                  activeVersion.id,
+                  userProfile?.user?.expiration_time
+                );
+              } else {
+                // Handle the case where no active version is found
+                console.log("No active version found.");
+              }
+            });
           toast.success("Published");
           handlePublishClosePopup();
         })
@@ -2855,6 +2918,7 @@ const WorkflowDesigner = (props: any) => {
 
   return (
     <Grid
+      ref={boxRef}
       sx={{
         height: { lg: "97vh", md: "100vh", sm: "auto" },
         display: "flex",
@@ -2916,9 +2980,14 @@ const WorkflowDesigner = (props: any) => {
                 }
               }}
             >
-              {}
               <Grid container>
                 <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
+                  {operationByIdLoading && (
+                    <GlobalCircularLoader
+                      open={operationByIdLoading}
+                      isBackdrop={true}
+                    />
+                  )}
                   <div
                     style={{
                       width: "100%",
@@ -2957,7 +3026,9 @@ const WorkflowDesigner = (props: any) => {
                       nodeTypes={nodeTypes}
                       edgeTypes={edgeTypes}
                       onInit={setRfInstance}
-                      onNodeDragStart={() => console.log("onNodeDragStart")}
+                      onNodeDragStart={() => {
+                        console.log("onNodeDragStart");
+                      }}
                       onNodeDragStop={() => console.log("onNodeDragStop")}
                       proOptions={proOptions}
                       nodeOrigin={[0.5, 0]}
@@ -2995,6 +3066,7 @@ const WorkflowDesigner = (props: any) => {
               project_id={currentFlowDetails?.project_id}
               recentlyModifiedProp={recentlyModifiedProp}
             />
+     
           </Grid>
         </Grid>
         <WorkflowDrawer

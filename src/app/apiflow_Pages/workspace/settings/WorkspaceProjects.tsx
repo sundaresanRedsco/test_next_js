@@ -21,11 +21,14 @@ import { PrimaryTypography } from "@/app/Styles/signInUp";
 // import GlobalOverViewGroupIntegration from "@/app/apiflow_components/global/GlobalOverViewGroupIntegration";
 import Grid from "@mui/material/Grid2";
 import dynamic from "next/dynamic";
+import WorkspaceProjectSkeleton from "@/app/apiflow_components/skeletons/WorkspaceProjectSkeleton";
 
 const GlobalOverViewGroupIntegration = dynamic(
   () =>
     import("@/app/apiflow_components/global/GlobalOverViewGroupIntegration"),
-  { ssr: false }
+  {
+    loading: () => <WorkspaceProjectSkeleton />, // Skeleton displayed during loading
+  }
 );
 
 const LeftArrowIcon = dynamic(

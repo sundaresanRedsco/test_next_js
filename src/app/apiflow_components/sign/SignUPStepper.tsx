@@ -37,7 +37,7 @@ const defaultStyle = (isActive: boolean) => {
     "& .MuiStepLabel-label.Mui-active": {
       color: isActive ? "white" : "#FFFFFF80",
     },
-    marginTop: { sm: 7, md: 0, lg: 10 },
+    marginTop: { sm: 7, md: 0, lg: 5 },
   };
 };
 const smallScreenStyle = (isSlider: boolean) => {

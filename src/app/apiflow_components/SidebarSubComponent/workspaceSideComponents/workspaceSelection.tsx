@@ -1,18 +1,8 @@
 "use client";
 
-import {
-  Box,
-  InputAdornment,
-  MenuItem,
-  TextField,
-  useTheme,
-} from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import { SecondaryTextTypography } from "../../../Styles/signInUp";
-import UserV2Icon from "../../../Assests/icons/v2UserIcon.svg";
-import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
-import GBadge from "../../global/GButton";
-import GButton from "../../global/GButton";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   GetWorkspacesByUserId,
@@ -25,17 +15,18 @@ import {
   CommonReducer,
   setCurrentTreeActive,
 } from "../../../Redux/commonReducer";
-import { setTabs } from "../../../Redux/tabReducer";
+
 import { resetEnvironmentState } from "../../../Redux/apiManagement/environmentReducer";
-import { usePathname } from "next/navigation"; // Import usePathname
+import { usePathname, useRouter } from "next/navigation"; // Import usePathname
 import { setCookies } from "@/app/Helpers/helpersFunctions";
 import { resetProjectState } from "@/app/Redux/apiManagement/projectApiReducer";
-import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
+
 import GSelect from "../../sign/discovery/GSelect";
 import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
 
 const WorkspaceSelection = () => {
   const dispatch = useDispatch<any>();
+  const router = useRouter();
 
   const containerRef = useRef<any>(null);
   const pathname = usePathname(); // Use usePathname instead of useLocation
@@ -123,9 +114,10 @@ const WorkspaceSelection = () => {
     dispatch(resetProjectState());
     dispatch(setCurrentTreeActive(wsidVal));
 
-    const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${wsidVal}?tabs=get_started`;
-    dispatch(setTabs(["get_started"]));
-    window.history.pushState({}, "", newUrl);
+    const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${wsidVal}`;
+    router.push(newUrl);
+
+    // window.history.pushState({}, "", newUrl);
   };
 
   useEffect(() => {

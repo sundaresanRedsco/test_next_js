@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Card, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { styled } from "@mui/system";
@@ -14,6 +14,7 @@ import {
   FlowReducer,
   GetRecentModification,
 } from "../Redux/apiManagement/flowReducer";
+import GlobalCircularLoader from "../ApiFlowComponents/Global/GlobalCircularLoader";
 
 const HeadingTypography = styled(Typography)`
   font-family: "FiraSans-Regular" !important;
@@ -61,13 +62,35 @@ export default function WorkflowHomePage() {
 
   const {
     // loading,
-    DesignFlowloading,
+    getRecentModificationsLoading,
     recentModifications,
   } = useSelector<RootStateType, FlowReducer>(
     (state) => state.apiManagement.apiFlowDesign
   );
 
-  console.log(recentModifications, "recentModifications");
+  console.log(recentModifications, "recentModificationssd");
+
+  const [displayedModifications, setDisplayedModifications] = useState(
+    recentModifications?.slice(-2)
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window?.innerWidth >= 1600) {
+        setDisplayedModifications(recentModifications?.slice(-3));
+      } else {
+        setDisplayedModifications(recentModifications?.slice(-2));
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [recentModifications]);
 
   useEffect(() => {
     dispatch(GetRecentModification(currentEnvironment))
@@ -112,7 +135,6 @@ export default function WorkflowHomePage() {
             <Box
               sx={{
                 display: "flex",
-
                 alignItems: "center",
                 width: {
                   xs: "auto",
@@ -145,69 +167,94 @@ export default function WorkflowHomePage() {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-evenly",
-            alignItems: "center",
+            // justifyContent: "space-evenly",
+            justifyContent: "flex-start",
+            alignItems: "start",
             marginTop: "10px",
             flexWrap: "wrap",
           }}
         >
-          {recentModifications?.map((x) => (
-            <OuterStyledCard
-              key={x.id}
+          {getRecentModificationsLoading && (
+            <GlobalCircularLoader
+              open={getRecentModificationsLoading}
+              isBackdrop={true}
+            />
+          )}
+          {recentModifications?.length <= 0 ? (
+            <Box
               sx={{
-                padding: "10px",
-                margin: "5px",
-                // width: "577px",
-                // height: "430px",
-                width: { xs: "100%", sm: "48%", md: "45%", lg: "48%" },
-                "@media (min-width: 1600px)": {
-                  width: "33%", // Same as the flexBasis for proper alignment
-                },
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "50vh",
               }}
             >
-              <PrimaryTypography style={{ marginBottom: "20px" }}>
-                {x.flow_name}
+              <PrimaryTypography
+                style={{
+                  color: "#FFFFFF",
+                  // padding: "15%",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                }}
+              >
+                No data found
               </PrimaryTypography>
-              {/* 
+            </Box>
+          ) : (
+            <>
+              {displayedModifications?.map((x, index) => (
+                <OuterStyledCard
+                  key={x.id}
+                  sx={{
+                    padding: "10px",
+                    margin: "20px",
+                    // width: "577px",
+                    // height: "430px",
+                    width: { xs: "100%", sm: "48%", md: "45%", lg: "45%" },
+                    // "@media (min-width: 1600px)": {
+                    //   width: "33%", // Same as the flexBasis for proper alignment
+                    // },
+                    "@media (min-width: 1600px)": {
+                      width: "30%", // Three boxes per row
+                    },
+                  }}
+                >
+                  <PrimaryTypography style={{ marginBottom: "20px" }}>
+                    {x.flow_name}
+                  </PrimaryTypography>
+                  {/* 
               <img
                 src={x.screenshot}
                 alt={x.flow_name}
                 style={{ width: "100%", height: "auto" }} // Ensure height is auto to maintain aspect ratio
               /> */}
 
-              <Image
+                  {/* <Image
                 // src={WorkflowImage}
                 src={x.screenshot}
                 alt={x.flow_name}
-                width={100}
-                height={100}
+                width={500}
+                height={300}
                 // style={{ width: "100%" }}
-              />
-            </OuterStyledCard>
-          ))}
+              /> */}
 
-          {/* <OuterStyledCard
-            sx={{
-              padding: "10px",
-              margin: "5px",
-              width: { xs: "100%", sm: "48%", md: "45%", lg: "48%" },
-              "@media (min-width: 1600px)": {
-                width: "33%", // Same as the flexBasis for proper alignment
-              },
-              // width: "577px",
-              // height: "430px",
-            }}
-          >
-            <PrimaryTypography style={{ marginBottom: "20px" }}>
-              Workflow2{" "}
-            </PrimaryTypography>
-
-            <Image
-              src={WorkflowImage}
-              alt="Workflow Image"
-              style={{ width: "100%" }}
-            />
-          </OuterStyledCard> */}
+                  <Box
+                    sx={{ position: "relative", width: "100%", height: "auto" }}
+                  >
+                    <Image
+                      src={x.screenshot}
+                      alt={x.flow_name}
+                      layout="responsive"
+                      width={500}
+                      height={300}
+                      objectFit="cover"
+                    />
+                  </Box>
+                </OuterStyledCard>
+              ))}
+            </>
+          )}
         </Box>
       </Grid>
       {/* <Grid

@@ -6,7 +6,8 @@ import GButton from "@/app/apiflow_components/global/GButton";
 import { styled } from "@mui/system";
 import { ArrowIcon } from "@/app/Assests/icons";
 import WorkflowCustomIconButton from "@/app/apiflow_components/WorkflowComponents/workflowCustomIconButton";
-import GSelect from "@/app/apiflow_components/global/GSelect";
+// import GSelect from "@/app/apiflow_components/global/GSelect";
+import GFlowSelect from "../global/GFLowSelect";
 import theme from "@/Theme/theme";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -193,7 +194,26 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
             )}
           </div>
         ))}
+
         <div>
+          <GFlowSelect
+            fullWidth={false}
+            fontSize="10px"
+            size={"small"}
+            borderHeight={"2rem"}
+            radius="4px"
+            options={flowVersions?.map((x) => ({
+              label: x.name,
+              value: x.id,
+            }))}
+            value={versionValue}
+            onChange={(val: any) => {
+              setVersionValue(val);
+            }}
+          />
+        </div>
+
+        {/* <div>
           <GSelect
             fullWidth={false}
             fontSize="10px"
@@ -213,14 +233,18 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
                   color: "#EEEEEE",
                   fontSize: "10px",
                   fontWeight: "800",
+                  // cursor: "pointer",
                 }}
+                // onClick={() => {
+                //   alert("WOrking");
+                // }}
               />
             }
             onChange={(val: any) => {
               setVersionValue(val);
             }}
           />
-        </div>
+        </div> */}
 
         <div>
           <div
@@ -250,12 +274,22 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
             MenuListProps={{
               "aria-labelledby": "basic-button",
             }}
-            sx={{ width: "auto", height: "auto", padding: "5px" }}
+            sx={{
+              "& .MuiPaper-root": {
+                // backgroundColor: "#F3F3F340", // Ensures the paper of the menu has the red background
+                background: "#12121259",
+                backdropFilter: "blur(158.97px)",
+                boxShadow: "0 0 1px 0px #000000a3",
+              },
+              // width: "auto",
+              // height: "auto",
+              padding: "5px",
+            }}
           >
             <Box
               sx={{
                 li: {
-                  fontFamily: "Inter-Regular",
+                  fontFamily: "FiraSans-Regular",
                   fontSize: "0.6rem",
                   fontWeight: "600",
                   textAlign: "start",
@@ -279,12 +313,24 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
                       <MenuItem disabled={config.disabled}>
                         {/* {config.IconComponent} */}
                         <WorkflowCustomIconButton
+                          key={index}
                           IconComponent={config.IconComponent}
                           disabled={config.disabled}
                           ariaLabel={""}
                           tooltipTitle={""}
+                          iconStyle={{
+                            color: "#FFFFFF",
+                            fontSize: "10px",
+                            fontWeight: 600,
+                          }}
                         />
-                        <SecondaryTypography>
+                        <SecondaryTypography
+                          style={{
+                            color: "#FFFFFF",
+                            fontSize: "10px",
+                            fontWeight: 600,
+                          }}
+                        >
                           {config.tooltipTitle}
                         </SecondaryTypography>
                       </MenuItem>

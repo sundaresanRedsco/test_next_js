@@ -28,7 +28,6 @@ const DotTypography = styled("div")`
   border-radius: 50%;
   height: 8px;
   width: 8px;
-
 `;
 
 // Modified data to match the single metric per time slot shown in your image
@@ -63,7 +62,7 @@ const GlobalGraphData: React.FC<GlobalGraphDataProps> = ({
         border: "solid 1px #FFFFFF40",
         color: "#FFFFFF",
         padding: "10px",
-        height: projectData?.length === 0 ? "200px" : "auto",
+        height: projectData?.length === 0 ? "250px" : "auto",
         display: projectData?.length === 0 ? "flex" : "block",
         justifyContent: projectData?.length === 0 ? "center" : "unset",
         alignItems: projectData?.length === 0 ? "center" : "unset",
@@ -75,7 +74,9 @@ const GlobalGraphData: React.FC<GlobalGraphDataProps> = ({
       </HeadingTypography>
 
       {projectData?.length === 0 ? (
-        <HeadingTypography style={{ textAlign: "center",fontWeight:"200",fontSize:"14px" }}>
+        <HeadingTypography
+          style={{ textAlign: "center", fontWeight: "200", fontSize: "14px" }}
+        >
           No Data Found
         </HeadingTypography>
       ) : (
@@ -94,7 +95,7 @@ const GlobalGraphData: React.FC<GlobalGraphDataProps> = ({
                 </Box>
                 <HeadingTypography style={{ fontSize: "18px" }}>
                   {project.dataValue}
-                  <span style={{ fontSize: "9px", marginLeft:"5px" }}> ▲</span>
+                  <span style={{ fontSize: "9px", marginLeft: "5px" }}> ▲</span>
                   <CardTypography> {project.percentageChange}%</CardTypography>
                 </HeadingTypography>
               </Grid>
