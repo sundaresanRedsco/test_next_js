@@ -173,7 +173,7 @@ function Channel() {
   };
 
   return (
-    <Box sx={{ padding: "30px" }}>
+    <Box>
       <Box>
         <HeadingTypography style={{ marginTop: "1rem" }}>
           Channel <LeftArrowIcon />
@@ -255,6 +255,7 @@ function Channel() {
                 />
               )}
             </Avatar>
+
 
             <Box
               sx={{
