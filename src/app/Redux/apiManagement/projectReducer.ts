@@ -894,7 +894,7 @@ type InitialStateType = {
   projectsListSolrPagination: projectSolrPaginationInterface[];
   projectsListSolrCount: number;
   getCollOperTreeLoading: boolean;
-  getCollOperTreeData: Collection[];
+  getCollOperTreeData: any[];
   saveAndGetResponseLoading: boolean;
   operationByIdLoading: boolean;
   testLoading: boolean;
