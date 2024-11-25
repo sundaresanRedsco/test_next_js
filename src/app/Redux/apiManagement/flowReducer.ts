@@ -11,7 +11,7 @@ export const GetDesignflowMinamlInfoFlowoffset = createAsyncThunk(
     try {
       return await AdminServices(
         "get",
-        `Api/Api_design_flow_service/get_designflow_minaml_info_flowoffset?project_id=${value.project_id}&start=0&end=${value.end}`,
+        `Api/Api_design_flow_service/get_designflow_minaml_info_flowoffset?project_id=${value.project_id}&start=${value.start}&end=${value.end}`,
         null,
         null
       );
@@ -714,9 +714,11 @@ type InitialStateType = {
   getDesignFlowOffsetLoading: boolean;
   recentModifications: any[];
   getRecentModificationsLoading: boolean;
+  totalCount: number;
 };
 
 const initialState: InitialStateType = {
+  totalCount: 0,
   loading: false,
   DesignFlowloading: false,
   currentFlowDetails: {},
@@ -852,7 +854,18 @@ export const flowSlice = createSlice({
       GetDesignflowMinamlInfoFlowoffset.fulfilled,
       (state, action) => {
         state.getDesignFlowOffsetLoading = false;
-        state.flowList = action.payload;
+        const newFlowList = action.payload.apiDesignFlows;
+        state.totalCount = action.payload.totalCount;
+        // Create a set of IDs from the new workspace list for quick lookup
+        const newFlowIds = new Set(newFlowList.map((nw: any) => nw.id));
+
+        // Filter out workspaces from the old list that are not in the new list
+        const filteredOldFlowList = state.flowList.filter(
+          (flow) => !newFlowIds.has(flow.id)
+        );
+
+        // Update the workspace list with the filtered old workspaces and the new workspaces
+        state.flowList = [...filteredOldFlowList, ...newFlowList];
       }
     );
 

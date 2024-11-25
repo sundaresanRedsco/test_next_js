@@ -180,6 +180,8 @@ export default function useWorkspace(userData?: any) {
               summary: formData.description,
               permission: formData?.visibility,
               post_content: "null",
+              profile_picture: "",
+              is_channel: true,
             },
             { headers: { Authorization: "Bearer " + access_token } }
           );

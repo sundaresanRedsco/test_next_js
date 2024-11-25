@@ -1391,7 +1391,8 @@ export default function OperationsPage(props: any) {
     };
 
     let updateOperationDetails = {
-      project_id: "2b9e61e83e9446a4b97c4e8120517e02",
+      // project_id: "2b9e61e83e9446a4b97c4e8120517e02",
+      project_id: currentEnvironment,
       details: {
         // user_id: userProfile?.user?.user_id,
         collection_id: collectionIdVal,
@@ -1558,8 +1559,8 @@ export default function OperationsPage(props: any) {
     };
 
     let updateOperationDetails = {
-      // project_id: currentEnvironment,
-      project_id: "2b9e61e83e9446a4b97c4e8120517e02",
+      project_id: currentEnvironment,
+      // project_id: "2b9e61e83e9446a4b97c4e8120517e02",
       details: {
         // user_id: userProfile?.user?.user_id,
         collection_id: collectionIdVal,
@@ -2294,11 +2295,11 @@ export default function OperationsPage(props: any) {
 
   useEffect(() => {
     let data = {
-      // operation_id: operationIdVal,
-      // project_id: currentEnvironment,
-      project_id: "2b9e61e83e9446a4b97c4e8120517e02",
-      // operation_id: "7323066c9e6642139fce3dabdc04e679",
-      operation_id: "c6370e9b3aab48408ed968dc28babf0e",
+      operation_id: operationIdVal,
+      project_id: currentEnvironment,
+      // project_id: "2b9e61e83e9446a4b97c4e8120517e02",
+      // // operation_id: "7323066c9e6642139fce3dabdc04e679",
+      // operation_id: "c6370e9b3aab48408ed968dc28babf0e",
     };
 
     dispatch(GetOperationById(data))

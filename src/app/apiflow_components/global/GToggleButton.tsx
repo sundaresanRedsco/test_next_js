@@ -25,14 +25,14 @@ const defaultStyle = {
     textTransform: "unset",
     fontFamily: "FiraSans-medium",
     fontSize: "10px",
-    paddingX: "20px",
+    padding: "8px 15px",
     border: "none",
   },
   background: "#121212",
   borderRadius: "10px",
   justifyContent: "space-between",
   width: "100%",
-  boxShadow: "0px 0px 1px  #4F4F4F",
+  boxShadow: "0px 0px 1.5px  #4F4F4F",
 };
 
 export default function GToggleButton({

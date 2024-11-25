@@ -30,6 +30,7 @@ export default function CreateWorkflowModal({ height, width }: Props) {
     resetApiData,
     resetForm,
     setactiveStep,
+    isLoading,
   } = useSignUpStore();
 
   const [completed, setCompleted] = React.useState({});
@@ -99,16 +100,25 @@ export default function CreateWorkflowModal({ height, width }: Props) {
             <Resources clientSession={clientSession} isWorkflowModal={true} />
           );
         case 3:
-          return <InvitedUsers clientSession={clientSession} />;
+          return (
+            <InvitedUsers
+              clientSession={clientSession}
+              isWorkflowModal={true}
+            />
+          );
       }
     }
   };
 
   return (
     <Modal
-      onClose={() => {
-        setOpenSignUp(false);
-      }}
+      onClose={
+        isLoading
+          ? undefined
+          : () => {
+              setOpenSignUp(false);
+            }
+      }
       open={openSignUp}
       sx={{
         height: "100vh",

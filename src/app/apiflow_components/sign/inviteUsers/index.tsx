@@ -17,9 +17,13 @@ import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 
 type Props = {
   clientSession: any;
+  isWorkflowModal?: boolean | undefined;
 };
 
-export default function InvitedUsers({ clientSession }: Props) {
+export default function InvitedUsers({
+  clientSession,
+  isWorkflowModal,
+}: Props) {
   const { activeStep, handleBack, handleStep, formDataStore } =
     useSignUpStore();
   const {
@@ -88,6 +92,7 @@ export default function InvitedUsers({ clientSession }: Props) {
       handleBack={handleBack}
       showNextButton={true}
       showBackButton={true}
+      isWorkflowModal={isWorkflowModal}
     >
       {InputArray?.map((elem: any, index: number) => {
         return (
@@ -158,7 +163,7 @@ export default function InvitedUsers({ clientSession }: Props) {
                               <SecondarySignInUPTypography
                                 sx={{
                                   color: "white",
-                                  fontSize: "12px",
+                                  fontSize: "13px",
                                 }}
                               >
                                 {input?.label}
@@ -173,8 +178,8 @@ export default function InvitedUsers({ clientSession }: Props) {
                               name={input.name}
                               error={input.err}
                               helperText={input.errMsg}
-                              radius={"7px"}
-                              height={"34.5px"}
+                              height="43px"
+                              radius="5px"
                             />
                           </Stack>
                         </Grid>
@@ -195,7 +200,7 @@ export default function InvitedUsers({ clientSession }: Props) {
                               <SecondarySignInUPTypography
                                 sx={{
                                   color: "white",
-                                  fontSize: "12px",
+                                  fontSize: "13px",
                                 }}
                               >
                                 {input?.label}
@@ -210,6 +215,8 @@ export default function InvitedUsers({ clientSession }: Props) {
                               error={input.err}
                               helperText={input.errMsg}
                               value={input.value}
+                              height="43px"
+                              radius="5px"
                             />
                           </Stack>
                         </Grid>
@@ -227,11 +234,13 @@ export default function InvitedUsers({ clientSession }: Props) {
                         label="Invite"
                         width={"100%"}
                         sx={{
-                          height: "33px",
+                          height: "43px",
                           marginBottom:
                             errMsg.email || errMsg.role
                               ? "25px !important"
                               : "5px !important",
+                          fontSize: "13px !important",
+                          fontFamily: "Firasans-medium !important",
                         }}
                         type={"button"}
                         onClickHandler={handleSubmit}

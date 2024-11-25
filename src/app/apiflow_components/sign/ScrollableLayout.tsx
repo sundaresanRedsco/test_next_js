@@ -77,7 +77,7 @@ export default function ScrollableLayout({
       <div
         ref={scrollToEnd}
         style={{
-          height: isxs ? "auto" : showBackButton ? "400px" : "400px",
+          height: isxs ? "auto" : isWorkflowModal ? "520px" : "400px",
           overflowY: isxs ? "hidden" : "auto",
           background: "#12121280",
           borderRadius: "10px",
@@ -109,8 +109,9 @@ export default function ScrollableLayout({
                 : showNextButton && showBackButton
                 ? "space-between"
                 : "flex-end",
-              padding: "15px",
+              padding: "0px 15px",
               position: "relative",
+              marginTop: "-17px",
             }}
           >
             {[
@@ -134,7 +135,7 @@ export default function ScrollableLayout({
                   <GlobalButton
                     disabled={elem.isDisabled}
                     key={index}
-                    padding="5px 15px"
+                    padding="4px 35px"
                     label={elem?.name}
                     iconPosition="end"
                     background={
@@ -147,6 +148,7 @@ export default function ScrollableLayout({
                     fontWeight={500}
                     type={"button"}
                     onClickHandler={elem?.onClick}
+                    fontSize={"15px"}
                   />
                 );
               }

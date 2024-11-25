@@ -18,6 +18,7 @@ import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularL
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import theme from "@/Theme/theme";
 import { ResizableBox } from "react-resizable";
+import "react-resizable/css/styles.css";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import JsonViewer from "@/app/ApiFlowComponents/ApiDesigner/jsonViewer";
 import { TeritaryTextTypography } from "@/app/Styles/signInUp";

@@ -24,8 +24,8 @@ const WorkspaceProjectSkeleton = () => (
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Skeleton
                 variant="circular"
-                width={50}
-                height={50}
+                width={60}
+                height={60}
                 sx={{ backgroundColor: "#00000052" }}
               />
               <Box sx={{ marginLeft: "1rem" }}>
@@ -46,14 +46,14 @@ const WorkspaceProjectSkeleton = () => (
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Skeleton
                 variant="circular"
-                width={24}
-                height={24}
+                width={38}
+                height={38}
                 sx={{ backgroundColor: "#00000052", marginRight: "1rem" }}
               />
               <Skeleton
                 variant="circular"
-                width={24}
-                height={24}
+                width={38}
+                height={38}
                 sx={{ backgroundColor: "#00000052" }}
               />
             </Box>

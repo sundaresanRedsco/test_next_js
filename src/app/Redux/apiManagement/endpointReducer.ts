@@ -205,37 +205,54 @@ export const ImportSwaggerDocument = createAsyncThunk(
 export const resetGatewayStateSwaggerDoc = createAction("Gateway/resetState");
 
 export const resetSwaggerState = createAction("swaggerDoc/resetState");
-
+type Endpoint = {
+  name: string;
+  id: string;
+};
+type Collection = { name: string; id: string; operations: Endpoint[] };
 type InitialStateType = {
   getOperationLoading: boolean;
   getTreeFlowLoading: boolean;
+  collectionCount: number;
   operationLists: operationInterface[];
   getCollOperTreeLoading: boolean;
   getMinimalCollOperTreeLoading: boolean;
-  getCollOperTreeData: GetCollecOperTreeInterface;
+  getCollOperTreeData: Collection[];
   getCollOperTreeFlowData: GetCollecOperTreeInterface;
+  workflowSidebarStart: number;
+  workflowSidebarEnd: number;
 };
 
 const initialState: InitialStateType = {
   getOperationLoading: false,
   getTreeFlowLoading: false,
+  collectionCount: 0,
   operationLists: [],
   getCollOperTreeLoading: false,
   getMinimalCollOperTreeLoading: false,
-  getCollOperTreeData: {
-    count: 0,
-    collections: [],
-  },
+  getCollOperTreeData: [],
   getCollOperTreeFlowData: {
     count: 0,
     collections: [],
   },
+  workflowSidebarStart: 0,
+  workflowSidebarEnd: 8,
 };
 
 export const endpointSlice = createSlice({
   name: "endpoints",
   initialState,
-  reducers: {},
+  reducers: {
+    resetCollOperTreeData(state, action) {
+      state.getCollOperTreeData = [];
+    },
+    updateWorkflowSidebarStart(state, action) {
+      state.workflowSidebarStart = action.payload;
+    },
+    updateWorkflowSidebarEnd(state, action) {
+      state.workflowSidebarEnd = action.payload;
+    },
+  },
   extraReducers(builder) {
     builder.addCase(GetOperations.pending, (state, action) => {
       state.getOperationLoading = true;
@@ -273,14 +290,28 @@ export const endpointSlice = createSlice({
       GetMinimalCollectionOperationTree.fulfilled,
       (state, action) => {
         state.getMinimalCollOperTreeLoading = false;
-        state.getCollOperTreeData = action.payload;
+        const newCollOperTreeData = action.payload.collections;
+        state.collectionCount = action.payload.count;
+
+        const newCollOperTreeDataIds = new Set(
+          newCollOperTreeData.map((nw: any) => nw.id)
+        );
+
+        const filteredOldCollectionList = state.getCollOperTreeData.filter(
+          (collection) => !newCollOperTreeDataIds.has(collection.id)
+        );
+
+        state.getCollOperTreeData = [
+          ...filteredOldCollectionList,
+          ...newCollOperTreeData,
+        ];
       }
     );
 
     builder.addCase(
       GetMinimalCollectionOperationTree.rejected,
       (state, action) => {
-        state.getTreeFlowLoading = false;
+        state.getMinimalCollOperTreeLoading = false;
       }
     );
 
@@ -401,5 +432,5 @@ export const endpointSlice = createSlice({
 });
 
 export type endpointReducer = ReturnType<typeof endpointSlice.reducer>;
-
+export const { resetCollOperTreeData, updateWorkflowSidebarStart, updateWorkflowSidebarEnd } = endpointSlice.actions;
 export default endpointSlice.reducer;

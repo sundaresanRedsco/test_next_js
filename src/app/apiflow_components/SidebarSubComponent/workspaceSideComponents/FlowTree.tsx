@@ -1,33 +1,29 @@
 import { InfoNew } from "@/app/Assests/icons";
 import { environmentReducer } from "@/app/Redux/apiManagement/environmentReducer";
 import {
-  clearFlowList,
   FlowReducer,
-  GetApiDesignFlowByProjectIdStageId,
   GetDesignflowMinamlInfoFlowoffset,
-  GetDesignFlowOffset,
 } from "@/app/Redux/apiManagement/flowReducer";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
 import { CommonReducer, setCurrentTreeActive } from "@/app/Redux/commonReducer";
 import { RootStateType } from "@/app/Redux/store";
 import { setTabs, tabsReducer } from "@/app/Redux/tabReducer";
-import {
-  SecondaryTextTypography,
-  TeritaryTextTypography,
-} from "@/app/Styles/signInUp";
-import { Box, useTheme } from "@mui/material";
+import { TeritaryTextTypography } from "@/app/Styles/signInUp";
+import { AccordionDetails, Box, useTheme } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
-import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
+import { usePathname, useRouter } from "next/navigation";
+import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
+import { useGlobalStore } from "@/app/hooks/useGlobalStore";
+import { useQuery } from "@tanstack/react-query";
 
-export const FlowTree = () => {
+export const FlowTree = ({ nestedExpandedIndexes }: any) => {
   const theme = useTheme(); // Access the current theme
   const dispatch = useDispatch<any>();
   const containerRef = useRef<any>(null);
   const router = useRouter();
 
-  const { getDesignFlowOffsetLoading, flowList } = useSelector<
+  const { getDesignFlowOffsetLoading, flowList, totalCount } = useSelector<
     RootStateType,
     FlowReducer
   >((state) => state.apiManagement.apiFlowDesign);
@@ -56,7 +52,7 @@ export const FlowTree = () => {
   const [inputVal, setInputVal] = useState("Flows");
   const [startVal, endStartVal] = useState<number>(0);
   const [endVal, setEndVal] = useState<number>(5);
-  const [currentPage, setCurrentPage] = useState<number>(5);
+  const [currentPage, setCurrentPage] = useState<any>({ start: 1, end: 5 });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleFlowSearch = (value: any) => {
@@ -81,117 +77,212 @@ export const FlowTree = () => {
     }?tabs=${tempArr.join(",")}`;
 
     // const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/design-api/${flowId}?tabs=${flowTab}`;
-    console.log(tempArr, newUrl, "tempArrtempArr");
     dispatch(setTabs(tempArr));
 
     window.history.pushState({}, "", newUrl);
   };
 
-  const fetchPageData = async (page: number) => {
+  const fetchPageData = async (page?: any) => {
     // if (currentEnvironmentDetails) {
+    if (page) {
+      setIsLoading(true);
+    }
     let requestData = {
       project_id: currentEnvironment,
-      start: 0,
-      end: page,
+      start: page?.start ? page?.start : 1,
+      end: page?.end ? page?.end : 6,
       name: "",
     };
+    try {
+      const response = await dispatch(
+        GetDesignflowMinamlInfoFlowoffset(requestData)
+      ).unwrap();
+      if (response) {
+        setIsLoading(false);
+      }
+      return response;
+    } catch (error) {
+      setIsLoading(false);
+      return null;
+    }
 
-    dispatch(GetDesignflowMinamlInfoFlowoffset(requestData))
-      .unwrap()
-      .then((flowRes: any) => {
-        console.log(flowRes, "flowResflowRes");
-        setFlowVal(flowRes);
-      })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      })
-      .finally(() => setIsLoading(false));
-    // }
+    //     .then((flowRes: any) => {
+    //       setFlowVal(flowRes);
+    //       setIsLoading(false);
+    //     })
+    //     .catch((error: any) => {
+    //       console.log("Error: ", error);
+    //       setIsLoading(false);
+    //     })
+    //     .finally(() => setIsLoading(false));
+    //   // }
   };
+  const pathname = usePathname();
 
+  const isFetchAllowed =
+    pathname.includes("/environment") ||
+    pathname.includes("/workflow") ||
+    pathname.split("/")[6]
+      ? true
+      : false;
+  useQuery({
+    queryKey: ["getFlowTree"],
+    queryFn: fetchPageData,
+    enabled: isFetchAllowed,
+  });
+  // const { handleScroll, offsetVal } = useScrollRef(
+  //   containerRef,
+  //   setIsLoading,
+  //   { start: 1, end: 5 },
+  //   isIncrease
+  // );
+  const [offsetVal, setoffsetVal] = useState({ start: 1, end: 6 });
   const handleScroll = () => {
-    if (containerRef?.current) {
-      const { scrollTop, clientHeight, scrollHeight } = containerRef?.current;
-      if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading) {
-        // setCurrentPage((prevPage) => prevPage + 8);
-        setCurrentPage((prevPage) => prevPage + 5);
+    if (containerRef.current) {
+      const bottom = containerRef.current.getBoundingClientRect().bottom;
+      if (bottom <= window.innerHeight) {
+        console.log("testScroll1", offsetVal?.start, totalCount);
+        setoffsetVal((prev: any) => ({
+          start: prev.start + 5,
+          end: prev.end + 5,
+        }));
       }
     }
   };
 
+  // const handleScroll = () => {
+  //   if (containerRef?.current) {
+  //     const { scrollTop, clientHeight, scrollHeight } = containerRef?.current;
+  //     if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading) {
+  //       // setCurrentPage((prevPage) => prevPage + 8);
+  //       setCurrentPage((prevPage) => prevPage + 5);
+  //     }
+  //   }
+  // };
+
   useEffect(() => {
-    // if (currentPage > 1) {
-    //   // Fetch additional data when scrolling
-    //   fetchPageData(currentPage);
-    // }
-    if (currentEnvironment) fetchPageData(currentPage);
-  }, [currentPage, currentEnvironment, currentEnvironmentDetails?.project_id]);
+    if (currentEnvironment && isFetchAllowed) fetchPageData();
+  }, [currentEnvironment, currentEnvironmentDetails?.project_id]);
+  useEffect(() => {
+    if (
+      currentEnvironment &&
+      totalCount >= offsetVal?.start &&
+      isFetchAllowed
+    ) {
+      fetchPageData(offsetVal);
+    }
+  }, [offsetVal?.start, offsetVal?.end, currentEnvironment]);
 
-  // useEffect(() => {
-  //   // if (currentEnvironmentDetails) {
-  //     let data = {
-  //       project_id: currentEnvironmentDetails?.project_id,
-  //       // stage_id: currentStage,
-  //     };
-  //     dispatch(GetApiDesignFlowByProjectIdStageId(data))
-  //       .unwrap()
-  //       .then((flowRes: any) => {
-  //         console.log(flowRes, "flowResflowRes");
-  //         // setFlowVal(flowRes);
-  //       })
-  //       .catch((error: any) => {
-  //         console.log("Error: ", error);
-  //       });
-  //   // } else {
-  //   //   dispatch(clearFlowList([]));
-  //   // }
-  // }, [currentEnvironmentDetails?.project_id, currentStage]);
+  useEffect(() => {
+    const container = document.getElementById("workflowContainer");
+    container?.addEventListener("scroll", handleScroll);
 
+    return () => {
+      container?.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+  const { setIsPageLoading } = useGlobalStore();
+  useEffect(() => {
+    if (nestedExpandedIndexes.flow == "") {
+      setoffsetVal({ start: 1, end: 6 });
+    }
+  }, [nestedExpandedIndexes.flow]);
+  const isHeightIncrease =
+    !getDesignFlowOffsetLoading && !isLoading && totalCount >= offsetVal.start;
   return (
-    <>
-      {flowList.map((flow: any, index: number) => (
-        <div
-          style={{
-            position: "relative",
-            background:
-              currentTreeActive === flow.id
-                ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
-                : theme.palette.sidebarMainBackground.main,
-            color: currentTreeActive === flow.id ? "#FFFFFF" : "#FFFFFF80",
-            padding: "10px 0 10px 50px",
-          }}
-          onClick={() => {
-            router.push(
-              `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/workflow/${flow?.id}`
-            );
-            dispatch(setCurrentTreeActive(flow?.id));
-            // .unwrap()
-            // .then((res: any) => {
-            //
-            // });
-          }}
-        >
-          {/* {getDesignFlowOffsetLoading && (
-            <GlobalCircularLoader open={getDesignFlowOffsetLoading} />
-          )} */}
-          <TeritaryTextTypography
+    <AccordionDetails
+      id="workflowContainer"
+      sx={{
+        width: "100%",
+        "&.MuiAccordionDetails-root": {
+          padding: "0px !important",
+          display: "flex",
+          flexDirection: "column",
+        },
+        maxHeight: "160px",
+        overflowY: "auto",
+        // "&:hover": {
+        //   overflowY: "auto",
+        // },
+      }}
+    >
+      {getDesignFlowOffsetLoading && !isLoading ? (
+        <SkeletonLoader />
+      ) : (
+        flowList?.map((flow: any, index: number) => (
+          <div
+            key={index}
             style={{
+              position: "relative",
+              background:
+                currentTreeActive === flow.id
+                  ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
+                  : theme.palette.sidebarMainBackground.main,
               color: currentTreeActive === flow.id ? "#FFFFFF" : "#FFFFFF80",
-              fontSize: "10px",
-              //   marginTop: "2rem",
-              cursor: "pointer",
+              padding: "10px 0 10px 50px",
+            }}
+            onClick={() => {
+              if (
+                pathname !=
+                `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/workflow/${flow?.id}`
+              ) {
+                setIsPageLoading(true);
+              }
+              router.push(
+                `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/workflow/${flow?.id}`
+              );
+              dispatch(setCurrentTreeActive(flow?.id));
+              // .unwrap()
+              // .then((res: any) => {
+              //
+              // });
             }}
           >
-            {`${flow.name}`}
-          </TeritaryTextTypography>
-        </div>
-      ))}
+            {/* {getDesignFlowOffsetLoading && (
+            <GlobalCircularLoader open={getDesignFlowOffsetLoading} />
+          )} */}
+            <TeritaryTextTypography
+              style={{
+                color: currentTreeActive === flow.id ? "#FFFFFF" : "#FFFFFF80",
+                fontSize: "10px",
+                //   marginTop: "2rem",
+                cursor: "pointer",
+              }}
+            >
+              {`${flow.name}`}
+            </TeritaryTextTypography>
+          </div>
+        ))
+      )}
 
-      {/* {getDesignFlowOffsetLoading && (
-        <Box sx={{ position: "relative" }}>
-          <GlobalCircularLoader open={true} noBackDrop />
-        </Box>
-      )} */}
-    </>
+      {isLoading && <SkeletonLoader />}
+      <div
+        ref={containerRef}
+        style={{
+          height: isHeightIncrease ? "50px" : 0,
+        }}
+      ></div>
+    </AccordionDetails>
   );
+};
+export const SkeletonLoader = () => {
+  return [1, 2, 3, 4].map((elem, index) => {
+    return (
+      <div
+        key={index}
+        style={{
+          padding: "10px 0 10px 50px",
+          position: "relative",
+          width: "auto",
+        }}
+      >
+        <GSkeletonLoader
+          secondary={true}
+          open={true}
+          width="60%"
+          height="15px"
+        />
+      </div>
+    );
+  });
 };

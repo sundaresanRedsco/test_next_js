@@ -14,6 +14,7 @@ import {
   Typography,
   IconButton,
   Box,
+  Avatar,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -29,7 +30,13 @@ import MenuItem from "@mui/material/MenuItem";
 // ** Custom CSS
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { borderBottom, borderRadius, fontFamily, useTheme } from "@mui/system";
+import {
+  borderBottom,
+  borderRadius,
+  fontFamily,
+  fontSize,
+  useTheme,
+} from "@mui/system";
 import { DeleteTableIcon } from "@/app/Assests/icons";
 import GInput from "./GInput";
 import {
@@ -130,6 +137,39 @@ const defaultTableHeadStyle = (additionalHeader?: boolean) => {
     },
   };
 };
+function stringToColor(string: string) {
+  let hash = 0;
+  let i;
+
+  /* eslint-disable no-bitwise */
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = "#";
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+  /* eslint-enable no-bitwise */
+
+  return color;
+}
+
+function stringAvatar(name: string) {
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+      width: 30,
+      height: 30,
+      fontFamily: "Firasans-medium",
+      fontSize: "15px",
+      textTransform: "uppercase",
+    },
+    children: `${name.split(" ")[0][0]}`,
+  };
+}
 const tableHeadCellCommonStyle = {
   fontSize: "12px",
   color: "white",
@@ -144,15 +184,17 @@ const tableHeadCellCommonStyle = {
   border: "none",
   padding: "10px",
 };
-const tableBodyCellCommonStyle = {
-  color: "white",
-  maxWidth: "100px",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  WebkitLineClamp: 2,
-  whiteSpace: "nowrap",
-  cursor: "pointer",
-  padding: "10px",
+const tableBodyCellCommonStyle = (notMaxWidth?: boolean) => {
+  return {
+    color: "white",
+    maxWidth: notMaxWidth ? "unset" : "100px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    WebkitLineClamp: 2,
+    whiteSpace: "nowrap",
+    cursor: "pointer",
+    padding: "10px",
+  };
 };
 const GDataTable = ({
   showCheckBox,
@@ -238,12 +280,18 @@ const GDataTable = ({
             if (column === "email") {
               return (
                 <TableCell
-                  style={tableBodyCellCommonStyle}
+                  style={{
+                    ...tableBodyCellCommonStyle(true),
+                  }}
                   title={row[column]}
                   key={column}
+
                   // onClick={(event) => handleRowSelect(row)}
                 >
-                  {row[column]}
+                  <Stack direction={"row"} gap={1.5} alignItems={"center"}>
+                    <Avatar {...stringAvatar(row[column])} />
+                    {row[column]}
+                  </Stack>
                 </TableCell>
               );
             } else if (column === "action") {
@@ -265,7 +313,7 @@ const GDataTable = ({
               return (
                 <TableCell
                   style={{
-                    ...tableBodyCellCommonStyle,
+                    ...tableBodyCellCommonStyle(),
                   }}
                   title={row[column]}
                   key={column}
@@ -429,7 +477,7 @@ const GDataTable = ({
                 <StyledTableRow key={row.id}>
                   <TableCell
                     scope="row"
-                    sx={{ ...tableBodyCellCommonStyle, padding: "15px" }}
+                    sx={{ ...tableBodyCellCommonStyle(), padding: "15px" }}
                   >
                     <Skeleton
                       variant="rounded"
@@ -439,7 +487,7 @@ const GDataTable = ({
                     />
                   </TableCell>
                   <TableCell
-                    sx={{ ...tableBodyCellCommonStyle, padding: "15px" }}
+                    sx={{ ...tableBodyCellCommonStyle(), padding: "15px" }}
                   >
                     <Skeleton
                       variant="rounded"
@@ -449,7 +497,7 @@ const GDataTable = ({
                     />
                   </TableCell>
                   <TableCell
-                    sx={{ ...tableBodyCellCommonStyle, padding: "15px" }}
+                    sx={{ ...tableBodyCellCommonStyle(), padding: "15px" }}
                   >
                     <Skeleton
                       variant="rounded"
@@ -459,7 +507,7 @@ const GDataTable = ({
                     />
                   </TableCell>
                   <TableCell
-                    sx={{ ...tableBodyCellCommonStyle, padding: "15px" }}
+                    sx={{ ...tableBodyCellCommonStyle(), padding: "15px" }}
                   >
                     <Skeleton
                       variant="rounded"
@@ -470,7 +518,7 @@ const GDataTable = ({
                   </TableCell>
                   <TableCell
                     align="center"
-                    sx={{ ...tableBodyCellCommonStyle }}
+                    sx={{ ...tableBodyCellCommonStyle() }}
                   >
                     <Skeleton
                       variant="rounded"
@@ -533,7 +581,7 @@ const GDataTable = ({
               <StyledTableRow>
                 <TableCell
                   style={{
-                    ...tableBodyCellCommonStyle,
+                    ...tableBodyCellCommonStyle(),
                     padding: "80px 0 80px 0",
                     textAlign: "center",
                   }}

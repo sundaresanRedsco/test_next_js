@@ -182,7 +182,7 @@ export default function SignUPStepper({ steps, variant }: Props) {
                   style={{
                     fontSize: "8px",
                     position: "absolute",
-                    bottom: -11,
+                    bottom: -15,
                     width: "100%",
                     color:
                       activeStep == index && isActive ? "#F3F3F3" : "#F3F3F380",

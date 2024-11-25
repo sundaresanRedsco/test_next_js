@@ -22,6 +22,7 @@ import { PrimaryTypography } from "@/app/Styles/signInUp";
 import Grid from "@mui/material/Grid2";
 import dynamic from "next/dynamic";
 import WorkspaceProjectSkeleton from "@/app/apiflow_components/skeletons/WorkspaceProjectSkeleton";
+import { initializeSession } from "@/app/Redux/commonReducer";
 
 const GlobalOverViewGroupIntegration = dynamic(
   () =>
@@ -54,20 +55,26 @@ function WorkspaceProjects() {
   const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
     (state) => state.apiManagement.workspace
   );
+  console.log(currentWorkspace?.id, "currentWorkspace?.id");
 
   const {
     groupOverViewEnd,
     groupOverViewStart,
     getGroupOverViewLoading,
     getGroupTotalCount,
+    getGroupList,
   } = useSelector<RootStateType, projectApiReducer>(
     (state) => state.apiManagement.apiProjects
   );
+  console.log(getGroupList, "getGroupListsd");
 
   const dispatch = useDispatch<any>();
-  const containerRef = useRef<any>(null);
+  // const containerRef = useRef<any>(null);
 
   const [groupData, setGroupData] = useState<any>([]);
+  console.log(groupData, "groupDatasd");
+  const [offsetVal, setoffsetVal] = useState<number>(1);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   console.log(groupData, "projetDatasdsd");
@@ -79,70 +86,58 @@ function WorkspaceProjects() {
     "getGroupOverViewLoading"
   );
 
-  const fetchPageData = async (offsetVal: number) => {
+
+
+
+  const fetchPageData = async (endValue: number) => {
     const data = {
       WorkspaceId: currentWorkspace?.id as string,
-      // WorkspaceId: "1edb2a2a8c3948beb0a8bace49360e15",
-      start: groupOverViewStart,
-      end: offsetVal,
+      start: 1,
+      end: endValue,
     };
 
     dispatch(GetGroupsByWorkspaceIdOVerView(data))
       .unwrap()
-      .then((groupRes: any) => {
-        // if (groupRes?.length > 0) {
-        //   // Handle success
-        // }
-        console.log(groupRes, "resneuusd");
-        // setGroupData(groupRes);
-        setGroupData((prevValues: any) => {
-          const newData = Array.isArray(groupRes?.groups)
-            ? groupRes?.groups
-            : [];
-          const updatedValues = [...prevValues];
-
-          newData?.forEach((val: any) => {
-            if (
-              !prevValues?.some((prevData: any) => prevData?.id === val?.id)
-            ) {
-              updatedValues.push(val);
-            }
-          });
-          return updatedValues;
-        });
+      .then((workspaceRes: any) => {
+        console.log("Fetched data:", workspaceRes);
       })
       .catch((error: any) => {
         console.log("ErrorWorkspace: ", error);
-      })
-      .finally(() => setIsLoading(false));
+      });
   };
 
+  useEffect(() => {
+    dispatch(initializeSession());
+  }, []);
+
+  const containerRef: any = useRef<any>();
   const handleScroll = () => {
-    if (containerRef?.current) {
-      const { scrollTop, clientHeight, scrollHeight } = containerRef?.current;
-      if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading) {
-        if (groupOverViewEnd <= getGroupTotalCount) {
-          dispatch(updateGroupOverViewStart(groupOverViewStart + 8));
-          dispatch(updateGroupOverViewEnd(groupOverViewEnd + 8));
-        }
+    if (containerRef.current) {
+      const bottom = containerRef.current.getBoundingClientRect().bottom;
+      if (bottom <= window.innerHeight) {
+        setEndValue((prevEnd) => prevEnd + 5); // Increase end value by 3 on scroll
       }
     }
   };
 
-  useEffect(() => {
-    // const container = document.getElementById(maninContainer);
-    const container: any = document.getElementById("scrollable-container");
-    container?.addEventListener("scroll", handleScroll);
+  // Initialize `start` and `end` values
+  const [endValue, setEndValue] = useState(5);
 
-    return () => {
-      container?.removeEventListener("scroll", handleScroll);
-    };
-    // }, [maninContainer]); // Include maninContainer as a dependency
+  useEffect(() => {
+    fetchPageData(endValue);
+  }, [endValue]);
+
+  // Hook to handle scroll events
+  useEffect(() => {
+    const container = document.getElementById("mainContainer");
+
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+      return () => {
+        container.removeEventListener("scroll", handleScroll);
+      };
+    }
   }, []);
-
-  useEffect(() => {
-    fetchPageData(groupOverViewEnd);
-  }, [groupOverViewEnd, currentWorkspace]);
 
   return (
     <div style={{ margin: "10px 15px" }}>
@@ -205,8 +200,8 @@ function WorkspaceProjects() {
       <div>
         <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
           <Box
-            ref={containerRef}
-            onScroll={handleScroll}
+            // ref={containerRef}
+            // onScroll={handleScroll}
             sx={{
               height: 500,
               overflowY: "auto",
@@ -220,7 +215,7 @@ function WorkspaceProjects() {
               />
             )}
             {getGroupTotalCount > 0 ? (
-              <GlobalOverViewGroupIntegration data={groupData} />
+              <GlobalOverViewGroupIntegration data={getGroupList?.groups} />
             ) : (
               <PrimaryTypography
                 style={{
@@ -236,6 +231,29 @@ function WorkspaceProjects() {
                 No data found
               </PrimaryTypography>
             )}
+
+            {getGroupOverViewLoading &&
+              getGroupList?.groups?.length > 1 &&
+              [1, 2, 3, 4].map((elem, index) => {
+                return (
+                  <Grid
+                    size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+                    sx={{
+                      display: "flex",
+                      position: "relative",
+                      minHeight: "300px",
+                      "@media (min-width: 1600px)": {
+                        // Change '1920px' to any custom breakpoint
+                        flexBasis: "25%", // Adjust as per your needs
+                        maxWidth: "25%", // Same as the flexBasis for proper alignment
+                      },
+                    }}
+                  >
+                    <WorkspaceProjectSkeleton key={index} />
+                  </Grid>
+                );
+              })}
+            <div ref={containerRef}></div>
           </Box>
         </Grid>
       </div>

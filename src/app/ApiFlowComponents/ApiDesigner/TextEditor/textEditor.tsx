@@ -245,6 +245,48 @@ interface TextEditorProps {
   disabled?: boolean;
 }
 
+const FQL_FUNCTIONS = [
+  {
+    name: "appendArray()",
+    description: "Appends values to an existing array.",
+    syntax: "&appendArray([{value1}, {value2}], [{value3}, {value4}, ...])",
+    example:
+      "{ \"combinedProducts\": \"&appendArray([{response.node_5mkzc7or.products[0].title}, 'New Product'], ['Additional Product 1', 'Additional Product 2'])\" }",
+  },
+  {
+    name: "upperCase()",
+    description: "Transforms a string to all uppercase.",
+    syntax: "&upperCase({value})",
+    example:
+      '{ "title": "&upperCase({response.node_5mkzc7or.products[0].title})" }',
+  },
+  {
+    name: "lowerCase()",
+    description: "Transforms a string to all lowercase.",
+    syntax: "&lowerCase({value})",
+    example:
+      '{ "title": "&lowerCase({response.node_5mkzc7or.products[0].title})" }',
+  },
+  {
+    name: "parseJson()",
+    description: "Converts a string into JSON.",
+    syntax: "&parseJson({value})",
+    example:
+      '{ "title": "&parseJson({response.node_ts0c4cyi.products[0].title})" }',
+  },
+
+  {
+    name: "checkCondition()",
+    description:
+      "Evaluates a condition and returns a value based on the result. Supports nested conditions.",
+    syntax:
+      "&checkCondition({ifCondition}?{truePart}:{falsePart}) (or) &checkCondition({ifCondition}?{truePart}:{nestedIfCondition}?{truePart}:{elsePart})",
+    example:
+      '{ "title": "&checkCondition({response.node_4mvfag04.products[0].id}===2?truePart:{response.node_4mvfag04.products[0].id}===1?{response.node_4mvfag04.products[0].price}: falsyPart)" }',
+  },
+  // Add more functions as needed
+];
+
 const getNestedKeys = (obj: any, prefix = ""): string[] => {
   if (obj) {
     let keys: string[] = [];
@@ -292,7 +334,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
   const modifiedResponse = useMemo(
     () => (globalResponse ? removeKey(globalResponse, currentNode) : {}),
-    [globalResponse, currentNode],
+    [globalResponse, currentNode]
   );
 
   const suggestions = useMemo(() => {
@@ -300,8 +342,8 @@ const TextEditor: React.FC<TextEditorProps> = ({
       objectToSuggest
         ? { response: objectToSuggest }
         : modifiedResponse
-          ? { response: modifiedResponse }
-          : {},
+        ? { response: modifiedResponse }
+        : {}
     );
   }, [objectToSuggest, modifiedResponse]);
 
@@ -310,11 +352,41 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const validateJSON = (input: string) => {
+    try {
+      const parsed = JSON.parse(input);
+      if (parsed.responses && typeof parsed.responses !== "object") {
+        throw new Error();
+      }
+      return "";
+    } catch (e) {
+      return "Invalid JSON format";
+    }
+  };
+
+  const validateCurlyBraces = (input: string) => {
+    const stack: string[] = [];
+    for (let char of input) {
+      if (char === "{") {
+        stack.push(char);
+      } else if (char === "}") {
+        if (stack.length === 0) {
+          return "Unmatched closing brace";
+        }
+        stack.pop();
+      }
+    }
+    if (stack.length > 0) {
+      return "Unmatched opening brace";
+    }
+    return "";
+  };
+
   const debouncedUpdateSuggestions = useCallback(
     debounce((value: string, cursor: number) => {
       updateSuggestions(value, cursor);
     }, 300),
-    [],
+    []
   );
 
   const updateSuggestions = (value: string, cursor: number) => {
@@ -323,7 +395,47 @@ const TextEditor: React.FC<TextEditorProps> = ({
     onChange(value);
 
     const lastOpenBrace = value.lastIndexOf("{", cursor);
+    const lastOpenAnd = value.lastIndexOf("&", cursor);
     const lastQuote = value.lastIndexOf('"', cursor);
+
+    let precedingText: string = "";
+
+    if (
+      (lastOpenAnd > -1 && lastOpenBrace === -1) ||
+      lastOpenAnd > lastOpenBrace
+    ) {
+      precedingText = value.substring(lastOpenAnd + 1, cursorPosition).trim();
+      console.log("Preceding Text for Functions:", precedingText);
+
+      const match = precedingText.match(/([&\w]+)$/);
+      if (match) {
+        const searchTerm = match[0];
+        console.log("Search Term for Functions:", searchTerm);
+
+        if (searchTerm == "&") {
+          // When the search term is empty, show all suggestions
+          console.log("No search term provided. Showing all suggestions.");
+          setSuggestedKeys(FQL_FUNCTIONS.map((func) => func.name));
+          // updatePopoverPosition(lastOpenAnd + searchTerm.length); // Assuming FQL_FUNCTIONS holds all your function suggestions
+          return; // Exit the function after setting all suggestions
+        }
+
+        const filteredFqlFunctions: string[] = FQL_FUNCTIONS.filter((func) =>
+          func.name.startsWith(searchTerm)
+        ).map((func) => func.name);
+
+        console.log(
+          "Filtered Suggestions for Functions:",
+          filteredFqlFunctions
+        );
+        setSuggestedKeys(filteredFqlFunctions);
+        // updatePopoverPosition(lastOpenAnd + searchTerm.length);
+      } else {
+        console.log("No match found for preceding text in function context.");
+        setSuggestedKeys([]);
+        // setPopoverPosition(null);
+      }
+    }
 
     if (lastOpenBrace > lastQuote) {
       const precedingText = value.substring(lastOpenBrace + 1, cursor);
@@ -331,6 +443,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
       if (match) {
         const prefix = match[0];
+
         const filteredSuggestions = suggestions
           .filter((key) => key.startsWith(prefix))
           .map((key) => key.substring(prefix.length));

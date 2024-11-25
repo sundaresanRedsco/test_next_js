@@ -106,7 +106,7 @@ export default function useSignIn() {
   }, []);
 
   const handleSuccess = (response: any) => {
-    let token = response.credential;
+    let token = response.access_token;
     let email = "null";
     let password = "null";
     let token_type = "GOOGLE";
@@ -317,10 +317,10 @@ export default function useSignIn() {
               // setFormDataStore("currentPage", "Sign Up");
             }
 
-            // router.push(`/userId/${res?.user?.user_id}`);
-            setactiveStep(2);
+            router.push(`/userId/${res?.user?.user_id}`);
+            // setactiveStep(2);
             setIsLoading(false);
-            setFormDataStore("currentPage", "Sign Up");
+            // setFormDataStore("currentPage", "Sign Up");
 
             // }
 

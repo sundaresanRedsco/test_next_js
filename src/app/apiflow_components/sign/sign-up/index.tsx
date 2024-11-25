@@ -46,7 +46,7 @@ export default function SignUp() {
     {
       id: 1,
       label: "Email *",
-      icon: <Email sx={{ fontSize: "14px", color: "#FFFFFF80" }} />,
+      icon: <Email sx={{ fontSize: "18px", color: "#FFFFFF80" }} />,
       type: "email",
       onChange: handleChange,
       name: "email",
@@ -71,7 +71,7 @@ export default function SignUp() {
     {
       id: 2,
       label: "User Name *",
-      icon: <PersonRounded sx={{ fontSize: "14px", color: "#FFFFFF80" }} />,
+      icon: <PersonRounded sx={{ fontSize: "18px", color: "#FFFFFF80" }} />,
       type: "text",
       onChange: handleChange,
 
@@ -87,7 +87,7 @@ export default function SignUp() {
     {
       id: 3,
       label: "First Name *",
-      icon: <PersonRounded sx={{ fontSize: "14px", color: "#FFFFFF80" }} />,
+      icon: <PersonRounded sx={{ fontSize: "18px", color: "#FFFFFF80" }} />,
       type: "text",
       onChange: handleChange,
       name: "first_name",
@@ -117,7 +117,7 @@ export default function SignUp() {
     {
       id: 5,
       label: "New Password *",
-      icon: <Lock sx={{ fontSize: "14px", color: "#FFFFFF80" }} />,
+      icon: <Lock sx={{ fontSize: "15px", color: "#FFFFFF80" }} />,
       type: "password",
       onChange: handleChange,
       name: "password",
@@ -167,7 +167,7 @@ export default function SignUp() {
       style={{
         width: "100%",
         height: "100%",
-        padding: isxs ? "10px" : issm ? "10px" : ismd ? "30px" : "0 100px",
+        padding: isxs ? "10px" : issm ? "10px" : ismd ? "30px" : "0 60px",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -176,7 +176,7 @@ export default function SignUp() {
       <Grid
         container
         sx={{ width: "100%", height: "90%" }}
-        columnSpacing={isxs ? 1 : issm ? 1 : 4}
+        columnSpacing={isxs ? 1 : issm ? 1 : 6}
       >
         <Grid
           size={{
@@ -219,7 +219,7 @@ export default function SignUp() {
         {InputArray.map((elem, index) => {
           return (
             <Grid size={{ md: 6, sm: 6, xs: 12 }} key={index}>
-              <Stack sx={{ gap: 1, marginBottom: "15px" }}>
+              <Stack sx={{ gap: 1.5, marginBottom: "15px" }}>
                 <Box
                   sx={{
                     color: "#FFFFFF80",
@@ -232,7 +232,7 @@ export default function SignUp() {
                   <SecondarySignInUPTypography
                     sx={{
                       color: "white",
-                      fontSize: "12px",
+                      fontSize: "13px",
                     }}
                   >
                     {elem?.label}
@@ -243,7 +243,7 @@ export default function SignUp() {
                   name={elem.name}
                   type={elem.type}
                   fullWidth={true}
-                  radius={"7px"}
+                  radius={"5px"}
                   value={elem.value}
                   onChangeHandler={elem.onChange}
                   error={elem.error}
@@ -252,6 +252,7 @@ export default function SignUp() {
                   patternError={elem?.patternError}
                   pattern={elem?.pattern}
                   // register={elem.register}
+                  height="43px"
                 />
               </Stack>
             </Grid>
@@ -276,7 +277,7 @@ export default function SignUp() {
               iconPosition="end"
               type={"submit"}
               buttonType="primary"
-              radius="10px"
+              radius="9px"
               fontSize={"15px"}
               fontFamily={"Firasans-medium !important"}
             />

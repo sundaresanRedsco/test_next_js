@@ -24,6 +24,8 @@ import { SecondaryTextTypography } from "@/app/Styles/signInUp";
 import {
   endpointReducer,
   GetCollectionOperationTreeFlow,
+  updateWorkflowSidebarEnd,
+  updateWorkflowSidebarStart,
 } from "@/app/Redux/apiManagement/endpointReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
@@ -143,9 +145,10 @@ export default function WorkflowSidebar(props: any) {
   const { recentlyModifiedProp, project_id } = props;
   const { isSidebarCollapsed } = useSideBarStore();
 
-  const { getTreeFlowLoading } = useSelector<RootStateType, endpointReducer>(
-    (state) => state.apiManagement.endpoint
-  );
+  const { getTreeFlowLoading, workflowSidebarStart, workflowSidebarEnd } =
+    useSelector<RootStateType, endpointReducer>(
+      (state) => state.apiManagement.endpoint
+    );
   const dispatch = useDispatch<any>();
   const theme = useTheme();
   const containerRef = useRef<any>(null);
@@ -227,7 +230,8 @@ export default function WorkflowSidebar(props: any) {
       setEndVal((prevEnd: any) => prevEnd + 5);
       let requestData = {
         project_id: project_id,
-        offsetStart: 0,
+        // offsetStart: 0,
+        offsetStart: workflowSidebarStart,
         offsetEnd: page,
       };
       dispatch(GetCollectionOperationTreeFlow(requestData))
@@ -235,11 +239,31 @@ export default function WorkflowSidebar(props: any) {
         .then((res: any) => {
           console.log("treeRes: ", res);
           setCollOperTreeCount(res?.count);
-          const filterStatusVal = res?.collections?.filter(
-            (filterStatus: any) => filterStatus?.status === "ACTIVE"
-          );
-          console.log("GetOperationTreeRes: ", res?.collections);
-          setCollOperDetails(filterStatusVal);
+
+          // const filterStatusVal = res?.collections?.filter(
+          //   (filterStatus: any) => filterStatus?.status === "ACTIVE"
+          // );
+          // console.log("GetOperationTreeRes: ", res?.collections);
+          // setCollOperDetails(filterStatusVal);
+
+          setCollOperDetails((prevValues: any) => {
+            const newData = Array.isArray(res?.collections)
+              ? res?.collections.filter(
+                  (filterStatus: any) => filterStatus?.status === "ACTIVE"
+                )
+              : [];
+            const updatedValues = [...prevValues];
+
+            newData?.forEach((val: any) => {
+              if (
+                !prevValues?.some((prevData: any) => prevData?.id === val?.id)
+              ) {
+                updatedValues.push(val);
+              }
+            });
+            return updatedValues;
+          });
+
           setIsLoading(false);
         })
         .catch((error: any) => {
@@ -252,8 +276,14 @@ export default function WorkflowSidebar(props: any) {
   const handleScroll = () => {
     if (containerRef?.current) {
       const { scrollTop, clientHeight, scrollHeight } = containerRef?.current;
-      if (scrollTop + clientHeight >= scrollHeight - 100) {
-        setCurrentPage((prevPage) => prevPage + 5);
+      // if (scrollTop + clientHeight >= scrollHeight - 100) {
+      //   setCurrentPage((prevPage) => prevPage + 5);
+      // }
+      if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading) {
+        if (workflowSidebarEnd <= collOperTreeCount) {
+          dispatch(updateWorkflowSidebarStart(workflowSidebarStart + 8));
+          dispatch(updateWorkflowSidebarEnd(workflowSidebarEnd + 8));
+        }
       }
     }
   };
@@ -289,15 +319,22 @@ export default function WorkflowSidebar(props: any) {
     // }, [maninContainer]); // Include maninContainer as a dependency
   }, []);
 
+  // useEffect(() => {
+  //   if (project_id) {
+  //     fetchPageData(currentPage);
+  //     setIsLoading(false);
+  //   } else {
+  //     setCollOperDetails([]);
+  //     setCollOperTreeCount(0);
+  //   }
+  // }, [currentPage, project_id]);
+
   useEffect(() => {
     if (project_id) {
-      fetchPageData(currentPage);
+      fetchPageData(workflowSidebarEnd);
       setIsLoading(false);
-    } else {
-      setCollOperDetails([]);
-      setCollOperTreeCount(0);
     }
-  }, [currentPage, project_id]);
+  }, [workflowSidebarEnd, project_id]);
 
   return (
     <Box
@@ -508,7 +545,7 @@ export default function WorkflowSidebar(props: any) {
                     fontSize: recentlyModifiedProp === true ? "6px" : "",
                   }}
                 >
-                  {item?.collection_name}s
+                  {item?.collection_name}
                 </SecondaryTypography>
               </Box>
             </AccordionSummary>

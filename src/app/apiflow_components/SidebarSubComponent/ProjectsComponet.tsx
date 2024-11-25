@@ -42,10 +42,21 @@ import WorkspaceSettings from "./workspaceSideComponents/WorkspaceSettings";
 import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
 import { getItems, removeItem, setItem } from "@/app/Services/localstorage";
 import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
-import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
-import { endpointReducer } from "@/app/Redux/apiManagement/endpointReducer";
+import {
+  clearFlowList,
+  FlowReducer,
+} from "@/app/Redux/apiManagement/flowReducer";
+import {
+  endpointReducer,
+  resetCollOperTreeData,
+} from "@/app/Redux/apiManagement/endpointReducer";
+import { useGlobalStore } from "@/app/hooks/useGlobalStore";
+import SkeletonProjectContainer, {
+  ProjectTreeSkeleton,
+} from "./SkeletonProjectContainer";
+import { queryClient } from "@/app/apiflow_Pages/layout/dashboardLayout";
 
-const accordionCollectionStyles = {
+export const accordionCollectionStyles = {
   elevation: 0,
   border: "none",
   borderBottom: "none",
@@ -62,7 +73,7 @@ const accordionCollectionStyles = {
   margin: "0px",
 };
 
-const EnvironmentTree = () => {
+const EnvironmentTree = ({ expanded, setExpanded }: any) => {
   const theme = useTheme(); // Access the current theme
   const dispatch = useDispatch<any>();
   const containerRef = React.useRef<any>(null);
@@ -84,10 +95,6 @@ const EnvironmentTree = () => {
     (state) => state.apiManagement.environment
   );
 
-  const { getDesignFlowOffsetLoading, flowList } = useSelector<
-    RootStateType,
-    FlowReducer
-  >((state) => state.apiManagement.apiFlowDesign);
   // const { getCollOperTreeLoading } = useSelector<
   //   RootStateType,
   //   endpointReducer
@@ -96,9 +103,10 @@ const EnvironmentTree = () => {
     (state) => state.apiManagement.apiProjects
   );
 
-  const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
-    (state) => state.apiManagement.workspace
-  );
+  const { currentWorkspace, getWsidLoading } = useSelector<
+    RootStateType,
+    workspaceReducer
+  >((state) => state.apiManagement.workspace);
 
   const { tabs } = useSelector<RootStateType, tabsReducer>(
     (state) => state.tabs
@@ -107,14 +115,15 @@ const EnvironmentTree = () => {
     (state) => state.common
   );
 
-  const [projectSearchClicked, setprojectSearchClicked] = useState(false);
-  const [expanded, setExpanded] = useState<string>("");
   const [projectValues, setProjectValues] = useState<any[]>([]);
   const [searchVal, setSearchVal] = useState("");
   // const [currentPage, setCurrentPage] = useState<number>(7);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [nestedExpandedIndexes, setNestedExpandedIndexes] = useState<any>({});
+  const [nestedExpandedIndexes, setNestedExpandedIndexes] = useState<any>({
+    flow: "",
+    endpoint: "",
+  });
 
   const fetchPageData = async (page: number) => {
     let requestData = {
@@ -122,8 +131,6 @@ const EnvironmentTree = () => {
       startValue: projectStartValue,
       endValue: page,
     };
-
-    console.log("RequestData: ", requestData);
 
     dispatch(GetProjectsByGroupOffset(requestData))
       .unwrap()
@@ -173,9 +180,14 @@ const EnvironmentTree = () => {
     }
   };
 
-  const onSelectCurrentProject = (projectId: string, workspaceId: string) => {
+  const onSelectCurrentProject = (
+    projectId: string,
+    workspaceId: string,
+    loadData?: boolean
+  ) => {
     if (expanded == projectId) {
       setExpanded("");
+      // setItem(`/first/${userProfile?.user?.user_id}`, "");
       return;
     }
     // Set the WSID in cookies and session storage (if needed)
@@ -187,7 +199,12 @@ const EnvironmentTree = () => {
     //   // Check if the tab starts with "pro_"
     //   return !tab.startsWith("pro_");
     // });
-
+    if (!loadData) {
+      setNestedExpandedIndexes({
+        flow: "",
+        endpoint: "",
+      });
+    }
     dispatch(
       GetProjectById({ project_id: projectId, workspace_id: workspaceId })
     )
@@ -224,15 +241,26 @@ const EnvironmentTree = () => {
   //     setExpanded(isExpanded ? panel : false); // Allow only one main accordion open
   //   };
 
-  const handleNestedAccordionChange = (index: number, accordionKey: any) => {
-    setNestedExpandedIndexes((prevState: any) => ({
-      ...prevState,
-      [accordionKey]: !prevState[accordionKey], // Allow multiple nested accordions open
-    }));
-    setItem(`/nested/${userProfile?.user?.user_id}`, {
-      ...nestedExpandedIndexes,
-      [accordionKey]: !nestedExpandedIndexes[accordionKey],
-    });
+  const handleNestedAccordionChange = (accordionKey: any, parentId: any) => {
+    if (nestedExpandedIndexes[accordionKey] == parentId) {
+      setNestedExpandedIndexes((prevState: any) => ({
+        ...prevState,
+        [accordionKey]: "",
+      }));
+      setItem(`/nested/${userProfile?.user?.user_id}`, {
+        ...nestedExpandedIndexes,
+        [accordionKey]: "",
+      });
+    } else {
+      setNestedExpandedIndexes((prevState: any) => ({
+        ...prevState,
+        [accordionKey]: parentId,
+      }));
+      setItem(`/nested/${userProfile?.user?.user_id}`, {
+        ...nestedExpandedIndexes,
+        [accordionKey]: parentId,
+      });
+    }
   };
 
   React.useEffect(() => {
@@ -249,8 +277,9 @@ const EnvironmentTree = () => {
   }, []);
 
   React.useEffect(() => {
-    fetchPageData(projectEndValue);
+    if (currentProject) fetchPageData(projectEndValue);
   }, [projectEndValue, searchVal, currentProject]);
+  const { setIsPageLoading } = useGlobalStore();
 
   const handleOpenMainMenu = async () => {
     const data = await getItems(`/first/${userProfile?.user?.user_id}`);
@@ -259,81 +288,115 @@ const EnvironmentTree = () => {
     const nestedcookies = await getItems(
       `/nested/${userProfile?.user?.user_id}`
     );
-    setNestedExpandedIndexes(nestedcookies ? nestedcookies : {});
-    onSelectCurrentProject(data, pathname.split("/")[4]);
+    if (data) {
+      setNestedExpandedIndexes(nestedcookies ? nestedcookies : {});
+      onSelectCurrentProject(data, pathname.split("/")[4], true);
 
-    if (pathname.includes("/workflow") && !pathname.split("/")[6]) {
-      await dispatch(setCurrentTreeActive(data + "_workflow"));
-    } else if (pathname.includes("/workflow") && pathname.split("/")[6]) {
-      await dispatch(setCurrentTreeActive(pathname.split("/")[6]));
-    } else {
-      await dispatch(setCurrentTreeActive(data));
+      if (pathname.includes("/workflow") && !pathname.split("/")[6]) {
+        await dispatch(setCurrentTreeActive(data + "_workflow"));
+      } else if (pathname.includes("/workflow") && pathname.split("/")[6]) {
+        await dispatch(setCurrentTreeActive(pathname.split("/")[6]));
+      } else {
+        await dispatch(setCurrentTreeActive(data));
+      }
     }
   };
 
   React.useEffect(() => {
-    if (!expanded) {
+    if (!expanded && userProfile?.user?.user_id) {
       handleOpenMainMenu();
     }
-  }, [dispatch, getProjectWsidLoading, pathname]);
+  }, [getProjectWsidLoading, pathname, userProfile?.user?.user_id]);
+  const workflowCollapse =
+    nestedExpandedIndexes.flow &&
+    nestedExpandedIndexes.flow.replace("_workflow", "");
+  const endpointCollapse =
+    nestedExpandedIndexes.endpoint &&
+    nestedExpandedIndexes.endpoint.replace("_endpoints", "");
+
+  const refreshDatas = async () => {
+    if (nestedExpandedIndexes.flow == currentTreeActive) {
+      await dispatch(clearFlowList([]));
+      await queryClient.invalidateQueries({
+        queryKey: ["getFlowTree"],
+      });
+    } else if (nestedExpandedIndexes.endpoint == currentTreeActive) {
+      await dispatch(resetCollOperTreeData([]));
+      await queryClient.invalidateQueries({
+        queryKey: ["getEndpointsTree"],
+      });
+    }
+  };
+
+  React.useEffect(() => {
+    if (
+      pathname.includes("/environment") ||
+      pathname.includes("/workflow") ||
+      pathname.split("/")[6]
+    )
+      refreshDatas();
+  }, [expanded, nestedExpandedIndexes.flow, nestedExpandedIndexes.endpoint]);
 
   return (
     <>
-      {enviProjectsListSolrOffset.map((env: any, index: any) => (
-        <Accordion
-          key={index}
-          sx={{
-            background: theme.palette.sidebarMainBackground.main,
-            color: "white",
-            boxShadow: "none",
-            "&::before": {
-              display: "none",
-            },
-          }}
-          expanded={expanded === env.project_id}
-        >
-          <AccordionSummary
-            onClick={() => {
-              onSelectCurrentProject(env.project_id, env.workspace_id);
-              router.push(
-                `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/environment`
-              );
-            }}
+      {getProjectWsidLoading ? (
+        <ProjectTreeSkeleton />
+      ) : enviProjectsListSolrOffset.length > 0 ? (
+        enviProjectsListSolrOffset.map((env: any, index: any) => (
+          <Accordion
+            key={index}
             sx={{
-              minHeight: "34px",
-              background:
-                currentTreeActive === env.project_id && !getProjectWsidLoading
-                  ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
-                  : theme.palette.sidebarMainBackground.main,
-              color:
-                currentTreeActive === env.project_id ? "#FFFFFF" : "#FFFFFF80",
-              "&.Mui-expanded": {
-                minHeight: "34px",
+              background: theme.palette.sidebarMainBackground.main,
+              color: "white",
+              boxShadow: "none",
+              "&::before": {
+                display: "none",
               },
-              "& .MuiAccordionSummary-content": {
-                margin: "0",
-                display: "flex",
-                alignItems: "center",
-              },
-              "& .MuiAccordionSummary-content.Mui-expanded": {
-                margin: "0px",
-              },
-              "&:hover": getProjectWsidLoading
-                ? {}
-                : {
-                    background:
-                      "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
-                    color: "#FFFFFF", // Change text color on hover
-                  },
+              margin: "0px !important",
             }}
+            expanded={expanded === env.project_id}
           >
-            {getProjectWsidLoading ? (
-              <GSkeletonLoader
-                secondary={true}
-                open={getProjectWsidLoading}
-                width="80%"
-              />
-            ) : (
+            <AccordionSummary
+              onClick={() => {
+                if (!pathname.includes("/environment")) {
+                  setIsPageLoading(true);
+                }
+
+                onSelectCurrentProject(env.project_id, env.workspace_id);
+                router.push(
+                  `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/environment`
+                );
+              }}
+              sx={{
+                minHeight: "34px",
+                background:
+                  currentTreeActive === env.project_id && !getProjectWsidLoading
+                    ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
+                    : theme.palette.sidebarMainBackground.main,
+                color:
+                  currentTreeActive === env.project_id
+                    ? "#FFFFFF"
+                    : "#FFFFFF80",
+                "&.Mui-expanded": {
+                  minHeight: "34px",
+                },
+                "& .MuiAccordionSummary-content": {
+                  margin: "0",
+                  display: "flex",
+                  alignItems: "center",
+                },
+                "& .MuiAccordionSummary-content.Mui-expanded": {
+                  margin: "0px",
+                },
+                "&:hover": getProjectWsidLoading
+                  ? {}
+                  : {
+                      background:
+                        "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
+                      color: "#FFFFFF", // Change text color on hover
+                    },
+              }}
+            >
               <Box
                 sx={{
                   display: "flex",
@@ -380,276 +443,257 @@ const EnvironmentTree = () => {
                   {/* )} */}
                 </div>
               </Box>
-            )}
-          </AccordionSummary>
-          <AccordionDetails
-            sx={{
-              width: "100%",
-              "&.MuiAccordionDetails-root": {
-                padding: "0px !important",
-              },
-              "& .MuiButtonBase-root": {
-                paddingLeft: getProjectWsidLoading ? 0 : 4,
-                paddingRight: 0,
-              },
-            }}
-          >
-            <Accordion
+            </AccordionSummary>
+            <AccordionDetails
               sx={{
-                background: theme.palette.sidebarMainBackground.main,
-                color: "white",
-                boxShadow: "none",
-                // marginTop: "10px",
+                width: "100%",
+                "&.MuiAccordionDetails-root": {
+                  padding: "0px !important",
+                },
+                "& .MuiButtonBase-root": {
+                  paddingLeft: getProjectWsidLoading ? 0 : 4,
+                  paddingRight: 0,
+                },
               }}
-              expanded={nestedExpandedIndexes[`${index}_flows`] || false}
-              onChange={() =>
-                handleNestedAccordionChange(index, `${index}_flows`)
-              }
             >
-              <AccordionSummary
+              <Accordion
                 sx={{
-                  background:
-                    currentTreeActive === env.project_id + "_workflow" &&
-                    !getProjectWsidLoading
-                      ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
-                      : theme.palette.sidebarMainBackground.main,
-                  color:
-                    currentTreeActive === env.project_id + "_workflow"
-                      ? "#FFFFFF"
-                      : "#FFFFFF80",
-                  minHeight: "34px",
-                  "&.Mui-expanded": {
-                    minHeight: "34px",
-                    // marginTop: "10px",
-                  },
-                  "& .MuiAccordionSummary-content": {
-                    margin: "0",
-                    display: "flex",
-                    alignItems: "center",
-                  },
-                  "& .MuiAccordionSummary-content.Mui-expanded": {
-                    margin: "0px",
-                  },
-                  "&:hover": getProjectWsidLoading
-                    ? {}
-                    : {
-                        background:
-                          "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
-                        color: "#FFFFFF", // Change text color on hover
-                      },
+                  background: theme.palette.sidebarMainBackground.main,
+                  color: "white",
+                  boxShadow: "none",
+                  // marginTop: "10px",
+                  margin: "0px !important",
                 }}
-                onClick={() => {
+                expanded={workflowCollapse == env.project_id}
+                onChange={() => {
+                  handleNestedAccordionChange(
+                    "flow",
+                    env.project_id + "_workflow"
+                  );
+                  if (!pathname.includes("/workflow")) {
+                    setIsPageLoading(true);
+                  }
                   dispatch(setCurrentTreeActive(env.project_id + "_workflow"));
                   router.push(
                     `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/workflow`
                   );
                 }}
               >
-                <Box
+                <AccordionSummary
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    margin: "0px 0px",
-                    position: "relative",
-                    width: "100%",
+                    background:
+                      currentTreeActive === env.project_id + "_workflow" &&
+                      !getProjectWsidLoading
+                        ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
+                        : theme.palette.sidebarMainBackground.main,
+                    color:
+                      currentTreeActive === env.project_id + "_workflow"
+                        ? "#FFFFFF"
+                        : "#FFFFFF80",
+                    minHeight: "34px",
+                    "&.Mui-expanded": {
+                      minHeight: "34px",
+                      // marginTop: "10px",
+                    },
+                    "& .MuiAccordionSummary-content": {
+                      margin: 0,
+                      display: "flex",
+                      alignItems: "center",
+                    },
+                    "& .MuiAccordionSummary-content.Mui-expanded": {
+                      margin: "0px",
+                    },
+                    "&:hover": getProjectWsidLoading
+                      ? {}
+                      : {
+                          background:
+                            "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
+                          color: "#FFFFFF", // Change text color on hover
+                        },
                   }}
                 >
-                  {/* {getProjectWsidLoading && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      cursor: "pointer",
+                      margin: 0,
+                      position: "relative",
+                      width: "100%",
+                    }}
+                  >
+                    {/* {getProjectWsidLoading && (
                     <GlobalCircularLoader open={getProjectWsidLoading} />
                   )} */}
 
-                  <ExpandMoreIcon
-                    sx={{
-                      transform: nestedExpandedIndexes[`${index}_flows`]
-                        ? "rotate(0deg)"
-                        : "rotate(-90deg)",
-                      transition: "transform 0.3s",
-                      color: nestedExpandedIndexes[`${index}_flows`]
-                        ? "#FFFFFF"
-                        : "#FFFFFF80",
-                      fontSize: "20px",
-                    }}
-                  />
+                    <ExpandMoreIcon
+                      sx={{
+                        transform:
+                          workflowCollapse == env.project_id
+                            ? "rotate(0deg)"
+                            : "rotate(-90deg)",
+                        transition: "transform 0.3s",
+                        color:
+                          workflowCollapse == env.project_id
+                            ? "#FFFFFF"
+                            : "#FFFFFF80",
+                        fontSize: "20px",
+                      }}
+                    />
 
-                  <div
-                    className="d-flex"
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <TeritaryTextTypography
+                    <div
+                      className="d-flex"
                       style={{
-                        color: nestedExpandedIndexes[`${index}_flows`]
-                          ? "#FFFFFF"
-                          : "#FFFFFF80",
-                        fontSize: "13px",
-                        cursor: "pointer",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
                       }}
                     >
-                      WorkFlows
-                    </TeritaryTextTypography>
-                    {/* {nestedAccordion?.badge === "true" && ( */}
-                    <GBadge
-                      badgeContent={"0"}
-                      color="#FD0101"
-                      iconRight="15px"
-                    />
-                    {/* )} */}
-                  </div>
-                </Box>
-              </AccordionSummary>
-              <AccordionDetails
-                sx={{
-                  width: "100%",
-                  "&.MuiAccordionDetails-root": {
-                    padding: "0px !important",
-                    display: "flex",
-                    flexDirection: "column",
-                  },
-                  height: flowList?.length > 5 ? "150px" : "auto",
-                  overflowY: "auto",
-                }}
-              >
-                <FlowTree />
-                {getDesignFlowOffsetLoading &&
-                  [1, 2, 3, 4].map((elem, index) => {
-                    return (
-                      <div
-                        key={index}
+                      <TeritaryTextTypography
                         style={{
-                          padding: "10px 0 10px 50px",
-                          position: "relative",
-                          width: "auto",
+                          color:
+                            workflowCollapse == env.project_id
+                              ? "#FFFFFF"
+                              : "#FFFFFF80",
+                          fontSize: "13px",
+                          cursor: "pointer",
                         }}
                       >
-                        <GSkeletonLoader
-                          secondary={true}
-                          open={true}
-                          width="90%"
-                        />
-                      </div>
-                    );
-                  })}
-              </AccordionDetails>
-            </Accordion>
+                        WorkFlows
+                      </TeritaryTextTypography>
+                      {/* {nestedAccordion?.badge === "true" && ( */}
+                      <GBadge
+                        badgeContent={"0"}
+                        color="#FD0101"
+                        iconRight="15px"
+                      />
+                      {/* )} */}
+                    </div>
+                  </Box>
+                </AccordionSummary>
 
-            <Accordion
-              sx={{
-                background: theme.palette.sidebarMainBackground.main,
-                color: "white",
-                boxShadow: "none",
-                marginTop: "10px",
-              }}
-              expanded={nestedExpandedIndexes[`${index}_enpoints`] || false}
-              onChange={() =>
-                handleNestedAccordionChange(index, `${index}_enpoints`)
-              }
-            >
-              <AccordionSummary
+                <FlowTree nestedExpandedIndexes={nestedExpandedIndexes} />
+              </Accordion>
+
+              <Accordion
                 sx={{
-                  background:
-                    currentTreeActive === env.project_id + "_endpoints"
-                      ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
-                      : theme.palette.sidebarMainBackground.main,
-                  color:
-                    currentTreeActive === env.project_id + "_endpoints"
-                      ? "#FFFFFF"
-                      : "#FFFFFF80",
-
-                  minHeight: "34px",
-                  "&.Mui-expanded": {
-                    minHeight: "34px",
-                    // marginTop: "10px",
-                  },
-                  "& .MuiAccordionSummary-content": {
-                    margin: "0",
-                    display: "flex",
-                    alignItems: "center",
-                  },
-                  "& .MuiAccordionSummary-content.Mui-expanded": {
-                    margin: "0px",
-                  },
-                  "&:hover": {
-                    background:
-                      "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
-                    color: "#FFFFFF", // Change text color on hover
-                  },
+                  background: theme.palette.sidebarMainBackground.main,
+                  color: "white",
+                  boxShadow: "none",
+                  // marginTop: "10px",
+                  margin: "0px !important",
+                }}
+                expanded={endpointCollapse == env.project_id}
+                onChange={() => {
+                  handleNestedAccordionChange(
+                    "endpoint",
+                    env.project_id + "_endpoints"
+                  );
+                  dispatch(setCurrentTreeActive(env.project_id + "_endpoints"));
                 }}
               >
-                <Box
+                <AccordionSummary
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    margin: "0px 0px",
-                    width: "100%",
-                  }}
-                >
-                  <ExpandMoreIcon
-                    sx={{
-                      transform: nestedExpandedIndexes[`${index}_enpoints`]
-                        ? "rotate(0deg)"
-                        : "rotate(-90deg)",
-                      transition: "transform 0.3s",
-                      color: nestedExpandedIndexes[`${index}_enpoints`]
+                    background:
+                      currentTreeActive === env.project_id + "_endpoints"
+                        ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
+                        : theme.palette.sidebarMainBackground.main,
+                    color:
+                      currentTreeActive === env.project_id + "_endpoints"
                         ? "#FFFFFF"
                         : "#FFFFFF80",
-                      fontSize: "20px",
-                    }}
-                    onClick={() => {
-                      dispatch(
-                        setCurrentTreeActive(env.project_id + "_endpoints")
-                      );
-                    }}
-                  />
-                  <div
-                    className="d-flex"
-                    style={{
-                      width: "100%",
+
+                    minHeight: "34px",
+                    "&.Mui-expanded": {
+                      minHeight: "34px",
+                      // marginTop: "10px",
+                    },
+                    "& .MuiAccordionSummary-content": {
+                      margin: 0,
                       display: "flex",
                       alignItems: "center",
+                    },
+                    "& .MuiAccordionSummary-content.Mui-expanded": {
+                      margin: "0px",
+                    },
+                    "&:hover": {
+                      background:
+                        "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
+                      color: "#FFFFFF", // Change text color on hover
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      cursor: "pointer",
+                      margin: 0,
+                      width: "100%",
                     }}
                   >
-                    <TeritaryTextTypography
+                    <ExpandMoreIcon
+                      sx={{
+                        transform:
+                          endpointCollapse == env.project_id
+                            ? "rotate(0deg)"
+                            : "rotate(-90deg)",
+                        transition: "transform 0.3s",
+                        color:
+                          endpointCollapse == env.project_id
+                            ? "#FFFFFF"
+                            : "#FFFFFF80",
+                        fontSize: "20px",
+                      }}
+                    />
+                    <div
+                      className="d-flex"
                       style={{
-                        color: nestedExpandedIndexes[`${index}_enpoints`]
-                          ? "#FFFFFF"
-                          : "#FFFFFF80",
-                        fontSize: "13px",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
                       }}
                     >
-                      Endpoints
-                    </TeritaryTextTypography>
-                    {/* {nestedAccordion?.badge === "true" && ( */}
-                    <GBadge
-                      badgeContent={"0"}
-                      color="#F7BD2B"
-                      iconRight="15px"
-                    />
-                    {/* )} */}
-                  </div>
-                </Box>
-              </AccordionSummary>
-              <AccordionDetails
-                sx={{
-                  width: "100%",
-                  "& .MuiButtonBase-root": {
-                    paddingLeft: 6,
-                  },
-                  "&.MuiAccordionDetails-root": {
-                    padding: "0px !important",
-                  },
-                }}
-              >
-                <Endpoints />
-              </AccordionDetails>
-            </Accordion>
-          </AccordionDetails>
-        </Accordion>
-      ))}
+                      <TeritaryTextTypography
+                        style={{
+                          color:
+                            endpointCollapse == env.project_id
+                              ? "#FFFFFF"
+                              : "#FFFFFF80",
+                          fontSize: "13px",
+                        }}
+                      >
+                        Endpoints
+                      </TeritaryTextTypography>
+                      {/* {nestedAccordion?.badge === "true" && ( */}
+                      <GBadge
+                        badgeContent={"0"}
+                        color="#F7BD2B"
+                        iconRight="15px"
+                      />
+                      {/* )} */}
+                    </div>
+                  </Box>
+                </AccordionSummary>
+                <Endpoints nestedExpandedIndexes={nestedExpandedIndexes} />
+              </Accordion>
+            </AccordionDetails>
+          </Accordion>
+        ))
+      ) : (
+        <Box
+          sx={{
+            padding: "20px 10px 10px 10px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TeritaryTextTypography sx={{ color: "gray", fontSize: "12px" }}>
+            No projects to show
+          </TeritaryTextTypography>
+        </Box>
+      )}
 
       {/* {getProjectWsidLoading && (
         <Box sx={{ position: "relative" }}>
@@ -664,6 +708,7 @@ const ProjectTree = () => {
   const theme = useTheme();
   const dispatch = useDispatch<any>();
   const router = useRouter();
+  const { setIsPageLoading } = useGlobalStore();
 
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null); // Only one index
   const pathname = usePathname();
@@ -683,9 +728,10 @@ const ProjectTree = () => {
     RootStateType,
     projectApiReducer
   >((state) => state.apiManagement.apiProjects);
-  console.log(projectsList, "projectsListsd");
 
   const handleAccordionChange = (index: number, id: any) => {
+    dispatch(resetCollOperTreeData([]));
+    dispatch(clearFlowList([]));
     setExpandedIndex((prevIndex) => (prevIndex === index ? null : index)); // Toggle between null and the index
     setSelectedLink(id);
     dispatch(
@@ -742,133 +788,142 @@ const ProjectTree = () => {
 
   React.useEffect(() => {
     handleOpenMainMenu();
-  }, [pathname, dispatch, getProjectLoading]);
+  }, [pathname, getProjectLoading]);
+  const [expanded, setExpanded] = useState<string>("");
+
+  React.useEffect(() => {
+    if (!expandedIndex) {
+      setExpanded("");
+    }
+  }, [expandedIndex]);
 
   return (
     <>
-      {projectsList?.map((accordion, index) => (
-        <div key={index}>
-          <Accordion
-            sx={accordionCollectionStyles}
-            expanded={expandedIndex === index} // Only one can be open
-            onChange={() => {
-              handleAccordionChange(index, accordion?.group_id);
-
-              // setSelecteText(accordion.title);
-            }}
-          >
-            <AccordionSummary
-              sx={{
-                "&:hover": getProjectLoading
-                  ? {}
-                  : {
-                      background:
-                        "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
-                      color: "#FFFFFF", // Change text color on hover
-                    },
-
-                background:
-                  currentTreeActive === accordion?.group_id &&
-                  !getProjectLoading
-                    ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
-                    : theme.palette.sidebarMainBackground.main,
-                color:
-                  currentTreeActive === accordion?.group_id
-                    ? "#FFFFFF"
-                    : "#FFFFFF80",
-                padding: "0px 10px",
-                alignItems: "center",
-                height: "45px",
-                "&.Mui-expanded": {
-                  minHeight: "34px",
-                  // marginTop: "10px",
-                },
-                "& .MuiAccordionSummary-content": {
-                  margin: "0",
-                  display: "flex",
-                  alignItems: "center",
-                },
-                "& .MuiAccordionSummary-content.Mui-expanded": {
-                  margin: "0px",
-                },
-              }}
-              onClick={() => {
-                // dispatch(
-                //   setCurrentTreeActive(env.project_id + "_workflow")
-                // );
+      {getProjectLoading ? (
+        <SkeletonProjectContainer />
+      ) : (
+        projectsList?.map((accordion, index) => (
+          <div key={index}>
+            <Accordion
+              sx={accordionCollectionStyles}
+              expanded={expandedIndex === index} // Only one can be open
+              onChange={() => {
+                handleAccordionChange(index, accordion?.group_id);
+                if (!pathname.includes("/project")) {
+                  setIsPageLoading(true);
+                }
                 router.push(
                   `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/project`
                 );
+                removeItem(`/first/${userProfile?.user?.user_id}`);
               }}
             >
-              <Box
+              <AccordionSummary
                 sx={{
-                  display: "flex",
+                  "&:hover": getProjectLoading
+                    ? {}
+                    : {
+                        background:
+                          "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
+                        color: "#FFFFFF", // Change text color on hover
+                      },
+
+                  background:
+                    currentTreeActive === accordion?.group_id &&
+                    !getProjectLoading
+                      ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
+                      : theme.palette.sidebarMainBackground.main,
+                  color:
+                    currentTreeActive === accordion?.group_id
+                      ? "#FFFFFF"
+                      : "#FFFFFF80",
+                  padding: "0px 10px",
                   alignItems: "center",
-                  cursor: "pointer",
-                  margin: "0px 0px",
-                  position: "relative",
-                  width: "100%",
+                  height: "45px",
+                  "&.Mui-expanded": {
+                    minHeight: "34px",
+                    // marginTop: "10px",
+                  },
+                  "& .MuiAccordionSummary-content": {
+                    margin: "0",
+                    display: "flex",
+                    alignItems: "center",
+                  },
+                  "& .MuiAccordionSummary-content.Mui-expanded": {
+                    margin: "0px",
+                  },
                 }}
               >
-                {getProjectLoading && (
-                  <GSkeletonLoader secondary={true} open={getProjectLoading} />
-                )}
-                <ExpandMoreIcon
+                <Box
                   sx={{
-                    transform:
-                      expandedIndex === index
-                        ? "rotate(0deg)"
-                        : "rotate(-90deg)",
-                    transition: "transform 0.3s",
-                    // marginRight: "10px",
-                    color:
-                      accordion?.group_id === selectedLink
-                        ? "#FFFFFF"
-                        : "#FFFFFF80",
-                    fontSize: "25px",
-                  }}
-                />
-                <SecondaryTextTypography
-                  style={{
-                    color:
-                      accordion?.group_id === selectedLink
-                        ? "#FFFFFF"
-                        : "#FFFFFF80",
-                    fontSize: "18px",
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    margin: "0px 0px",
+                    position: "relative",
+                    width: "100%",
                   }}
                 >
-                  {accordion.name}
-                </SecondaryTextTypography>
-              </Box>
-            </AccordionSummary>
-            <AccordionDetails
-              sx={{
-                background: theme.palette.sidebarMainBackground.main,
-                width: "100%",
-                "&.MuiAccordionDetails-root": {
-                  padding: "0px !important",
-                },
-                "& .MuiButtonBase-root": {
-                  paddingLeft: 2,
-                },
-                "& .MuiPaper-root": {
-                  margin: 0,
-                },
+                  <ExpandMoreIcon
+                    sx={{
+                      transform:
+                        expandedIndex === index
+                          ? "rotate(0deg)"
+                          : "rotate(-90deg)",
+                      transition: "transform 0.3s",
+                      // marginRight: "10px",
+                      color:
+                        accordion?.group_id === selectedLink
+                          ? "#FFFFFF"
+                          : "#FFFFFF80",
+                      fontSize: "25px",
+                    }}
+                  />
+                  <SecondaryTextTypography
+                    style={{
+                      color:
+                        accordion?.group_id === selectedLink
+                          ? "#FFFFFF"
+                          : "#FFFFFF80",
+                      fontSize: "18px",
+                    }}
+                  >
+                    {accordion.name}
+                  </SecondaryTextTypography>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails
+                sx={{
+                  background: theme.palette.sidebarMainBackground.main,
+                  width: "100%",
+                  "&.MuiAccordionDetails-root": {
+                    padding: "0px !important",
+                  },
+                  "& .MuiButtonBase-root": {
+                    paddingLeft: 2,
+                  },
+                  "& .MuiPaper-root": {
+                    margin: 0,
+                    position: "relative",
+                  },
+                }}
+              >
+                <EnvironmentTree
+                  expanded={expanded}
+                  setExpanded={setExpanded}
+                />
+              </AccordionDetails>
+            </Accordion>
+            <hr
+              style={{
+                color: "white",
+                border: "-10px solid white",
+                margin: "10px",
               }}
-            >
-              <EnvironmentTree />
-            </AccordionDetails>
-          </Accordion>
-          <hr
-            style={{
-              color: "white",
-              border: "-10px solid white",
-              margin: "10px",
-            }}
-          />
-        </div>
-      ))}
+            />
+          </div>
+        ))
+      )}
       {/* {getProjectLoading && (
         <Box sx={{ position: "relative" }}>
           <GlobalCircularLoader open={true} noBackDrop />
@@ -890,12 +945,15 @@ export default function ProjectsComponet() {
 
   const router = useRouter();
   const pathname = usePathname();
+  const { setIsPageLoading } = useGlobalStore();
 
+  const newUrl = `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/settings/overview`;
   const handleSelectedTeam = () => {
     //encrypt wsid
-
-    const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/settings/overview`;
-    router.push(newUrl);
+    if (newUrl) {
+      setIsPageLoading(true);
+      router.push(newUrl);
+    }
     setSelectedLink("workspace_settings");
   };
 
@@ -944,7 +1002,6 @@ export default function ProjectsComponet() {
             }}
           >
             <ProjectTree />
-
             <SecondaryTextTypography
               style={{
                 color: "#7A43FE",

@@ -18,7 +18,6 @@ import {
 } from "@react-oauth/google";
 import { AzureIcon, GoogleIcon } from "@/app/Assests/icons";
 import IconLayout from "../../global/IconLayout";
-import { removeItem, setItem } from "@/app/Services/localstorage";
 
 export default function SignIn({ clientSession }: any) {
   const {
@@ -43,7 +42,7 @@ export default function SignIn({ clientSession }: any) {
     {
       id: 1,
       label: "E-Mail",
-      icon: <Email sx={{ fontSize: "14px", color: "#FFFFFF80" }} />,
+      icon: <Email sx={{ fontSize: "18px", color: "#FFFFFF80" }} />,
       type: "email",
       name: "email",
       value: formData?.email,
@@ -57,7 +56,7 @@ export default function SignIn({ clientSession }: any) {
     {
       id: 5,
       label: "Password",
-      icon: <Lock sx={{ fontSize: "14px", color: "#FFFFFF80" }} />,
+      icon: <Lock sx={{ fontSize: "18px", color: "#FFFFFF80" }} />,
       type: "password",
       name: "password",
       value: formData?.password,
@@ -133,16 +132,18 @@ export default function SignIn({ clientSession }: any) {
                 <Stack
                   key={index}
                   sx={{
-                    gap: 1,
+                    gap: 1.5,
                     alignItems: "flex-start",
                     justifyContent: "center",
                     width: { xs: "100%", sm: "80%", md: "360px" },
+                    marginBottom: index == 0 ? 1 : 0,
                   }}
                 >
                   <Box
                     sx={{
                       color: "#FFFFFF80",
                       display: "flex",
+                      alignItems: "center",
                       gap: "3px",
                     }}
                   >
@@ -150,7 +151,7 @@ export default function SignIn({ clientSession }: any) {
                     <SecondarySignInUPTypography
                       sx={{
                         color: "white",
-                        fontSize: "12px",
+                        fontSize: "13px",
                       }}
                     >
                       {elem?.label}
@@ -167,6 +168,8 @@ export default function SignIn({ clientSession }: any) {
                     error={elem.error}
                     helperText={elem.helperText}
                     onChangeHandler={elem.onChangeHandler}
+                    height="43px"
+                    radius="5px"
                   />
                 </Stack>
               );
@@ -179,13 +182,13 @@ export default function SignIn({ clientSession }: any) {
               }}
             >
               <GlobalButton
-                padding="5px 30px"
+                padding="4px 35px"
                 label={"Login"}
                 iconPosition="end"
                 fontWeight={500}
                 type={"submit"}
                 buttonType="primary"
-                radius="10px"
+                radius="8px"
                 fontSize={"15px"}
                 fontFamily={"Firasans-medium !important"}
               />
@@ -207,9 +210,22 @@ export default function SignIn({ clientSession }: any) {
                   margin: "10px 0",
                 }}
               >
-                <Divider textAlign="center">
+                <Divider
+                  variant="middle"
+                  sx={{
+                    borderColor: "#FFFFFF40",
+                    borderWidth: "1px 100px 0px 100px",
+                    borderStyle: "none solid",
+                    height: "1px",
+                    alignItems: "center",
+                  }}
+                >
                   <TertiarySignInUPTypography
-                    sx={{ color: "#FFFFFFBF", fontSize: "12px" }}
+                    sx={{
+                      color: "#FFFFFFBF",
+                      fontSize: "12px",
+                      top: 0,
+                    }}
                   >
                     {"(OR)"}
                   </TertiarySignInUPTypography>
@@ -233,7 +249,7 @@ export default function SignIn({ clientSession }: any) {
                     onClick: googleLogin,
                   },
                   {
-                    label: "Continue with Microsoft",
+                    label: "Continue with Azure",
                     icon: <AzureIcon />,
                     onClick: handleAuthentication,
                   },
@@ -252,7 +268,7 @@ export default function SignIn({ clientSession }: any) {
                         boxShadow: "0px 0px 0px .3px #F3F3F340 inset",
                       }}
                       onClickHandler={btn.onClick}
-                      radius="7px"
+                      radius="8px"
                     />
                   );
                 })}

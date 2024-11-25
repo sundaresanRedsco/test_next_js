@@ -166,6 +166,7 @@ function Channel() {
         })
         .catch((error: any) => {
           console.log(error, "error OccurredWork");
+          
         });
     } else {
       console.log("Form has errors.");
@@ -268,8 +269,8 @@ function Channel() {
                 justifyContent: "center",
                 alignItems: "center",
                 position: "absolute",
-                marginLeft: "90%",
-                marginTop: "50%",
+                marginLeft: "79%",
+                marginTop: "78%",
                 zIndex: "99",
                 cursor: "pointer",
               }}

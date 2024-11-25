@@ -1,3 +1,5 @@
+"use client"
+
 import OverviewPageSkeleton from "@/app/apiflow_components/skeletons/WorkspaceSettings/OverviewPageSkeleton";
 import OverviewSettings from "@/app/apiflow_Pages/pages/workspace/overwiewSettings";
 import OverView from "@/app/apiflow_Pages/workspace/settings/Overview";

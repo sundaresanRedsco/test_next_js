@@ -59,7 +59,7 @@ export default function WelcomePage() {
         Better API Visibility, Lesser Complexity
       </TertiarySignInUPTypography>
       <GButton
-        padding="12px 34px"
+        padding="12px 40px"
         label={"Let’s Get Started"}
         iconPosition="end"
         icon={<ArrowForwardRounded />}
@@ -69,6 +69,7 @@ export default function WelcomePage() {
         margin="70px 0 0 0"
         fontWeight={600}
         onClickHandler={handleStep}
+        radius="10px"
       />
     </Stack>
   );

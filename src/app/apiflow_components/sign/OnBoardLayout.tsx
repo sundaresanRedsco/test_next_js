@@ -79,6 +79,7 @@ export default function OnBoardLayout({
               alignItems: "center",
               width: { xs: "100%", sm: isWorkflowModal ? "100%" : "90%" },
               flexDirection: { xs: "column", sm: "row" },
+              position: "relative",
             }}
           >
             {isLoading && <GLoader />}
@@ -91,9 +92,9 @@ export default function OnBoardLayout({
                 width: {
                   xs: "100%", // Full width on extra-small screens
                   sm: "250px", // Fixed width on small screens
-                  md: "30%", // 30% width on medium screens
-                  lg: "30%", // Adjusted width on large screens (e.g., 25%)
-                  xl: "30%", // Optional width on extra-large screens if needed
+                  md: "28%", // 30% width on medium screens
+                  lg: "28%", // Adjusted width on large screens (e.g., 25%)
+                  xl: "28%", // Optional width on extra-large screens if needed
                 },
 
                 position: "relative",
@@ -132,14 +133,23 @@ export default function OnBoardLayout({
               >
                 {activeStep == 0 ? (
                   !isWorkflowModal && (
-                    <GToggleButton
-                      handleChange={handleChange}
-                      alignment={formDataStore?.currentPage}
-                      buttons={buttons}
-                      customStyle={{
-                        width: "160px",
+                    <Box
+                      sx={{
+                        width: "135px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
-                    />
+                    >
+                      <GToggleButton
+                        handleChange={handleChange}
+                        alignment={formDataStore?.currentPage}
+                        buttons={buttons}
+                        customStyle={{
+                          width: "160px",
+                        }}
+                      />
+                    </Box>
                   )
                 ) : (
                   <GlobalButton
@@ -199,9 +209,9 @@ export default function OnBoardLayout({
                   width: {
                     xs: "100%", // Full width on extra-small screens
                     sm: "250px", // Fixed width on small screens
-                    md: "30%", // 30% width on medium screens
-                    lg: "30%", // Adjusted width on large screens (e.g., 25%)
-                    xl: "30%", // Optional width on extra-large screens if needed
+                    md: "28%", // 28% width on medium screens
+                    lg: "28%", // Adjusted width on large screens (e.g., 25%)
+                    xl: "28%", // Optional width on extra-large screens if needed
                   },
                 }}
               ></Box>

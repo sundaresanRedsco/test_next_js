@@ -26,7 +26,7 @@ const HeadingTypography = styled(Typography)`
 
 const options = [
   { label: "Compliance", value: "compliance" },
-  { label: "Thretcategory", value: "threatCategory" }, // Default placeholder
+  { label: "Threat Category", value: "threatCategory" }, // Default placeholder
   { label: "Risk", value: "risk" },
   { label: "Frequent Changes", value: "frequentChanges" },
   { label: "Recent Messages", value: "recentMessages" },
@@ -96,14 +96,13 @@ function ThreatHeader() {
             value={selectedValue}
             color={"white"}
             onChange={handleChange}
-            name={"gateway"}  
+            name={"gateway"}
             background="#7946FD40"
             borderRadius="7px"
             radius="10px"
             height="35px"
             fontWeight="0"
             fontSize="11px"
-
           />
 
           <GSelect
@@ -119,7 +118,6 @@ function ThreatHeader() {
             radius="10px"
             height="35px"
             fontSize="11px"
-
           />
 
           <GSelect
@@ -135,7 +133,6 @@ function ThreatHeader() {
             radius="10px"
             height="35px"
             fontSize="11px"
-
           />
           <span>
             <ExpandIcon />

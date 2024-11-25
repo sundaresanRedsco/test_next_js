@@ -76,7 +76,7 @@ function WorkspaceSettings() {
   const [selectedLink, setSelectedLink] = useState<any>("overview");
   const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/settings`;
   const handleActive = (id: any) => {
-    setSelectedLink(id); // Set selected link on click
+    // setSelectedLink(id); // Set selected link on click
     router.push(`${newUrl}/${id}`);
   };
 
@@ -154,21 +154,34 @@ function WorkspaceSettings() {
                   workspace?.id === selectedLink
                     ? "linear-gradient(90deg, #9B53B0 0%, rgba(122, 67, 254, 0.5) 100%)"
                     : "transparent",
-                padding: "10px",
+                padding: "8px",
                 cursor: "pointer",
                 borderTopLeftRadius: "8px",
                 borderBottomLeftRadius: "8px",
-                color: workspace?.id === selectedLink ? "white" : "#FFFFFF80",
+                color: workspace?.id === selectedLink ? "#FFFFFF" : "#FFFFFF80",
               }}
               onClick={() => {
-                handleActive(workspace?.id);
+                // Update selected link for active color
+                setSelectedLink(workspace.id);
+
+                if (
+                  workspace.id !== "collaborators" &&
+                  workspace.id !== "integration"
+                ) {
+                  handleActive(workspace.id);
+                } else {
+                  console.log(
+                    `${workspace.text} clicked, but navigation is disabled.`
+                  );
+                }
               }}
             >
-              {workspace.icon}
+              <Box> {workspace.icon}</Box>
               <PrimaryTypography
                 style={{
-                  color: "white",
-                  marginLeft: "1rem",
+                  color: "#FFFFFF",
+                  marginLeft: "0.8rem",
+                  marginTop:"3px",
                   fontFamily:
                     workspace?.id === selectedLink
                       ? "Firasans-medium"

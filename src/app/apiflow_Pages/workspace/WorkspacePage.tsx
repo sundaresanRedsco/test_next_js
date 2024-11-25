@@ -23,6 +23,9 @@ import { useSideBarStore } from "@/app/hooks/sideBarStore";
 import { setItem } from "@/app/Services/localstorage";
 import dynamic from "next/dynamic";
 import WorkspacePageSkeleton from "@/app/apiflow_components/skeletons/WorkspacePageSkeleton";
+import { useGlobalStore } from "@/app/hooks/useGlobalStore";
+import { useSignUpStore } from "@/app/hooks/sign/signZustand";
+import { useSession } from "next-auth/react";
 
 const WorkspaceCard = dynamic(
   () => import("../../apiflow_components/workspace/WorkspaceCard"),
@@ -47,10 +50,12 @@ const TextTypography = styled(Typography)`
 `;
 
 function WorkspacePage() {
+  const { openSignUp }: any = useSignUpStore();
+
   const dispatch = useDispatch<any>();
   const router = useRouter();
   const [offsetVal, setoffsetVal] = useState<number>(0);
-
+  const { status } = useSession();
   const { workspaceList, currentWorkspace, getWsidLoading, totalCount } =
     useSelector<RootStateType, workspaceReducer>(
       (state) => state.apiManagement.workspace
@@ -60,9 +65,11 @@ function WorkspacePage() {
     (state) => state.common
   );
   const { setIsSidebarCollapsed } = useSideBarStore();
+  const { setIsPageLoading } = useGlobalStore();
+
   const handleSelectedTeam = (wsidVal: string) => {
     //encrypt wsid
-
+    setIsPageLoading(true);
     setCookies(
       process.env.NEXT_PUBLIC_COOKIE_WSID || "",
       wsidVal,
@@ -84,8 +91,10 @@ function WorkspacePage() {
     setItem(`/sidebarMenuId/${userProfile?.user?.user_id}`, "apiMan");
     router.push(`/userId/${userProfile?.user.user_id}/workspaceId/${wsidVal}`);
   };
-
+  const [isLoading, setisLoading] = useState(false);
   const fetchPageData = async (offsetVal: number) => {
+    setisLoading(true);
+
     const data = {
       user_id: userProfile?.user.user_id,
       offset: offsetVal,
@@ -94,9 +103,12 @@ function WorkspacePage() {
 
     dispatch(GetWorkspacesByUserId(data))
       .unwrap()
-      .then((workspaceRes: any) => {})
+      .then((workspaceRes: any) => {
+        setisLoading(false);
+      })
       .catch((error: any) => {
         console.log("ErrorWorkspace: ", error);
+        setisLoading(false);
       });
   };
 
@@ -107,16 +119,17 @@ function WorkspacePage() {
   const handleScroll = () => {
     if (containerRef.current) {
       const bottom = containerRef.current.getBoundingClientRect().bottom;
-      if (bottom <= window.innerHeight) {
+      if (bottom <= window.innerHeight && !isLoading) {
         setoffsetVal((prev) => prev + 5);
       }
     }
   };
   useEffect(() => {
-    fetchPageData(offsetVal);
-  }, [userProfile?.user.user_id]);
+    if (userProfile?.user.user_id) fetchPageData(offsetVal);
+  }, [userProfile?.user.user_id, openSignUp]);
   useEffect(() => {
-    if (offsetVal <= totalCount) fetchPageData(offsetVal);
+    if (offsetVal <= totalCount && userProfile?.user.user_id)
+      fetchPageData(offsetVal);
   }, [userProfile?.user.user_id, offsetVal]);
 
   // Hook to handle scroll events
@@ -143,64 +156,43 @@ function WorkspacePage() {
       </TextTypography>
 
       <Grid container spacing={3}>
-        {workspaceList?.map((workspace: any) => (
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={4}
-            lg={4}
-            xl={4}
-            key={workspace?.id}
-            sx={{
-              display: "flex",
-              position: "relative",
-              minHeight: "300px",
-              "@media (min-width: 1600px)": {
-                // Change '1920px' to any custom breakpoint
-                flexBasis: "25%", // Adjust as per your needs
-                maxWidth: "25%", // Same as the flexBasis for proper alignment
-              },
-            }}
-          >
-            <React.Suspense fallback={<WorkspacePageSkeleton />}>
-              <WorkspaceCard
-                membersCount={workspace?.members_count}
-                syncTime={"2 mins ago"}
-                riskCount={2}
-                projectCount={workspace?.group_count}
-                title={workspace?.name}
-                onClickHandler={() => handleSelectedTeam(workspace.id)}
-              />
-            </React.Suspense>
-          </Grid>
-        ))}
-        {getWsidLoading &&
-          workspaceList?.length > 1 &&
-          [1, 2, 3, 4].map((elem, index) => {
-            return (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                lg={4}
-                xl={4}
-                sx={{
-                  display: "flex",
-                  position: "relative",
-                  minHeight: "300px",
-                  "@media (min-width: 1600px)": {
-                    // Change '1920px' to any custom breakpoint
-                    flexBasis: "25%", // Adjust as per your needs
-                    maxWidth: "25%", // Same as the flexBasis for proper alignment
-                  },
-                }}
-              >
-                <WorkspacePageSkeleton key={index} />
-              </Grid>
-            );
-          })}
+        {status == "loading" || (getWsidLoading && !isLoading) ? (
+          <SkeletonLoader />
+        ) : (
+          workspaceList?.map((workspace: any) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              lg={4}
+              xl={4}
+              key={workspace?.id}
+              sx={{
+                display: "flex",
+                position: "relative",
+                minHeight: "300px",
+                "@media (min-width: 1600px)": {
+                  // Change '1920px' to any custom breakpoint
+                  flexBasis: "25%", // Adjust as per your needs
+                  maxWidth: "25%", // Same as the flexBasis for proper alignment
+                },
+              }}
+            >
+              <React.Suspense fallback={<WorkspacePageSkeleton />}>
+                <WorkspaceCard
+                  membersCount={workspace?.members_count}
+                  syncTime={"2 mins ago"}
+                  riskCount={2}
+                  projectCount={workspace?.group_count}
+                  title={workspace?.name}
+                  onClickHandler={() => handleSelectedTeam(workspace.id)}
+                />
+              </React.Suspense>
+            </Grid>
+          ))
+        )}
+        {isLoading && <SkeletonLoader />}
         {/* {getWsidLoading && (
           <Grid
             item
@@ -253,5 +245,30 @@ function WorkspacePage() {
     </div>
   );
 }
-
+const SkeletonLoader = () => {
+  return [1, 2, 3, 4].map((elem, index) => {
+    return (
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={4}
+        lg={4}
+        xl={4}
+        sx={{
+          display: "flex",
+          position: "relative",
+          minHeight: "300px",
+          "@media (min-width: 1600px)": {
+            // Change '1920px' to any custom breakpoint
+            flexBasis: "25%", // Adjust as per your needs
+            maxWidth: "25%", // Same as the flexBasis for proper alignment
+          },
+        }}
+      >
+        <WorkspacePageSkeleton key={index} />
+      </Grid>
+    );
+  });
+};
 export default WorkspacePage;

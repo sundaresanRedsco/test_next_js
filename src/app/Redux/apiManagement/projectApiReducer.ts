@@ -24,21 +24,24 @@ export const GetGroupsByWorkspaceIdOVerView = createAsyncThunk(
   "groups/GetGroupsByWorkspaceIdOVerView",
   async (value: any) => {
     try {
-      console.log(`api/Project/get_groups_by_workspace_id?WorkspaceId=${value?.WorkspaceId}&start=${value?.start}&end=${value?.end}`, "OVerViewCheck")
+      console.log(
+        `api/Project/get_groups_by_workspace_id?WorkspaceId=${value?.WorkspaceId}&start=${value?.start}&end=${value?.end}`,
+        "OVerViewCheck"
+      );
       return await AdminServices(
         "get",
         `api/Project/get_groups_by_workspace_id?WorkspaceId=${value?.WorkspaceId}&start=${value?.start}&end=${value?.end}`,
         null,
         null
-      )
+      );
     } catch (error: any) {
-       if (error?.response && error?.response?.status === 401) {
+      if (error?.response && error?.response?.status === 401) {
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
     }
   }
-)
+);
 
 export const GetProjectByWorkspaceIdOverView = createAsyncThunk(
   "projects/GetProjectByWorkspaceIdOverView",
@@ -48,16 +51,16 @@ export const GetProjectByWorkspaceIdOverView = createAsyncThunk(
         "get",
         `api/Project/get_project_by_workspace_id?workspace_id=${value}`,
         null,
-        null,
-      )
+        null
+      );
     } catch (error: any) {
-       if (error?.response && error?.response?.status === 401) {
+      if (error?.response && error?.response?.status === 401) {
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
     }
   }
-)
+);
 
 export const resetProjectstate = createAction("groups/resetState");
 
@@ -70,9 +73,11 @@ type InitialStateType = {
   projectEndValue: number;
   groupOverViewStart: number;
   groupOverViewEnd: number;
-  getGroupOverViewLoading: boolean,
-  getGroupTotalCount: number,
-  getProjectByWorkspaceLoading: boolean,
+  getGroupOverViewLoading: boolean;
+  getGroupTotalCount: number;
+  getGroupList: any;
+
+  getProjectByWorkspaceLoading: boolean;
 };
 
 const initialState: InitialStateType = {
@@ -86,7 +91,8 @@ const initialState: InitialStateType = {
   groupOverViewEnd: 8,
   getGroupOverViewLoading: false,
   getGroupTotalCount: 0,
-  getProjectByWorkspaceLoading: false
+  getProjectByWorkspaceLoading: false,
+  getGroupList: {},
 };
 
 export const projectApiSlice = createSlice({
@@ -115,6 +121,9 @@ export const projectApiSlice = createSlice({
     },
     updateGroupOverViewEnd(state, action) {
       state.groupOverViewEnd = action.payload;
+    },
+    resetProjectList(state, action) {
+      state.projectsList = [];
     },
   },
   extraReducers(builder) {
@@ -165,18 +174,16 @@ export const projectApiSlice = createSlice({
       }
     );
 
-    builder.addCase(
-      GetGroupsByWorkspaceIdOVerView.pending,
-      (state, action) => {
-        state.getGroupOverViewLoading = true;
-      }
-    );
+    builder.addCase(GetGroupsByWorkspaceIdOVerView.pending, (state, action) => {
+      state.getGroupOverViewLoading = true;
+    });
 
     builder.addCase(
       GetGroupsByWorkspaceIdOVerView.fulfilled,
       (state, action) => {
         state.getGroupOverViewLoading = false;
-        state.getGroupTotalCount = action?.payload?.totalCount
+        state.getGroupTotalCount = action?.payload?.totalCount;
+        state.getGroupList = action?.payload;
       }
     );
 
@@ -219,5 +226,6 @@ export const {
   updateGroupOverViewEnd,
   updateGroupOverViewStart,
   setCurrentProjectDetails,
+  resetProjectList,
 } = projectApiSlice.actions;
 export default projectApiSlice.reducer;

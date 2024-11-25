@@ -42,6 +42,26 @@ export const GetWorkspacesByUserId = createAsyncThunk(
     }
   }
 );
+export const GetSelectionWorkspaces = createAsyncThunk(
+  "workspace/GetSelectionWorkspaces",
+  async (data: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        // `Api/Workspace_/get_workspaces_by_userid?user_id=${data?.user_id}&offset=${data?.offset}&limit=${data?.limit}`,
+        `Api/Workspace_/get_workspaces_by_userid?offset=${data?.offset}&limit=${data?.limit}`,
+
+        null,
+        null
+      );
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
+      throw new Error(errorHandling(error));
+    }
+  }
+);
 
 export const GetWorkspacesById = createAsyncThunk(
   "workspace/GetWorkspacesById",
@@ -87,7 +107,9 @@ export const resetWorkspaceState = createAction("workspace/resetState");
 type InitialStateType = {
   loading: boolean;
   workspaceList: workspaceInterface[];
+  workspaceSelectList: workspaceInterface[];
   getWsidLoading: boolean;
+  getWsSelectLoading: boolean;
   totalCount: number;
   currentWorkspace: workspaceInterface | null;
   workSpaceResponce: any;
@@ -97,8 +119,10 @@ type InitialStateType = {
 const initialState: InitialStateType = {
   loading: false,
   workspaceList: [],
+  workspaceSelectList: [],
   workSpaceResponce: {},
   getWsidLoading: false,
+  getWsSelectLoading: false,
   currentWorkspace: null,
   updateWorkspaceLoading: false,
   totalCount: 0,
@@ -191,6 +215,33 @@ export const workspaceSlice = createSlice({
 
     builder.addCase(GetWorkspacesByUserId.rejected, (state, action) => {
       state.getWsidLoading = false;
+    });
+
+    builder.addCase(GetSelectionWorkspaces.pending, (state, action) => {
+      state.getWsSelectLoading = true;
+    });
+
+    builder.addCase(GetSelectionWorkspaces.fulfilled, (state, action) => {
+      state.getWsSelectLoading = false;
+      const newWorkspaceList = action.payload.workspaces;
+      state.totalCount = action.payload.total_count;
+      // Create a set of IDs from the new workspace list for quick lookup
+      const newWorkspaceIds = new Set(newWorkspaceList.map((nw: any) => nw.id));
+
+      // Filter out workspaces from the old list that are not in the new list
+      const filteredOldWorkspaces = state.workspaceSelectList.filter(
+        (workspace) => !newWorkspaceIds.has(workspace.id)
+      );
+
+      // Update the workspace list with the filtered old workspaces and the new workspaces
+      state.workspaceSelectList = [
+        ...filteredOldWorkspaces,
+        ...newWorkspaceList,
+      ];
+    });
+
+    builder.addCase(GetSelectionWorkspaces.rejected, (state, action) => {
+      state.getWsSelectLoading = false;
     });
 
     builder.addCase(UpdateWorkspace.pending, (state, action) => {

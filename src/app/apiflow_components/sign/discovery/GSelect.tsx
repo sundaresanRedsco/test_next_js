@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   TextField,
   MenuItem,
@@ -8,6 +8,8 @@ import {
 } from "@mui/material";
 import { KeyboardArrowDownRounded } from "@mui/icons-material";
 import theme from "@/Theme/theme";
+import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
+import useScrollRef from "@/app/hooks/useScrollRef";
 type Props = {
   fullWidth?: boolean;
   width?: any;
@@ -37,6 +39,11 @@ type Props = {
   background?: any;
   customStyle?: any;
   padding?: any;
+  additionalMenuItemsStyle?: any;
+  totalCount?: any;
+  fetchData?: any;
+  isMenuItemsLoading?: any;
+  setisMenuItemsLoading?: any;
 };
 export default function GSelect(props: Props) {
   const {
@@ -66,8 +73,12 @@ export default function GSelect(props: Props) {
     background,
     customStyle,
     padding,
+    additionalMenuItemsStyle,
+    fetchData,
+    totalCount,
+    isMenuItemsLoading,
+    setisMenuItemsLoading,
   } = props;
-
   const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const selectedValue = event.target.value;
     console.log("Selected Value:", selectedValue);
@@ -76,6 +87,47 @@ export default function GSelect(props: Props) {
       onChange(selectedValue, event);
     }
   };
+  const containerRef = useRef<any>();
+  // const { handleScroll, offsetVal } = useScrollRef(containerRef);
+  const [offsetVal, setoffsetVal] = useState(0);
+  const selectMenuRef = useRef<any>();
+
+  const handleScroll = () => {
+    if (containerRef.current) {
+      const bottom = containerRef.current.getBoundingClientRect().bottom;
+      if (bottom <= window.innerHeight) {
+        setoffsetVal((prev) => prev + 5);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (offsetVal <= totalCount && !isMenuItemsLoading) {
+      setisMenuItemsLoading(true);
+      fetchData(offsetVal);
+    }
+  }, [offsetVal]);
+  useEffect(() => {
+    const observer = new MutationObserver((mutationsList, observer) => {
+      if (selectMenuRef.current) {
+        selectMenuRef.current.addEventListener("scroll", handleScroll);
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      if (selectMenuRef.current) {
+        selectMenuRef.current.removeEventListener("scroll", handleScroll);
+      }
+      observer.disconnect();
+    };
+  }, []);
+  const isHeightIncrease = !isMenuItemsLoading && offsetVal <= totalCount;
 
   return (
     <Box
@@ -84,6 +136,7 @@ export default function GSelect(props: Props) {
       }}
     >
       <TextField
+        // ref={selectMenuRef}
         name={name}
         fullWidth={fullWidth}
         size={size}
@@ -99,11 +152,12 @@ export default function GSelect(props: Props) {
           width: width,
           background: background || "transparent",
           "& .MuiInputBase-root": {
-            border: border || "1.5px solid #F3F3F340",
+            // border: border || "1.5px solid #F3F3F340",
             height: height,
             display: "flex",
             alignItems: "center",
             paddingLeft: "10px",
+            boxShadow: border ? border : "0 0 0 1.3px #F3F3F340",
           },
           "& .MuiOutlinedInput-notchedOutline": {
             border: "none",
@@ -112,7 +166,6 @@ export default function GSelect(props: Props) {
           borderRadius: borderRadius || "7px",
           "& .MuiOutlinedInput-notchedOutline:hover": {
             borderColor: borderColor || "#F3F3F340",
-            border: border || "1.5px solid #F3F3F340",
           },
           "& .MuiSelect-select.MuiSelect-select": {
             fontFamily: "FiraSans-medium",
@@ -179,7 +232,9 @@ export default function GSelect(props: Props) {
                   //   },
                   // },
                   color: "white",
+                  ...additionalMenuItemsStyle,
                 },
+                ref: selectMenuRef,
               },
             },
           },
@@ -203,6 +258,27 @@ export default function GSelect(props: Props) {
             {option.label}
           </MenuItem>
         ))}
+        {isMenuItemsLoading &&
+          [1, 2, 3, 4].map((elem, index) => {
+            return (
+              <MenuItem
+                key={index}
+                sx={{
+                  marginBottom: elem == 4 ? "5px" : "20px",
+                  marginTop: elem == 1 ? "5px" : 0,
+                }}
+              >
+                <GSkeletonLoader secondary={true} open={true} width="90%" />
+              </MenuItem>
+            );
+          })}
+
+        <div
+          ref={containerRef}
+          style={{
+            height: isHeightIncrease ? "50px" : 0,
+          }}
+        ></div>
       </TextField>
       {helperText && (
         <FormHelperText

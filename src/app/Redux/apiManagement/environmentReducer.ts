@@ -121,7 +121,6 @@ export const GetProjectByWorkspaceIdSolrOffsetOverView = createAsyncThunk(
   }
 );
 
-
 export const resetGatewayStateSwaggerDoc = createAction("Gateway/resetState");
 
 export const resetSwaggerState = createAction("swaggerDoc/resetState");
@@ -159,7 +158,7 @@ const initialState: InitialStateType = {
   getProjectOverViewLoading: false,
   getProjectOverViewStart: 0,
   getProjectOverViewEnd: 8,
-  getProjectOverViewTotalCount: 0
+  getProjectOverViewTotalCount: 0,
 };
 
 export const environmentSlice = createSlice({
@@ -197,6 +196,9 @@ export const environmentSlice = createSlice({
 
     builder.addCase(GetProjectsByGroupOffset.fulfilled, (state, action) => {
       state.getProjectWsidLoading = false;
+      if (action.payload.length == 0) {
+        state.enviProjectsListSolrOffset = [];
+      }
       const newprojectList = action.payload;
       if (state.enviProjectsListSolrOffset.length > 0) {
         const projectId = getCookies(

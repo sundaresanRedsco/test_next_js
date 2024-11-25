@@ -26,7 +26,10 @@ import WorkspaceComponent from "./SidebarSubComponent/workspaceSideComponents/Wo
 import { useDispatch, useSelector } from "react-redux";
 import { resetGatewayStateProject } from "../Redux/apiManagement/projectReducer";
 import { resetGatewayStateApiGateway } from "../Redux/apiManagement/apiGatewayReducer";
-import { resetGatewayStateFlow } from "../Redux/apiManagement/flowReducer";
+import {
+  clearFlowList,
+  resetGatewayStateFlow,
+} from "../Redux/apiManagement/flowReducer";
 import Cookies from "js-cookie";
 import {
   resetGatewayStateSwaggerDoc,
@@ -63,6 +66,9 @@ import { SidebarIcon } from "../Assests/icons";
 import { getItems, removeItem, setItem } from "../Services/localstorage";
 import useMuiBreakpoints from "../hooks/useMuiBreakpoints";
 import IconLayout from "./global/IconLayout";
+import { useGlobalStore } from "../hooks/useGlobalStore";
+import { resetProjectList } from "../Redux/apiManagement/projectApiReducer";
+import { resetCollOperTreeData } from "../Redux/apiManagement/endpointReducer";
 
 interface SidebarContainerProps {
   expanded?: boolean;
@@ -191,6 +197,12 @@ const SidebarMenu = styled(Box)<SidebarMenuProps>`
 function SidebarComponent(props: any) {
   const { isCollapsed, setIsSidebarCollapsed, onClick } = props;
   const { setactiveStep, setFormDataStore } = useSignUpStore();
+  const dispatch = useDispatch<any>();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    dispatch(resetProjectList([]));
+  }, [isCollapsed]);
 
   const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
     (state) => state.apiManagement.workspace
@@ -202,9 +214,7 @@ function SidebarComponent(props: any) {
 
   const [selectedLink, setSelectedLink] = useState<any>("apiMan");
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
-  const dispatch = useDispatch<any>();
   const router = useRouter();
-  const pathname = usePathname();
 
   // const handleLinkHover = (id: any) => {
   //   console.log(id, "Linkid");
@@ -230,7 +240,7 @@ function SidebarComponent(props: any) {
   }, [selectedLink]);
   const baseUrl = `/userId/${userProfile.user.user_id}`;
   const { ismd, issm, islg } = useMuiBreakpoints();
-
+  const { setIsPageLoading, isPageLoading } = useGlobalStore();
   const paths = [
     {
       label: `${translate("apiManagementSidebar.API_MANAGEMENT")}`,
@@ -254,6 +264,9 @@ function SidebarComponent(props: any) {
       id: "dashboard",
       icon: <MenuImage style={{ height: "60%", width: "60%" }} />,
       onClickHandler: (id: any) => {
+        if (!pathname.includes("/dashboard")) {
+          setIsPageLoading(true);
+        }
         router.push(`${baseUrl}/dashboard`);
         setSelectedLink(id);
         setIsSidebarCollapsed(true);
@@ -265,6 +278,9 @@ function SidebarComponent(props: any) {
       id: "apiMan",
       icon: <MenuMaximize style={{ height: "60%", width: "60%" }} />,
       onClickHandler: (id: any) => {
+        if (pathname != baseUrl) {
+          setIsPageLoading(true);
+        }
         router.push(`${baseUrl}`);
         setSelectedLink(id);
         setIsSidebarCollapsed(true);
@@ -320,6 +336,7 @@ function SidebarComponent(props: any) {
       id: "logout",
       icon: <MenuLogout style={{ height: "60%", width: "60%" }} />,
       onClickHandler: (id: any) => {
+        setIsPageLoading(true);
         setactiveStep(0);
         setFormDataStore("currentPage", "Login");
         handleLogout();
@@ -327,6 +344,12 @@ function SidebarComponent(props: any) {
       },
     },
   ];
+  useEffect(() => {
+    if (isPageLoading) {
+      setIsPageLoading(false);
+    }
+  }, [pathname]);
+
   const [isOpen, setisOpen] = useState(paths.map(() => ({ open: false })));
   const handleToggle = (index: number) => {
     const tempData = isOpen.map((item, idx) => ({
@@ -453,9 +476,13 @@ function SidebarComponent(props: any) {
         {paths?.slice(0, 3).map((link: any, index: number) => (
           <SubMenuItem
             key={link?.id}
-            onClick={() => {
-              link.isLogo ? "" : link.onClickHandler(link?.id, index);
-            }}
+            onClick={
+              userProfile?.user?.user_id
+                ? () => {
+                    link.isLogo ? "" : link.onClickHandler(link?.id, index);
+                  }
+                : undefined
+            }
             active={link?.id === selectedLink}
             sx={{
               borderRadius: link?.id === selectedLink ? "6px" : "0px",
@@ -494,7 +521,11 @@ function SidebarComponent(props: any) {
         {paths?.slice(3, 6).map((link: any, index: number) => (
           <SubMenuItem
             key={link?.id}
-            onClick={() => link.onClickHandler(link?.id, index)}
+            onClick={
+              userProfile?.user?.user_id
+                ? () => link.onClickHandler(link?.id, index)
+                : undefined
+            }
             active={link?.id === selectedLink}
             sx={{
               borderRadius: link?.id === selectedLink ? "6px" : "0px",
@@ -533,7 +564,11 @@ function SidebarComponent(props: any) {
         {paths?.slice(6, 8).map((link: any, index: number) => (
           <SubMenuItem
             key={link?.id}
-            onClick={() => link.onClickHandler(link?.id, index)}
+            onClick={
+              userProfile?.user?.user_id
+                ? () => link.onClickHandler(link?.id, index)
+                : undefined
+            }
             active={link?.id === selectedLink}
             sx={{
               borderRadius: link?.id === selectedLink ? "6px" : "0px",

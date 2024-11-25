@@ -312,7 +312,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                     <SecondarySignInUPTypography
                       sx={{
                         color: "white",
-                        fontSize: "12px",
+                        fontSize: "13px",
                       }}
                     >
                       {elem?.label}
@@ -327,7 +327,8 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                     name={elem.name}
                     error={elem.isErr}
                     helperText={elem.errMsg}
-                    radius={"7px"}
+                    height="43px"
+                    radius="5px"
                   />
                 </Stack>
               </Grid>
@@ -354,7 +355,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                     <SecondarySignInUPTypography
                       sx={{
                         color: "white",
-                        fontSize: "12px",
+                        fontSize: "13px",
                       }}
                     >
                       {elem?.label}
@@ -440,7 +441,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                     <SecondarySignInUPTypography
                       sx={{
                         color: "white",
-                        fontSize: "12px",
+                        fontSize: "13px",
                       }}
                     >
                       {elem?.label}
@@ -454,6 +455,8 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                     onChangeHandler={elem.onChange}
                     error={elem.isErr}
                     helperText={elem.errMsg}
+                    height="43px"
+                    radius="5px"
                   />
                 </Stack>
               </Grid>

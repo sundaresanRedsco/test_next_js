@@ -132,7 +132,9 @@ function OverView() {
   const [avatarImage, setAvatarImage] = useState<any>(
     currentWorkspace?.profile_picture
   );
-  const [isToggled, setIsToggled] = useState(true);
+  const [isChannel, setIschannel] = useState(true);
+  console.log(isChannel,"isToggledsds");
+  
 
   const [data, setData] = useState({
     name: currentWorkspace?.name,
@@ -213,7 +215,7 @@ function OverView() {
   };
 
   const handleToggle = () => {
-    setIsToggled((prev) => !prev);
+    setIschannel((prev) => !prev);
   };
 
   const handleUpdateWorkspace = () => {
@@ -224,6 +226,7 @@ function OverView() {
         name: data?.name,
         descriptions: data?.description,
         profile_picture: avatarImage,
+        is_channel:isChannel
       },
     };
 
@@ -380,7 +383,7 @@ function OverView() {
             <TextTypography>Channel</TextTypography>
             <span style={{ marginTop: "5px" }}>
               <GSwitch
-                value={isToggled}
+                value={isChannel}
                 handleChange={handleToggle}
                 name={"toggleSwitch"}
               />

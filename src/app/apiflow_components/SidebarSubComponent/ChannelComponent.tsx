@@ -128,8 +128,8 @@ function ChannelComponent() {
               >
                 <SecondaryTextTypography
                   style={{
-                    color: "white",
-                    fontSize: "18px",
+                    color: "#FFFFFF",
+                    fontSize: "17px",
                   }}
                 >
                   {elem?.label}

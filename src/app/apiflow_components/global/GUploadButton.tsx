@@ -38,7 +38,7 @@ export default function GUploadButton({
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            padding: "5px",
+            padding: "10px",
             border: "1.5px solid gray",
             borderRadius: "10px",
           }}
@@ -63,7 +63,7 @@ export default function GUploadButton({
           label={label || "Select File"}
           background="#F3F3F31A"
           margin="0"
-          padding="5px"
+          padding="10px"
           color="white"
           type="button"
           icon={<FileUpload />}

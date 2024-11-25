@@ -175,6 +175,9 @@ export default function GInput(props: Props) {
         }}
         sx={{
           ...sx,
+          "&.MuiFormControl-root": {
+            height: "auto",
+          },
           "& input:-webkit-autofill": {
             // boxShadow: "none !important",
             WebkitBoxShadow: background
@@ -191,7 +194,7 @@ export default function GInput(props: Props) {
             paddingLeft: smallInput ? 0 : "auto",
             padding: padding,
             height: height,
-            border: border ? border : "1.5px solid #F3F3F340",
+            boxShadow: border ? border : "0 0 0 1.3px #F3F3F340",
           },
           "& .MuiOutlinedInput-notchedOutline": {
             border: "none",

@@ -1160,36 +1160,36 @@ export default function WorkflowOperationNode({ data }: any) {
     }
   }, [headers, inputs, auths, querys]);
 
-  useEffect(() => {
-    if (Array.isArray(warning)) {
-      warning.forEach((message: any, index: number) => {
-        if (message) {
-          console.log(`Warning at index ${index}:`, message);
-        }
-      });
-    }
-  }, [warning]);
+  // useEffect(() => {
+  //   if (Array.isArray(warning)) {
+  //     warning.forEach((message: any, index: number) => {
+  //       if (message) {
+  //         console.log(`Warning at index ${index}:`, message);
+  //       }
+  //     });
+  //   }
+  // }, [warning]);
 
-  useEffect(() => {
-    const newWarnings = headers.map((header: any) =>
-      header.name ? checkSensitiveInformation(header.name) : ""
-    );
-    setWarning(newWarnings);
-  }, [headers]);
+  // useEffect(() => {
+  //   const newWarnings = headers.map((header: any) =>
+  //     header.name ? checkSensitiveInformation(header.name) : ""
+  //   );
+  //   setWarning(newWarnings);
+  // }, [headers]);
 
-  useEffect(() => {
-    const newWarnings = querys.map((query: any) =>
-      query.name ? checkQuerySensitiveInformation(query.name) : ""
-    );
-    setQueryWarning(newWarnings);
-  }, [querys]);
+  // useEffect(() => {
+  //   const newWarnings = querys.map((query: any) =>
+  //     query.name ? checkQuerySensitiveInformation(query.name) : ""
+  //   );
+  //   setQueryWarning(newWarnings);
+  // }, [querys]);
 
-  useEffect(() => {
-    const newWarnings = globalKeys.map((global: any) =>
-      global.key_name ? checkGlobalSensitiveInformation(global.key_name) : ""
-    );
-    setGlobalWarning(newWarnings);
-  }, [globalKeys]);
+  // useEffect(() => {
+  //   const newWarnings = globalKeys.map((global: any) =>
+  //     global.key_name ? checkGlobalSensitiveInformation(global.key_name) : ""
+  //   );
+  //   setGlobalWarning(newWarnings);
+  // }, [globalKeys]);
 
   useEffect(() => {
     if (!flowYdoc) return;

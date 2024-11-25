@@ -22,7 +22,7 @@ export default function GatewayCard({ isActive, icon, label, onClick }: Props) {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        padding: 2,
+        padding: 3,
         borderRadius: "10px",
         transition: "background 3s, box-shadow 3s",
         "&:hover": {

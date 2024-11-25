@@ -75,32 +75,36 @@ export default function WorkflowHomePage() {
   );
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window?.innerWidth >= 1600) {
-        setDisplayedModifications(recentModifications?.slice(-3));
-      } else {
-        setDisplayedModifications(recentModifications?.slice(-2));
-      }
-    };
+    if (recentModifications) {
+      const handleResize = () => {
+        if (window?.innerWidth >= 1600) {
+          setDisplayedModifications(recentModifications?.slice(-3));
+        } else {
+          setDisplayedModifications(recentModifications?.slice(-2));
+        }
+      };
 
-    handleResize();
+      handleResize();
 
-    window.addEventListener("resize", handleResize);
+      window.addEventListener("resize", handleResize);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
   }, [recentModifications]);
 
   useEffect(() => {
-    dispatch(GetRecentModification(currentEnvironment))
-      .unwrap()
-      .then((getRecentModRes: any) => {
-        console.log(getRecentModRes, "getRecentModRes");
-      })
-      .catch((error: any) => {
-        console.log(error, "ERROR");
-      });
+    if (currentEnvironment) {
+      dispatch(GetRecentModification(currentEnvironment))
+        .unwrap()
+        .then((getRecentModRes: any) => {
+          console.log(getRecentModRes, "getRecentModRes");
+        })
+        .catch((error: any) => {
+          console.log(error, "ERROR");
+        });
+    }
   }, [currentEnvironment]);
 
   return (
@@ -129,6 +133,7 @@ export default function WorkflowHomePage() {
             padding: "10px",
             justifyContent: "space-around",
             marginTop: "20px",
+            gap: "20px",
           }}
         >
           {workflowVal?.map((val) => (
@@ -143,11 +148,22 @@ export default function WorkflowHomePage() {
                   lg: "33%",
                   xl: "33%",
                 },
+                gap: "10px",
               }}
             >
               {/* <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}> */}
               <InnerStyledCard>
-                <PrimaryTypography>{val}</PrimaryTypography>
+                <PrimaryTypography
+                  sx={{
+                    fontSize: {
+                      xl: "18px",
+                      lg: "18px",
+                      md: "16px",
+                    },
+                  }}
+                >
+                  {val}
+                </PrimaryTypography>
                 <KeyboardArrowRightIcon
                   style={{
                     color: "#FFFFFF",
@@ -180,7 +196,7 @@ export default function WorkflowHomePage() {
               isBackdrop={true}
             />
           )}
-          {recentModifications?.length <= 0 ? (
+          {displayedModifications?.length <= 0 ? (
             <Box
               sx={{
                 display: "flex",

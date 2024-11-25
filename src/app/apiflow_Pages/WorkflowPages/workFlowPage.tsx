@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 // import WorkflowHeader from "@/app/apiflow_components/WorkflowComponents/workflowHeader";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
@@ -95,6 +95,9 @@ import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularL
 import WorkFlowHeaderSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkFlowHeaderSkeleton";
 import WorkflowDrawerSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkflowDrawerSkeleton";
 import WorkflowSidebarSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkflowSidebarSkeleton";
+import _ from "lodash";
+import FlowDesigner from "@/app/ApiflowPages/ApiManagement/FlowDesigner";
+import DraggableDrawer from "@/app/ApiFlowComponents/ApiDesigner/drawer/draggableDrawer";
 
 const WorkflowHeader = dynamic(
   () => import("@/app/apiflow_components/WorkflowComponents/workflowHeader"),
@@ -1545,153 +1548,149 @@ const WorkflowDesigner = (props: any) => {
         }
         let name: string = tempData?.name;
         let node_name = name + (count == 0 ? "" : "_" + count);
-        dispatch(
-          GetOperationById({
-            operation_id: tempData?.id,
-            project_id: currentFlowDetails?.project_id,
-          })
-        )
-          .unwrap()
-          .then((operRes: any) => {
-            console.log("OperRes: ", operRes);
+        // dispatch(
+        //   GetOperationById({
+        //     operation_id: tempData?.id,
+        //     project_id: currentFlowDetails?.project_id,
+        //   })
+        // )
+        // .unwrap()
+        // .then((operRes: any) => {
+        // console.log("OperRes: ", operRes);
 
-            if (tempData?.type === "operations" && isEditable) {
-              // let name: string = tempData?.name;
-              let id: string = uuidv4();
-              // let node_name = generateUniqueNodeName();
-              let matchedPaths = extractPlaceholdersFromPath(
-                operRes?.[0]?.full_url || null
-              );
-              console.log(matchedPaths, operRes?.[0]?.full_url, "matchedPaths");
+        if (tempData?.type === "operations" && isEditable) {
+          // let name: string = tempData?.name;
+          let id: string = uuidv4();
+          // let node_name = generateUniqueNodeName();
+          let matchedPaths = extractPlaceholdersFromPath(null);
+          // console.log(matchedPaths, operRes?.[0]?.full_url, "matchedPaths");
 
-              let queryParams = operRes?.[0]?.operation_queryparamaeters;
+          let queryParams: any = [];
 
-              for (let params of matchedPaths) {
-                if (params) {
-                  const updatedData = queryParams?.filter(
-                    (x: any) => x?.name !== params && x?.scope !== "path"
-                  );
-
-                  queryParams = [
-                    ...updatedData,
-                    {
-                      name: params,
-                      test_value: "",
-                      scope: "path",
-                      data_type: "string",
-                    },
-                  ];
-                }
-              }
-
-              const operHeaders = operRes?.[0]?.operationHeaders?.map(
-                (x: any) => ({
-                  name: x.name,
-                  test_value: x.test_value,
-                  data_type: x.data_type,
-                })
+          for (let params of matchedPaths) {
+            if (params) {
+              const updatedData: any = queryParams?.filter(
+                (x: any) => x?.name !== params && x?.scope !== "path"
               );
 
-              const newNode = {
-                id: id,
-                type: "operationNode",
-                name: node_name,
-                position: { x: dropPosition?.x, y: dropPosition?.y },
-                positionAbsolute: { x: dropPosition?.x, y: dropPosition?.y },
-                status: "null",
-                flow_id: apiFlow_Id,
-                version: versionValue,
-                created_by: userProfile.user.user_id,
-                data: JSON.stringify({
-                  name,
-                  id,
-                  node_name,
-                  operation_id: tempData?.id,
-                  method: operRes?.[0]?.http_method,
-                  full_url: operRes?.[0]?.full_url,
-                  operations_header: operHeaders,
-                  operations_input: [],
-                  operations_auth: [],
-                  operations_query_param: queryParams,
-                  raw_output: operRes?.[0]?.raw_output,
-                  raw_payload: operRes?.[0]?.raw_payload,
-                }),
-                response: {},
-                width: 230,
-                height: 120,
-              };
+              queryParams = [
+                ...updatedData,
+                {
+                  name: params,
+                  test_value: "",
+                  scope: "path",
+                  data_type: "string",
+                },
+              ];
+            }
+          }
 
-              // Parse and access the variable
-              const parsedData = JSON.parse(newNode?.data);
-              console.log("Parsed Data: ", parsedData);
+          const operHeaders = []?.map((x: any) => ({
+            name: x.name,
+            test_value: x.test_value,
+            data_type: x.data_type,
+          }));
 
-              // Add the condition to allow dragging only if operation_id is not null
-              if (parsedData?.operation_id !== null) {
-                let updatedNode: any = {
-                  action: "ADD_NODE",
+          const newNode = {
+            id: id,
+            type: "operationNode",
+            name: node_name,
+            position: { x: dropPosition?.x, y: dropPosition?.y },
+            positionAbsolute: { x: dropPosition?.x, y: dropPosition?.y },
+            status: "null",
+            flow_id: apiFlow_Id,
+            version: versionValue,
+            created_by: userProfile.user.user_id,
+            data: JSON.stringify({
+              name,
+              id,
+              node_name,
+              operation_id: tempData?.id,
+              method: tempData?.http_method,
+              full_url: tempData?.full_url,
+              operations_header: operHeaders,
+              operations_input: [],
+              operations_auth: [],
+              operations_query_param: [],
+              raw_output: "",
+              raw_payload: "",
+            }),
+            response: {},
+            width: 230,
+            height: 120,
+          };
+
+          // Parse and access the variable
+          const parsedData = JSON.parse(newNode?.data);
+          console.log("Parsed Data: ", parsedData);
+
+          // Add the condition to allow dragging only if operation_id is not null
+          if (parsedData?.operation_id !== null) {
+            let updatedNode: any = {
+              action: "ADD_NODE",
+              status: "null",
+              flow_id: apiFlow_Id,
+              id: id,
+              nodes: newNode,
+            };
+
+            const nodeMap = ydoc?.getMap<any>("nodes");
+            if (nodeMap) {
+              nodeMap.set(updatedNode.id, updatedNode);
+
+              const startNode = nodes.find(
+                (node) => node.type === "startButtonNode"
+              );
+              console.log(startNode, "startNode");
+              if (startNode && nodes?.length == 1) {
+                let id = uuidv4();
+                let edge = {
+                  ...params,
+                  id: id,
+                  animated: true,
+                  name: "null",
+                  status: "null",
+                  source: startNode.id,
+                  flow_id: apiFlow_Id,
+                  sourceHandle: startNode.id + "_startHandle",
+                  target: updatedNode.id,
+                  targetHandle: updatedNode.id + "_input",
+                  version: versionValue,
+                  created_by: userProfile.user.user_id,
+                  style: {
+                    stroke: "#4CAF50",
+                    // stroke: "#55CCFF",
+                  },
+                  type: "buttonEdge",
+                };
+
+                let updatedEdge: any = {
+                  action: "ADD_EDGES",
                   status: "null",
                   flow_id: apiFlow_Id,
                   id: id,
-                  nodes: newNode,
+                  edges: edge,
                 };
+                console.log(updatedEdge, "startNode");
 
-                const nodeMap = ydoc?.getMap<any>("nodes");
-                if (nodeMap) {
-                  nodeMap.set(updatedNode.id, updatedNode);
-
-                  const startNode = nodes.find(
-                    (node) => node.type === "startButtonNode"
-                  );
-                  console.log(startNode, "startNode");
-                  if (startNode && nodes?.length == 1) {
-                    let id = uuidv4();
-                    let edge = {
-                      ...params,
-                      id: id,
-                      animated: true,
-                      name: "null",
-                      status: "null",
-                      source: startNode.id,
-                      flow_id: apiFlow_Id,
-                      sourceHandle: startNode.id + "_startHandle",
-                      target: updatedNode.id,
-                      targetHandle: updatedNode.id + "_input",
-                      version: versionValue,
-                      created_by: userProfile.user.user_id,
-                      style: {
-                        stroke: "#4CAF50",
-                        // stroke: "#55CCFF",
-                      },
-                      type: "buttonEdge",
-                    };
-
-                    let updatedEdge: any = {
-                      action: "ADD_EDGES",
-                      status: "null",
-                      flow_id: apiFlow_Id,
-                      id: id,
-                      edges: edge,
-                    };
-                    console.log(updatedEdge, "startNode");
-
-                    const edgeMap = ydoc?.getMap<any>("edges");
-                    if (edgeMap) {
-                      edgeMap.set(updatedEdge.id, updatedEdge);
-                    } else {
-                      console.log("Yjs Map 'edgeMap' is not initialized.");
-                    }
-                  }
+                const edgeMap = ydoc?.getMap<any>("edges");
+                if (edgeMap) {
+                  edgeMap.set(updatedEdge.id, updatedEdge);
                 } else {
-                  console.log("Yjs Map 'run' is not initialized.");
+                  console.log("Yjs Map 'edgeMap' is not initialized.");
                 }
-              } else {
-                console.log("Operation ID is null. Drag is not allowed.");
               }
+            } else {
+              console.log("Yjs Map 'run' is not initialized.");
             }
-          })
-          .catch((error: any) => {
-            console.log("Error: ", error);
-          });
+          } else {
+            console.log("Operation ID is null. Drag is not allowed.");
+          }
+        }
+        // })
+        // .catch((error: any) => {
+        //   console.log("Error: ", error);
+        // });
       }
     },
     collect: (monitor) => ({
@@ -2277,7 +2276,7 @@ const WorkflowDesigner = (props: any) => {
     },
     {
       // onClick: () => navigate(`${pathname}/scheduleRuns`),
-      onClick: () => router.push(`${pathname}/scheduleRuns`),
+      onClick: () => "",
       ariaLabel: "Schedule Runs",
       tooltipTitle: "Schedule Runs",
       IconComponent: ScheduleSendIcon,
@@ -2851,7 +2850,7 @@ const WorkflowDesigner = (props: any) => {
   ]);
 
   useEffect(() => {
-    if (apiFlow_Id) {
+    if (apiFlow_Id && userProfile?.user?.user_id) {
       dispatch(GetApiDesignFlowByDesignFlowId(apiFlow_Id))
         .unwrap()
         .then((res: any) => {
@@ -2889,7 +2888,7 @@ const WorkflowDesigner = (props: any) => {
           }
         });
     }
-  }, [apiFlow_Id, userProfile.user.tenant_id]);
+  }, [apiFlow_Id, userProfile.user.tenant_id, userProfile?.user?.user_id]);
 
   const proOptions = { hideAttribution: true };
 
@@ -2915,6 +2914,56 @@ const WorkflowDesigner = (props: any) => {
       sessionStorage.removeItem("versionValue");
     };
   }, []);
+
+  // Throttled handler for onNodeDrag to test its effect
+  const onNodeDragWithThrottle = useCallback(
+    _.throttle((event, node) => {
+      // setNodes((nds) =>
+      //   // nds.map((n) =>
+      //   //   n.id === node.id ? { ...n, position: node.position } : n
+      //   // )
+      //   nds.map((n) => {
+      //     console.log("Current Node ID (n.id):", n.id);
+      //     console.log("Dragged Node ID (node.id):", node.id);
+      //     console.log("Dragged Node Position (node.position):", node.position);
+      //     return n.id === node.id ? { ...n, position: node.position } : n;
+      //   })
+      // );
+
+      requestAnimationFrame(() => {
+        setNodes((nds) => {
+          const updatedNodes = nds.map((n) =>
+            n.id === node.id ? { ...n, position: node.position } : n
+          );
+          return updatedNodes;
+        });
+      });
+    }, 50), // Throttle interval: 200ms
+    [setNodes]
+  );
+
+  let lastFrameTime = performance.now();
+  let frameCount = 0;
+
+  function measureFPS() {
+    const now = performance.now();
+    const delta = now - lastFrameTime;
+    lastFrameTime = now;
+    frameCount++;
+
+    if (delta > 1000) {
+      // Log FPS every second
+      console.log(`FPS: ${frameCount}`);
+      frameCount = 0;
+    }
+    requestAnimationFrame(measureFPS);
+  }
+
+  useEffect(() => {
+    measureFPS();
+  }, []);
+
+  console.log(ydoc, "YDOC");
 
   return (
     <Grid
@@ -2999,6 +3048,10 @@ const WorkflowDesigner = (props: any) => {
                       id="react-flow-container"
                       className="position-relative"
                       ref={reactFlowWrapper}
+                      onDragOver={(event) => {
+                        event.preventDefault();
+                        event.dataTransfer.dropEffect = "move";
+                      }}
                       elementsSelectable={true}
                       nodes={nodes}
                       edges={edges}
@@ -3013,6 +3066,9 @@ const WorkflowDesigner = (props: any) => {
                           userColor
                         )
                       }
+                      onNodeDrag={onNodeDragWithThrottle}
+                      snapToGrid={true}
+                      snapGrid={[25, 25]}
                       onEdgesChange={onEdgesChange}
                       nodesConnectable={isEditable}
                       nodesDraggable={isEditable}
@@ -3030,6 +3086,15 @@ const WorkflowDesigner = (props: any) => {
                         console.log("onNodeDragStart");
                       }}
                       onNodeDragStop={() => console.log("onNodeDragStop")}
+                      // onNodeDragStart={() => {
+                      //   console.log("onNodeDragStart");
+                      //   setDragCount(0);
+                      //   setEventTimestamps([]);
+                      // }}
+                      // onNodeDragStop={() => {
+                      //   console.log("onNodeDragStop");
+                      //   console.log("Total drag events:", dragCount);
+                      // }}
                       proOptions={proOptions}
                       nodeOrigin={[0.5, 0]}
                       // fitView
@@ -3066,25 +3131,25 @@ const WorkflowDesigner = (props: any) => {
               project_id={currentFlowDetails?.project_id}
               recentlyModifiedProp={recentlyModifiedProp}
             />
-     
-          </Grid>
-        </Grid>
-        <WorkflowDrawer
-          containerRef={mouseRef}
-          openDrawer={recentlyModifiedProp === true ? false : openDrawer}
-          setOpenDrawer={setOpenDrawer}
-          errors={errors}
-          compiling={compiling}
-          SuccessMessages={SuccessMessages}
-        />
-        {/* <DraggableDrawer
+          </Grid>{" "}
+          <WorkflowDrawer
             containerRef={mouseRef}
-            openDrawer={false}
+            openDrawer={recentlyModifiedProp === true ? false : openDrawer}
             setOpenDrawer={setOpenDrawer}
             errors={errors}
             compiling={compiling}
             SuccessMessages={SuccessMessages}
-          /> */}
+          />
+        </Grid>
+
+        {/* <DraggableDrawer
+          containerRef={mouseRef}
+          openDrawer={true}
+          setOpenDrawer={setOpenDrawer}
+          errors={errors}
+          compiling={compiling}
+          SuccessMessages={SuccessMessages}
+        /> */}
 
         {(saveFlow || (PublishConfirmation && PublishSavePopup)) && (
           <GDialogBox
@@ -3122,8 +3187,11 @@ const WorkflowDesigner = (props: any) => {
   );
 };
 
+const MemoizedWorkFlowDesigner = memo(WorkflowDesigner);
+
 export default (props: any) => (
   <ReactFlowProvider>
-    <WorkflowDesigner {...props} />
+    {/* <WorkflowDesigner {...props} /> */}
+    <MemoizedWorkFlowDesigner {...props} />
   </ReactFlowProvider>
 );

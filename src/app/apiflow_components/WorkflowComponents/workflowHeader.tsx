@@ -92,11 +92,12 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
         sx={{
           display: "flex",
           alignItems: "center",
+          flexDirection: "row",
           justifyContent: "space-between",
           gap: {
             xs: "5px",
             sx: "5px",
-            md: "10px",
+            md: "8px",
             lg: recentlyModifiedProp === true ? "5px" : "10px",
             xl: recentlyModifiedProp === true ? "5px" : "10px",
           },
@@ -105,14 +106,18 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
       >
         <PrimarySignInUPTypography
           sx={{
+            width: "auto",
             color: "#EEEEEE",
             fontSize: {
               xs: "12px",
               sm: "12px",
               md: "13px",
               lg: recentlyModifiedProp === true ? "8px" : "13px",
-              xl: recentlyModifiedProp === true ? "8px" : "18px",
+              xl: recentlyModifiedProp === true ? "8px" : "13px",
             },
+            // whiteSpace: "nowrap",
+            // overflow: "hidden",
+            // textOverflow: "ellipsis",
           }}
         >
           {apiFlowName}
@@ -122,7 +127,7 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
         <GButton
           buttonType="primary"
           label={isEditable ? "Edit Mode" : "View Mode"}
-          width="100%"
+          width="auto"
           fontSize={{
             xs: "10px",
             sm: "10px",
@@ -131,7 +136,7 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
             xl: recentlyModifiedProp === true ? "6px" : "15px",
           }}
           radius={"8px"}
-          padding="3px"
+          padding="3px 10px"
         />
         {userAction && (
           <HeadingTypography style={{ fontSize: "10px" }}>
@@ -160,13 +165,14 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
 
       <Stack
         direction="row"
-        spacing={{
-          xs: 0,
-          sm: 0,
-          md: 0,
-          lg: recentlyModifiedProp === true ? 0 : 1,
-          xl: recentlyModifiedProp === true ? 0 : 1,
-        }}
+        spacing={1}
+        // spacing={{
+        //   xs: 0,
+        //   sm: 0,
+        //   md: 0,
+        //   lg: recentlyModifiedProp === true ? 0 : 1,
+        //   xl: recentlyModifiedProp === true ? 0 : 1,
+        // }}
         sx={{
           display: "flex",
           alignItems: "center",

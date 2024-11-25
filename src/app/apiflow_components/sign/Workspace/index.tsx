@@ -263,7 +263,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                         <SecondarySignInUPTypography
                           sx={{
                             color: "white",
-                            fontSize: "12px",
+                            fontSize: "13px",
                           }}
                         >
                           {input?.title}
@@ -272,7 +272,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                           <PrimarySignInUPTypography
                             sx={{
                               color: "white",
-                              fontSize: "12px",
+                              fontSize: "13px",
                               textTransform: "uppercase",
                               textDecoration: "underline",
                             }}
@@ -323,7 +323,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                         <SecondarySignInUPTypography
                           sx={{
                             color: "white",
-                            fontSize: "12px",
+                            fontSize: "13px",
                           }}
                         >
                           {input?.label}
@@ -337,6 +337,8 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                         helperText={input.errMsg}
                         onChangeHandler={input.onChange}
                         value={input.value}
+                        height="43px"
+                        radius="5px"
                       />
                     </Stack>
                   </Grid>

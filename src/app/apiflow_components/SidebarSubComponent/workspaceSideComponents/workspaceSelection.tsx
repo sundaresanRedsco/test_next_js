@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
+  GetSelectionWorkspaces,
   GetWorkspacesByUserId,
   setCurrentWorkspace,
   workspaceReducer,
@@ -23,6 +24,8 @@ import { resetProjectState } from "@/app/Redux/apiManagement/projectApiReducer";
 
 import GSelect from "../../sign/discovery/GSelect";
 import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
+import { resetCollOperTreeData } from "@/app/Redux/apiManagement/endpointReducer";
+import { clearFlowList } from "@/app/Redux/apiManagement/flowReducer";
 
 const WorkspaceSelection = () => {
   const dispatch = useDispatch<any>();
@@ -37,10 +40,14 @@ const WorkspaceSelection = () => {
     CommonReducer
   >((state) => state.common);
 
-  const { workspaceList, currentWorkspace, getWsidLoading } = useSelector<
-    RootStateType,
-    workspaceReducer
-  >((state) => state.apiManagement.workspace);
+  const {
+    workspaceSelectList,
+    currentWorkspace,
+    getWsSelectLoading,
+    totalCount,
+  } = useSelector<RootStateType, workspaceReducer>(
+    (state) => state.apiManagement.workspace
+  );
 
   const theme = useTheme();
   const [offset, setOffset] = useState(0);
@@ -56,25 +63,17 @@ const WorkspaceSelection = () => {
     };
 
     setLoading(true);
-    dispatch(GetWorkspacesByUserId(data))
+    dispatch(GetSelectionWorkspaces(data))
       .unwrap()
       .then((workspaceRes: any) => {
-        console.log(workspaceRes, "WORKSPACECHECK2");
         if (workspaceRes?.length > 0) {
           setOffset((prevOffset) => prevOffset + limit);
-          setTeamsCount(workspaceList?.length || 0);
+          setTeamsCount(workspaceSelectList?.length || 0);
 
           if (!currentWorkspace) {
             const currentSelectedWorkspace =
-              workspaceList?.find((x) => x.id === workspaceId) ||
-              workspaceList[0];
-
-            console.log(
-              currentSelectedWorkspace,
-              workspaceList,
-              "WORKSPACECHECK1"
-            );
-
+              workspaceSelectList?.find((x) => x.id === workspaceId) ||
+              workspaceSelectList[0];
             dispatch(setCurrentWorkspace(currentSelectedWorkspace));
           }
         }
@@ -97,14 +96,16 @@ const WorkspaceSelection = () => {
 
   const handleSelectedTeam = (wsidVal: string) => {
     //encrypt wsid
-
+    dispatch(resetCollOperTreeData([]));
+    dispatch(clearFlowList([]));
+    localStorage.clear();
     setCookies(
       process.env.NEXT_PUBLIC_COOKIE_WSID || "",
       wsidVal,
       userProfile?.user?.expiration_time
     );
 
-    const currentSelectedWorkspace = workspaceList?.find(
+    const currentSelectedWorkspace = workspaceSelectList?.find(
       (x: any) => x.id === wsidVal
     );
     Cookies.remove(process.env.NEXT_PUBLIC_COOKIE_PROJECTID ?? "");
@@ -130,18 +131,12 @@ const WorkspaceSelection = () => {
   }, []);
 
   useEffect(() => {
-    if (userProfile.user.user_id) {
+    if ((userProfile.user.user_id, offset <= totalCount)) {
       fetchPageData(offset);
     }
   }, [userProfile.user.user_id, offset]);
 
-  console.log(
-    currentWorkspace,
-    workspaceList,
-    "WORKSPACECHECK",
-    currentTreeActive
-  );
-  const menuOption = workspaceList
+  const menuOption = workspaceSelectList
     ?.filter((x) => x.id !== currentWorkspace?.id)
     .map((elem) => ({ label: elem.name, value: elem.id }));
   if (currentWorkspace)
@@ -151,8 +146,12 @@ const WorkspaceSelection = () => {
     });
   return (
     <Box sx={{ position: "relative" }}>
-      {getWsidLoading && <GSkeletonLoader open={!getWsidLoading} />}
+      {getWsSelectLoading && <GSkeletonLoader open={!getWsSelectLoading} />}
       <GSelect
+        totalCount={totalCount}
+        fetchData={fetchPageData}
+        isMenuItemsLoading={loading}
+        setisMenuItemsLoading={setLoading}
         options={menuOption}
         fullWidth={true}
         background="#FFFFFF1A"
@@ -186,6 +185,7 @@ const WorkspaceSelection = () => {
           handleSelectedTeam(value);
         }}
         fontSize="13px"
+        additionalMenuItemsStyle={{ maxHeight: "150px" }}
       />
     </Box>
   );
