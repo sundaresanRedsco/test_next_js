@@ -1,6 +1,13 @@
 "use client";
 
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 // import WorkflowHeader from "@/app/apiflow_components/WorkflowComponents/workflowHeader";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
@@ -3133,6 +3140,17 @@ const WorkflowDesigner = (props: any) => {
     requestAnimationFrame(measureFPS);
   }
 
+  const onDragOver = useCallback((event: any) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
+
+  const onNodeDragStop = useCallback((event: any, node: any) => {
+    setNodes((nds) =>
+      nds.map((n) => (n.id === node.id ? { ...n, position: node.position } : n))
+    );
+  }, []);
+
   useEffect(() => {
     measureFPS();
   }, []);
@@ -3223,10 +3241,11 @@ const WorkflowDesigner = (props: any) => {
                       id="react-flow-container"
                       className="position-relative"
                       ref={reactFlowWrapper}
-                      onDragOver={(event) => {
-                        event.preventDefault();
-                        event.dataTransfer.dropEffect = "move";
-                      }}
+                      // onDragOver={(event) => {
+                      //   event.preventDefault();
+                      //   event.dataTransfer.dropEffect = "move";
+                      // }}
+                      onDragOver={onDragOver}
                       elementsSelectable={true}
                       nodes={nodes}
                       edges={edges}
@@ -3242,8 +3261,8 @@ const WorkflowDesigner = (props: any) => {
                         )
                       }
                       onNodeDrag={onNodeDragWithThrottle}
-                      snapToGrid={true}
-                      snapGrid={[25, 25]}
+                      // snapToGrid={true}
+                      // snapGrid={[15, 15]}
                       onEdgesChange={onEdgesChange}
                       nodesConnectable={isEditable}
                       nodesDraggable={isEditable}
@@ -3260,7 +3279,8 @@ const WorkflowDesigner = (props: any) => {
                       onNodeDragStart={() => {
                         console.log("onNodeDragStart");
                       }}
-                      onNodeDragStop={() => console.log("onNodeDragStop")}
+                      // onNodeDragStop={() => console.log("onNodeDragStop")}
+                      onNodeDragStop={onNodeDragStop}
                       // onNodeDragStart={() => {
                       //   console.log("onNodeDragStart");
                       //   setDragCount(0);

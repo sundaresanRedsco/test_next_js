@@ -1305,10 +1305,10 @@ export default function WorkflowOperationNode({ data }: any) {
   return (
     <Box
       sx={{
-        minWidth: 200,
-        minHeight: 120,
-        // width: "240px",
-        // height: "120px",
+        // minWidth: 200,
+        // minHeight: 120,
+        width: "230px",
+        height: "120px",
         // borderColor: "#F3F3F340",
         // backdropFilter: "blur(14.19)",
         background: "rgba(243, 243, 243, 0.15)",
@@ -1577,7 +1577,7 @@ export default function WorkflowOperationNode({ data }: any) {
                 },
                 backgroundColor: "unset !important",
                 marginLeft: "auto",
-                width: "max-content",
+                minWidth: "auto",
               }}
             >
               {isEditable && (
