@@ -188,7 +188,11 @@ export const FlowTree = ({ nestedExpandedIndexes }: any) => {
     }
   }, [nestedExpandedIndexes.flow]);
   const isHeightIncrease =
-    !getDesignFlowOffsetLoading && !isLoading && totalCount >= offsetVal.start;
+    !getDesignFlowOffsetLoading &&
+    !isLoading &&
+    totalCount > offsetVal.start &&
+    totalCount > 4;
+
   return (
     <AccordionDetails
       id="workflowContainer"

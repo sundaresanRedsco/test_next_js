@@ -223,7 +223,8 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
   const isHeightIncrease =
     !getMinimalCollOperTreeLoading &&
     !isLoading &&
-    collectionCount >= currentPage.start;
+    collectionCount > currentPage.start &&
+    collectionCount > 4;
   return (
     <AccordionDetails
       id="envContainer"

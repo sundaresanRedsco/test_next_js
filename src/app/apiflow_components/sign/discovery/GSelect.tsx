@@ -127,7 +127,7 @@ export default function GSelect(props: Props) {
       observer.disconnect();
     };
   }, []);
-  const isHeightIncrease = !isMenuItemsLoading && offsetVal <= totalCount;
+  const isHeightIncrease = !isMenuItemsLoading && offsetVal < totalCount;
 
   return (
     <Box

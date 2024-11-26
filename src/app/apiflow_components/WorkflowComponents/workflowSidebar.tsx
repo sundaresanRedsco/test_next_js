@@ -36,6 +36,7 @@ import { environmentReducer } from "@/app/Redux/apiManagement/environmentReducer
 import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
 import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
 import { useSideBarStore } from "@/app/hooks/sideBarStore";
+import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 
 export const SecondaryTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
@@ -66,18 +67,33 @@ const DraggableCard = ({
 }: // onSelectCurrentOperation,
 any) => {
   const theme = useTheme();
-  const [, drag] = useDrag({
-    type: ItemTypes.CARD,
-    item: { id, name, http_method, type },
-  });
+  // const [, drag] = useDrag({
+  //   type: ItemTypes.CARD,
+  //   item: { id, name, http_method, type },
+  // });
 
   const divRef = useRef<HTMLDivElement>(null);
 
   // Attach the drag to the ref, as React DnD will correctly handle this ref
-  drag(divRef);
-
+  // drag(divRef);
+  const { dropItem, setdropItems } = useGlobalStore();
+  const [isDragging, setisDragging] = useState(false);
+  useEffect(() => {
+    if (isDragging) {
+      setdropItems({ id, name, http_method, type });
+    }
+  }, [isDragging, id, name, http_method, type]);
   return (
-    <div ref={divRef}>
+    <div
+      ref={divRef}
+      onDragStart={(e) => {
+        setisDragging(true);
+      }}
+      onDragEnd={() => {
+        setisDragging(false);
+      }}
+      draggable
+    >
       {/* <SecondaryTextTypography
           key={id}
           style={{

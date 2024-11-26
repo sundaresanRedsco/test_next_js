@@ -98,6 +98,7 @@ import WorkflowSidebarSkeleton from "@/app/apiflow_components/skeletons/Designer
 import _ from "lodash";
 import FlowDesigner from "@/app/ApiflowPages/ApiManagement/FlowDesigner";
 import DraggableDrawer from "@/app/ApiFlowComponents/ApiDesigner/drawer/draggableDrawer";
+import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 
 const WorkflowHeader = dynamic(
   () => import("@/app/apiflow_components/WorkflowComponents/workflowHeader"),
@@ -1519,22 +1520,201 @@ const WorkflowDesigner = (props: any) => {
     [screenToFlowPosition]
   );
 
-  const [{ canDrop, isOver }, drop] = useDrop({
-    accept: ItemTypes.CARD,
-    drop: (item, monitor) => {
-      const container: any = document.getElementById("react-flow-container");
-      const rect = container.getBoundingClientRect();
-      const flowInstance: any = rfInstance;
-      const adjustdropPosition: any = monitor.getClientOffset();
-      const zoomLevel = flowInstance.getZoom();
+  // const [{ canDrop, isOver }, drop] = useDrop({
+  //   accept: ItemTypes.CARD,
+  //   drop: (item, monitor) => {
+  //     const container: any = document.getElementById("react-flow-container");
+  //     const rect = container.getBoundingClientRect();
+  //     const flowInstance: any = rfInstance;
+  //     const adjustdropPosition: any = monitor.getClientOffset();
+  //     const zoomLevel = flowInstance.getZoom();
 
-      const dropPosition: any = {
-        x: (adjustdropPosition.x - rect.left) / zoomLevel,
-        y: (adjustdropPosition.y - rect.top) / zoomLevel,
-      };
+  //     const dropPosition: any = {
+  //       x: (adjustdropPosition.x - rect.left) / zoomLevel,
+  //       y: (adjustdropPosition.y - rect.top) / zoomLevel,
+  //     };
 
-      let tempData: any = item;
-      console.log(tempData, "tempDataDrop");
+  //     let tempData: any = item;
+  //     console.log(tempData, "tempDataDrop");
+  //     let count = 0;
+  //     if (isEditable) {
+  //       for (const node of nodes) {
+  //         if (node.data) {
+  //           const nodeDataV2 = JSON.parse(node.data);
+  //           console.log(nodeDataV2, "nodeDataV2");
+  //           if (nodeDataV2.operation_id === tempData?.id) {
+  //             count++;
+  //           }
+  //         }
+  //       }
+  //       let name: string = tempData?.name;
+  //       let node_name = name + (count == 0 ? "" : "_" + count);
+  //       // dispatch(
+  //       //   GetOperationById({
+  //       //     operation_id: tempData?.id,
+  //       //     project_id: currentFlowDetails?.project_id,
+  //       //   })
+  //       // )
+  //       // .unwrap()
+  //       // .then((operRes: any) => {
+  //       // console.log("OperRes: ", operRes);
+
+  //       if (tempData?.type === "operations" && isEditable) {
+  //         // let name: string = tempData?.name;
+  //         let id: string = uuidv4();
+  //         // let node_name = generateUniqueNodeName();
+  //         let matchedPaths = extractPlaceholdersFromPath(null);
+  //         // console.log(matchedPaths, operRes?.[0]?.full_url, "matchedPaths");
+
+  //         let queryParams: any = [];
+
+  //         for (let params of matchedPaths) {
+  //           if (params) {
+  //             const updatedData: any = queryParams?.filter(
+  //               (x: any) => x?.name !== params && x?.scope !== "path"
+  //             );
+
+  //             queryParams = [
+  //               ...updatedData,
+  //               {
+  //                 name: params,
+  //                 test_value: "",
+  //                 scope: "path",
+  //                 data_type: "string",
+  //               },
+  //             ];
+  //           }
+  //         }
+
+  //         const operHeaders = []?.map((x: any) => ({
+  //           name: x.name,
+  //           test_value: x.test_value,
+  //           data_type: x.data_type,
+  //         }));
+
+  //         const newNode = {
+  //           id: id,
+  //           type: "operationNode",
+  //           name: node_name,
+  //           position: { x: dropPosition?.x, y: dropPosition?.y },
+  //           positionAbsolute: { x: dropPosition?.x, y: dropPosition?.y },
+  //           status: "null",
+  //           flow_id: apiFlow_Id,
+  //           version: versionValue,
+  //           created_by: userProfile.user.user_id,
+  //           data: JSON.stringify({
+  //             name,
+  //             id,
+  //             node_name,
+  //             operation_id: tempData?.id,
+  //             method: tempData?.http_method,
+  //             full_url: tempData?.full_url,
+  //             operations_header: operHeaders,
+  //             operations_input: [],
+  //             operations_auth: [],
+  //             operations_query_param: [],
+  //             raw_output: "",
+  //             raw_payload: "",
+  //           }),
+  //           response: {},
+  //           width: 230,
+  //           height: 120,
+  //         };
+
+  //         // Parse and access the variable
+  //         const parsedData = JSON.parse(newNode?.data);
+  //         console.log("Parsed Data: ", parsedData);
+
+  //         // Add the condition to allow dragging only if operation_id is not null
+  //         if (parsedData?.operation_id !== null) {
+  //           let updatedNode: any = {
+  //             action: "ADD_NODE",
+  //             status: "null",
+  //             flow_id: apiFlow_Id,
+  //             id: id,
+  //             nodes: newNode,
+  //           };
+
+  //           const nodeMap = ydoc?.getMap<any>("nodes");
+  //           if (nodeMap) {
+  //             nodeMap.set(updatedNode.id, updatedNode);
+
+  //             const startNode = nodes.find(
+  //               (node) => node.type === "startButtonNode"
+  //             );
+  //             console.log(startNode, "startNode");
+  //             if (startNode && nodes?.length == 1) {
+  //               let id = uuidv4();
+  //               let edge = {
+  //                 ...params,
+  //                 id: id,
+  //                 animated: true,
+  //                 name: "null",
+  //                 status: "null",
+  //                 source: startNode.id,
+  //                 flow_id: apiFlow_Id,
+  //                 sourceHandle: startNode.id + "_startHandle",
+  //                 target: updatedNode.id,
+  //                 targetHandle: updatedNode.id + "_input",
+  //                 version: versionValue,
+  //                 created_by: userProfile.user.user_id,
+  //                 style: {
+  //                   stroke: "#4CAF50",
+  //                   // stroke: "#55CCFF",
+  //                 },
+  //                 type: "buttonEdge",
+  //               };
+
+  //               let updatedEdge: any = {
+  //                 action: "ADD_EDGES",
+  //                 status: "null",
+  //                 flow_id: apiFlow_Id,
+  //                 id: id,
+  //                 edges: edge,
+  //               };
+  //               console.log(updatedEdge, "startNode");
+
+  //               const edgeMap = ydoc?.getMap<any>("edges");
+  //               if (edgeMap) {
+  //                 edgeMap.set(updatedEdge.id, updatedEdge);
+  //               } else {
+  //                 console.log("Yjs Map 'edgeMap' is not initialized.");
+  //               }
+  //             }
+  //           } else {
+  //             console.log("Yjs Map 'run' is not initialized.");
+  //           }
+  //         } else {
+  //           console.log("Operation ID is null. Drag is not allowed.");
+  //         }
+  //       }
+  //       // })
+  //       // .catch((error: any) => {
+  //       //   console.log("Error: ", error);
+  //       // });
+  //     }
+  //   },
+  //   collect: (monitor) => ({
+  //     isOver: monitor.isOver(),
+  //     canDrop: monitor.canDrop(),
+  //   }),
+  // });
+  const dropContainer1 = useRef<HTMLDivElement>(null);
+  // drop(dropContainer1);
+  const { dropItem } = useGlobalStore();
+  const onDrop = useCallback(
+    (event: any) => {
+      event.preventDefault();
+
+      if (!ItemTypes.CARD) {
+        return;
+      }
+      const dropPosition = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      let tempData: any = dropItem;
       let count = 0;
       if (isEditable) {
         for (const node of nodes) {
@@ -1693,14 +1873,8 @@ const WorkflowDesigner = (props: any) => {
         // });
       }
     },
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
-  });
-  const dropContainer1 = useRef<HTMLDivElement>(null);
-  drop(dropContainer1);
-
+    [screenToFlowPosition, dropItem]
+  );
   function parseData(data: any) {
     // Check if data is an object
     if (typeof data === "object") {
@@ -3045,6 +3219,7 @@ const WorkflowDesigner = (props: any) => {
                     ref={dropContainer1}
                   >
                     <ReactFlow
+                      onDrop={onDrop}
                       id="react-flow-container"
                       className="position-relative"
                       ref={reactFlowWrapper}
