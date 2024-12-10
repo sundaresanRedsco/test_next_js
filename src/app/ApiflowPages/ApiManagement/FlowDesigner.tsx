@@ -3449,10 +3449,12 @@ const FlowDesigner = (props: any) => {
               />
 
               {Array.from(cursors?.entries()).map(
-                ([clientId, position]: any) => (
+                ([clientId, position] : any) => (
                   <>
-                    {position?.name !== userProfile?.user?.email &&
-                      !position?.dragging && (
+                    {
+                    // position?.name !== userProfile?.user?.email &&
+                      !position?.dragging && 
+                      (
                         <LightTooltip
                           key={position?.name}
                           title={position?.name}
@@ -3476,6 +3478,36 @@ const FlowDesigner = (props: any) => {
                   </>
                 )
               )}
+
+{/* {Array.from(cursors?.entries()).map(
+                ([_clientId_, position]: any) => (
+                  <>
+           
+                      {!position?.dragging && (
+                        <_LightTooltip_
+                          key={position?.name}
+                          title={position?.name}
+                          open={true}
+                          // backgroundColor={"white"}
+                          // color={"black"}
+
+
+                          // arrow
+                        >
+                          <_NavigationIcon_
+                            sx={{
+                              position: "absolute",
+                              left: position?.x,
+                              top: position?.y,
+                              fill: position?.color,
+                              transform: rotate(-15deg),
+                            }}
+                          />
+                        </_LightTooltip_>
+                      )}
+                  </>
+                )
+              )} */}
             </ReactFlow>
           </div>
           {/* // )} */}

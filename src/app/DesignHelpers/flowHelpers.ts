@@ -65,9 +65,6 @@ export async function runHandler(
       let globalResponse = {};
       processedNodes = new Set();
 
-      console.log("updatedEdges1", updatedEdges);
-      console.log("updatedNodes", updatedNodes);
-      console.log("processedNodes", processedNodes);
       // Process nodes in parallel
       while (queue.length > 0) {
         const currentEdges = queue.splice(0, Math.min(threads, queue.length));
@@ -150,7 +147,6 @@ export async function runHandler(
         });
       }
 
-      console.log("target COMPLETED");
       finalizeRun(runMap, queue.length === 0, globalResponse);
     } catch (error) {
       console.error("Error occurred:", error);
@@ -189,12 +185,12 @@ export async function processNode(
 ) {
   // console.log(previousEdgeResponse, "previousEdgeResponse");
   let currentNode = updatedNodes.find((x: any) => x.id === currentEdge?.target);
-  console.log("target2");
+
   if (!currentNode || processedNodes?.has(currentNode.id))
     return { nextEdges: [] };
-  console.log("target21");
+
   processedNodes?.add(currentNode.id);
-  console.log("target3");
+
   const parsedData =
     typeof currentNode?.data === "string"
       ? JSON.parse(currentNode.data)
@@ -202,7 +198,7 @@ export async function processNode(
   currentNode = { ...currentNode, data: parsedData };
 
   updateRunStatus(runMap, currentEdge?.target);
-  console.log("target4");
+
   let nextEdges = [];
   let newPreviousEdgeResponse = previousEdgeResponse;
   let requestBody = {};
@@ -281,13 +277,13 @@ export async function processNode(
       newPreviousEdgeResponse?.statusCode
     );
   }
-  console.log("target4");
+
   finalizeNode(runMap, currentEdge?.target, nextEdges, {
     ...newPreviousEdgeResponse,
     requestBody: requestBody,
   });
   let current_node_id = currentNode?.data?.node_name;
-  console.log("target5");
+
   return {
     nextEdges,
     previousEdgeResponse: newPreviousEdgeResponse,
@@ -376,8 +372,6 @@ export async function processNode(
 // Compare all nodes and get similarity results
 // const similarityResults = compareAllNodes(setGlobalResponse);
 
-// console.log(similarityResults,"similarityResultssdsd");
-
 // Log results
 // similarityResults.forEach(result => {
 //   console.log(`Node ${result.node1} vs Node ${result.node2}`);
@@ -387,7 +381,6 @@ export async function processNode(
 
 export function updateRunStatus(runMap: any, target: any) {
   // Logging to indicate the function execution
-  console.log("target");
 
   // Check if runMap is provided
   if (runMap) {
@@ -421,7 +414,6 @@ export function updateRunStatus(runMap: any, target: any) {
   }
 
   // Logging to indicate the function has completed execution
-  console.log("target7");
 }
 
 export function createRequestBody(
@@ -436,7 +428,7 @@ export function createRequestBody(
 
   const payloadStr = currentNode?.data?.raw_payload || "{}";
   // const payload = JSON.parse(payloadStr);
-  console.log(globalResponse, "globalResponse");
+
   let payload = {};
 
   try {
@@ -452,8 +444,6 @@ export function createRequestBody(
     { response },
     globalKeysArray
   );
-
-  console.log(globalKeysArray, "globalKeysArraysdsdsdjrjr");
 
   let headersArr = currentNode?.data?.operations_header || [];
 
@@ -486,29 +476,28 @@ export function createRequestBody(
       new_payload[key.body_key] = key.body_key; // or key.body_key = value if there is a corresponding value
     }
   }
-  console.log(headersArr, "headersArr");
+
   const updateArray = (array: any) => {
     if (Array.isArray(array)) {
       return array.map((item) => {
         const key = item.name;
-        console.log(previousEdgeResponse?.status, "array");
+
         let value =
           // previousEdgeResponse?.status == "SUCCESS"
           replacePlaceholders(item.test_value, { response }, globalKeysArray);
         // : item.test_value;
-        console.log(value, "test_value");
+
         value =
           typeof value === "object" || Array.isArray(value)
             ? JSON.stringify(value)
             : value?.toString();
 
-        console.log(value, "array");
         return { key, value };
       });
     }
     return [];
   };
-  console.log("target8");
+
   return {
     operation_inputs: updateArray(currentNode?.data?.operations_input),
     operation_headers: updateArray(headersArr),
@@ -662,7 +651,6 @@ export function getNextEdges(
   nodetype: any,
   nodeEndVariable: any
 ) {
-  console.log(operationSuccess, "operationSuccess");
   if (nodetype === "operationNode") {
     return edges.filter(
       (edge: any) =>
@@ -691,23 +679,19 @@ export async function performOperation(
   currentNode: any,
   requestBody: any
 ) {
-  console.log("function Called");
   try {
     // Define the URL of the API endpoint you want to call
     // const nodeMap = doc.getMap("nodes");
     // let particular_node = nodeMap.get(targetId).nodes;
     let particular_node = currentNode;
     const apiUrl = `${adminUrl}/Api/Api_design_flow_service/save_and_fetch_by_operation_id?operation_id=${particular_node?.data.operation_id}&flow_id=${flow_id}&node_id=${targetId}`;
-    // console.log("api url", apiUrl);
-    // Make a POST request to the API endpoint
-    // console.log(requestBody )
+
     const response = await axios.post(apiUrl, requestBody);
 
     // Log the response data
-    // console.log("Response:", response.data);
 
     // Return the response data
-    // console.log(response.data, "response.data");
+
     return response.data;
   } catch (error) {
     // Handle errors here
@@ -771,8 +755,6 @@ export function calculateSimilarityScore(nodeA: any, nodeB: any) {
 }
 
 export function compareGlobalResponse(globalResponse: any) {
-  console.log(globalResponse, "globalResponsefun");
-
   const nodeIds = Object.keys(globalResponse);
   const results = [];
 
@@ -790,8 +772,6 @@ export function compareGlobalResponse(globalResponse: any) {
       });
     }
   }
-
-  console.log(results, "Similarity Results");
 
   // Log the similarity results
   results.forEach((result) => {
@@ -822,13 +802,91 @@ function hasFilterCondition(query: any) {
 }
 
 // replace holders in apiflow designer
+// export function replacePlaceholders(
+//   template: any,
+//   data: any,
+//   globalArrayKeys: any
+// ) {
+
+//   if (typeof template === "string" && template.includes("{")) {
+//     if (hasFilterCondition(template)) {
+
+//       template = dynamicFilter(data, template);
+
+//       return template;
+//     }
+//     const placeholders = template.match(/{(.*?)}/g); // Find all placeholders
+//     if (placeholders) {
+//       placeholders.forEach((place) => {
+//         let keys;
+//         let replacementValue;
+//         // Check if the placeholder starts with 'global.'
+
+//         if (globalArrayKeys?.length > 0 && place.includes("{global.")) {
+//           const startIndex = place.indexOf("{global.") + 8; // 8 is the length of '{global.'
+//           const endIndex = place.indexOf("}", startIndex); // Find the closing '}'
+//           let globalKey: any;
+//           if (endIndex > startIndex) {
+//             globalKey = place.slice(startIndex, endIndex);
+
+//           } else {
+//             console.error("Closing brace '}' not found for '{global.'");
+//           }
+//           const globalObject = globalArrayKeys
+//             ? globalArrayKeys.find((obj: any) => obj.key_name === globalKey)
+//             : null;
+//           console.log(globalObject, "globalObject");
+//           replacementValue = globalObject?.value
+//             ? globalObject?.value
+//             : undefined;
+//         } else {
+//           keys = place
+//             .slice(1, -1)
+//             .split(/\.|\[|\]/)
+//             .filter(Boolean); // Split by . or [ or ]
+//           replacementValue = data;
+//         }
+
+//         // Navigate through the structure if not a global key
+//         if (keys) {
+//           for (const k of keys) {
+//             if (Array.isArray(replacementValue)) {
+//               replacementValue = replacementValue[parseInt(k)] || undefined;
+//             } else {
+//               replacementValue = replacementValue
+//                 ? replacementValue[k]
+//                 : undefined;
+//             }
+//           }
+//         }
+
+//         template = template.replace(
+//           place,
+//           replacementValue ? replacementValue : place
+//         );
+//       });
+//     }
+//     return template;
+//   } else if (typeof template === "object" && template !== null) {
+//     const result: any = Array.isArray(template) ? [] : {};
+//     for (const key in template) {
+//       result[key] = replacePlaceholders(template[key], data, globalArrayKeys);
+//     }
+//     return result;
+//   } else {
+//     return template; // Return the value if it's not a placeholder
+//   }
+// }
+
 export function replacePlaceholders(
   template: any,
   data: any,
   globalArrayKeys: any
 ) {
-  console.log("template1", template);
-  if (typeof template === "string" && template.includes("{")) {
+  if (
+    typeof template === "string" &&
+    (template.includes("{") || template.includes("&"))
+  ) {
     if (hasFilterCondition(template)) {
       console.log("template", template);
       console.log("template", hasFilterCondition(template));
@@ -842,7 +900,7 @@ export function replacePlaceholders(
         let keys;
         let replacementValue;
         // Check if the placeholder starts with 'global.'
-        console.log("place", place);
+        console.log("place", place, typeof place);
         if (globalArrayKeys?.length > 0 && place.includes("{global.")) {
           const startIndex = place.indexOf("{global.") + 8; // 8 is the length of '{global.'
           const endIndex = place.indexOf("}", startIndex); // Find the closing '}'
@@ -867,7 +925,6 @@ export function replacePlaceholders(
             .filter(Boolean); // Split by . or [ or ]
           replacementValue = data;
         }
-
         // Navigate through the structure if not a global key
         if (keys) {
           for (const k of keys) {
@@ -883,11 +940,20 @@ export function replacePlaceholders(
 
         template = template.replace(
           place,
-          replacementValue ? replacementValue : place
+          JSON.stringify(replacementValue) || place
+          // replacementValue ? replacementValue : place
         );
       });
     }
-    return template;
+
+    //----------------------multiple condition-----------------------------------------
+
+    const multipleCondition = splitAndExtractPatterns(template);
+
+    let multipleConditionResult = multipleFqlConditions(multipleCondition);
+    return multipleConditionResult;
+
+    //----------------------multiple condition-----------------------------------------
   } else if (typeof template === "object" && template !== null) {
     const result: any = Array.isArray(template) ? [] : {};
     for (const key in template) {
@@ -897,6 +963,371 @@ export function replacePlaceholders(
   } else {
     return template; // Return the value if it's not a placeholder
   }
+}
+
+//fql functions
+export function multipleFqlConditions(multipleCondition: any) {
+  let multiVal: any[] = [];
+
+  multipleCondition?.forEach((pattern: any) => {
+    const templateSplit = extractCurlyBraceContent(pattern);
+    console.log(templateSplit, "CheckValueCheckValue5");
+
+    console.log(multipleCondition, "fql4");
+    console.log(pattern, "fql5");
+    console.log(templateSplit, templateSplit.curlyContent?.length, "fql6");
+
+    if (templateSplit?.beforeCurly === "upperCase") {
+      const upperCaseResult = upperCaseFunc(templateSplit?.curlyContent);
+      multiVal?.push(upperCaseResult);
+    } else if (templateSplit?.beforeCurly === "lowerCase") {
+      const lowerCaseResult = lowerCaseFunc(templateSplit?.curlyContent);
+      multiVal?.push(lowerCaseResult);
+    } else if (templateSplit?.beforeCurly === "parseJson") {
+      const stringToJsonResult = stringToJsonFunc(templateSplit?.curlyContent);
+      multiVal?.push(stringToJsonResult);
+    } else if (templateSplit?.beforeCurly === "appendArray") {
+      const appendArrayResult = appendArraysFunc(templateSplit?.curlyContent);
+      multiVal?.push(appendArrayResult);
+    } else if (templateSplit?.beforeCurly === "checkCondition") {
+      const conditionResult = parseTernaryExpressionFunc(
+        templateSplit?.curlyContent
+      );
+      multiVal?.push(conditionResult);
+    } else {
+      // multiVal?.push(templateSplit?.curlyContent);
+      multiVal?.push(pattern);
+    }
+  });
+
+  let multiValResult = multiVal?.toString();
+
+  return multiValResult;
+}
+
+export function splitAndExtractPatterns(input: string) {
+  if (input.startsWith("&appendArray")) {
+    const patterns = input
+      .replace(/^\&appendArray\(/, "")
+      .replace(/\)$/, "")
+      .replace(/\[|\]/g, "")
+      .split(",")
+      .map((value) => value.trim());
+
+    return patterns;
+  } else if (input.startsWith("&checkCondition")) {
+    const splitWithRespectToBrackets = (val: string | any[]) => {
+      const result = [];
+      let current = "";
+      let depth = 0;
+
+      for (let i = 0; i < val.length; i++) {
+        const char = val[i];
+        if (char === "[" || char === "(") {
+          depth++;
+        } else if (char === "]" || char === ")") {
+          depth--;
+        }
+
+        if (char === "," && depth === 0) {
+          // If at the top level (not inside brackets), split here
+          result.push(current.trim());
+          current = "";
+        } else {
+          current += char; // Accumulate characters
+        }
+      }
+
+      if (current) {
+        result.push(current.trim()); // Add the last segment
+      }
+
+      return result.map((str, index) => (index === 0 ? str : `&${str}`));
+    };
+    const patterns = splitWithRespectToBrackets(input);
+    return patterns;
+  } else {
+    const patterns = input.split(",&").map((str, index) => {
+      const check = index === 0 ? str.trim() : `&${str.trim()}`;
+      return check;
+    });
+
+    return patterns;
+  }
+  // const patterns = input.split(",&").map((str, index) => {
+  //   const check = index === 0 ? str.trim() : `&${str.trim()}`;
+  //   return check;
+  // });
+
+  // return patterns;
+}
+
+export function extractCurlyBraceContent(str: any) {
+  if (typeof str !== "string" || !str.startsWith("&")) {
+    return { beforeCurly: null, curlyContent: null };
+  }
+
+  const start = str?.indexOf("(");
+  const end = str?.lastIndexOf(")");
+
+  if (start === -1 || end === -1 || start >= end) {
+    return { beforeCurly: null, curlyContent: null };
+  }
+
+  const beforeCurly = str.substring(0, start).replace("&", "");
+  const curlyContent = str.substring(start + 1, end);
+
+  return { beforeCurly, curlyContent };
+}
+
+function splitCommaSeparatedConditions(input: string): string[] {
+  // This regular expression matches balanced parentheses and everything outside them.
+  const regex = /(?:\([^()]*\)|[^,])+/g;
+  const matches = input.match(regex);
+
+  // Trim each match to remove excess spaces
+  return matches ? matches.map((match) => match.trim()) : [];
+}
+
+export const upperCaseFunc = (str: string | number | object | null) => {
+  if (typeof str !== "string") {
+    return str;
+  }
+
+  let upperCaseValue: any[] = [];
+
+  const multipleCondition = splitAndExtractPatterns(str);
+
+  multipleCondition?.forEach((val: any) => {
+    const commaSeperatedValues = splitCommaSeparatedConditions(val);
+
+    commaSeperatedValues?.forEach((item: any) => {
+      if (item?.startsWith("&")) {
+        let multipleConditionResult = multipleFqlConditions(multipleCondition);
+
+        let strUpperCase = multipleConditionResult?.toUpperCase();
+
+        upperCaseValue.push(strUpperCase);
+      } else {
+        upperCaseValue.push(item?.toUpperCase());
+      }
+    });
+  });
+
+  return upperCaseValue;
+};
+
+export const lowerCaseFunc = (
+  str: string | number | object | null
+): string | number | object | null => {
+  if (typeof str !== "string") {
+    return str;
+  }
+  // return str?.toLowerCase();
+  let lowerCaseValue = "";
+
+  const multipleCondition = splitAndExtractPatterns(str);
+
+  multipleCondition?.forEach((val: any) => {
+    if (val?.startsWith("&")) {
+      let multipleConditionResult = multipleFqlConditions(multipleCondition);
+
+      let strUpperCase = multipleConditionResult?.toLowerCase();
+      lowerCaseValue = strUpperCase;
+    } else {
+      lowerCaseValue = val?.toLowerCase();
+    }
+  });
+
+  return lowerCaseValue;
+};
+
+export const stringToJsonFunc = (value: any) => {
+  try {
+    if (typeof value === "string") {
+      if (
+        (value.startsWith("{") && value.endsWith("}")) ||
+        (value.startsWith("[") && value.endsWith("]"))
+      ) {
+        return JSON.parse(value);
+      }
+    }
+    return value;
+  } catch (error) {
+    console.error("Error parsing JSON:", error);
+    return value;
+  }
+};
+
+//for array
+
+export function extractCommaSeperatedValues(input: any): any[] {
+  // const arrays = input
+  //   .replace(/^\[|\]$/g, "")
+  //   .split(",")
+  //   .map((value) => value.trim().replace(/^\[|\]$/g, ""))
+  //   .filter((value) => value !== "");
+
+  const multipleCondition = splitAndExtractPatterns(input);
+
+  // const arrays = input
+  //   .replace(/^\&appendArray\(\[/, "")
+  //   .replace(/\]\)$/, "")
+  //   .split(/,(?![^\[]*\])/g)
+  //   .map((value) => value.trim());
+
+  const arrays =
+    input
+      .replace(/^\&appendArray\(\[/, "") // Remove &appendArray([ wrapper
+      .replace(/\]\)$/, "") // Remove closing brackets ])
+      .match(/(?<=\[).*?(?=\])/g) // Match content inside square brackets
+      ?.flatMap((group: string) =>
+        group.split(",").map((value: string) => value.trim())
+      ) || [];
+  // ?.flatMap((group: string) => group.split(",").map((value) => value.trim())); // Split each group by commas and trim values
+
+  // Return the resulting flattened array
+  const result = arrays;
+
+  let multipleFqlArr: any[] = [];
+  result?.forEach((val: any) => {
+    console.log(val, "fql993");
+    if (val?.startsWith("&")) {
+      let multipleConditionResult = multipleFqlConditions([val]);
+      console.log(multipleConditionResult, "fql994");
+      multipleFqlArr.push(multipleConditionResult);
+    } else {
+      console.log(val, "fql995");
+      multipleFqlArr.push(val);
+    }
+  });
+
+  // return result;
+  return multipleFqlArr;
+}
+
+export function appendArraysFunc(inputs: any) {
+  const commaSeperatedValues = extractCommaSeperatedValues(inputs);
+  let resultArray: any[] = [];
+
+  resultArray = commaSeperatedValues;
+
+  return resultArray;
+}
+
+//for condition
+interface ConditionParts {
+  lhs: string;
+  operator: string;
+  rhs: string;
+}
+
+const operatorPattern = /(===|!==|==|!=|>=|<=|>|<)/;
+
+//condition part
+function extractConditionParts(condition: string): ConditionParts {
+  const match = condition?.match(operatorPattern);
+  if (!match) {
+    throw new Error("No operator found in condition");
+  }
+
+  const operator = match[0];
+  const [lhs, rhs] = condition?.split(operator)?.map((part) => part.trim());
+
+  return { lhs, operator, rhs };
+}
+
+//evaluate based on condition
+function evaluateCondition(condition: ConditionParts): boolean {
+  const lhsValue = condition?.lhs;
+  const rhsValue = condition?.rhs;
+  const operValue = condition?.operator;
+
+  switch (operValue) {
+    case "===":
+      return lhsValue === rhsValue;
+
+    case "!==":
+      return lhsValue !== rhsValue;
+
+    case ">":
+      return lhsValue > rhsValue;
+
+    case "<":
+      return lhsValue < rhsValue;
+
+    case ">=":
+      return lhsValue >= rhsValue;
+
+    case "<=":
+      return lhsValue <= rhsValue;
+
+    default:
+      throw new Error(`Unsupported operator: ${operValue}`);
+  }
+}
+
+export function parseTernaryExpressionFunc(expression: string): string {
+  if (!expression?.includes("?")) return expression;
+
+  const ternaryPattern = /(.+?)\?(.+?):(.+)/;
+  // const ternaryPattern = /^(.*?[^?])\?([^:]+):(.+)$/;
+  const match = expression?.match(ternaryPattern);
+
+  if (!match) return expression;
+
+  const [_, condition, truePart, falsePart] = match.map((part) => part.trim());
+
+  const isConditionTrue = evaluateCondition(extractConditionParts(condition));
+
+  const parsePart = (part: string) => {
+    const evaluatedPart = parseTernaryExpressionFunc(part);
+    console.log(evaluatedPart, "**6");
+    console.log(part, "**7");
+    return evaluatedPart.startsWith("&")
+      ? multipleFqlConditions([evaluatedPart])
+      : evaluatedPart;
+  };
+  return isConditionTrue ? parsePart(truePart) : parsePart(falsePart);
+
+  // if (match) {
+  //   const condition = match[1]?.trim();
+  //   const truePart = match[2]?.trim();
+  //   const falsePart = match[3]?.trim();
+
+  //   console.log(condition, "**3");
+  //   console.log(truePart, "**4");
+  //   console.log(falsePart, "**5");
+
+  //   const conditionParts = extractConditionParts(condition);
+
+  //   console.log(conditionParts, "**6");
+
+  //   const isConditionTrue = evaluateCondition(conditionParts);
+
+  //   const evaluatedTruePart = parseTernaryExpressionFunc(truePart);
+  //   const evaluatedFalsePart = parseTernaryExpressionFunc(falsePart);
+
+  //   console.log(isConditionTrue, "**7");
+  //   console.log(evaluatedTruePart, "**8");
+  //   console.log(evaluatedFalsePart, "**9");
+
+  //   const fqlTruePart = evaluatedTruePart?.startsWith("&")
+  //     ? multipleFqlConditions([evaluatedTruePart])
+  //     : evaluatedTruePart;
+
+  //   const fqlFalsePart = evaluatedFalsePart?.startsWith("&")
+  //     ? multipleFqlConditions([evaluatedFalsePart])
+  //     : evaluatedFalsePart;
+
+  //   console.log(fqlTruePart, "**10");
+  //   console.log(fqlFalsePart, "**11");
+
+  //   // return isConditionTrue ? evaluatedTruePart : evaluatedFalsePart;
+  //   return isConditionTrue ? fqlTruePart : fqlFalsePart;
+  // }
+
+  // return expression;
 }
 
 export const updateArray = (

@@ -1,9 +1,10 @@
 import {
   convertToMilliSeconds,
   getCookies,
-  replacePlaceholders,
+  // replacePlaceholders,
   updateArray,
 } from "@/app/Helpers/helpersFunctions";
+import { replacePlaceholders } from "@/app/DesignHelpers/flowHelpers";
 import {
   FlowReducer,
   GetNodeChangeManByFlowNodeId,
@@ -56,14 +57,14 @@ import { RenderNoDataFound } from "@/app/ApiFlowComponents/ApiDesigner/renderNoD
 import GButton from "@/app/apiflow_components/global/GButton";
 import { ChangeNodeManage } from "@/app/ApiFlowComponents/ApiDesigner/ChangeHistoryDesigner/ChangeNodeManage";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
-import AceEditorComponent from "@/app/ApiFlowComponents/AceEditor/aceEditor";
 import GSelect from "@/app/apiflow_components/global/GSelect";
-import TextEditor from "@/app/ApiFlowComponents/ApiDesigner/TextEditor/textEditor";
+import TextEditor from "@/app/apiflow_components/WorkflowComponents/TextEditor/textEditor";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import WorkflowCustomHandle from "../workflowCustomHandle";
 import theme from "@/Theme/theme";
 import { debounce } from "lodash";
+import AceEditorComponent from "@/app/apiflow_components/WorkflowComponents/AceEditor/aceEditor";
 
 type YDoc = Y.Doc;
 
@@ -125,7 +126,6 @@ const checkConnections = (
   user_id: string
 ) => {
   let matches = extractAllVariables(request_variable);
-  console.log(matches, "errorCOn1");
 
   for (const match of matches) {
     for (const node of nodesArray) {
@@ -136,7 +136,6 @@ const checkConnections = (
           let existingEdge = edgesArray.find(
             (x: any) => x.source === update_data && x.target === node_id
           );
-          console.log(existingEdge, "existingEdge");
 
           if (!existingEdge) {
             addEdges_new(ydoc, node_id, update_data, apiFlowId, user_id);
@@ -211,8 +210,6 @@ const addEdges_new = (
 export default function WorkflowOperationNode({ data }: any) {
   //--------------------variable declarations-----------------------------------------
   const { deleteElements, getEdges, getNode, getNodes } = useReactFlow();
-
-  console.log(data, getNode, getNodes, "DATADATADATA");
 
   const theme = useTheme();
   const pathname = usePathname();
@@ -441,13 +438,10 @@ export default function WorkflowOperationNode({ data }: any) {
   );
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
-
-    console.log("runData running");
   };
 
   const handleClose = () => {
     setAnchorEl(null);
-    console.log("handleClose");
   };
 
   const handleClickInput = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -464,9 +458,6 @@ export default function WorkflowOperationNode({ data }: any) {
     setInputClicked(false);
     setResponseClicked(false);
     setQueryClicked(false);
-    // console.log("EventCurrentTarget: ", event);
-
-    // console.log("Node: ", nodeValues);
   };
 
   const handleClickQuery = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -477,10 +468,6 @@ export default function WorkflowOperationNode({ data }: any) {
     setResponseClicked(false);
 
     setGlobalKeysClicked(false);
-
-    // console.log("EventCurrentTarget: ", event);
-
-    // console.log("Node: ", nodeValues);
   };
 
   const handleClickResponse = (event: any) => {
@@ -491,9 +478,6 @@ export default function WorkflowOperationNode({ data }: any) {
 
     setQueryClicked(false);
     setGlobalKeysClicked(false);
-    // console.log("EventCurrentTarget: ", event);
-
-    // console.log("Node: ", nodeValues);
   };
 
   const handleGlobalKeys = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -504,9 +488,6 @@ export default function WorkflowOperationNode({ data }: any) {
 
     setQueryClicked(false);
     setGlobalKeysClicked(true);
-    // console.log("EventCurrentTarget: ", event);
-
-    // console.log("Node: ", nodeValues);
   };
 
   const checkSensitiveInformation = (text: any) => {
@@ -747,11 +728,8 @@ export default function WorkflowOperationNode({ data }: any) {
     index: number,
     type: string
   ) => {
-    console.log("HeaderCheck: ", name, value);
-
     // Create a cloned object for immutability and update the field
     const tempEventInputs = { ...details, [name]: value };
-    console.log("TempAfter: ", tempEventInputs);
 
     if (type === "headers") {
       // Update headers state
@@ -859,7 +837,6 @@ export default function WorkflowOperationNode({ data }: any) {
     const newGlobalKeys = globalKeys?.map((item: any) =>
       item?.id === id ? { ...item, [name]: value } : item
     );
-    console.log("newGlobalKeyssdsdsdsd", newGlobalKeys);
 
     // Update the Yjs document
     const keysArray = flowYdoc.getArray("globalkeys");
@@ -885,14 +862,12 @@ export default function WorkflowOperationNode({ data }: any) {
   };
 
   const updateNodeData = (updatedData: any, type: any) => {
-    console.log("NodeCHecK: ", headers);
-
     const nodesMap = flowYdoc?.getMap<any>("nodes");
     let currentData: any = getNode(nodeData?.id);
 
     // Prepare the new node data based on the type
     let newNodeData = { ...nodeData };
-    console.log("NodeCHecK: ", newNodeData, updatedData, currentData);
+
     switch (type) {
       case "header":
         newNodeData.operations_header = updatedData;
@@ -921,7 +896,6 @@ export default function WorkflowOperationNode({ data }: any) {
           data: JSON.stringify(newNodeData),
         },
       });
-      console.log("NodeCHecK: ", nodeData, nodesMap);
     } else {
       console.log("Yjs Map 'run' is not initialized.");
     }
@@ -991,10 +965,43 @@ export default function WorkflowOperationNode({ data }: any) {
     );
   }
 
+  function safeJSONParse(rawPayload: string) {
+    if (!rawPayload) return {};
+
+    // Preprocess the raw payload to ensure valid JSON
+    const preprocessedPayload = rawPayload
+      //   .replace(
+      //   /:\s*(&[a-zA-Z]+\(\{[^}]*\}\))/g, // Match unquoted functions like &upperCase({...})
+      //   (match: any, group: any) => `: "${group}"` // Wrap the match in quotes
+      // );
+      .replace(
+        /:\s*({[^}]*})/g, // Match unquoted object-like values (e.g., `{...}`)
+        (match, group) => `: "${group}"`
+      )
+      .replace(
+        /:\s*(&[a-zA-Z]+\(\{[^}]*\}\))/g, // Match unquoted functions like &upperCase({...})
+        (match, group) => `: "${group}"`
+      )
+      .replace(
+        /:\s*([^",\s}\]]+)/g, // Match unquoted standalone values (e.g., response.getAllProducts...)
+        (match, group) => `: "${group}"`
+      );
+
+    // Parse the preprocessed JSON string
+    try {
+      return JSON.parse(preprocessedPayload);
+    } catch (e) {
+      console.error("Invalid JSON format:", e);
+      return {};
+    }
+  }
+
   const RunHandler = () => {
     let payload;
     try {
-      payload = JSON.parse(nodeData?.raw_payload || "{}");
+      // payload = JSON.parse(nodeData?.raw_payload || "{}");
+      payload = safeJSONParse(nodeData.raw_payload);
+      // payload = nodeData?.raw_payload;
     } catch (error: any) {
       toast.error(
         `${nodeData?.node_name || "Unknown Node"}:Input Error parsing JSON: ${
@@ -1004,17 +1011,11 @@ export default function WorkflowOperationNode({ data }: any) {
     }
     // const payload = JSON.parse(nodeData?.raw_payload || "{}");
 
-    console.log(nodeData?.operations_header, headers, "operations_header");
-    console.log(nodeData?.raw_payload, "raw_payloadsdsdsd");
-
     // let response = previousOpRaw || null;
 
     let response = globalResponse || null;
 
     const new_payload = replacePlaceholders(payload, { response }, globalKeys);
-
-    // console.log(new_payload,"new_payload");
-    console.log(globalKeys, "globalKeys");
 
     let headersArr = nodeData.operations_header || [];
     let globalHeaders = globalKeys?.filter(
@@ -1026,7 +1027,6 @@ export default function WorkflowOperationNode({ data }: any) {
     );
 
     // "key":"value"
-    console.log("KEYCheck: ", globalHeaders);
 
     if (globalHeaders.length > 0) {
       for (let key of globalHeaders) {
@@ -1046,8 +1046,6 @@ export default function WorkflowOperationNode({ data }: any) {
         new_payload[key.body_key] = key.body_key; // or key.body_key = value if there is a corresponding value
       }
     }
-
-    console.log(new_payload, "newpaydata");
 
     let updatedData = {
       operation_id: nodeData.operation_id,
@@ -1072,26 +1070,22 @@ export default function WorkflowOperationNode({ data }: any) {
         payload: new_payload ? JSON.stringify(new_payload) : "",
       },
     };
-    console.log(updatedData.data, "operations_query_param");
+
     setCurrentNodeRun(true);
     dispatch(RunSingleNode(updatedData))
       .unwrap()
 
       .then((res: any) => {
         setCurrentNodeRun(false);
-        console.log(res, "nodeRunResult");
-        const responceResult = {
+        const responseResult = {
           serviceInput: res?.serviceInput,
           response: res?.response,
           statusCode: res?.statusCode,
         };
 
-        console.log(responceResult, "responceResult");
-
         // if (res.statusCode >= 200 && res.statusCode < 300) {
         const nodesMap = flowYdoc?.getMap<any>("nodes");
         let currentData: any = getNode(nodeData?.id);
-        console.log(currentData, "currentDataDrag");
 
         if (nodesMap) {
           nodesMap.set(nodeData?.id, {
@@ -1099,7 +1093,7 @@ export default function WorkflowOperationNode({ data }: any) {
             status: "null",
             id: nodeData?.id,
             nodes: {
-              response: responceResult,
+              response: responseResult,
               ...currentData,
               data: JSON.stringify({
                 ...nodeData,
@@ -1133,9 +1127,8 @@ export default function WorkflowOperationNode({ data }: any) {
     const nodesMap = flowYdoc?.getMap<any>("nodes");
 
     // const messagesArrayNew = messagesArray.toArray();
-    // console.log(messagesArrayNew, "messagesArrayNew");
+
     let currentData: any = getNode(nodeData?.id);
-    console.log(currentData, "currentDataDrag");
 
     if (nodesMap) {
       nodesMap.set(nodeData?.id, {
@@ -1154,7 +1147,6 @@ export default function WorkflowOperationNode({ data }: any) {
           }),
         },
       });
-      console.log("operations_header: ", headers);
     } else {
       console.log("Yjs Map 'run' is not initialized.");
     }
@@ -1194,14 +1186,13 @@ export default function WorkflowOperationNode({ data }: any) {
   useEffect(() => {
     if (!flowYdoc) return;
     const runMap = flowYdoc?.getMap<any>("run");
-    console.log("FlowYDoc: ", flowYdoc, runMap.toJSON(), runMap?.size);
 
     // const editNodesArry = ydoc.getArray<any>("nodes");
 
     const runFlow = () => {
       console.log("call");
       let runData = runMap?.toJSON();
-      console.log(runData, "runData");
+
       if (runData.run.status === "RUNNING") {
         let updateRun = runData?.run?.run_result.find(
           (x: any) => x?.node_id == nodeData?.id
@@ -1300,8 +1291,6 @@ export default function WorkflowOperationNode({ data }: any) {
     );
   }, [nodeData]);
 
-  console.log(nodeData, "NODEDATA");
-
   return (
     <Box
       sx={{
@@ -1329,10 +1318,12 @@ export default function WorkflowOperationNode({ data }: any) {
       }}
       // className="rounded"
     >
-      {nodeData?.dragger && userProfile?.user?.email !== nodeData?.dragger && (
+      {/* {nodeData?.dragger && userProfile?.user?.email !== nodeData?.dragger && ( */}
+
+      {nodeData?.dragger && (
         <div
           style={{
-            position: "absolute",
+            position: "relative",
             top: "-20px",
             left: "25px",
             backgroundColor: "white",
@@ -1776,28 +1767,33 @@ export default function WorkflowOperationNode({ data }: any) {
                 horizontal: "right",
               }}
               PaperProps={{
-                sx: {
-                  width: "400px",
-                  // minWidth: "180px",
-                  padding: "15px",
-                  maxHeight: "200px",
-                  // overflowY: "auto",
-                  overflow: "auto",
-                  // pointerEvents: 'none',
-                },
+                sx:
+                  inputClicked === true
+                    ? {
+                        // minWidth: "180px",
+                        // overflowY: "auto",
+                        overflow: "hidden",
+                        // pointerEvents: 'none',
+                        background: "transparent",
+                        boxShadow: "none",
+                      }
+                    : {
+                        padding: "15px",
+                        overflowY: "auto",
+                        maxHeight: "200px",
+                        width: "350px",
+                      },
               }}
               disableRestoreFocus
             >
               {inputClicked === true ? (
-                <>
-                  <PrimaryTypography
-                    style={{
-                      fontWeight: 900,
-                    }}
-                  >
-                    Operation Input
-                  </PrimaryTypography>
-
+                <div
+                  style={{
+                    position: "relative",
+                    height: "55vh",
+                    width: "40vw",
+                  }}
+                >
                   {/*Ace Editor*/}
                   <AceEditorComponent
                     onInputVal={handleInputDataFromAceEditor}
@@ -1805,7 +1801,7 @@ export default function WorkflowOperationNode({ data }: any) {
                     currentNode={nodeData.node_name}
                     // suggestionVal={previousOpRaw}
                   />
-                </>
+                </div>
               ) : headerClicked === true ? (
                 <>
                   <>
@@ -2099,11 +2095,7 @@ export default function WorkflowOperationNode({ data }: any) {
                                 const updatedQuery = querys.filter(
                                   (_: any, i: any) => i !== index
                                 );
-                                console.log(
-                                  "NodeCheck: ",
-                                  nodeData,
-                                  updatedQuery
-                                );
+
                                 updateNodeData(updatedQuery, "query");
                                 setQuerys(updatedQuery);
                               }}
@@ -2171,7 +2163,6 @@ export default function WorkflowOperationNode({ data }: any) {
 
                           // Assuming ydoc is accessible in this scope and has a method to update it
                           if (flowYdoc) {
-                            console.log("test_globalKeys");
                             const keysArray = flowYdoc.getArray("globalkeys");
                             keysArray.push([newkeys]);
                           }
@@ -2361,7 +2352,6 @@ export default function WorkflowOperationNode({ data }: any) {
                               buttonType="secondary"
                               label={"Remove"}
                               onClickHandler={() => {
-                                console.log("ValID: ", val?.id);
                                 const keysArray =
                                   flowYdoc?.getArray("globalkeys");
                                 const itemsArray: any = keysArray?.toArray();

@@ -10,10 +10,7 @@ import Cookies from "js-cookie";
 const SECRET_KEYS = process.env.REACT_APP_SECREAT_KEY;
 const Envdata = process.env.AZURE_AUTHORITY;
 
-console.log(SECRET_KEYS, "SECRET_KEYS");
-
 const adminUrl = process.env.AZURE_AUTHORITY;
-console.log(adminUrl, "adminUrlllll");
 
 export const translate = (key: string) => {
   let language: string = "en";
@@ -74,7 +71,6 @@ export const EncrouptionLogic = (val: any): string => {
     "your-secret-key"
   ).toString();
   // Logging only the encrypted userProfile data to the console
-  console.log("Encrypted UserProfile Data:", encryptedUserProfile);
   //   }
   // }, [val]);
 
@@ -137,8 +133,10 @@ export function replacePlaceholders(
   data: any,
   globalArrayKeys: any
 ) {
-
-  if (typeof template === "string" && template.includes("{")) {
+  if (
+    typeof template === "string" &&
+    (template.includes("{") || template.includes("&"))
+  ) {
     if (hasFilterCondition(template)) {
       console.log("template", template);
       console.log("template", hasFilterCondition(template));
@@ -192,7 +190,7 @@ export function replacePlaceholders(
 
         template = template.replace(
           place,
-           JSON.stringify(replacementValue) || place
+          JSON.stringify(replacementValue) || place
           // replacementValue ? replacementValue : place
         );
       });
@@ -201,12 +199,11 @@ export function replacePlaceholders(
     //----------------------multiple condition-----------------------------------------
 
     const multipleCondition = splitAndExtractPatterns(template);
-    
+
     let multipleConditionResult = multipleFqlConditions(multipleCondition);
     return multipleConditionResult;
 
-     //----------------------multiple condition-----------------------------------------
-
+    //----------------------multiple condition-----------------------------------------
   } else if (typeof template === "object" && template !== null) {
     const result: any = Array.isArray(template) ? [] : {};
     for (const key in template) {
@@ -231,13 +228,12 @@ export const updateArray = (
       let value = previousEdgeResponse
         ? replacePlaceholders(item.test_value, { response }, globalKeysArray)
         : item.test_value;
-      console.log(value, "operations_query_param");
+
       value =
         typeof value === "object" || Array.isArray(value)
           ? JSON.stringify(value)
           : value?.toString();
 
-      console.log(value, "operations_query_param");
       return { key, value };
     });
   }
@@ -353,7 +349,6 @@ function dynamicFilter(data: any, queries: any) {
       throw new Error("Invalid query format: missing path");
     }
 
-    console.log("DataPath: ", data, path)
     const array = getValueByPath(data, path);
     if (!Array.isArray(array)) {
       throw new Error(`Path does not lead to an array: ${path}`);
@@ -438,13 +433,12 @@ export function getRandomColor() {
   return color;
 }
 
- export const getValueOrDefault = (value: any) => {
-    // Check if value is null, "null", or undefined
-    const checkValue =
-      value === null || value === "null" || value === undefined ? "-" : value;
-    console.log("checkValue: ", checkValue);
-    return checkValue; // Ensure the returned value is always a string
-  };
+export const getValueOrDefault = (value: any) => {
+  // Check if value is null, "null", or undefined
+  const checkValue =
+    value === null || value === "null" || value === undefined ? "-" : value;
+  return checkValue; // Ensure the returned value is always a string
+};
 
 export const extractAllVariables = (inputString: any) => {
   const variablePattern = /\{response\.([^\}\.]+)(?:\.[^\}]*)?\}/g;
@@ -530,65 +524,110 @@ export function getFirstThreeLetters(str: string) {
 }
 
 export function multipleFqlConditions(multipleCondition: any) {
-let multiVal: any[] = [];
-  
-  multipleCondition?.forEach((pattern: any) => {
-      const templateSplit = extractCurlyBraceContent(pattern);
+  let multiVal: any[] = [];
 
-      if (templateSplit?.beforeCurly === "upperCase") {
-        const upperCaseResult = upperCaseFunc(templateSplit?.curlyContent);
-        multiVal?.push(upperCaseResult)
-      }
-      else if (templateSplit?.beforeCurly === "lowerCase") {
-        const lowerCaseResult = lowerCaseFunc(templateSplit?.curlyContent);
-        multiVal?.push(lowerCaseResult);
-      }
-      else if (templateSplit?.beforeCurly === "parseJson") {
-        const stringToJsonResult = stringToJsonFunc(templateSplit?.curlyContent);
-        multiVal?.push(stringToJsonResult);
-      }
-      else if (templateSplit?.beforeCurly === "appendArray") {
-        const appendArrayResult = appendArraysFunc(templateSplit?.curlyContent);
-        multiVal?.push(appendArrayResult);
-      }
-      else if (templateSplit?.beforeCurly === "checkCondition") {
-        const conditionResult = parseTernaryExpressionFunc(templateSplit?.curlyContent);
-        multiVal?.push(conditionResult)
-      }
-      else {
-        multiVal?.push(templateSplit?.curlyContent)
-      }
-    })
-    let multiValResult = multiVal?.toString();
-    
-    return multiValResult;
+  multipleCondition?.forEach((pattern: any) => {
+    const templateSplit = extractCurlyBraceContent(pattern);
+
+    if (templateSplit?.beforeCurly === "upperCase") {
+      const upperCaseResult = upperCaseFunc(templateSplit?.curlyContent);
+      multiVal?.push(upperCaseResult);
+    } else if (templateSplit?.beforeCurly === "lowerCase") {
+      const lowerCaseResult = lowerCaseFunc(templateSplit?.curlyContent);
+      multiVal?.push(lowerCaseResult);
+    } else if (templateSplit?.beforeCurly === "parseJson") {
+      const stringToJsonResult = stringToJsonFunc(templateSplit?.curlyContent);
+      multiVal?.push(stringToJsonResult);
+    } else if (templateSplit?.beforeCurly === "appendArray") {
+      const appendArrayResult = appendArraysFunc(templateSplit?.curlyContent);
+      multiVal?.push(appendArrayResult);
+    } else if (templateSplit?.beforeCurly === "checkCondition") {
+      const conditionResult = parseTernaryExpressionFunc(
+        templateSplit?.curlyContent
+      );
+      multiVal?.push(conditionResult);
+    } else {
+      // multiVal?.push(templateSplit?.curlyContent);
+      multiVal?.push(pattern);
+    }
+  });
+  let multiValResult = multiVal?.toString();
+
+  return multiValResult;
 }
 
 export function splitAndExtractPatterns(input: string) {
-  const patterns = input.split(",&").map((str, index) => {
+  if (input.startsWith("&appendArray")) {
+    const patterns = input
+      .replace(/^\&appendArray\(/, "")
+      .replace(/\)$/, "")
+      .replace(/\[|\]/g, "")
+      .split(",")
+      .map((value) => value.trim());
+    return patterns;
+  } else if (input.startsWith("&checkCondition")) {
+    const splitWithRespectToBrackets = (val: string | any[]) => {
+      const result = [];
+      let current = "";
+      let depth = 0;
+
+      for (let i = 0; i < val.length; i++) {
+        const char = val[i];
+        if (char === "[" || char === "(") {
+          depth++;
+        } else if (char === "]" || char === ")") {
+          depth--;
+        }
+
+        if (char === "," && depth === 0) {
+          // If at the top level (not inside brackets), split here
+          result.push(current.trim());
+          current = "";
+        } else {
+          current += char; // Accumulate characters
+        }
+      }
+
+      if (current) {
+        result.push(current.trim()); // Add the last segment
+      }
+
+      return result.map((str, index) => (index === 0 ? str : `&${str}`));
+    };
+    const patterns = splitWithRespectToBrackets(input);
+    return patterns;
+  } else {
+    const patterns = input.split(",&").map((str, index) => {
       const check = index === 0 ? str.trim() : `&${str.trim()}`;
       return check;
-  });
-  
-  return patterns;
+    });
+
+    return patterns;
+  }
+  // const patterns = input.split(",&").map((str, index) => {
+  //   const check = index === 0 ? str.trim() : `&${str.trim()}`;
+  //   return check;
+  // });
+
+  // return patterns;
 }
 
 export function extractCurlyBraceContent(str: any) {
-  if (typeof str !== 'string' || !str.startsWith('&')) {  
-    return { beforeCurly: null, curlyContent: null}
+  if (typeof str !== "string" || !str.startsWith("&")) {
+    return { beforeCurly: null, curlyContent: null };
   }
 
-  const start = str?.indexOf('(');
-  const end = str?.lastIndexOf(')');
+  const start = str?.indexOf("(");
+  const end = str?.lastIndexOf(")");
 
   if (start === -1 || end === -1 || start >= end) {
-     return {beforeCurly: null, curlyContent: null}
+    return { beforeCurly: null, curlyContent: null };
   }
-  
-  const beforeCurly = str.substring(0, start).replace('&', '');
+
+  const beforeCurly = str.substring(0, start).replace("&", "");
   const curlyContent = str.substring(start + 1, end);
 
-  return {beforeCurly, curlyContent}
+  return { beforeCurly, curlyContent };
 }
 
 function splitCommaSeparatedConditions(input: string): string[] {
@@ -597,41 +636,41 @@ function splitCommaSeparatedConditions(input: string): string[] {
   const matches = input.match(regex);
 
   // Trim each match to remove excess spaces
-  return matches ? matches.map(match => match.trim()) : [];
+  return matches ? matches.map((match) => match.trim()) : [];
 }
 
-
 export const upperCaseFunc = (str: string | number | object | null) => {
-  if (typeof str !== 'string') {
+  if (typeof str !== "string") {
     return str;
   }
 
-  let upperCaseValue:any[] = [];
+  let upperCaseValue: any[] = [];
 
   const multipleCondition = splitAndExtractPatterns(str);
 
   multipleCondition?.forEach((val: any) => {
-
     const commaSeperatedValues = splitCommaSeparatedConditions(val);
 
     commaSeperatedValues?.forEach((item: any) => {
       if (item?.startsWith("&")) {
-      let multipleConditionResult = multipleFqlConditions(multipleCondition);
- 
-      let strUpperCase = multipleConditionResult?.toUpperCase();
+        let multipleConditionResult = multipleFqlConditions(multipleCondition);
 
-      upperCaseValue.push(strUpperCase);
-    } else {
-      upperCaseValue.push(item?.toUpperCase());
-    }
-    })
-  })
+        let strUpperCase = multipleConditionResult?.toUpperCase();
+
+        upperCaseValue.push(strUpperCase);
+      } else {
+        upperCaseValue.push(item?.toUpperCase());
+      }
+    });
+  });
 
   return upperCaseValue;
-}
+};
 
-export const lowerCaseFunc = (str: string | number | object | null): string | number | object | null => {
-  if (typeof str !== 'string') {
+export const lowerCaseFunc = (
+  str: string | number | object | null
+): string | number | object | null => {
+  if (typeof str !== "string") {
     return str;
   }
   // return str?.toLowerCase();
@@ -642,64 +681,95 @@ export const lowerCaseFunc = (str: string | number | object | null): string | nu
   multipleCondition?.forEach((val: any) => {
     if (val?.startsWith("&")) {
       let multipleConditionResult = multipleFqlConditions(multipleCondition);
- 
+
       let strUpperCase = multipleConditionResult?.toLowerCase();
       lowerCaseValue = strUpperCase;
     } else {
       lowerCaseValue = val?.toLowerCase();
     }
-  })
+  });
 
   return lowerCaseValue;
-}
+};
 
 export const stringToJsonFunc = (value: any) => {
   try {
-    if (typeof value === 'string') {
-    
-      if ((value.startsWith('{') && value.endsWith('}')) || 
-          (value.startsWith('[') && value.endsWith(']'))) {
-        return JSON.parse(value); 
+    if (typeof value === "string") {
+      if (
+        (value.startsWith("{") && value.endsWith("}")) ||
+        (value.startsWith("[") && value.endsWith("]"))
+      ) {
+        return JSON.parse(value);
       }
     }
-    return value; 
+    return value;
   } catch (error) {
     console.error("Error parsing JSON:", error);
-    return value; 
+    return value;
   }
-}
+};
 
 //for array
-export function extractCommaSeperatedValues(input: string): string[] {
-  const arrays = input
-    .replace(/^\[|\]$/g, "") 
-    .split(",") 
-    .map(value => value.trim().replace(/^\[|\]$/g, ""))
-    .filter(value => value !== ""); 
 
-// Return the resulting flattened array
+export function extractCommaSeperatedValues(input: any): any[] {
+  // const arrays = input
+  //   .replace(/^\[|\]$/g, "")
+  //   .split(",")
+  //   .map((value) => value.trim().replace(/^\[|\]$/g, ""))
+  //   .filter((value) => value !== "");
+
+  const multipleCondition = splitAndExtractPatterns(input);
+
+  // const arrays = input
+  //   .replace(/^\&appendArray\(\[/, "")
+  //   .replace(/\]\)$/, "")
+  //   .split(/,(?![^\[]*\])/g)
+  //   .map((value) => value.trim());
+
+  const arrays =
+    input
+      .replace(/^\&appendArray\(\[/, "") // Remove &appendArray([ wrapper
+      .replace(/\]\)$/, "") // Remove closing brackets ])
+      .match(/(?<=\[).*?(?=\])/g) // Match content inside square brackets
+      ?.flatMap((group: string) =>
+        group.split(",").map((value: string) => value.trim())
+      ) || [];
+
+  // Return the resulting flattened array
   const result = arrays;
-  return result;
+
+  let multipleFqlArr: any[] = [];
+  result?.forEach((val: any) => {
+    if (val?.startsWith("&")) {
+      let multipleConditionResult = multipleFqlConditions([val]);
+
+      multipleFqlArr.push(multipleConditionResult);
+    } else {
+      multipleFqlArr.push(val);
+    }
+  });
+
+  // return result;
+  return multipleFqlArr;
 }
 
 export function appendArraysFunc(inputs: any) {
   const commaSeperatedValues = extractCommaSeperatedValues(inputs);
   let resultArray: any[] = [];
-  
+
   resultArray = commaSeperatedValues;
 
   return resultArray;
 }
 
-
 //for condition
-interface ConditionParts{
+interface ConditionParts {
   lhs: string;
   operator: string;
   rhs: string;
 }
 
-const operatorPattern =  /(===|!==|==|!=|>=|<=|>|<)/;
+const operatorPattern = /(===|!==|==|!=|>=|<=|>|<)/;
 
 //condition part
 function extractConditionParts(condition: string): ConditionParts {
@@ -718,60 +788,81 @@ function extractConditionParts(condition: string): ConditionParts {
 function evaluateCondition(condition: ConditionParts): boolean {
   const lhsValue = condition?.lhs;
   const rhsValue = condition?.rhs;
-  const operValue =  condition?.operator
+  const operValue = condition?.operator;
 
   switch (operValue) {
-    case '===':
+    case "===":
       return lhsValue === rhsValue;
-    
-    case '!==':
+
+    case "!==":
       return lhsValue !== rhsValue;
-    
-    case '>':
+
+    case ">":
       return lhsValue > rhsValue;
-    
-    case '<':
+
+    case "<":
       return lhsValue < rhsValue;
-    
-    case '>=':
+
+    case ">=":
       return lhsValue >= rhsValue;
-    
-    case '<=':
+
+    case "<=":
       return lhsValue <= rhsValue;
-    
+
     default:
       throw new Error(`Unsupported operator: ${operValue}`);
   }
 }
 
 export function parseTernaryExpressionFunc(expression: string): string {
-  if (!expression?.includes('?')) {
-    return expression;
-  }
-
+  if (!expression?.includes("?")) return expression;
 
   const ternaryPattern = /(.+?)\?(.+?):(.+)/;
+  // const ternaryPattern = /^(.*?[^?])\?([^:]+):(.+)$/;
   const match = expression?.match(ternaryPattern);
 
-  if (match) {
-    const condition = match[1]?.trim();
-    const truePart = match[2]?.trim();
-    const falsePart = match[3]?.trim();
+  if (!match) return expression;
 
-    const conditionParts = extractConditionParts(condition);
+  const [_, condition, truePart, falsePart] = match.map((part) => part.trim());
 
-    const isConditionTrue = evaluateCondition(conditionParts);
+  const isConditionTrue = evaluateCondition(extractConditionParts(condition));
 
-    const evaluatedTruePart = parseTernaryExpressionFunc(truePart);
-    const evaluatedFalsePart = parseTernaryExpressionFunc(falsePart);
+  const parsePart = (part: string) => {
+    const evaluatedPart = parseTernaryExpressionFunc(part);
 
-    return isConditionTrue ? evaluatedTruePart : evaluatedFalsePart;
-  }
+    return evaluatedPart.startsWith("&")
+      ? multipleFqlConditions([evaluatedPart])
+      : evaluatedPart;
+  };
 
+  return isConditionTrue ? parsePart(truePart) : parsePart(falsePart);
 
-  return expression;
+  // if (match) {
+  //   const condition = match[1]?.trim();
+  //   const truePart = match[2]?.trim();
+  //   const falsePart = match[3]?.trim();
+
+  //   const conditionParts = extractConditionParts(condition);
+
+  //   const isConditionTrue = evaluateCondition(conditionParts);
+
+  //   const evaluatedTruePart = parseTernaryExpressionFunc(truePart);
+  //   const evaluatedFalsePart = parseTernaryExpressionFunc(falsePart);
+
+  //   const fqlTruePart = evaluatedTruePart?.startsWith("&")
+  //     ? multipleFqlConditions([evaluatedTruePart])
+  //     : evaluatedTruePart;
+
+  //   const fqlFalsePart = evaluatedFalsePart?.startsWith("&")
+  //     ? multipleFqlConditions([evaluatedFalsePart])
+  //     : evaluatedFalsePart;
+
+  //   // return isConditionTrue ? evaluatedTruePart : evaluatedFalsePart;
+  //   return isConditionTrue ? fqlTruePart : fqlFalsePart;
+  // }
+
+  // return expression;
 }
-
 
 export function formatWorkspaceDate(val: string | any) {
   return moment(val).format("DD/MM/YYYY, hh:mm:ss A");

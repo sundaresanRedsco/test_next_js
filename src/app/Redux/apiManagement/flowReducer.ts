@@ -495,7 +495,7 @@ export const GetRevisionsByFlowVersionId = createAsyncThunk(
     try {
       return await AdminServices(
         "get",
-        `Api/Api_design_flow_service/getrevisions_by_flowidand_versionid_offset?flow_id=${values?.flow_id}&version_id=${values?.version_id}&offset=${values?.offset}&limit=${values?.limit}&sort_order=${values?.sort_order}&sort_by=${values?.sort_by}`,
+        `Api/Api_design_flow_service/getrevisions_by_flowidand_versionid_offset?flow_id=${values?.flow_id}&version_id=${values?.version_id}&offset=${values?.offset}&limit=${values?.limit}&sort_order=${values?.sort_order}&sort_by=${values?.sort_by}&project_id=${values?.project_id}`,
         null,
         null
       );

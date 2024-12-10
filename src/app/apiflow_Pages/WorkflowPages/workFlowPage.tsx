@@ -11,6 +11,8 @@ import React, {
 // import WorkflowHeader from "@/app/apiflow_components/WorkflowComponents/workflowHeader";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
+import Draggable from "react-draggable";
+
 import {
   clearResults,
   clearSingleApiData,
@@ -106,6 +108,32 @@ import _ from "lodash";
 import FlowDesigner from "@/app/ApiflowPages/ApiManagement/FlowDesigner";
 import DraggableDrawer from "@/app/ApiFlowComponents/ApiDesigner/drawer/draggableDrawer";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
+import {
+  Badge,
+  Box,
+  Popover,
+  Tooltip,
+  TooltipProps,
+  Typography,
+  styled,
+  tooltipClasses,
+} from "@mui/material";
+import NavigationIcon from "@mui/icons-material/Navigation";
+import ChangeHistoryDesigner from "@/app/apiflow_components/WorkflowComponents/ChangeHistoryDesigner";
+
+const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.common.white,
+    color: "rgba(0, 0, 0, 0.87)",
+    // boxShadow: theme.shadows[1],
+    fontFamily: "Inter-Regular",
+    fontSize: 8,
+    fontWeight: 600,
+    marginTop: "0px",
+  },
+}));
 
 const WorkflowHeader = dynamic(
   () => import("@/app/apiflow_components/WorkflowComponents/workflowHeader"),
@@ -919,10 +947,35 @@ const WorkflowDesigner = (props: any) => {
     }
   }, [pathname]);
 
-  const isProduction = true;
+  const isProduction = false;
   const websocketUrl = isProduction
     ? process.env.NEXT_PUBLIC_WSS_URL || "default_websocket_url" // Use a default if undefined
-    : "ws://localhost:9595";
+    : // : "ws://localhost:9595";
+  // "ws://localhost:9596";
+      "ws://139.99.114.132:2053";
+
+
+  const socket = new WebSocket(websocketUrl);
+
+  // Open event - WebSocket connection established
+  socket.addEventListener("open", () => {
+    console.log("WebSocket connected to " + websocketUrl);
+  });
+
+  // Close event - WebSocket connection closed
+  socket.addEventListener("close", () => {
+    console.log("WebSocket connection closed.");
+  });
+
+  // Error event - WebSocket connection error
+  socket.addEventListener("error", (error) => {
+    console.error("WebSocket error: ", error);
+  });
+
+  // Message event - WebSocket message received
+  socket.addEventListener("message", (event) => {
+    console.log("Received message: ", event.data);
+  });
 
   //---------------------------useSelector---------------------------------------------------------------
   const {
@@ -992,6 +1045,8 @@ const WorkflowDesigner = (props: any) => {
   const [hasEdited, setHasEdited] = useState(false);
   const [hasNewEdited, setHasNewEdited] = useState(isEditable);
   const [rfInstance, setRfInstance] = useState<any>(null);
+
+  const [fullUrl, setFullUrl] = useState("");
 
   //--------------------------------------constants---------------------------------------------------------
 
@@ -1722,6 +1777,7 @@ const WorkflowDesigner = (props: any) => {
       });
 
       let tempData: any = dropItem;
+      console.log(dropItem, "DropItem");
       let count = 0;
       if (isEditable) {
         for (const node of nodes) {
@@ -1749,7 +1805,10 @@ const WorkflowDesigner = (props: any) => {
           // let name: string = tempData?.name;
           let id: string = uuidv4();
           // let node_name = generateUniqueNodeName();
-          let matchedPaths = extractPlaceholdersFromPath(null);
+          // let matchedPaths = extractPlaceholdersFromPath(null);
+          let matchedPaths = extractPlaceholdersFromPath(
+            tempData?.full_url || null
+          );
           // console.log(matchedPaths, operRes?.[0]?.full_url, "matchedPaths");
 
           let queryParams: any = [];
@@ -1882,6 +1941,24 @@ const WorkflowDesigner = (props: any) => {
     },
     [screenToFlowPosition, dropItem]
   );
+
+  useEffect(() => {
+    dispatch(
+      GetOperationById({
+        operation_id: dropItem?.id,
+        project_id: currentFlowDetails?.project_id,
+      })
+    )
+      .unwrap()
+      .then((operationRes: any) => {
+        // console.log(operationRes, operationRes?.[0]?.full_url, "operationRes");
+        // setFullUrl(operationRes?.[0]?.full_url);
+      })
+      .catch((error: any) => {
+        console.log("Error: ", error);
+      });
+  }, []);
+
   function parseData(data: any) {
     // Check if data is an object
     if (typeof data === "object") {
@@ -2541,6 +2618,7 @@ const WorkflowDesigner = (props: any) => {
       setYdoc(ydoc);
       dispatch(setFlowYdoc(ydoc));
       setWSprovider(wsProvider);
+      setWWsProvider(wsProvider);
       dispatch(setWSprovider(wsProvider));
 
       wsProvider.on("status", (event: any) => {
@@ -3157,6 +3235,47 @@ const WorkflowDesigner = (props: any) => {
 
   console.log(ydoc, "YDOC");
 
+  const [tooltipPosition, setTooltipPosition] = React.useState({ x: 0, y: 0 });
+
+  console.log(tooltipPosition, "tooltipPosition");
+
+  const handleMouseMove = (event: any) => {
+    // Convert mouse position to flow coordinates
+    const position = rfInstance?.screenToFlowPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
+
+    if (position) {
+      setTooltipPosition({
+        x: position.x,
+        y: position.y,
+      });
+    }
+  };
+
+  React.useEffect(() => {
+    if (!ydoc) return; // If ydoc is null, exit early
+
+    const cursorsMap = ydoc.getMap("cursors");
+
+    const updateCursors = () => {
+      const updatedCursors = new Map();
+      cursorsMap.forEach((value, key) => {
+        updatedCursors.set(key, value);
+      });
+      setCursors(updatedCursors);
+    };
+
+    // Attach Yjs event listeners
+    cursorsMap.observe(updateCursors);
+
+    // Clean up the listener on component unmount
+    return () => {
+      cursorsMap.unobserve(updateCursors);
+    };
+  }, [ydoc]);
+
   return (
     <Grid
       ref={boxRef}
@@ -3223,12 +3342,12 @@ const WorkflowDesigner = (props: any) => {
             >
               <Grid container>
                 <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
-                  {operationByIdLoading && (
+                  {/* {operationByIdLoading && (
                     <GlobalCircularLoader
                       open={operationByIdLoading}
                       isBackdrop={true}
                     />
-                  )}
+                  )} */}
                   <div
                     style={{
                       width: "100%",
@@ -3236,7 +3355,7 @@ const WorkflowDesigner = (props: any) => {
                     }}
                     ref={dropContainer1}
                   >
-                    <ReactFlow
+                    {/* <ReactFlow
                       onDrop={onDrop}
                       id="react-flow-container"
                       className="position-relative"
@@ -3308,7 +3427,133 @@ const WorkflowDesigner = (props: any) => {
                       }}
                       // style={{ width: "100%", height: "100%" }}
                       // onNodesDelete={onNodesDelete}
-                    ></ReactFlow>
+                    >
+                      
+                 
+                      {Array.from(cursors?.entries()).map(([clientId, position]: any) => (
+  <Draggable
+    key={clientId}
+    position={{ x: position?.x || 0, y: position?.y || 0 }} // Control position dynamically
+    onDrag={(e, data) => {
+      // Update the position during the drag
+      const updatedPosition = { x: data.x, y: data.y };
+      setCursors((prevCursors) =>
+        new Map(prevCursors).set(clientId, {
+          ...position,
+          ...updatedPosition,
+        })
+      );
+    }}
+    onStop={(e, data) => {
+      console.log(`Moved ${position?.name} to:`, {
+        x: data.x,
+        y: data.y,
+      });
+      // Optionally update final position in shared state
+    }}
+  >
+    <div style={{ position: "absolute" }}>
+      <LightTooltip
+        title={position?.name}
+        open={true} // Tooltip remains visible
+      >
+        <NavigationIcon
+          sx={{
+            fill: position?.color,
+            transform: `rotate(-15deg)`,
+            cursor: "grab", // Change cursor to indicate dragging is enabled
+          }}
+        />
+      </LightTooltip>
+    </div>
+  </Draggable>
+))}
+
+
+                    </ReactFlow> */}
+
+                    <ReactFlow
+                      id="react-flow-container"
+                      className="position-relative"
+                      onDrop={onDrop}
+                      ref={reactFlowWrapper}
+                      elementsSelectable={true}
+                      nodes={nodes}
+                      onDragOver={onDragOver}
+                      edges={edges}
+                      onNodesChange={(data) => {
+                        handleNodeChange(
+                          data,
+                          nodes,
+                          ydoc,
+                          wWsProvider,
+                          userProfile,
+                          userColor
+                        );
+
+                        const deletedNodes = data.filter(
+                          (change) => change.type === "remove"
+                        );
+                        if (deletedNodes.length > 0) {
+                          const updatedCursors = new Map(cursors);
+                          deletedNodes.forEach((node) => {
+                            updatedCursors.delete(node.id);
+                          });
+                          setCursors(updatedCursors);
+                        }
+                      }}
+                      onMouseMove={handleMouseMove} // Track mouse movement
+                      onEdgesChange={onEdgesChange}
+                      onConnect={onConnect}
+                      nodeTypes={nodeTypes}
+                      edgeTypes={edgeTypes}
+                      onInit={setRfInstance}
+                      fitViewOptions={{ padding: 700 }}
+                      proOptions={{ hideAttribution: true }}
+                    >
+                      {Array.from(cursors?.entries()).map(
+                        ([clientId, cursorPosition]) => {
+                          const viewport = rfInstance?.getViewport() || {
+                            zoom: 1,
+                            x: 0,
+                            y: 0,
+                          };
+                          // const adjustedX = tooltipPosition.x * viewport.zoom + viewport.x;
+                          const adjustedX =
+                            cursorPosition.x * viewport.zoom + viewport.x;
+                          const adjustedY =
+                            cursorPosition.y * viewport.zoom + viewport.y;
+
+                          return (
+                            <div
+                              key={clientId}
+                              style={{
+                                position: "absolute",
+                                transform: `translate(${adjustedX}px, ${adjustedY}px)`,
+                                pointerEvents: "none",
+                              }}
+                            >
+                              {!cursorPosition.dragging && (
+                                <LightTooltip
+                                  title={cursorPosition?.name}
+                                  open={true}
+                                  PopperProps={{
+                                    disablePortal: true,
+                                  }}
+                                >
+                                  <NavigationIcon
+                                    sx={{
+                                      fill: cursorPosition?.color,
+                                      transform: `rotate(-15deg)`,
+                                    }}
+                                  />
+                                </LightTooltip>
+                              )}
+                            </div>
+                          );
+                        }
+                      )}
+                    </ReactFlow>
                   </div>
                 </Grid>
               </Grid>
@@ -3334,6 +3579,13 @@ const WorkflowDesigner = (props: any) => {
             errors={errors}
             compiling={compiling}
             SuccessMessages={SuccessMessages}
+          />
+          <ChangeHistoryDesigner
+            openChangeHistory={changehistorySlider}
+            flowId={apiFlow_Id}
+            versionId={versionValue}
+            onCloseChangeHistory={handleCloseChageHistory}
+            project_id={currentEnvironment}
           />
         </Grid>
 

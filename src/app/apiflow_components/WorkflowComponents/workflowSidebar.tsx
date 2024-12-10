@@ -64,6 +64,7 @@ const DraggableCard = ({
   // tabs,
   collection_id,
   recentlyModifiedProp,
+  full_url,
 }: // onSelectCurrentOperation,
 any) => {
   const theme = useTheme();
@@ -80,9 +81,9 @@ any) => {
   const [isDragging, setisDragging] = useState(false);
   useEffect(() => {
     if (isDragging) {
-      setdropItems({ id, name, http_method, type });
+      setdropItems({ id, name, http_method, type, full_url });
     }
-  }, [isDragging, id, name, http_method, type]);
+  }, [isDragging, id, name, http_method, type, full_url]);
   return (
     <div
       ref={divRef}
@@ -369,6 +370,7 @@ export default function WorkflowSidebar(props: any) {
         width: "95%",
       }}
     >
+      
       {/* <Box
       // sx={{
       //   padding: "10px",
@@ -618,6 +620,7 @@ export default function WorkflowSidebar(props: any) {
                   type="operations"
                   collection_id={operation?.collection_id}
                   recentlyModifiedProp={recentlyModifiedProp}
+                  full_url={operation?.full_url}
                   // tabs={tabs}
                   // onSelectCurrentOperation={onSelectCurrentOperation}
                 />

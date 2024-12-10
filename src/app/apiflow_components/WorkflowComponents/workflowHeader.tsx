@@ -314,6 +314,7 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
                         if (!config.disabled) {
                           config.onClick();
                         }
+                        handleMenuClose();
                       }}
                     >
                       <MenuItem disabled={config.disabled}>

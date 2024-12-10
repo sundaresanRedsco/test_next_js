@@ -75,12 +75,28 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
 }
-
+/* .ace_scroller {
+  width: 100%;
+  overflow: unset;
+}
+#json_editor {
+  overflow: unset;
+} */
+/* .ace_autocomplete .ace_text-layer{
+  width: unset;
+}
+.ace_line{
+  width:-webkit-fill-available
+} */
 /* common scroll style */
 
 /* Style the scrollbar track */
+.react-flow__panel {
+  display: none !important;
+}
 ::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
   background-color: #f6f9ff;
   border-radius: 10px;
 }
@@ -89,6 +105,11 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: #888;
   border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+  width: 98%;
+  height: 98%;
+  margin-bottom: 10px;
 }
 
 /* Optionally, you can style the scrollbar track on hover */
