@@ -51,10 +51,7 @@ function ChangeHistoryDesigner(props: any) {
   //   );
   //   const flowId = getCookies(process.env.NEXT_PUBLIC_COOKIE_FLOWID ?? "");
 
-  //   console.log("VersionIdCheck: ", versionId);
-
   const [filterStatusVal, setFilterStatusVal] = useState("All");
-
   const [logsDates, setLogsDates] = useState<any[]>([]);
   const [currentId, setCurrentId] = useState<string[]>([]);
   const [userValue, setUserValue] = useState<any[]>([]);
@@ -88,7 +85,6 @@ function ChangeHistoryDesigner(props: any) {
     // Check if value is null, "null", or undefined
     const checkValue =
       value === null || value === "null" || value === undefined ? "-" : value;
-    console.log("checkValue: ", checkValue);
     return checkValue; // Ensure the returned value is always a string
   };
 
@@ -132,9 +128,7 @@ function ChangeHistoryDesigner(props: any) {
           setUserValue(filteringOnlyUserNames);
           setIsLoading(false);
         })
-        .catch((error: any) => {
-          console.log("Error: ", error);
-        });
+        .catch((error: any) => {});
     }
   };
 
@@ -159,8 +153,27 @@ function ChangeHistoryDesigner(props: any) {
     }
     return handle; // Return unchanged if no underscore is found
   };
+  const [pushedNodeCount, setpushedNodeCount] = useState<any>(
+    filteredData?.map(() => ({ position: 0 }))
+  );
+  useEffect(() => {
+    setpushedNodeCount(filteredData?.map(() => ({ position: 0 })));
+  }, [filteredData.length]);
 
-  function revisionHandler(id: string, name: string) {
+  const handleIncreament = (index: number) => {
+    const tempArr = [...pushedNodeCount];
+    if (tempArr[index]?.position != 0) {
+      tempArr[index].position = 0;
+    } else {
+      if (tempArr.every((elem) => elem.position != 200)) {
+        tempArr[index].position = 200;
+      } else {
+        tempArr[index].position = 400;
+      }
+    }
+    setpushedNodeCount(tempArr);
+  };
+  function revisionHandler(id: string, name: string, index: number) {
     if (!currentId?.includes(id)) {
       if (currentId?.length === 2) {
         toast.error("Already two revisions selected");
@@ -171,23 +184,44 @@ function ChangeHistoryDesigner(props: any) {
       dispatch(GetChangesByRevisionId(id))
         .unwrap()
         .then((changeRes: any) => {
-          console.log("changeRes: ", changeRes);
-
           // For nodes
           setCurrentId((prevSelectedIds) => [...prevSelectedIds, id]);
           const parsedDetailsArray = changeRes?.changedNodes?.map(
             (item: any) => {
               const parsedDetails = JSON?.parse(item?.details);
+              const parsedPosition = JSON?.parse(parsedDetails?.position);
+              const nodeIds = nodes.map((elem) => elem.id);
+              if (!nodeIds.includes(parsedDetails.id)) {
+                parsedDetails["isDeleted"] = true;
+                parsedDetails.type = "deletedNode";
+              } else {
+                parsedDetails["isDeleted"] = false;
+              }
+              // parsedDetails.position.y = parsedDetails.position.y + 10;
+              if (parsedPosition && pushedNodeCount[index]) {
+                parsedPosition.y =
+                  (parsedPosition?.y || 0) +
+                  (pushedNodeCount[index]?.position || 0);
+              }
+
+              parsedDetails.position = parsedPosition;
+
               return {
                 ...item,
                 parsedDetails,
               };
             }
           );
-
+          // if (parsedDetailsArray[1]) {
+          //   const nodeObj = parsedDetailsArray[1];
+          // }
           let nodeId_array: any = [];
           let changeNodeArray = parsedDetailsArray
-            ?.filter((x: any) => x.parsedDetails.type === "operationNode")
+            ?.filter(
+              (x: any) =>
+                x.parsedDetails.type === "operationNode" ||
+                x.parsedDetails.type == "deletedNode"
+            )
             .map((item: any) => {
               let parsedData = JSON?.parse(item?.parsedDetails?.data);
               parsedData.changeType = name + " - " + item?.type;
@@ -202,10 +236,13 @@ function ChangeHistoryDesigner(props: any) {
                 revision_id: id,
               };
             });
+          // const deletedNodes = parsedDetailsArray.filter(
+          //   (elem: any) => elem.parsedDetails.isDeleted == true
+          // );
+          // console.log(deletedNodes, "testRevHistory2");
 
           setNodes((prevNodes: any) => {
             const updatedNodes = prevNodes?.map((node: any) => node);
-            console.log("UpdateNodes: ", changeNodeArray);
             return [...updatedNodes, ...changeNodeArray];
           });
 
@@ -227,6 +264,7 @@ function ChangeHistoryDesigner(props: any) {
                 edgeStyle = { stroke: "green" };
                 edgeLabel = name + " - " + "Added Edge";
                 break;
+
               case "DELETED_EDGE":
                 edgeStyle = { stroke: "red" };
                 edgeLabel = name + " - " + "Deleted Edge";
@@ -287,13 +325,10 @@ function ChangeHistoryDesigner(props: any) {
               changeEdgeType: "ModifiedEdge",
             }));
 
-            console.log("UpdateEdge: ", updatedEdges, changeEdgeArray, edges);
             return [...updatedEdges, ...changeEdgeArray];
           });
         })
-        .catch((error: any) => {
-          console.log("Error: ", error);
-        });
+        .catch((error: any) => {});
     } else {
       // If the ID is already selected, remove the associated nodes and edges
       setCurrentId((prevSelectedIds) =>
@@ -335,9 +370,6 @@ function ChangeHistoryDesigner(props: any) {
     setNodes(changeHistoryNodes?.nodes);
     setEdges(changeHistoryNodes?.edges);
   }, [changeHistoryNodes]);
-
-  console.log("nodesModified", nodes);
-  console.log("nodesModified", edges);
 
   return (
     <div>
@@ -450,7 +482,17 @@ function ChangeHistoryDesigner(props: any) {
                     <div>
                       {filteredData?.length > 0 ? (
                         filteredData?.map((val: any, index: any) => (
-                          <div id="scrollContainer" key={val?.revision_id}>
+                          <div
+                            id="scrollContainer"
+                            key={val?.revision_id}
+                            style={{
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              handleIncreament(index);
+                              revisionHandler(val.revision_id, val.name, index);
+                            }}
+                          >
                             <Timeline
                               sx={{
                                 [`& .${timelineItemClasses.root}:before`]: {
@@ -471,14 +513,7 @@ function ChangeHistoryDesigner(props: any) {
                                   />
                                   <TimelineConnector />
                                 </TimelineSeparator>
-                                <TimelineContent
-                                  style={{
-                                    cursor: "pointer",
-                                  }}
-                                  onClick={() => {
-                                    revisionHandler(val.revision_id, val.name);
-                                  }}
-                                >
+                                <TimelineContent>
                                   <div>
                                     <PrimaryTypography
                                       style={{

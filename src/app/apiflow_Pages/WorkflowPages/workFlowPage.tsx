@@ -952,7 +952,7 @@ const WorkflowDesigner = (props: any) => {
     ? process.env.NEXT_PUBLIC_WSS_URL || "default_websocket_url" // Use a default if undefined
     : // : "ws://localhost:9595";
       // "ws://localhost:9596";
-      "wss://139.99.114.132:2053";
+      "wss://afnode.iprotecs.net";
 
   const socket = new WebSocket(websocketUrl);
 

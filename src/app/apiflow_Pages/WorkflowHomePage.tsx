@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Box, Card, Typography } from "@mui/material";
+import { Box, Card, Skeleton, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { styled } from "@mui/system";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -190,63 +190,64 @@ export default function WorkflowHomePage() {
             flexWrap: "wrap",
           }}
         >
-          {getRecentModificationsLoading && (
+          {/* {getRecentModificationsLoading && (
             <GlobalCircularLoader
               open={getRecentModificationsLoading}
               isBackdrop={true}
             />
-          )}
-          {displayedModifications?.length <= 0 ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
-                height: "50vh",
-              }}
-            >
-              <PrimaryTypography
-                style={{
-                  color: "#FFFFFF",
-                  // padding: "15%",
-                  fontWeight: 600,
-                  fontSize: "14px",
+          )} */}
+          {!getRecentModificationsLoading ? (
+            displayedModifications?.length <= 0 ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  height: "50vh",
                 }}
               >
-                No data found
-              </PrimaryTypography>
-            </Box>
-          ) : (
-            <>
-              {displayedModifications?.map((x, index) => (
-                <OuterStyledCard
-                  key={x.id}
-                  sx={{
-                    padding: "10px",
-                    margin: "20px",
-                    // width: "577px",
-                    // height: "430px",
-                    width: { xs: "100%", sm: "48%", md: "45%", lg: "45%" },
-                    // "@media (min-width: 1600px)": {
-                    //   width: "33%", // Same as the flexBasis for proper alignment
-                    // },
-                    "@media (min-width: 1600px)": {
-                      width: "30%", // Three boxes per row
-                    },
+                <PrimaryTypography
+                  style={{
+                    color: "#FFFFFF",
+                    // padding: "15%",
+                    fontWeight: 600,
+                    fontSize: "14px",
                   }}
                 >
-                  <PrimaryTypography style={{ marginBottom: "20px" }}>
-                    {x.flow_name}
-                  </PrimaryTypography>
-                  {/* 
+                  No data found
+                </PrimaryTypography>
+              </Box>
+            ) : (
+              <>
+                {displayedModifications?.map((x, index) => (
+                  <OuterStyledCard
+                    key={x.id}
+                    sx={{
+                      padding: "10px",
+                      margin: "20px",
+                      // width: "577px",
+                      // height: "430px",
+                      width: { xs: "100%", sm: "48%", md: "45%", lg: "45%" },
+                      // "@media (min-width: 1600px)": {
+                      //   width: "33%", // Same as the flexBasis for proper alignment
+                      // },
+                      "@media (min-width: 1600px)": {
+                        width: "30%", // Three boxes per row
+                      },
+                    }}
+                  >
+                    <PrimaryTypography style={{ marginBottom: "20px" }}>
+                      {x.flow_name}
+                    </PrimaryTypography>
+                    {/* 
               <img
                 src={x.screenshot}
                 alt={x.flow_name}
                 style={{ width: "100%", height: "auto" }} // Ensure height is auto to maintain aspect ratio
               /> */}
 
-                  {/* <Image
+                    {/* <Image
                 // src={WorkflowImage}
                 src={x.screenshot}
                 alt={x.flow_name}
@@ -255,21 +256,43 @@ export default function WorkflowHomePage() {
                 // style={{ width: "100%" }}
               /> */}
 
-                  <Box
-                    sx={{ position: "relative", width: "100%", height: "auto" }}
-                  >
-                    <Image
-                      src={x.screenshot}
-                      alt={x.flow_name}
-                      layout="responsive"
-                      width={500}
-                      height={300}
-                      objectFit="cover"
-                    />
-                  </Box>
-                </OuterStyledCard>
-              ))}
-            </>
+                    <Box
+                      sx={{
+                        position: "relative",
+                        width: "100%",
+                        height: "auto",
+                      }}
+                    >
+                      <Image
+                        src={x.screenshot}
+                        alt={x.flow_name}
+                        layout="responsive"
+                        width={500}
+                        height={300}
+                        objectFit="cover"
+                      />
+                    </Box>
+                  </OuterStyledCard>
+                ))}
+              </>
+            )
+          ) : (
+            [1, 2].map((_, index) => (
+              <OuterStyledCard
+                key={index}
+                sx={{
+                  margin: "20px",
+                  height: "370px",
+                  width: { xs: "100%", sm: "48%", md: "45%", lg: "45%" },
+                  "@media (min-width: 1600px)": {
+                    width: "30%", // Three boxes per row
+                  },
+                  overflow: "hidden",
+                }}
+              >
+                <Skeleton sx={{ height: "100%", width: "100%" }} />
+              </OuterStyledCard>
+            ))
           )}
         </Box>
       </Grid>
