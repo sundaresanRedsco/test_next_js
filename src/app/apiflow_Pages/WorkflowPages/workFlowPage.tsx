@@ -952,6 +952,7 @@ const WorkflowDesigner = (props: any) => {
     ? process.env.NEXT_PUBLIC_WSS_URL || "default_websocket_url" // Use a default if undefined
     : // : "ws://localhost:9595";
       // "ws://localhost:9596";
+      // "wss://afnode.iprotecs.net/";
       "wss://afnode.iprotecs.net";
 
   const socket = new WebSocket(websocketUrl);
@@ -3239,8 +3240,10 @@ const WorkflowDesigner = (props: any) => {
   console.log(tooltipPosition, "tooltipPosition");
 
   const handleMouseMove = (event: any) => {
+    if (!rfInstance) return; // Ensure rfInstance is available
+
     // Convert mouse position to flow coordinates
-    const position = rfInstance?.screenToFlowPosition({
+    const position = rfInstance.screenToFlowPosition({
       x: event.clientX,
       y: event.clientY,
     });
@@ -3470,7 +3473,6 @@ const WorkflowDesigner = (props: any) => {
 
 
                     </ReactFlow> */}
-
                     <ReactFlow
                       id="react-flow-container"
                       className="position-relative"
@@ -3517,11 +3519,21 @@ const WorkflowDesigner = (props: any) => {
                             x: 0,
                             y: 0,
                           };
-                          // const adjustedX = tooltipPosition.x * viewport.zoom + viewport.x;
+
+                          // Adjust the scaling factor based on the zoom level
+                          // Use scale = 1 for normal zoom, increase it for zoom in, and decrease it for zoom out
+                          const scale =
+                            viewport.zoom > 1 ? 2 : viewport.zoom < 1 ? 0.5 : 1;
+
+                          // Adjust both cursor and tooltip position equally based on zoom and scaling factor
                           const adjustedX =
-                            cursorPosition.x * viewport.zoom + viewport.x;
+                            (cursorPosition.x - viewport.x) *
+                              (scale / viewport.zoom) +
+                            viewport.x;
                           const adjustedY =
-                            cursorPosition.y * viewport.zoom + viewport.y;
+                            (cursorPosition.y - viewport.y) *
+                              (scale / viewport.zoom) +
+                            viewport.y;
 
                           return (
                             <div
@@ -3532,27 +3544,26 @@ const WorkflowDesigner = (props: any) => {
                                 pointerEvents: "none",
                               }}
                             >
-                              {!cursorPosition.dragging && (
-                                <LightTooltip
-                                  title={cursorPosition?.name}
-                                  open={true}
-                                  PopperProps={{
-                                    disablePortal: true,
+                              <LightTooltip
+                                title={cursorPosition?.name}
+                                open={true}
+                                PopperProps={{
+                                  disablePortal: true,
+                                }}
+                              >
+                                <NavigationIcon
+                                  sx={{
+                                    fill: cursorPosition?.color,
+                                    transform: `rotate(-15deg)`,
                                   }}
-                                >
-                                  <NavigationIcon
-                                    sx={{
-                                      fill: cursorPosition?.color,
-                                      transform: `rotate(-15deg)`,
-                                    }}
-                                  />
-                                </LightTooltip>
-                              )}
+                                />
+                              </LightTooltip>
                             </div>
                           );
                         }
                       )}
                     </ReactFlow>
+                    ; ;
                   </div>
                 </Grid>
               </Grid>
