@@ -3535,7 +3535,11 @@ const WorkflowDesigner = (props: any) => {
                               (scale / viewport.zoom) +
                             viewport.y;
 
-                          return (
+                          return cursorPosition.dragging ||
+                            cursorPosition?.name ===
+                              userProfile?.user?.email ? (
+                            <></>
+                          ) : (
                             <div
                               key={clientId}
                               style={{

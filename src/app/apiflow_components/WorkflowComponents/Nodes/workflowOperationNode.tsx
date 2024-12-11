@@ -1323,7 +1323,7 @@ export default function WorkflowOperationNode({ data }: any) {
       {nodeData?.dragger && (
         <div
           style={{
-            position: "relative",
+            position: "absolute",
             top: "-20px",
             left: "25px",
             backgroundColor: "white",
