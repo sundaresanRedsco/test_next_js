@@ -120,6 +120,7 @@ import {
 } from "@mui/material";
 import NavigationIcon from "@mui/icons-material/Navigation";
 import ChangeHistoryDesigner from "@/app/apiflow_components/WorkflowComponents/ChangeHistoryDesigner";
+import { useWebSocket } from "@/app/hooks/useWebSocket";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -202,12 +203,8 @@ async function runHandler(
   // const edgesMap = doc.getMap("edges");
   const runData = runMap?.toJSON()?.run;
 
-  // console.log(edgesMap.toJSON());
-
   const globalkeys = doc.getArray("globalkeys");
   const globalKeysArray = globalkeys.toArray();
-
-  // console.log(globalkeys,"globalKeysArraydsd");
 
   if (runData?.status !== "COMPLETED") {
     try {
@@ -217,8 +214,6 @@ async function runHandler(
       // // Update nodes and edges
       // updateNodesAndEdges(nodeMap, updatedNodes);
       // updateNodesAndEdges(edgesMap, updatedEdges, "edges");
-
-      console.log("updatedEdges", updatedEdges);
 
       let queue = [];
       let currentEdge = getStartEdge(updatedEdges);
@@ -249,10 +244,6 @@ async function runHandler(
       let previousEdgeResponse: any = null;
       let globalResponse = {};
       processedNodes = new Set();
-
-      console.log("updatedEdges1", updatedEdges);
-      console.log("updatedNodes", updatedNodes);
-      console.log("processedNodes", processedNodes);
       // Process nodes in parallel
       while (queue.length > 0) {
         const currentEdges = queue.splice(0, Math.min(threads, queue.length));
@@ -334,8 +325,6 @@ async function runHandler(
           }
         });
       }
-
-      console.log("target COMPLETED");
       finalizeRun(runMap, queue.length === 0, globalResponse);
     } catch (error) {
       console.error("Error occurred:", error);
@@ -372,14 +361,10 @@ async function processNode(
   project_id: string,
   workspace_id: string
 ) {
-  // console.log(previousEdgeResponse, "previousEdgeResponse");
   let currentNode = updatedNodes.find((x: any) => x.id === currentEdge?.target);
-  console.log("target2");
   if (!currentNode || processedNodes?.has(currentNode.id))
     return { nextEdges: [] };
-  console.log("target21");
   processedNodes?.add(currentNode.id);
-  console.log("target3");
   const parsedData =
     typeof currentNode?.data === "string"
       ? JSON.parse(currentNode.data)
@@ -387,7 +372,6 @@ async function processNode(
   currentNode = { ...currentNode, data: parsedData };
 
   updateRunStatus(runMap, currentEdge?.target);
-  console.log("target4");
   let nextEdges = [];
   let newPreviousEdgeResponse = previousEdgeResponse;
   let requestBody = {};
@@ -408,12 +392,6 @@ async function processNode(
     );
     newPreviousEdgeResponse = operationSuccess;
 
-    console.log(
-      "operationSuccess: ",
-      operationSuccess,
-      newPreviousEdgeResponse
-    );
-
     let changeManData = {
       flow_id: apiFlow_Id,
       node_id: operationSuccess?.node_id,
@@ -430,22 +408,16 @@ async function processNode(
 
     // query need pas id
     // let changeManResponse = await changeManagement(changeManData);
-    // console.log("changeManResponse: ", changeManResponse);
-
-    console.log(globalResponse, "globalResponse");
 
     if (operationSuccess?.status === "SUCCESS") {
       for (let key of globalKeysArray) {
-        console.log(currentNode, "test1");
         if (key.node_id === currentNode.id) {
-          console.log(currentNode, "test2");
           const response = newPreviousEdgeResponse?.response?.apiResponse;
           let value = replacePlaceholders(
             key.request_template,
             { response },
             null
           );
-          console.log(value, "value");
           updateKeys(doc, value, key.id, globalKeysArray);
         }
       }
@@ -467,13 +439,11 @@ async function processNode(
       newPreviousEdgeResponse?.statusCode
     );
   }
-  console.log("target4");
   finalizeNode(runMap, currentEdge?.target, nextEdges, {
     ...newPreviousEdgeResponse,
     requestBody: requestBody,
   });
   let current_node_id = currentNode?.data?.node_name;
-  console.log("target5");
   return {
     nextEdges,
     previousEdgeResponse: newPreviousEdgeResponse,
@@ -483,7 +453,6 @@ async function processNode(
 
 function updateRunStatus(runMap: any, target: any) {
   // Logging to indicate the function execution
-  console.log("target");
 
   // Check if runMap is provided
   if (runMap) {
@@ -517,7 +486,6 @@ function updateRunStatus(runMap: any, target: any) {
   }
 
   // Logging to indicate the function has completed execution
-  console.log("target7");
 }
 
 function createRequestBody(
@@ -532,7 +500,6 @@ function createRequestBody(
 
   const payloadStr = currentNode?.data?.raw_payload || "{}";
   // const payload = JSON.parse(payloadStr);
-  console.log(globalResponse, "globalResponse");
   let payload = {};
 
   try {
@@ -548,8 +515,6 @@ function createRequestBody(
     { response },
     globalKeysArray
   );
-
-  console.log(globalKeysArray, "globalKeysArraysdsdsdjrjr");
 
   let headersArr = currentNode?.data?.operations_header || [];
 
@@ -582,29 +547,23 @@ function createRequestBody(
       new_payload[key.body_key] = key.body_key; // or key.body_key = value if there is a corresponding value
     }
   }
-  console.log(headersArr, "headersArr");
   const updateArray = (array: any) => {
     if (Array.isArray(array)) {
       return array.map((item) => {
         const key = item.name;
-        console.log(previousEdgeResponse?.status, "array");
         let value =
           // previousEdgeResponse?.status == "SUCCESS"
           replacePlaceholders(item.test_value, { response }, globalKeysArray);
         // : item.test_value;
-        console.log(value, "test_value");
         value =
           typeof value === "object" || Array.isArray(value)
             ? JSON.stringify(value)
             : value?.toString();
-
-        console.log(value, "array");
         return { key, value };
       });
     }
     return [];
   };
-  console.log("target8");
   return {
     operation_inputs: updateArray(currentNode?.data?.operations_input),
     operation_headers: updateArray(headersArr),
@@ -754,7 +713,6 @@ function getNextEdges(
   nodetype: any,
   nodeEndVariable: any
 ) {
-  console.log(operationSuccess, "operationSuccess");
   if (nodetype === "operationNode") {
     return edges.filter(
       (edge: any) =>
@@ -784,26 +742,24 @@ async function performOperation(
   currentNode: any,
   requestBody: any
 ) {
-  console.log("function Called");
   try {
     // Define the URL of the API endpoint you want to call
     // const nodeMap = doc.getMap("nodes");
     // let particular_node = nodeMap.get(targetId).nodes;
     let particular_node = currentNode;
     const apiUrl = `Api/Api_design_flow_service/save_and_fetch_by_operation_id?operation_id=${particular_node?.data.operation_id}&flow_id=${flow_id}&node_id=${targetId}&project_id=${project_id}`;
-    // console.log("api url", apiUrl);
+
     // Make a POST request to the API endpoint
-    // console.log(requestBody )
+
     let method = "post";
     const response = await AdminServices(method, apiUrl, requestBody);
 
     // await axios.post(apiUrl, requestBody);
 
     // Log the response data
-    // console.log("Response:", response.data);
 
     // Return the response data
-    // console.log(response.data, "response.data");
+
     return response;
   } catch (error) {
     // Handle errors here
@@ -868,8 +824,6 @@ function calculateSimilarityScore(nodeA: any, nodeB: any) {
 }
 
 function compareGlobalResponse(globalResponse: any) {
-  console.log(globalResponse, "globalResponsefun");
-
   const nodeIds = Object.keys(globalResponse);
   const results = [];
 
@@ -888,16 +842,8 @@ function compareGlobalResponse(globalResponse: any) {
     }
   }
 
-  console.log(results, "Similarity Results");
-
   // Log the similarity results
-  results.forEach((result) => {
-    console.log(
-      `Similarity between ${result.nodes[0]} and ${
-        result.nodes[1]
-      }: ${result.score.toFixed(2)}%`
-    );
-  });
+  results.forEach((result) => {});
 }
 
 // Example usage with your globalResponse
@@ -933,8 +879,6 @@ const WorkflowDesigner = (props: any) => {
 
   const [apiFlow_Id, setWorkflowId] = useState<any>(null);
 
-  console.log(apiFlow_Id, "apiFlow_Id");
-
   useEffect(() => {
     // Extracting the workflowId from the pathname
     const pathParts = pathname.split("/"); // Split the pathname by '/'
@@ -954,28 +898,6 @@ const WorkflowDesigner = (props: any) => {
       // "ws://localhost:9596";
       // "wss://afnode.iprotecs.net/";
       "wss://afnode.iprotecs.net";
-
-  const socket = new WebSocket(websocketUrl);
-
-  // Open event - WebSocket connection established
-  socket.addEventListener("open", () => {
-    console.log("WebSocket connected to " + websocketUrl);
-  });
-
-  // Close event - WebSocket connection closed
-  socket.addEventListener("close", () => {
-    console.log("WebSocket connection closed.");
-  });
-
-  // Error event - WebSocket connection error
-  socket.addEventListener("error", (error) => {
-    console.error("WebSocket error: ", error);
-  });
-
-  // Message event - WebSocket message received
-  socket.addEventListener("message", (event) => {
-    console.log("Received message: ", event.data);
-  });
 
   //---------------------------useSelector---------------------------------------------------------------
   const {
@@ -1100,7 +1022,6 @@ const WorkflowDesigner = (props: any) => {
         setImportOpen(true);
         setErrorBoole(true);
       } else {
-        console.log("Yjs Map 'run' is not initialized.");
       }
     }
   };
@@ -1124,7 +1045,6 @@ const WorkflowDesigner = (props: any) => {
       setErrorBoole(false);
       setErrors([]);
     } else {
-      console.log("Yjs Map 'run' is not initialized.");
     }
   };
 
@@ -1138,7 +1058,6 @@ const WorkflowDesigner = (props: any) => {
           const json = JSON.parse(e.target?.result as string);
           setFileContent(json);
           const jsonStringified = JSON.stringify(json, null, 2);
-          console.log("JSON file uploaded successfully");
           toast.success("JSON file uploaded successfully");
         } catch (error) {
           console.error("Invalid JSON file:", error);
@@ -1174,7 +1093,6 @@ const WorkflowDesigner = (props: any) => {
 
       // Convert canvas to Base64 image URL
       const imageURL = canvas.toDataURL("image/png");
-      console.log("Screenshot captured:", imageURL);
       return imageURL;
 
       // // Optionally: Download the image
@@ -1226,12 +1144,9 @@ const WorkflowDesigner = (props: any) => {
     dispatch(GetCollectionOperationTree(requestData))
       .unwrap()
       .then((res: any) => {
-        console.log("treeRes: ", res);
         const filterStatusVal: any = res?.collections?.filter(
           (filterStatus: any) => filterStatus?.status === "ACTIVE"
         );
-        console.log(filterStatusVal, "dfdfdf");
-        console.log("GetOperationTreeRes: ", res?.collections);
 
         if (file) {
           try {
@@ -1258,7 +1173,6 @@ const WorkflowDesigner = (props: any) => {
                   `${edge.source}-${edge.sourceHandle}-${edge.target}-${edge.targetHandle}`
               )
             );
-            console.log(data.nodes, "data.nodessdsdsdkk");
 
             // Validate nodes
             const nodeNew = data.nodes
@@ -1278,7 +1192,6 @@ const WorkflowDesigner = (props: any) => {
                   // Validate operations_header
                   try {
                     const parsedData = JSON.parse(node.data);
-                    console.log(parsedData, "parsedDataasas");
 
                     const headers = parsedData.operations_header || [];
                     if (
@@ -1488,8 +1401,6 @@ const WorkflowDesigner = (props: any) => {
                 created_by: userProfile.user.user_id,
               };
             });
-
-            console.log("Uploaded Data:", nodeNew, edgeNew);
             setUpdatedNodesNew(nodeNew);
             setUpdatedEdgesNew(edgeNew);
 
@@ -1506,11 +1417,7 @@ const WorkflowDesigner = (props: any) => {
           }
         }
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
-
-    console.log("requestData: ", requestData);
+      .catch((error: any) => {});
   };
 
   const handleSaveImportData = () => {
@@ -1522,7 +1429,6 @@ const WorkflowDesigner = (props: any) => {
         id: newNode?.id,
         nodes: newNode,
       };
-      console.log(updatedNode, "updatedNode");
 
       const nodeMap = ydoc?.getMap<any>("nodes");
       if (nodeMap) {
@@ -1597,13 +1503,13 @@ const WorkflowDesigner = (props: any) => {
   //     };
 
   //     let tempData: any = item;
-  //     console.log(tempData, "tempDataDrop");
+
   //     let count = 0;
   //     if (isEditable) {
   //       for (const node of nodes) {
   //         if (node.data) {
   //           const nodeDataV2 = JSON.parse(node.data);
-  //           console.log(nodeDataV2, "nodeDataV2");
+
   //           if (nodeDataV2.operation_id === tempData?.id) {
   //             count++;
   //           }
@@ -1619,14 +1525,14 @@ const WorkflowDesigner = (props: any) => {
   //       // )
   //       // .unwrap()
   //       // .then((operRes: any) => {
-  //       // console.log("OperRes: ", operRes);
+  //
 
   //       if (tempData?.type === "operations" && isEditable) {
   //         // let name: string = tempData?.name;
   //         let id: string = uuidv4();
   //         // let node_name = generateUniqueNodeName();
   //         let matchedPaths = extractPlaceholdersFromPath(null);
-  //         // console.log(matchedPaths, operRes?.[0]?.full_url, "matchedPaths");
+  //
 
   //         let queryParams: any = [];
 
@@ -1685,7 +1591,6 @@ const WorkflowDesigner = (props: any) => {
 
   //         // Parse and access the variable
   //         const parsedData = JSON.parse(newNode?.data);
-  //         console.log("Parsed Data: ", parsedData);
 
   //         // Add the condition to allow dragging only if operation_id is not null
   //         if (parsedData?.operation_id !== null) {
@@ -1704,7 +1609,7 @@ const WorkflowDesigner = (props: any) => {
   //             const startNode = nodes.find(
   //               (node) => node.type === "startButtonNode"
   //             );
-  //             console.log(startNode, "startNode");
+
   //             if (startNode && nodes?.length == 1) {
   //               let id = uuidv4();
   //               let edge = {
@@ -1734,25 +1639,24 @@ const WorkflowDesigner = (props: any) => {
   //                 id: id,
   //                 edges: edge,
   //               };
-  //               console.log(updatedEdge, "startNode");
 
   //               const edgeMap = ydoc?.getMap<any>("edges");
   //               if (edgeMap) {
   //                 edgeMap.set(updatedEdge.id, updatedEdge);
   //               } else {
-  //                 console.log("Yjs Map 'edgeMap' is not initialized.");
+
   //               }
   //             }
   //           } else {
-  //             console.log("Yjs Map 'run' is not initialized.");
+
   //           }
   //         } else {
-  //           console.log("Operation ID is null. Drag is not allowed.");
+
   //         }
   //       }
   //       // })
   //       // .catch((error: any) => {
-  //       //   console.log("Error: ", error);
+  //
   //       // });
   //     }
   //   },
@@ -1777,13 +1681,11 @@ const WorkflowDesigner = (props: any) => {
       });
 
       let tempData: any = dropItem;
-      console.log(dropItem, "DropItem");
       let count = 0;
       if (isEditable) {
         for (const node of nodes) {
           if (node.data) {
             const nodeDataV2 = JSON.parse(node.data);
-            console.log(nodeDataV2, "nodeDataV2");
             if (nodeDataV2.operation_id === tempData?.id) {
               count++;
             }
@@ -1799,7 +1701,6 @@ const WorkflowDesigner = (props: any) => {
         // )
         // .unwrap()
         // .then((operRes: any) => {
-        // console.log("OperRes: ", operRes);
 
         if (tempData?.type === "operations" && isEditable) {
           // let name: string = tempData?.name;
@@ -1809,7 +1710,6 @@ const WorkflowDesigner = (props: any) => {
           let matchedPaths = extractPlaceholdersFromPath(
             tempData?.full_url || null
           );
-          // console.log(matchedPaths, operRes?.[0]?.full_url, "matchedPaths");
 
           let queryParams: any = [];
 
@@ -1868,7 +1768,6 @@ const WorkflowDesigner = (props: any) => {
 
           // Parse and access the variable
           const parsedData = JSON.parse(newNode?.data);
-          console.log("Parsed Data: ", parsedData);
 
           // Add the condition to allow dragging only if operation_id is not null
           if (parsedData?.operation_id !== null) {
@@ -1887,7 +1786,6 @@ const WorkflowDesigner = (props: any) => {
               const startNode = nodes.find(
                 (node) => node.type === "startButtonNode"
               );
-              console.log(startNode, "startNode");
               if (startNode && nodes?.length == 1) {
                 let id = uuidv4();
                 let edge = {
@@ -1917,25 +1815,21 @@ const WorkflowDesigner = (props: any) => {
                   id: id,
                   edges: edge,
                 };
-                console.log(updatedEdge, "startNode");
 
                 const edgeMap = ydoc?.getMap<any>("edges");
                 if (edgeMap) {
                   edgeMap.set(updatedEdge.id, updatedEdge);
                 } else {
-                  console.log("Yjs Map 'edgeMap' is not initialized.");
                 }
               }
             } else {
-              console.log("Yjs Map 'run' is not initialized.");
             }
           } else {
-            console.log("Operation ID is null. Drag is not allowed.");
           }
         }
         // })
         // .catch((error: any) => {
-        //   console.log("Error: ", error);
+
         // });
       }
     },
@@ -1951,12 +1845,9 @@ const WorkflowDesigner = (props: any) => {
     )
       .unwrap()
       .then((operationRes: any) => {
-        // console.log(operationRes, operationRes?.[0]?.full_url, "operationRes");
         // setFullUrl(operationRes?.[0]?.full_url);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   }, []);
 
   function parseData(data: any) {
@@ -2010,7 +1901,6 @@ const WorkflowDesigner = (props: any) => {
     if (edgeMap) {
       edgeMap.set(updatedEdge.id, updatedEdge);
     } else {
-      console.log("Yjs Map 'edgeMap' is not initialized.");
     }
   };
 
@@ -2024,10 +1914,7 @@ const WorkflowDesigner = (props: any) => {
     // Validate nodes
     for (const node of nodesArray) {
       if (node.data) {
-        console.log(node.data, "node.dataS");
-
         const nodeData = JSON.parse(node.data);
-        console.log(nodeData, "cvcvdffd");
 
         // Validate headers
         const headers = nodeData?.operations_header || [];
@@ -2048,8 +1935,6 @@ const WorkflowDesigner = (props: any) => {
           }
         }
 
-        console.log(nodes, "nrewnodesnodes");
-
         // Validate query parameters
         const queryParams = nodeData?.operations_query_param || [];
         for (const input of queryParams) {
@@ -2068,7 +1953,6 @@ const WorkflowDesigner = (props: any) => {
             );
           }
         }
-        console.log(nodeData, "nodeDataNewsssdfjjk");
 
         // Validate raw_payload
         if (nodeData.raw_payload) {
@@ -2091,8 +1975,6 @@ const WorkflowDesigner = (props: any) => {
 
     // Validate globalKeysArray
     for (const key of globalKeysArray) {
-      console.log(globalKeysArray, "globalKeysArray");
-
       if (key.body_include == true) {
         if (!key.body_key?.trim()) {
           errors.push(
@@ -2152,7 +2034,6 @@ const WorkflowDesigner = (props: any) => {
     );
 
     if (errors.length > 0) {
-      console.log(errors, "errorsComes");
       setErrors(errors);
 
       const errorMap = ydoc?.getMap<any>("errors");
@@ -2161,7 +2042,6 @@ const WorkflowDesigner = (props: any) => {
       }
       // setCompiling(false);
       dispatch(setCompiling(false));
-      console.log("Validation failed:", errors);
     }
 
     // Validate nodes and collect errors
@@ -2187,7 +2067,6 @@ const WorkflowDesigner = (props: any) => {
           currentWorkspace ? currentWorkspace?.id : ""
         );
       } else {
-        console.log("Yjs Map 'run' is not initialized.");
       }
     }
   };
@@ -2230,7 +2109,6 @@ const WorkflowDesigner = (props: any) => {
           },
         });
       } else {
-        console.log("Yjs Map 'nodes' is not initialized.");
       }
     } else {
       awareness?.setLocalStateField("dragging", {
@@ -2256,7 +2134,6 @@ const WorkflowDesigner = (props: any) => {
           },
         });
       } else {
-        console.log("Yjs Map 'nodes' is not initialized.");
       }
     }
   };
@@ -2316,7 +2193,6 @@ const WorkflowDesigner = (props: any) => {
                 );
               } else {
                 // Handle the case where no active version is found
-                console.log("No active version found.");
               }
             });
           toast.success("Published");
@@ -2338,8 +2214,6 @@ const WorkflowDesigner = (props: any) => {
   };
 
   const exportToJson = () => {
-    console.log("test");
-
     // Parse nodes data
     // const parsedNodes = nodes.map((node) => ({
     //   id: node.id,
@@ -2413,10 +2287,6 @@ const WorkflowDesigner = (props: any) => {
 
     const { nodeArray, deleteNodeId } = prepareNodes(nodeMap);
     const { edgesArray, deleteEdgeId } = prepareEdges(edgesMap);
-    console.log(nodeArray, "nodeArray");
-    console.log(edgesArray, "edgesArray");
-    console.log(deleteNodeId, "deleteNodeId");
-    console.log(deleteEdgeId, "deleteEdgeId");
 
     if (
       nodeArray.length == 0 &&
@@ -2501,7 +2371,6 @@ const WorkflowDesigner = (props: any) => {
           };
         });
     } else {
-      console.log("Yjs Map 'run' is not initialized.");
     }
   };
 
@@ -2602,18 +2471,24 @@ const WorkflowDesigner = (props: any) => {
       dropDown: "true",
     },
   ];
-
+  const { getWsProvider } = useWebSocket();
   // -----------------------------------------useEffect-------------------------------------------------------
   useEffect(() => {
     if (versionValue && apiFlow_Id && userProfile.user.tenant_id) {
       setNodes([]);
       setEdges([]);
       const ydoc = new Y.Doc();
-      const wsProvider = new WebsocketProvider(
-        websocketUrl,
-        `${userProfile.user.tenant_id}_${apiFlow_Id}_${versionValue}`,
+      const wsProvider = getWsProvider(
+        userProfile.user.tenant_id,
+        apiFlow_Id,
+        versionValue,
         ydoc
       );
+      //   new WebsocketProvider(
+      //   websocketUrl,
+      //   `${userProfile.user.tenant_id}_${apiFlow_Id}_${versionValue}`,
+      //   ydoc
+      // );
 
       setYdoc(ydoc);
       dispatch(setFlowYdoc(ydoc));
@@ -2622,7 +2497,7 @@ const WorkflowDesigner = (props: any) => {
       dispatch(setWSprovider(wsProvider));
 
       wsProvider.on("status", (event: any) => {
-        console.log(event.status); // logs "connected" or "disconnected"
+        // logs "connected" or "disconnected"
       });
 
       const awareness = wsProvider?.awareness;
@@ -2630,7 +2505,7 @@ const WorkflowDesigner = (props: any) => {
       awareness?.on("change", () => {
         dispatch(setUserLists(Array.from(awareness.getStates().values())));
         const newCursors = new Map();
-        awareness.getStates().forEach((state, clientId) => {
+        awareness.getStates().forEach((state: any, clientId: any) => {
           if (state.dragging?.dragging) {
             // Handle dragging state if needed
           }
@@ -2760,7 +2635,6 @@ const WorkflowDesigner = (props: any) => {
     };
     // const runFlow = () => {
     //   let runData = runMap?.toJSON();
-    //   console.log(runData, "runDatasds");
 
     //   if (runData.run.action === "RUN") {
     //     if (runData.run.status === "START") {
@@ -2840,8 +2714,6 @@ const WorkflowDesigner = (props: any) => {
     //         setHasEdited(false); // Reset the flag after saving
     //       }
 
-    //       console.log(isEditable, "NewhasEdited");
-
     //       // } else {
     //       //   // No edits made, keep editing disabled
     //       //   setIsEditable(false);
@@ -2862,7 +2734,6 @@ const WorkflowDesigner = (props: any) => {
 
     const runFlow = () => {
       let runData = runMap?.toJSON();
-      console.log(runData, "runDatasds");
 
       if (runData.run.action === "RUN") {
         if (runData.run.status === "START") {
@@ -2950,9 +2821,7 @@ const WorkflowDesigner = (props: any) => {
     };
 
     const globalFlow = () => {
-      console.log("call");
       let globalData = keysArray.toArray();
-      console.log(globalData, "globalData");
 
       dispatch(setGlobalKeys(globalData));
     };
@@ -3030,8 +2899,6 @@ const WorkflowDesigner = (props: any) => {
                 }
               }
             });
-
-            console.log("updatedNodes", updatedNodes, newNodes);
             // Update nodes state
             setNodes(updatedNodes);
 
@@ -3085,7 +2952,6 @@ const WorkflowDesigner = (props: any) => {
           }
           if (res.globalKeys) {
             let keys = JSON.parse(res.globalKeys);
-            console.log(keys);
             // dispatch(setGlobalKeys(keys));
             let currentIndex = 0;
             keys.forEach((key: any, i: any) => {
@@ -3113,7 +2979,6 @@ const WorkflowDesigner = (props: any) => {
       dispatch(GetApiDesignFlowByDesignFlowId(apiFlow_Id))
         .unwrap()
         .then((res: any) => {
-          console.log(res, "flowIdRes");
           setApiFlowName(res.name);
 
           dispatch(
@@ -3135,7 +3000,6 @@ const WorkflowDesigner = (props: any) => {
                 );
               } else {
                 // Handle the case where no active version is found
-                console.log("No active version found.");
               }
             });
         })
@@ -3182,9 +3046,7 @@ const WorkflowDesigner = (props: any) => {
       //   //   n.id === node.id ? { ...n, position: node.position } : n
       //   // )
       //   nds.map((n) => {
-      //     console.log("Current Node ID (n.id):", n.id);
-      //     console.log("Dragged Node ID (node.id):", node.id);
-      //     console.log("Dragged Node Position (node.position):", node.position);
+
       //     return n.id === node.id ? { ...n, position: node.position } : n;
       //   })
       // );
@@ -3212,7 +3074,6 @@ const WorkflowDesigner = (props: any) => {
 
     if (delta > 1000) {
       // Log FPS every second
-      console.log(`FPS: ${frameCount}`);
       frameCount = 0;
     }
     requestAnimationFrame(measureFPS);
@@ -3233,11 +3094,7 @@ const WorkflowDesigner = (props: any) => {
     measureFPS();
   }, []);
 
-  console.log(ydoc, "YDOC");
-
   const [tooltipPosition, setTooltipPosition] = React.useState({ x: 0, y: 0 });
-
-  console.log(tooltipPosition, "tooltipPosition");
 
   const handleMouseMove = (event: any) => {
     if (!rfInstance) return; // Ensure rfInstance is available
@@ -3398,18 +3255,17 @@ const WorkflowDesigner = (props: any) => {
                       edgeTypes={edgeTypes}
                       onInit={setRfInstance}
                       onNodeDragStart={() => {
-                        console.log("onNodeDragStart");
                       }}
-                      // onNodeDragStop={() => console.log("onNodeDragStop")}
+                      // onNodeDragStop={() =>}
                       onNodeDragStop={onNodeDragStop}
                       // onNodeDragStart={() => {
-                      //   console.log("onNodeDragStart");
+                      
                       //   setDragCount(0);
                       //   setEventTimestamps([]);
                       // }}
                       // onNodeDragStop={() => {
-                      //   console.log("onNodeDragStop");
-                      //   console.log("Total drag events:", dragCount);
+                      
+                      
                       // }}
                       proOptions={proOptions}
                       nodeOrigin={[0.5, 0]}
@@ -3447,10 +3303,6 @@ const WorkflowDesigner = (props: any) => {
       );
     }}
     onStop={(e, data) => {
-      console.log(`Moved ${position?.name} to:`, {
-        x: data.x,
-        y: data.y,
-      });
       // Optionally update final position in shared state
     }}
   >
@@ -3511,6 +3363,8 @@ const WorkflowDesigner = (props: any) => {
                       onInit={setRfInstance}
                       fitViewOptions={{ padding: 700 }}
                       proOptions={{ hideAttribution: true }}
+                      maxZoom={3.5}
+                      minZoom={0.2}
                     >
                       {Array.from(cursors?.entries()).map(
                         ([clientId, cursorPosition]) => {
@@ -3535,11 +3389,7 @@ const WorkflowDesigner = (props: any) => {
                               (scale / viewport.zoom) +
                             viewport.y;
 
-                          return cursorPosition.dragging ||
-                            cursorPosition?.name ===
-                              userProfile?.user?.email ? (
-                            <></>
-                          ) : (
+                          return (
                             <div
                               key={clientId}
                               style={{
@@ -3567,7 +3417,6 @@ const WorkflowDesigner = (props: any) => {
                         }
                       )}
                     </ReactFlow>
-                    ; ;
                   </div>
                 </Grid>
               </Grid>

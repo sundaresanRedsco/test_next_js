@@ -841,6 +841,14 @@ export const flowSlice = createSlice({
       // Update the state with the selected container value
       state.changeHistoryNodes = action.payload;
     },
+    clearChangeHistroy: (state, action) => {
+      // console.log(action.payload, "setNextNode");
+      // Update the state with the selected container value
+      state.changeHistoryNodes = {
+        nodes: [],
+        edges: [],
+      };
+    },
   },
   extraReducers(builder) {
     builder.addCase(
@@ -1319,6 +1327,7 @@ export const {
   setGlobalResponse,
   setCurrentUserFlowColor,
   setChangeHistroy,
+  clearChangeHistroy,
   clearFlowList,
 } = flowSlice.actions;
 export default flowSlice.reducer;

@@ -1114,126 +1114,6 @@ export default function RevHistoryNode({ data }: any) {
   };
 
   //------------------------------------useEffect---------------------------------------------------------
-  useEffect(() => {
-    const nodesMap = flowYdoc?.getMap<any>("nodes");
-
-    // const messagesArrayNew = messagesArray.toArray();
-
-    let currentData: any = getNode(nodeData?.id);
-
-    if (nodesMap) {
-      nodesMap.set(nodeData?.id, {
-        action: "EDIT_NODE",
-        status: "null",
-        id: nodeData?.id,
-        nodes: {
-          ...currentData,
-
-          data: JSON.stringify({
-            ...nodeData,
-            operations_header: headers,
-            operations_input: inputs,
-            operations_auth: auths,
-            operations_query_param: querys,
-          }),
-        },
-      });
-    } else {
-    }
-  }, [headers, inputs, auths, querys]);
-
-  useEffect(() => {
-    if (!flowYdoc) return;
-    const runMap = flowYdoc?.getMap<any>("run");
-
-    // const editNodesArry = ydoc.getArray<any>("nodes");
-
-    const runFlow = () => {
-      let runData = runMap?.toJSON();
-
-      if (runData.run.status === "RUNNING") {
-        let updateRun = runData?.run?.run_result.find(
-          (x: any) => x?.node_id == nodeData?.id
-        );
-        setCurrentResultRun(updateRun);
-      }
-    };
-
-    runMap.observe(runFlow);
-
-    return () => {
-      runMap.unobserve(runFlow);
-    };
-  }, []);
-
-  useEffect(() => {
-    const user_id = userProfile.user.user_id;
-    const handleClickOutside = (event: any) => {
-      if (popoverRef?.current && !popoverRef?.current?.contains(event.target)) {
-        let nodesArray = getNodes();
-        let edgesArray = getEdges();
-        for (const node of nodesArray) {
-          if (node.data) {
-            const nodeDataV2 = JSON.parse(node.data);
-
-            // Validate headers
-            const headers = nodeDataV2?.operations_header || [];
-            for (const header of headers) {
-              const error = checkConnections(
-                node.id,
-                header.test_value,
-                nodeDataV2.node_name,
-                edgesArray,
-                nodesArray,
-                flowYdoc,
-                initialFlowId,
-                user_id
-              );
-            }
-
-            const queryParams = nodeDataV2?.operations_query_param || [];
-            for (const input of queryParams) {
-              const error = checkConnections(
-                node.id,
-                input.test_value,
-                nodeData.node_name,
-                edgesArray,
-                nodesArray,
-                flowYdoc,
-                initialFlowId,
-                user_id
-              );
-            }
-
-            // Validate raw_payload
-            if (nodeDataV2.raw_payload) {
-              try {
-                // Try parsing the JSON
-                const error = checkConnections(
-                  node.id,
-                  nodeDataV2.raw_payload,
-                  nodeDataV2.node_name,
-                  edgesArray,
-                  nodesArray,
-                  flowYdoc,
-                  initialFlowId,
-                  user_id
-                );
-              } catch (error: any) {}
-            }
-          }
-        }
-      }
-    };
-
-    // Add event listener for clicks outside
-    document.addEventListener("mousedown", handleClickOutside);
-
-    // Cleanup event listener on component unmount
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   useEffect(() => {
     setHeaders(
@@ -1450,7 +1330,10 @@ export default function RevHistoryNode({ data }: any) {
       <WorkflowCustomHandle
         type="target"
         position={Position.Left}
-        id={nodeData?.id + "_input"}
+        id={
+          (nodeData?.modifiedID ? nodeData?.modifiedID : nodeData?.id) +
+          "_input"
+        }
         // isConnectable={3}
         style={{
           height: "7px",
@@ -2750,12 +2633,455 @@ export default function RevHistoryNode({ data }: any) {
             </Popover>
           </div>
         </Popover>
+        {/* Response section */}
+        <Popover
+          id="mouse-over-popover"
+          open={Boolean(anchorElResponse)}
+          anchorEl={anchorElResponse}
+          onClose={handleCloseResponse}
+          anchorOrigin={{
+            vertical: "center",
+            horizontal: "right",
+          }}
+          PaperProps={{
+            sx: {
+              width: "400px",
+              // minWidth: "180px",
+              padding: "15px",
+              maxHeight: "200px",
+              // overflowY: "auto",
+              overflow: "auto",
+              // pointerEvents: 'none',
+            },
+          }}
+          disableRestoreFocus
+        >
+          <>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: "5px",
+              }}
+            >
+              <PrimaryTypography
+                style={{
+                  fontWeight: 900,
+                }}
+              >
+                Operation Response
+              </PrimaryTypography>
+            </div>
+            <>
+              {
+                // ((currentResultRun === null) || (currentResultRun === undefined)) ?
+                JSON?.stringify(currentResultRun) === "{}" ? (
+                  <>
+                    <RenderNoDataFound />
+                  </>
+                ) : (
+                  <>
+                    <div style={{ marginTop: "-5px", marginLeft: "-18px" }}>
+                      <Accordion
+                        style={{
+                          background: "transparent",
+                          boxShadow: "none",
+                        }}
+                        onClick={() => {
+                          setSizeAccClicked(!sizeAccClicked);
+                        }}
+                      >
+                        <AccordionSummary
+                          aria-controls="panel1a-content"
+                          id="panel1a-header"
+                          expandIcon={<ExpandMoreIcon />}
+                        >
+                          <div>
+                            <TextTypography
+                              style={{
+                                fontWeight: 900,
+                              }}
+                            >
+                              Size:{" "}
+                              <span
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                }}
+                              >
+                                {/* {currentResultRun?.size?.response_BodySize} KB */}
+                                {/* {currentResultRun?.size && `${currentResultRun?.size?.request_HeaderSize + currentResultRun?.size?.request_BodySize + currentResultRun?.size?.response_BodySize + currentResultRun?.size?.response_HeaderSize}`} KB */}
+                                {calculateTotalSize()} KB
+                              </span>
+                            </TextTypography>
+                          </div>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <div
+                            style={{
+                              marginTop: "-25px",
+                              marginLeft: "15px",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                width: "100%",
+                                height: "100%",
+                                background: theme.palette.primaryWhite.main,
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "grid",
+                                  gridTemplateColumns: "auto auto",
+                                  rowGap: "4px",
+                                  // columnGap: '5px'
+                                }}
+                              >
+                                <TextTypography>
+                                  Request Body Size:{" "}
+                                </TextTypography>
+                                <TextTypography
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                    marginLeft: "-105px",
+                                  }}
+                                >
+                                  {currentResultRun?.size?.request_BodySize} KB
+                                </TextTypography>
+                                <TextTypography>
+                                  Request Header Size:{" "}
+                                </TextTypography>
+                                <TextTypography
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                    marginLeft: "-105px",
+                                  }}
+                                >
+                                  {currentResultRun?.size?.request_HeaderSize}{" "}
+                                  KB
+                                </TextTypography>
+                                <TextTypography>
+                                  Response Body Size:{" "}
+                                </TextTypography>
+                                <TextTypography
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                    marginLeft: "-105px",
+                                  }}
+                                >
+                                  {currentResultRun?.size?.response_BodySize} KB
+                                </TextTypography>
+                                <TextTypography>
+                                  Response Header Size:{" "}
+                                </TextTypography>
+                                <TextTypography
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                    marginLeft: "-105px",
+                                  }}
+                                >
+                                  {currentResultRun?.size?.response_HeaderSize}{" "}
+                                  KB
+                                </TextTypography>
+                              </div>
+                            </Box>
+                          </div>
+                        </AccordionDetails>
+                      </Accordion>
+                    </div>
+                    <div
+                      style={{
+                        marginTop: "-25px",
+                        marginLeft: "-18px",
+                      }}
+                    >
+                      <Accordion
+                        style={{
+                          background: "transparent",
+                          boxShadow: "none",
+                        }}
+                        onClick={() => {
+                          setTimeAccClicked(!timeAccClicked);
+                        }}
+                      >
+                        <AccordionSummary
+                          aria-controls="panel1a-content"
+                          id="panel1a-header"
+                          expandIcon={<ExpandMoreIcon />}
+                        >
+                          <div>
+                            <TextTypography
+                              style={{
+                                fontWeight: 900,
+                              }}
+                            >
+                              Time:{" "}
+                              <span
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                }}
+                              >
+                                {/* {convertToMilliSeconds(currentResultRun?.lookups?.totalTime)} ms */}
+                                {calculateTotalTime()} ms
+                              </span>
+                            </TextTypography>
+                          </div>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <div
+                            style={{
+                              marginTop: "-25px",
+                              marginLeft: "15px",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                width: "100%",
+                                height: "100%",
+                                background: theme.palette.primaryWhite.main,
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "grid",
+                                  gridTemplateColumns: "auto auto",
+                                  rowGap: "4px",
+                                  // columnGap: '5px'
+                                }}
+                              >
+                                <TextTypography>
+                                  Dns Lookup Time:{" "}
+                                </TextTypography>
+                                <TextTypography
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                    marginLeft: "-90px",
+                                  }}
+                                >
+                                  {convertToMilliSeconds(
+                                    currentResultRun?.lookups?.dnsLookupTime
+                                  )}{" "}
+                                  ms
+                                </TextTypography>
+                                <TextTypography>Download Time: </TextTypography>
+                                <TextTypography
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                    marginLeft: "-90px",
+                                  }}
+                                >
+                                  {convertToMilliSeconds(
+                                    currentResultRun?.lookups?.downloadTime
+                                  )}{" "}
+                                  ms
+                                </TextTypography>
+                                <TextTypography>Response Time: </TextTypography>
+                                <TextTypography
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                    marginLeft: "-90px",
+                                  }}
+                                >
+                                  {convertToMilliSeconds(
+                                    currentResultRun?.lookups?.responseTime
+                                  )}{" "}
+                                  ms
+                                </TextTypography>
+                                <TextTypography>
+                                  SSL Handshake Time:{" "}
+                                </TextTypography>
+                                <TextTypography
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                    marginLeft: "-90px",
+                                  }}
+                                >
+                                  {convertToMilliSeconds(
+                                    currentResultRun?.lookups?.sslHandshakeTime
+                                  )}{" "}
+                                  ms
+                                </TextTypography>
+                                <TextTypography>Total Time: </TextTypography>
+                                <TextTypography
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                    marginLeft: "-90px",
+                                  }}
+                                >
+                                  {convertToMilliSeconds(
+                                    currentResultRun?.lookups?.totalTime
+                                  )}{" "}
+                                  ms
+                                </TextTypography>
+                                <TextTypography>
+                                  TransferStart Time:{" "}
+                                </TextTypography>
+                                <TextTypography
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                    marginLeft: "-90px",
+                                  }}
+                                >
+                                  {convertToMilliSeconds(
+                                    currentResultRun?.lookups?.transferStartTime
+                                  )}{" "}
+                                  ms
+                                </TextTypography>
+                                <TextTypography>
+                                  TCP Handshake Time:{" "}
+                                </TextTypography>
+                                <TextTypography
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                    marginLeft: "-90px",
+                                  }}
+                                >
+                                  {convertToMilliSeconds(
+                                    currentResultRun?.lookups?.tcpHandshakeTime
+                                  )}{" "}
+                                  ms
+                                </TextTypography>
+                              </div>
+                            </Box>
+                          </div>
+                        </AccordionDetails>
+                      </Accordion>
+                    </div>
+                    <div style={{ marginTop: "-10px" }}>
+                      <TextTypography>
+                        <span
+                          style={{
+                            fontWeight: 900,
+                          }}
+                        >
+                          {`StatusCode: `}
+                        </span>
+                        <span
+                          style={{
+                            fontWeight: 900,
+                          }}
+                        >
+                          {/* {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`} */}
+                          {currentResultRun?.statusCode >= 100 &&
+                          currentResultRun?.statusCode <= 199 ? (
+                            <span
+                              style={{
+                                color: `${theme.palette.primaryBlue.main}`,
+                              }}
+                            >
+                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                            </span>
+                          ) : currentResultRun?.statusCode >= 200 &&
+                            currentResultRun?.statusCode <= 299 ? (
+                            <span
+                              style={{
+                                color: `#16A34A`,
+                              }}
+                            >
+                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                            </span>
+                          ) : currentResultRun?.statusCode >= 300 &&
+                            currentResultRun?.statusCode <= 399 ? (
+                            <span
+                              style={{
+                                color: `#D8A805`,
+                              }}
+                            >
+                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                            </span>
+                          ) : currentResultRun?.statusCode >= 400 &&
+                            currentResultRun?.statusCode <= 499 ? (
+                            <span
+                              style={{
+                                color: `#FF8C00`,
+                              }}
+                            >
+                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                            </span>
+                          ) : currentResultRun?.statusCode >= 500 &&
+                            currentResultRun?.statusCode <= 509 ? (
+                            <span
+                              style={{
+                                color: `${theme.palette.mainRed.main}`,
+                              }}
+                            >
+                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                            </span>
+                          ) : (
+                            ""
+                          )}
+                        </span>
+                      </TextTypography>
+                    </div>
+
+                    {data?.currentResultRun?.node_id !== undefined ? (
+                      <>
+                        <TextTypography
+                          style={{
+                            margin: "10px",
+                            fontSize: "12px",
+                            fontWeight: 900,
+                            color: `${theme.palette.teritiaryColor.main}`,
+                          }}
+                        >
+                          No data found
+                        </TextTypography>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ marginTop: "5px" }}>
+                          <TextTypography
+                            style={{
+                              fontWeight: 900,
+                            }}
+                          >
+                            Response:
+                          </TextTypography>
+                          <pre
+                            style={{
+                              fontSize: "9px",
+                            }}
+                          >
+                            {formatWithLineNumbers(
+                              JSON.stringify(
+                                currentResultRun?.response,
+                                null,
+                                2
+                              )
+                            )}
+                          </pre>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )
+              }
+            </>
+          </>
+        </Popover>
       </Box>
 
       <WorkflowCustomHandle
         type="source"
         position={Position.Right}
-        id={nodeData?.id + "_success"}
+        id={
+          (nodeData?.modifiedID ? nodeData?.modifiedID : nodeData?.id) +
+          "_success"
+        }
         style={{
           height: "8px",
           width: "8px",
@@ -2770,7 +3096,10 @@ export default function RevHistoryNode({ data }: any) {
       <WorkflowCustomHandle
         type="source"
         position={Position.Right}
-        id={nodeData?.id + "_failure"}
+        id={
+          (nodeData?.modifiedID ? nodeData?.modifiedID : nodeData?.id) +
+          "_failure"
+        }
         style={{
           height: "8px",
           width: "8px",

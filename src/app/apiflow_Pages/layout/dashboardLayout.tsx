@@ -52,6 +52,7 @@ import useSecuredRoutes from "@/app/hooks/useSecuredRoutes";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import GLoader from "@/app/apiflow_components/global/GLoader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import WebSocketProvider from "@/app/hooks/useWebSocket";
 
 const fetchWorkspace = (
   dispatch: any,
@@ -241,43 +242,45 @@ const DashboardLayout = ({ children }: any) => {
       <ThemeProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
           {" "}
-          <AlertProvider>
-            <Grid
-              container
-              sx={{ height: "100%", position: "relative" }}
-              spacing={2}
-            >
-              {isPageLoading && <GLoader />}
+          <WebSocketProvider>
+            <AlertProvider>
               <Grid
-                sx={{ width: "max-content", transition: "width 0.3s linear" }}
+                container
+                sx={{ height: "100%", position: "relative" }}
+                spacing={2}
               >
-                <SidebarContainer isCollapsed={isSidebarCollapsed}>
-                  <SidebarComponent
-                    isCollapsed={isSidebarCollapsed}
-                    setIsSidebarCollapsed={setIsSidebarCollapsed}
-                    onClick={toggleSidebar}
-                  />
-                  {/* <button style={{color:"red"}}>close</button> */}
-                  {/* <SidebarIconWithRotation
+                {isPageLoading && <GLoader />}
+                <Grid
+                  sx={{ width: "max-content", transition: "width 0.3s linear" }}
+                >
+                  <SidebarContainer isCollapsed={isSidebarCollapsed}>
+                    <SidebarComponent
+                      isCollapsed={isSidebarCollapsed}
+                      setIsSidebarCollapsed={setIsSidebarCollapsed}
+                      onClick={toggleSidebar}
+                    />
+                    {/* <button style={{color:"red"}}>close</button> */}
+                    {/* <SidebarIconWithRotation
                   isOpen={isSidebarCollapsed} // Pass the state to the styled component
                   onClick={toggleSidebar}
                 /> */}
-                </SidebarContainer>
+                  </SidebarContainer>
+                </Grid>
+                <Grid
+                  sx={{
+                    overflowY: "auto",
+                    height: "100vh",
+                    flex: 1,
+                    transition: "width 0.3s linear",
+                    padding: { lg: "10px", md: "0px" },
+                  }}
+                  id="mainContainer"
+                >
+                  {children}
+                </Grid>
               </Grid>
-              <Grid
-                sx={{
-                  overflowY: "auto",
-                  height: "100vh",
-                  flex: 1,
-                  transition: "width 0.3s linear",
-                  padding: { lg: "10px", md: "0px" },
-                }}
-                id="mainContainer"
-              >
-                {children}
-              </Grid>
-            </Grid>
-          </AlertProvider>
+            </AlertProvider>
+          </WebSocketProvider>
         </QueryClientProvider>
       </ThemeProvider>
     );

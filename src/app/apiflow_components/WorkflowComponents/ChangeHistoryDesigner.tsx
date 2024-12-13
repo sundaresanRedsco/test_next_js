@@ -5,6 +5,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
 import {
+  clearChangeHistroy,
   FlowReducer,
   GetChangesByRevisionId,
   GetRevisionsByFlowVersionId,
@@ -158,7 +159,7 @@ function ChangeHistoryDesigner(props: any) {
   );
   useEffect(() => {
     setpushedNodeCount(filteredData?.map(() => ({ position: 0 })));
-  }, [filteredData.length]);
+  }, [filteredData.length, openChangeHistory]);
 
   const handleIncreament = (index: number) => {
     const tempArr = [...pushedNodeCount];
@@ -226,6 +227,7 @@ function ChangeHistoryDesigner(props: any) {
               let parsedData = JSON?.parse(item?.parsedDetails?.data);
               parsedData.changeType = name + " - " + item?.type;
               parsedData.response = item?.parsedDetails?.response;
+              parsedData["modifiedID"] = item?.parsedDetails?.id + "_" + name;
               let stringifiedData = JSON?.stringify(parsedData);
               nodeId_array.push(item?.parsedDetails?.id);
 
@@ -357,6 +359,10 @@ function ChangeHistoryDesigner(props: any) {
 
   useEffect(() => {
     fetchPageData(currentPage);
+    if (!openChangeHistory) {
+      setCurrentId([]);
+      dispatch(clearChangeHistroy([]));
+    }
   }, [openChangeHistory, currentPage, project_id, flowId, versionId]);
 
   useEffect(() => {
@@ -367,7 +373,20 @@ function ChangeHistoryDesigner(props: any) {
   }, []);
 
   useEffect(() => {
-    setNodes(changeHistoryNodes?.nodes);
+    const nodesArr = changeHistoryNodes?.nodes?.map((elem: any) => {
+      let tempObj: any = { ...elem };
+      if (elem.data) {
+        const parsedData = JSON?.parse(elem.data);
+        if (parsedData?.changeType) {
+          parsedData.changeType = "CURRENT_NODE";
+        }
+        tempObj["data"] = JSON?.stringify(parsedData);
+      }
+
+      return tempObj;
+    });
+
+    setNodes(nodesArr);
     setEdges(changeHistoryNodes?.edges);
   }, [changeHistoryNodes]);
 

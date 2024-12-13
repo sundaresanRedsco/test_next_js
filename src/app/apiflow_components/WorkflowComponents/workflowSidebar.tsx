@@ -230,7 +230,6 @@ export default function WorkflowSidebar(props: any) {
   const [endVal, setEndVal] = useState<number>(5);
   const [collOperTreeCount, setCollOperTreeCount] = useState(0);
   const [collOperDetails, setCollOperDetails] = useState<any[]>([]);
-  console.log(collOperDetails, "collOperDetailssdsd");
 
   const [searchVal, setSearchVal] = useState("");
 
@@ -254,13 +253,12 @@ export default function WorkflowSidebar(props: any) {
       dispatch(GetCollectionOperationTreeFlow(requestData))
         .unwrap()
         .then((res: any) => {
-          console.log("treeRes: ", res);
           setCollOperTreeCount(res?.count);
 
           // const filterStatusVal = res?.collections?.filter(
           //   (filterStatus: any) => filterStatus?.status === "ACTIVE"
           // );
-          // console.log("GetOperationTreeRes: ", res?.collections);
+
           // setCollOperDetails(filterStatusVal);
 
           setCollOperDetails((prevValues: any) => {
@@ -283,9 +281,7 @@ export default function WorkflowSidebar(props: any) {
 
           setIsLoading(false);
         })
-        .catch((error: any) => {
-          console.log("Eror: ", error);
-        })
+        .catch((error: any) => {})
         .finally(() => setIsLoading(false));
     }
   };
@@ -314,11 +310,11 @@ export default function WorkflowSidebar(props: any) {
   //     dispatch(GetOperations(getOperationValues))
   //       .unwrap()
   //       .then((operRes: any) => {
-  //         console.log(operRes, "operResoperRes");
+
   //         setCollOperVal(operRes);
   //       })
   //       .catch((error: any) => {
-  //         console.log("Error: ", error);
+
   //       });
   //   }
   // }, [currentEnvironment, currentStage]);
@@ -370,7 +366,6 @@ export default function WorkflowSidebar(props: any) {
         width: "95%",
       }}
     >
-      
       {/* <Box
       // sx={{
       //   padding: "10px",

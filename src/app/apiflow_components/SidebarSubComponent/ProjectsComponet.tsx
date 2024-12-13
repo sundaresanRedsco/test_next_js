@@ -466,6 +466,9 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                 }}
                 expanded={workflowCollapse == env.project_id}
                 onChange={() => {
+                  router.push(
+                    `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/workflow`
+                  );
                   handleNestedAccordionChange(
                     "flow",
                     env.project_id + "_workflow"
@@ -474,9 +477,6 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                     setIsPageLoading(true);
                   }
                   dispatch(setCurrentTreeActive(env.project_id + "_workflow"));
-                  router.push(
-                    `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/workflow`
-                  );
                 }}
               >
                 <AccordionSummary
