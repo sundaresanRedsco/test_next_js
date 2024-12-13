@@ -3389,7 +3389,10 @@ const WorkflowDesigner = (props: any) => {
                               (scale / viewport.zoom) +
                             viewport.y;
 
-                          return (
+                          return userProfile?.user.email ===
+                            cursorPosition?.name ? (
+                            <></>
+                          ) : (
                             <div
                               key={clientId}
                               style={{
@@ -3408,7 +3411,7 @@ const WorkflowDesigner = (props: any) => {
                                 <NavigationIcon
                                   sx={{
                                     fill: cursorPosition?.color,
-                                    transform: `rotate(-15deg)`,
+                                    transform: "rotate(-15deg)",
                                   }}
                                 />
                               </LightTooltip>

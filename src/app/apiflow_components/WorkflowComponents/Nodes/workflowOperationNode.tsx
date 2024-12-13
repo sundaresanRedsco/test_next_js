@@ -1318,9 +1318,7 @@ export default function WorkflowOperationNode({ data }: any) {
       }}
       // className="rounded"
     >
-      {/* {nodeData?.dragger && userProfile?.user?.email !== nodeData?.dragger && ( */}
-
-      {nodeData?.dragger && (
+      {nodeData?.dragger && userProfile?.user?.email !== nodeData?.dragger && (
         <div
           style={{
             position: "absolute",
