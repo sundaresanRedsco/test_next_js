@@ -1,5 +1,5 @@
 import { styled } from "@mui/system";
-import { Button, IconButton, useTheme } from "@mui/material";
+import { Box, Button, IconButton, useTheme } from "@mui/material";
 import { SxProps, Theme } from "@mui/material/styles";
 
 const StyledButton = styled(Button)`
@@ -10,7 +10,7 @@ const StyledButton = styled(Button)`
 `;
 
 export interface GlobalButtonProps {
-  buttonType?: string;
+  buttonType?: string | "primary" | "tertiary" | "secondary";
   fontSize?: any;
   dataTest?: string | undefined;
   type?: any;
@@ -127,15 +127,27 @@ export default function GlobalButton(props: GlobalButtonProps) {
       type={type ? type : ""}
       disabled={disabled}
       onClick={onClickHandler}
+      // startIcon={
+      //   icon &&
+      //   iconPosition === "start" && (
+      //     <Box sx={{ fill: Color, color: Color }}>{icon}</Box>
+      //   )
+      // }
     >
       {icon && iconPosition === "start" && (
-        <IconButton className="p-0 me-1" sx={{ fill: Color, color: Color }}>
+        <IconButton
+          className="p-0 me-1"
+          sx={{ fill: Color, color: Color, cursor: cursor }}
+        >
           {icon}
         </IconButton>
       )}
       {label}
       {icon && iconPosition === "end" && (
-        <IconButton className="p-0 ms-1" sx={{ fill: Color, color: Color }}>
+        <IconButton
+          className="p-0 ms-1"
+          sx={{ fill: Color, color: Color, cursor: cursor }}
+        >
           {icon}
         </IconButton>
       )}

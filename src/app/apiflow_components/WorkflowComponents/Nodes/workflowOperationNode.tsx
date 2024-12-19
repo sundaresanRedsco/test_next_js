@@ -65,6 +65,7 @@ import WorkflowCustomHandle from "../workflowCustomHandle";
 import theme from "@/Theme/theme";
 import { debounce } from "lodash";
 import AceEditorComponent from "@/app/apiflow_components/WorkflowComponents/AceEditor/aceEditor";
+import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 
 type YDoc = Y.Doc;
 
@@ -1291,8 +1292,48 @@ export default function WorkflowOperationNode({ data }: any) {
     );
   }, [nodeData]);
 
+  const { addFlowId, removeFlowId, selectedFlowIds } = useGlobalStore();
+  const nodeSelected = isEditable && selectedFlowIds?.includes(nodeData?.id);
+  const selectedNodeData = getNode(nodeData?.id);
+
+  const handleClickNode = (id: any) => {
+    if (isEditable) {
+      if (selectedFlowIds?.includes(id)) {
+        removeFlowId(id);
+      } else {
+        addFlowId(id);
+      }
+    }
+  };
+
+  // Handle click outside the box
+  const handleClickOutside = (event: any) => {
+    if (event.target.closest("#selectable-box") === null && isEditable) {
+      removeFlowId(nodeData?.id);
+    }
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event?.key === "Escape" && isEditable) {
+      removeFlowId(nodeData?.id);
+    }
+  };
+
+  useEffect(() => {
+    // Add event listener to detect clicks outside the box
+    document.addEventListener("click", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    };
+  }, [isEditable]);
+
+  console.log(nodeData, data, "NODEDATANODEDATA");
+
   return (
     <Box
+      id="selectable-box"
       sx={{
         // minWidth: 200,
         // minHeight: 120,
@@ -1306,7 +1347,10 @@ export default function WorkflowOperationNode({ data }: any) {
         borderRadius: "15px", // Rounded to 2 decimal places
         // background: "transparent",
         animation:
-          nextNode?.includes(nodeData?.id) || currentNodeRun
+          nextNode?.includes(nodeData?.id) ||
+          currentNodeRun ||
+          nodeSelected ||
+          selectedNodeData?.selected
             ? "blinkShadow 3s infinite"
             : "",
         border:
@@ -1314,7 +1358,14 @@ export default function WorkflowOperationNode({ data }: any) {
             ? "2px solid #48C9B0"
             : currentResultRun?.status == "FAILED"
             ? "2px solid #FF5252"
+            : nodeSelected || selectedNodeData?.selected
+            ? // ? "2px solid rgba(122, 67, 254, 0.35)"
+              "2px solid white"
             : "2px solid transparent",
+        transition: "border-color 0.3s ease-in-out",
+      }}
+      onClick={() => {
+        handleClickNode(nodeData?.id);
       }}
       // className="rounded"
     >
@@ -1541,7 +1592,7 @@ export default function WorkflowOperationNode({ data }: any) {
           <SecondaryTypography
             style={{
               marginLeft: "5px",
-              maxWidth: "100px",
+              maxWidth: "150px",
               overflow: "hidden",
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",

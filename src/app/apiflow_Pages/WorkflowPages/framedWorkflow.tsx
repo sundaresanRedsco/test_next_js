@@ -104,7 +104,7 @@ import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularL
 import WorkFlowHeaderSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkFlowHeaderSkeleton";
 import WorkflowDrawerSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkflowDrawerSkeleton";
 import WorkflowSidebarSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkflowSidebarSkeleton";
-import _, { isEqual } from "lodash";
+import _ from "lodash";
 import FlowDesigner from "@/app/ApiflowPages/ApiManagement/FlowDesigner";
 import DraggableDrawer from "@/app/ApiFlowComponents/ApiDesigner/drawer/draggableDrawer";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
@@ -121,8 +121,7 @@ import {
 import NavigationIcon from "@mui/icons-material/Navigation";
 import ChangeHistoryDesigner from "@/app/apiflow_components/WorkflowComponents/ChangeHistoryDesigner";
 import { useWebSocket } from "@/app/hooks/useWebSocket";
-import UndoRedo from "@/app/apiflow_components/WorkflowComponents/UndoRedo";
-import useRedoUndo from "@/app/hooks/workflow/useRedoUndo";
+import ResizableFrame from "@/app/apiflow_components/WorkflowComponents/Nodes/ResizableFrame";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -180,6 +179,7 @@ const nodeTypes = {
   startButtonNode: WorkflowStartNode,
   // operationNode: OperationNode,
   operationNode: WorkflowOperationNode,
+  frame: ResizableFrame,
 };
 
 const edgeTypes = {
@@ -869,8 +869,7 @@ const WorkflowDesigner = (props: any) => {
 
   // const apiFlow_Id = "5409b548a1854ddfa9b297ad9d102488";
   const dispatch = useDispatch<any>();
-  const { deleteElements, getEdges, getNode, getNodes, addNodes } =
-    useReactFlow();
+  const { deleteElements, getEdges, getNode, getNodes } = useReactFlow();
 
   const params = useParams();
   const router = useRouter();
@@ -894,7 +893,13 @@ const WorkflowDesigner = (props: any) => {
     }
   }, [pathname]);
 
-  // Add secretKey to the connection headers
+  const isProduction = false;
+  const websocketUrl = isProduction
+    ? process.env.NEXT_PUBLIC_WSS_URL || "default_websocket_url" // Use a default if undefined
+    : // : "ws://localhost:9595";
+      // "ws://localhost:9596";
+      // "wss://afnode.iprotecs.net/";
+      "wss://afnode.iprotecs.net";
 
   //---------------------------useSelector---------------------------------------------------------------
   const {
@@ -968,15 +973,7 @@ const WorkflowDesigner = (props: any) => {
   const [fullUrl, setFullUrl] = useState("");
 
   //--------------------------------------constants---------------------------------------------------------
-  const {
-    settotalCounts,
-    storedNodes,
-    setstoredNodes,
-    count,
-    setcount,
-    handleUndo,
-    handleRedo,
-  } = useRedoUndo(ydoc, { edges, setEdges, nodes, setNodes });
+
   const open = Boolean(anchorEl2);
   const id = open ? "simple-popover" : undefined;
 
@@ -1672,7 +1669,7 @@ const WorkflowDesigner = (props: any) => {
   // });
   const dropContainer1 = useRef<HTMLDivElement>(null);
   // drop(dropContainer1);
-  const { dropItem, setdropItems } = useGlobalStore();
+  const { dropItem } = useGlobalStore();
   const onDrop = useCallback(
     (event: any) => {
       event.preventDefault();
@@ -1686,18 +1683,16 @@ const WorkflowDesigner = (props: any) => {
       });
 
       let tempData: any = dropItem;
-      console.log(tempData, "OnD1");
       let count = 0;
       if (isEditable) {
-        for (const node of nodes) {
-          if (node.data) {
-            const nodeDataV2 = JSON.parse(node.data);
-            console.log(nodeDataV2, tempData?.id, "OnD2");
-            if (nodeDataV2.operation_id === tempData?.id) {
-              count++;
-            }
-          }
-        }
+        // for (const node of nodes) {
+        //   if (node.data) {
+        //     const nodeDataV2 = JSON.parse(node.data);
+        //     if (nodeDataV2.operation_id === tempData?.id) {
+        //       count++;
+        //     }
+        //   }
+        // }
         let name: string = tempData?.name;
         let node_name = name + (count == 0 ? "" : "_" + count);
         // dispatch(
@@ -1768,6 +1763,8 @@ const WorkflowDesigner = (props: any) => {
               raw_output: "",
               raw_payload: "",
             }),
+            parentId: "A",
+            extent: "parent",
             response: {},
             width: 230,
             height: 120,
@@ -2576,8 +2573,8 @@ const WorkflowDesigner = (props: any) => {
             } else {
               // Handle other actions (e.g., adding or updating nodes)
               const node = message.nodes;
-              const index = accumulator?.findIndex(
-                (existingNode: any) => existingNode?.id === node?.id
+              const index = accumulator.findIndex(
+                (existingNode: any) => existingNode.id === node.id
               );
               if (index !== -1) {
                 // If node already exists, update it
@@ -2636,6 +2633,7 @@ const WorkflowDesigner = (props: any) => {
           },
           [...previousEdges]
         );
+
         return updatedEdges;
       });
     };
@@ -2845,7 +2843,7 @@ const WorkflowDesigner = (props: any) => {
       nodeMap.unobserve(updateNodes);
       keysArray.unobserve(globalFlow);
     };
-  }, [ydoc, count, storedNodes]);
+  }, [ydoc]);
 
   useEffect(() => {
     if (apiFlow_Id && userProfile.user.tenant_id) {
@@ -2868,18 +2866,7 @@ const WorkflowDesigner = (props: any) => {
             // Extract nodes and edges from API response
             const nodesApiData = res?.payload?.nodes || [];
             const edgesApiData = res?.payload?.edges || [];
-            settotalCounts({
-              nodes: nodesApiData.length,
-              edges: edgesApiData.length,
-              nodesArr: nodesApiData,
-              edgesArr: edgesApiData,
-            });
-            if (storedNodes.length == 0) {
-              setstoredNodes((prev: any) => [
-                ...prev,
-                { nodes: nodesApiData, edges: edgesApiData },
-              ]);
-            }
+
             // Get nodes and edges from ydoc
             const nodeMap = ydoc?.getMap<any>("nodes");
             const edgeMap = ydoc?.getMap<any>("edges");
@@ -3152,266 +3139,6 @@ const WorkflowDesigner = (props: any) => {
     };
   }, [ydoc]);
 
-  const { selectedFlowIds, removeFlowId } = useGlobalStore();
-  console.log(selectedFlowIds, "selectedFlowIds");
-  console.log(nodes, "selectedFlowIds");
-
-  const [copiedNodes, setCopiedNodes] = useState<any[]>([]);
-
-  const copyNodes = () => {
-    if (selectedFlowIds?.length > 0) {
-      const copiedval = selectedFlowIds?.flatMap((val: any) =>
-        nodes?.filter((item) => item?.id === val)
-      );
-      console.log(copiedval, "COPYPASTE1");
-      // copiedval?.map((item: any) => {
-      //   setdropItems({
-      //     id: item?.id,
-      //     name: item?.name,
-      //     http_method: item?.http_method,
-      //     type: item?.type,
-      //     full_url: item?.full_url,
-      //     nodes: item,
-      //   });
-      // });
-      copiedval?.map((item: any) => {
-        const parseJson = JSON.parse(item?.data);
-        setdropItems({
-          id: parseJson?.operation_id,
-          name: parseJson?.name,
-          http_method: item?.http_method,
-          type: item?.type,
-          full_url: item?.full_url,
-          nodes: item,
-        });
-      });
-      setCopiedNodes(copiedval);
-    }
-  };
-
-  const viewport = rfInstance?.getViewport();
-  console.log(viewport, "ViewPortViewPort");
-
-  const [lastCursorPosition, setLastCursorPosition] = useState({ x: 0, y: 0 });
-
-  const handleCanvasClick = (event: React.MouseEvent) => {
-    const position = screenToFlowPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
-    setLastCursorPosition(position);
-  };
-
-  const gettingAllNodes = getNodes();
-  console.log(gettingAllNodes, "gettingAllNodes");
-
-  const pasteNodes = (event?: React.MouseEvent) => {
-    if (copiedNodes?.length === 0) return;
-
-    const position = event
-      ? screenToFlowPosition({ x: event.clientX, y: event.clientY })
-      : lastCursorPosition;
-
-    // console.log(newNodes, "COPYPASTE");
-    // setNodes((prevNodes) => [
-    //   ...prevNodes, // Keep existing nodes
-    //   ...copiedNodes.map((node) => ({
-    //     ...node,
-    //     id: `${node.id}-copy-${Date.now()}`, // Ensure unique IDs for copied nodes
-    //     position: {
-    //       x: node.position.x + 50, // Offset to prevent overlap
-    //       y: node.position.y + 50,
-    //     },
-    //   })),
-    // ]);
-
-    console.log(copiedNodes, dropItem, "COPYPASTE2");
-
-    // setNodes((prevNodes) => {
-    //   const existingIds = new Set(prevNodes.map((node) => node.id));
-    //   const newNodes = copiedNodes
-    //     .map((node, index) => ({
-    //       ...node,
-    //       id: `${node.id}-copy-${Date.now()}`, // Unique ID
-    //       position: {
-    //         x: position?.x,
-    //         y: position?.y,
-    //       },
-    //       // position: {
-    //       //   x: position.x + index * 50, // Offset for multiple nodes
-    //       //   y: position.y + index * 50,
-    //       // },
-    //     }))
-    //     .filter((node) => !existingIds.has(node.id)); // Avoid duplicates
-
-    //   return [...prevNodes, ...newNodes];
-    // });
-
-    const gettingAllNodes = getNodes();
-    console.log(gettingAllNodes, "gettingAllNodes");
-
-    let tempData: any = dropItem;
-    console.log(tempData, "Reach1");
-
-    let count = 0;
-    console.log(nodes, "NODESNODES");
-    for (const node of nodes) {
-      // console.log(node?.name, "Reach99");
-      // if (node?.data) {
-      const nodeDataV2 = JSON.parse(node?.data);
-      console.log(nodeDataV2, tempData, "Reach77");
-      // if (nodeDataV2?.name === tempData?.name) {
-      if (nodeDataV2?.operation_id === tempData?.id) {
-        count++;
-        console.log(count, "Reach2");
-      }
-      // }
-    }
-
-    let name: string = tempData?.name;
-    let node_name = name + (count === 0 ? "" : "_" + count);
-
-    console.log(node_name, "Reach3");
-
-    if (tempData?.type === "operationNode") {
-      let id: string = uuidv4();
-      console.log(id, "Reach4");
-      let matchedPaths = extractPlaceholdersFromPath(
-        tempData?.nodes?.full_url || null
-      );
-      console.log(matchedPaths, "Reach5");
-
-      let queryParams: any = [];
-
-      for (let params of matchedPaths) {
-        if (params) {
-          const updatedData: any = queryParams?.filter(
-            (x: any) => x?.name !== params && x?.scope !== "path"
-          );
-          console.log(updatedData, "Reach6");
-
-          queryParams = [
-            ...updatedData,
-            {
-              name: params,
-              test_value: "",
-              scope: "path",
-              data_type: "string",
-            },
-          ];
-        }
-      }
-
-      const operHeaders = []?.map((x: any) => ({
-        name: x?.name,
-        test_value: x?.test_value,
-        data_type: x?.data_type,
-      }));
-
-      const newNode = {
-        id: id,
-        type: "operationNode",
-        name: node_name,
-        position: { x: position?.x, y: position?.y },
-        positionAbsolute: { x: position?.x, y: position?.y },
-        status: "null",
-        // ...tempData?.nodes,
-        flow_id: apiFlow_Id,
-        version: versionValue,
-        created_by: userProfile?.user?.user_id,
-        data: JSON?.stringify({
-          name,
-          id,
-          node_name,
-          operation_id: tempData?.id,
-          method: tempData?.nodes?.http_method,
-          full_url: tempData?.nodes?.full_url,
-          operations_header: operHeaders,
-          operations_input: [],
-          operations_auth: [],
-          operations_query_param: [],
-          raw_output: "",
-          raw_payload: "",
-        }),
-        response: {},
-        width: 230,
-        height: 120,
-      };
-
-      console.log(newNode, "Reach7");
-      const parsedData = JSON?.parse(newNode?.data);
-      console.log(parsedData, "Reach8");
-
-      if (parsedData?.operation_id !== null) {
-        let updatedNode: any = {
-          action: "ADD_NODE",
-          status: "null",
-          flow_id: apiFlow_Id,
-          id: id,
-          nodes: newNode,
-        };
-
-        console.log(updatedNode, "Reach9");
-
-        const nodeMap = ydoc?.getMap<any>("nodes");
-        console.log(nodeMap, "Reach10");
-        if (nodeMap) {
-          nodeMap?.set(updatedNode?.id, updatedNode);
-          console.log(nodeMap, "Reach11");
-        }
-      }
-    }
-
-    setCopiedNodes([]);
-    selectedFlowIds?.map((idVal: any) => removeFlowId(idVal));
-  };
-
-  console.log(nodes, "COPYPASTE3");
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event?.ctrlKey && event?.key === "c") {
-        copyNodes();
-      } else if (event?.ctrlKey && event?.key === "v") {
-        // selectedFlowIds?.map((idVal: any) => removeFlowId(idVal));
-        // setCopiedNodes([]);
-        pasteNodes();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [selectedFlowIds.length, copiedNodes, lastCursorPosition, nodes.length]);
-  console.log(selectedFlowIds, "COPYPASTE4");
-  console.log(cursors, "CURSORSCURSORS");
-
-  useEffect(() => {
-    if (nodes?.length === 0) return;
-    const nodeMap = ydoc?.getMap<any>("nodes");
-    const nodeIds = nodes?.map((val: any) => val?.id);
-    console.log(nodeIds, "NODEIDSNODEIDS");
-    nodeIds.forEach((id) => {
-      if (!selectedFlowIds.includes(id)) {
-        selectedFlowIds?.map((id: any) => {
-          const nodeDetails = getNode(id);
-          let tempData = { ...nodeDetails };
-          tempData.selected = false;
-          console.log(tempData, "TEMPSELECT");
-          nodeMap?.set(id, { action: "ADD_NODE", nodes: tempData, id });
-        });
-      } else {
-        selectedFlowIds?.map((id: any) => {
-          const nodeDetails = getNode(id);
-          let tempData = { ...nodeDetails };
-          tempData.selected = true;
-          console.log(tempData, "TEMPSELECT");
-          nodeMap?.set(id, { action: "ADD_NODE", nodes: tempData, id });
-        });
-      }
-    });
-  }, [selectedFlowIds.length, nodes?.length]);
-
   return (
     <Grid
       ref={boxRef}
@@ -3460,6 +3187,21 @@ const WorkflowDesigner = (props: any) => {
             sx={{ padding: "10px" }}
             size={{ xs: 12, sm: 12, md: 7.7, lg: 8.7, xl: 8.6 }}
           >
+            <button
+              onClick={() => {
+                setNodes([
+                  ...nodes,
+                  {
+                    id: "A",
+                    type: "frame",
+                    data: { label: "NodeResizer" },
+                    position: { x: 0, y: 50 },
+                  },
+                ]);
+              }}
+            >
+              add
+            </button>
             <div
               className="position-relative"
               ref={mouseRef}
@@ -3490,7 +3232,6 @@ const WorkflowDesigner = (props: any) => {
                       height: recentlyModifiedProp === true ? "20vh" : "80vh",
                     }}
                     ref={dropContainer1}
-                    onClick={handleCanvasClick}
                   >
                     {/* <ReactFlow
                       onDrop={onDrop}
@@ -3634,9 +3375,7 @@ const WorkflowDesigner = (props: any) => {
                         }
                       }}
                       onMouseMove={handleMouseMove} // Track mouse movement
-                      onEdgesChange={(event) => {
-                        onEdgesChange(event);
-                      }}
+                      onEdgesChange={onEdgesChange}
                       onConnect={onConnect}
                       nodeTypes={nodeTypes}
                       edgeTypes={edgeTypes}
@@ -3645,15 +3384,6 @@ const WorkflowDesigner = (props: any) => {
                       proOptions={{ hideAttribution: true }}
                       maxZoom={3.5}
                       minZoom={0.2}
-                      onNodeDragStop={() => {
-                        if (isEditable) {
-                          setstoredNodes((prev: any) => [
-                            ...prev,
-                            { nodes, edges },
-                          ]);
-                          setcount((prev) => prev + 1);
-                        }
-                      }}
                     >
                       {Array.from(cursors?.entries()).map(
                         ([clientId, cursorPosition]) => {
@@ -3726,15 +3456,7 @@ const WorkflowDesigner = (props: any) => {
               project_id={currentFlowDetails?.project_id}
               recentlyModifiedProp={recentlyModifiedProp}
             />
-          </Grid>
-          <UndoRedo
-            handleUndo={handleUndo}
-            handleRedo={handleRedo}
-            isHeightIncreased={openDrawer}
-            visible={isEditable}
-            undoDisabled={storedNodes.length == 1 || count == 0}
-            redoDisabled={count == storedNodes?.length - 1}
-          />
+          </Grid>{" "}
           <WorkflowDrawer
             containerRef={mouseRef}
             openDrawer={recentlyModifiedProp === true ? false : openDrawer}

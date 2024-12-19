@@ -23,6 +23,7 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import JsonViewer from "@/app/ApiFlowComponents/ApiDesigner/jsonViewer";
 import { TeritaryTextTypography } from "@/app/Styles/signInUp";
 import { ArrowForwardIosRounded } from "@mui/icons-material";
+import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 
 const CustomizedAccSummary = styled(AccordionSummary)(({ theme }) => ({
   flexDirection: "row-reverse",
@@ -87,7 +88,7 @@ export default function WorkflowDrawer(props: any) {
   const [selectedBtn, setSelectedBtn] = useState("Run Results");
   const [drawerBtnVal, setDrawerBtnVal] = useState(btnData);
   const [runResult, setRunResult] = useState<any>([]);
-  const [height, setHeight] = useState(250); // Default height
+  const { height, setHeight } = useGlobalStore(); // Default height
 
   const handleResize = (event: any, { size }: any) => {
     setHeight(size.height);

@@ -10,35 +10,35 @@ export const useWebSocket = () => {
 export default function WebSocketProvider({ children }: Props) {
   const [socket, setsocket] = useState(null);
   const isProduction = false;
-
+  const secretKey = process.env.SECRET_KEY;
   const websocketUrl = isProduction
-    ? process.env.NEXT_PUBLIC_WSS_URL || "default_websocket_url" // Use a default if undefined
-    : // : "ws://localhost:9595";
-      // "ws://localhost:9596";
-      // "wss://afnode.iprotecs.net/";
-      "wss://apiflow-websocket.onrender.com/";
+    ? process.env.NEXT_PUBLIC_WSS_URL || "default_websocket_url"
+    : "wss://afnode.iprotecs.net/";
   useEffect(() => {
     const connection: any = new WebSocket(websocketUrl);
     if (connection) {
       setsocket(connection);
-      connection.addEventListener("open", () => {
-        console.log("WebSocket connected to " + websocketUrl);
-      });
+      connection.onopen = () => {
+        connection.send(JSON.stringify({ secretKey }));
+        console.log("WebSocket connection established.");
+      };
 
-      // Close event - WebSocket connection closed
-      connection.addEventListener("close", () => {
+      // Handle incoming messages from WebSocket
+      connection.onmessage = (event: any) => {
+        const message = event.data;
+        console.log("Received message from serverssss:", message);
+      };
+
+      // Handle WebSocket errors
+      connection.onerror = (error: any) => {
+        console.error("WebSocket Error:", error);
+        // toast.error("Invalid JSON file");
+      };
+
+      // Handle WebSocket close
+      connection.onclose = () => {
         console.log("WebSocket connection closed.");
-      });
-
-      // Error event - WebSocket connection error
-      connection.addEventListener("error", (error: any) => {
-        console.error("WebSocket error: ", error);
-      });
-
-      // Message event - WebSocket message received
-      connection.addEventListener("message", (event: any) => {
-        console.log("Received message: ", event.data);
-      });
+      };
     }
   }, []);
   const getWsProvider: any = (

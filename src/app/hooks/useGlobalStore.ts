@@ -6,6 +6,11 @@ interface Store {
   setdropItems: (state: any) => void;
   arr: any;
   setArr: any;
+  selectedFlowIds: any;
+  addFlowId: any;
+  removeFlowId: any;
+  height: any;
+  setHeight: (state: any) => void;
 }
 
 export const useGlobalStore = create<Store>((set, get) => ({
@@ -15,4 +20,15 @@ export const useGlobalStore = create<Store>((set, get) => ({
   setdropItems: (newItem: any) => set(() => ({ dropItem: newItem })),
   arr: [],
   setArr: (newItem: any) => set(() => ({ arr: newItem })),
+  selectedFlowIds: [],
+  addFlowId: (newItem: any) =>
+    set((prev) => ({ selectedFlowIds: [...prev.selectedFlowIds, newItem] })),
+  removeFlowId: (newItem: any) =>
+    set((prev) => ({
+      selectedFlowIds: prev.selectedFlowIds.filter(
+        (item: any) => item !== newItem
+      ),
+    })),
+  height: 250,
+  setHeight: (newItem: any) => set(() => ({ height: newItem })),
 }));
