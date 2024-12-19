@@ -1,28 +1,79 @@
 import React, { useEffect, useState } from "react";
 import { useEdgesState, useNodesState, useReactFlow } from "reactflow";
 import * as Y from "yjs";
+import { create } from "zustand";
+interface Store {
+  storedNodes: any;
+  setstoredNodes: (value: any) => void;
+  nodeFunctions: {
+    id: any;
+    method: "DELETE_NODES" | "ADD_NODE" | "DELETE_EDGES" | "ADD_EDGES" | "";
+    obj: any;
+  };
+  setNodeFunction: (value: any) => void;
+  resetNodeFunction: () => void;
+}
+
+export const useRedoUndoStore = create<Store>((set, get) => ({
+  storedNodes: [],
+  setstoredNodes: (value) => set({ storedNodes: value }),
+  nodeFunctions: { id: "", method: "", obj: null },
+  setNodeFunction: (value) => set({ nodeFunctions: value }),
+  resetNodeFunction: () =>
+    set({ nodeFunctions: { id: "", method: "", obj: null } }),
+}));
+
+const normalizeObject = (obj: any) => {
+  // Normalize fields by sanitizing null-like mismatches or unnecessary differences
+  return {
+    ...obj,
+    tenant_id: obj.tenant_id || null, // Normalize null-like mismatches
+    data: JSON.parse(obj.data || "{}"), // Parse and normalize encoded JSON strings
+  };
+};
+
+const areObjectsDeeplyEqual = (obj1: any, obj2: any) => {
+  obj1 = normalizeObject(obj1);
+  obj2 = normalizeObject(obj2);
+
+  return Object.keys(obj1).every(
+    (key) => JSON.stringify(obj1[key]) === JSON.stringify(obj2[key])
+  );
+};
+
+export const deepEqual = (arr1: any[], arr2: any[]) => {
+  if (arr1.length !== arr2.length) return false;
+
+  for (let i = 0; i < arr1.length; i++) {
+    if (!areObjectsDeeplyEqual(arr1[i], arr2[i])) return false;
+  }
+
+  return true;
+};
 
 export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
-  const { getEdges } = useReactFlow();
+  // const { getEdges } = useReactFlow();
   const { edges, setEdges, nodes, setNodes } = data;
+  const { storedNodes, setstoredNodes, nodeFunctions, resetNodeFunction } =
+    useRedoUndoStore();
 
   const [count, setcount] = useState(0);
-  const [storedNodes, setstoredNodes] = useState<any>([]);
   const [totalCounts, settotalCounts] = useState({
     nodes: 0,
     edges: 0,
     edgesArr: [],
     nodesArr: [],
   });
+  console.log(storedNodes, "node&Edge", count);
   /**
    * Removes edges connected to a node during undo
    */
   const removeEdgesConnectedToNode = (nodeId: string, edgesMap: Y.Map<any>) => {
-    const connectedEdges = getEdges().filter(
-      (edge) => edge.source === nodeId || edge.target === nodeId
+    const connectedEdges = edges.filter(
+      (edge: any) => edge.source === nodeId || edge.target === nodeId
     );
 
-    connectedEdges.forEach((edge) => {
+    connectedEdges.forEach((edge: any) => {
       if (edgesMap.has(edge.id)) {
         const edgeUpdate = {
           action: "DELETE_EDGES",
@@ -39,11 +90,11 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
    * Adds edges connected to a node during redo
    */
   const addEdgesConnectedToNode = (nodeId: string, edgesMap: Y.Map<any>) => {
-    const connectedEdges = getEdges().filter(
-      (edge) => edge.source === nodeId || edge.target === nodeId
+    const connectedEdges = edges.filter(
+      (edge: any) => edge.source === nodeId || edge.target === nodeId
     );
 
-    connectedEdges.forEach((edge) => {
+    connectedEdges.forEach((edge: any) => {
       const edgeUpdate = {
         action: "ADD_EDGES",
         status: "null",
@@ -53,37 +104,10 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
       edgesMap.set(edge.id, edgeUpdate);
     });
   };
-
-  const normalizeObject = (obj: any) => {
-    // Normalize fields by sanitizing null-like mismatches or unnecessary differences
-    return {
-      ...obj,
-      tenant_id: obj.tenant_id || null, // Normalize null-like mismatches
-      data: JSON.parse(obj.data || "{}"), // Parse and normalize encoded JSON strings
-    };
-  };
-
-  const areObjectsDeeplyEqual = (obj1: any, obj2: any) => {
-    obj1 = normalizeObject(obj1);
-    obj2 = normalizeObject(obj2);
-
-    return Object.keys(obj1).every(
-      (key) => JSON.stringify(obj1[key]) === JSON.stringify(obj2[key])
-    );
-  };
-
-  const deepEqual = (arr1: any[], arr2: any[]) => {
-    if (arr1.length !== arr2.length) return false;
-
-    for (let i = 0; i < arr1.length; i++) {
-      if (!areObjectsDeeplyEqual(arr1[i], arr2[i])) return false;
-    }
-
-    return true;
-  };
   const handleYjsMap = (count: number, type: "undo" | "redo") => {
     const getNodeIds = (currentCount: number, direction: number) =>
       storedNodes[currentCount]?.nodes.map((elem: any) => elem.id) || [];
+    const getNodes = (currentCount: number) => storedNodes[currentCount]?.nodes;
     const getEdgeIds = (currentCount: number) =>
       storedNodes[currentCount]?.edges.map((elem: any) => elem.id) || [];
     const getEdges = (currentCount: number) =>
@@ -91,35 +115,30 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
 
     let currentIds: any = [];
     let prevIds = [];
+    let currentNodes: any = [];
     let currentEdgeIds: any = [];
     let prevEdgeIds = [];
     let currentEdges = [];
 
     if (type === "redo") {
+      currentNodes = getNodes(count + 1);
       currentIds = getNodeIds(count + 1, 1);
-      prevIds =
-        storedNodes[count]?.nodes
-          .filter((elem: any) => !currentIds.includes(elem.id))
-          .map((elem: any) => elem.id) || [];
       currentEdgeIds = getEdgeIds(count + 1);
-      prevEdgeIds =
-        storedNodes[count]?.edges
-          .filter((elem: any) => !currentEdgeIds.includes(elem.id))
-          .map((elem: any) => elem.id) || [];
       currentEdges = getEdges(count + 1);
     } else {
+      currentNodes = getNodes(count - 1);
       currentIds = getNodeIds(count - 1, -1);
-      prevIds =
-        storedNodes[count]?.nodes
-          .filter((elem: any) => !currentIds.includes(elem.id))
-          .map((elem: any) => elem.id) || [];
       currentEdgeIds = getEdgeIds(count - 1);
-      prevEdgeIds =
-        storedNodes[count]?.edges
-          .filter((elem: any) => !currentEdgeIds.includes(elem.id))
-          .map((elem: any) => elem.id) || [];
       currentEdges = getEdges(count - 1);
     }
+    prevIds =
+      storedNodes[count]?.nodes
+        .filter((elem: any) => !currentIds.includes(elem.id))
+        .map((elem: any) => elem.id) || [];
+    prevEdgeIds =
+      storedNodes[count]?.edges
+        .filter((elem: any) => !currentEdgeIds.includes(elem.id))
+        .map((elem: any) => elem.id) || [];
 
     const nodesMap = ydoc?.getMap<any>("nodes");
     const edgesMap = ydoc?.getMap<any>("edges");
@@ -128,32 +147,32 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
       console.log("Yjs Maps 'nodes' or 'edges' are not available.");
       return;
     }
+    const filteredNodeIds = currentNodes.filter(
+      (elem: any) => !prevIds.includes(elem.id)
+    );
+    // Handle redo logic
+    filteredNodeIds.forEach((node: any) => {
+      // const prevEdges = getEdge(id);
+      const updatedNode = {
+        action: "ADD_NODE",
+        status: "null",
+        id: node.id,
+        nodes: node,
+      };
 
-    if (type === "undo") {
-      // Handle undo logic
-      prevIds.forEach((id: any) => {
-        if (nodesMap.has(id)) {
-          const updatedNode = {
-            action: "DELETE_NODES",
-            status: "null",
-            id,
-            nodes: { id },
-          };
+      nodesMap.set(node?.id, updatedNode);
 
-          nodesMap.set(id, updatedNode);
-
-          // Handle connected edges
-          removeEdgesConnectedToNode(id, edgesMap);
-        } else {
-          console.log(`Node ID ${id} does not exist in the Yjs Map.`);
-        }
-      });
-    } else if (type === "redo") {
-      // Handle redo logic
-      prevIds.forEach((id: any) => {
-        // const prevEdges = getEdge(id);
+      // Handle connected edges
+      addEdgesConnectedToNode(node?.id, edgesMap);
+    });
+    const unusedNodeIds = prevIds.filter(
+      (elem: any) => !currentIds.includes(elem)
+    );
+    // Handle undo logic
+    unusedNodeIds.forEach((id: any) => {
+      if (nodesMap.has(id)) {
         const updatedNode = {
-          action: "ADD_NODE",
+          action: "DELETE_NODES",
           status: "null",
           id,
           nodes: { id },
@@ -162,9 +181,12 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
         nodesMap.set(id, updatedNode);
 
         // Handle connected edges
-        addEdgesConnectedToNode(id, edgesMap);
-      });
-    }
+        removeEdgesConnectedToNode(id, edgesMap);
+      } else {
+        console.log(`Node ID ${id} does not exist in the Yjs Map.`);
+      }
+    });
+
     const filteredEdges = currentEdges?.filter(
       (elem: any) => !prevEdgeIds.includes(elem.id)
     );
@@ -203,9 +225,9 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
       }
     });
   };
+
   const handleRedo = () => {
     if (count + 1 < storedNodes?.length) {
-      console.log(count, "nodeEdge-redo0", storedNodes);
       setcount((prev) => prev + 1);
       handleYjsMap(count, "redo");
       if (storedNodes[count + 1]) {
@@ -215,63 +237,66 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
     }
   };
   const handleUndo = () => {
-    if (count != 0) {
+    if (count > 0) {
       setcount((prev) => prev - 1);
+      handleYjsMap(count, "undo");
+      setNodes(storedNodes[count - 1]?.nodes);
+      setEdges(storedNodes[count - 1]?.edges);
     } else {
       setcount(0);
-    }
-    console.log(count, "nodeEdge-undo", storedNodes);
-
-    if (count >= 0) {
-      handleYjsMap(count, "undo");
-
-      setNodes(storedNodes[count == 0 ? 0 : count - 1]?.nodes);
-      setEdges(storedNodes[count == 0 ? 0 : count - 1]?.edges);
+      handleYjsMap(0, "undo");
+      setNodes(storedNodes[0]?.nodes);
+      setEdges(storedNodes[0]?.edges);
     }
   };
-
+  const handleStoredNodeUpdate = () => {
+    if (count == storedNodes.length - 1) {
+      setstoredNodes([...storedNodes, { nodes, edges }]);
+    } else {
+      setstoredNodes([...storedNodes.slice(0, count + 1), { nodes, edges }]);
+      setcount((prev: any) => prev + 1);
+    }
+  };
   useEffect(() => {
-    if (nodes.length != 0) {
-      if (storedNodes.length > 1 && storedNodes[count]) {
-        if (
-          !deepEqual(nodes, storedNodes[count]?.nodes) ||
-          !deepEqual(edges, storedNodes[count]?.edges)
-        ) {
-          if (count == storedNodes.length - 1) {
-            setstoredNodes((prev: any) => [
-              ...prev,
-              { nodes, edges }, // Push the new state
-            ]);
-            setcount((prev) => prev + 1);
-          } else {
-            if (count <= 1) {
-              setstoredNodes((prev: any) => [
-                ...prev.slice(0, 1),
-                { nodes, edges },
-              ]);
-            } else {
-              setstoredNodes((prev: any) => [
-                ...prev.slice(0, count),
-                { nodes, edges },
-              ]);
-              // setcount((prev) => prev - 1);
-            }
-          }
-        }
-      } else {
-        if (
-          !deepEqual(totalCounts.nodesArr, nodes) ||
-          !deepEqual(totalCounts.edgesArr, edges)
-        ) {
-          setstoredNodes((prev: any) => [
-            ...prev,
-            { nodes, edges }, // Push the new state
-          ]);
-          setcount((prev) => prev + 1);
-        }
+    if (storedNodes.length != 0) {
+      setcount(storedNodes.length - 1);
+    }
+  }, [storedNodes.length]);
+  const handleDelete = (type: "node" | "edge") => {
+    const arr = type == "node" ? nodes : edges;
+    const tempStoredData = [...storedNodes];
+    const newData = arr.filter((elem: any) => elem.id != nodeFunctions.id);
+    tempStoredData[count + 1] =
+      type == "node" ? { nodes: newData, edges } : { nodes, edges: newData };
+    setstoredNodes(tempStoredData);
+    setcount((prev: any) => prev + 1);
+    resetNodeFunction();
+  };
+  const handleAdd = (type: "node" | "edge") => {
+    const tempStoredData = [...storedNodes];
+    const newDatas =
+      type == "node"
+        ? [...nodes, nodeFunctions.obj]
+        : [...edges, nodeFunctions.obj];
+    tempStoredData[count + 1] =
+      type == "node" ? { nodes: newDatas, edges } : { nodes, edges: newDatas };
+    setstoredNodes(tempStoredData);
+    setcount((prev: any) => prev + 1);
+    resetNodeFunction();
+  };
+  useEffect(() => {
+    if (nodeFunctions.id) {
+      if (nodeFunctions.method == "ADD_NODE") {
+        handleAdd("node");
+      } else if (nodeFunctions.method == "DELETE_NODES") {
+        handleDelete("node");
+      } else if (nodeFunctions.method == "ADD_EDGES") {
+        handleAdd("edge");
+      } else if (nodeFunctions.method == "DELETE_EDGES") {
+        handleDelete("edge");
       }
     }
-  }, [nodes.length, edges.length, storedNodes.length]);
+  }, [nodeFunctions]);
 
   useEffect(() => {
     // Function to handle the undo action when Ctrl+Z is pressed
@@ -299,14 +324,10 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
   // console.log(count, "nodeEdge123", storedNodes);
 
   return {
-    totalCounts,
     settotalCounts,
-    storedNodes,
-    setstoredNodes,
-    handleYjsMap,
     count,
-    setcount,
     handleUndo,
     handleRedo,
+    handleStoredNodeUpdate,
   };
 }

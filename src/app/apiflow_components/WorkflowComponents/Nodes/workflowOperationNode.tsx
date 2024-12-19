@@ -63,9 +63,10 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import WorkflowCustomHandle from "../workflowCustomHandle";
 import theme from "@/Theme/theme";
-import { debounce } from "lodash";
+import { debounce, method } from "lodash";
 import AceEditorComponent from "@/app/apiflow_components/WorkflowComponents/AceEditor/aceEditor";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
+import { useRedoUndoStore } from "@/app/hooks/workflow/useRedoUndo";
 
 type YDoc = Y.Doc;
 
@@ -301,10 +302,9 @@ export default function WorkflowOperationNode({ data }: any) {
       }
     }
   }
-
+  const { setNodeFunction } = useRedoUndoStore();
   const onClick = useCallback(() => {
     const nodeToRemoveId = nodeData?.id;
-
     // Find edges connected to the node being removed
     const edgesToRemove = getEdges().filter(
       (edge) => edge.source === nodeToRemoveId || edge.target === nodeToRemoveId
@@ -346,6 +346,11 @@ export default function WorkflowOperationNode({ data }: any) {
     const nodesMap = flowYdoc?.getMap<any>("nodes");
     if (nodesMap) {
       nodesMap?.set(nodeToRemoveId, updatedNode);
+      setNodeFunction({
+        id: nodeToRemoveId,
+        method: "DELETE_NODES",
+        obj: null,
+      });
     } else {
       console.log("Yjs Map 'run' is not initialized.");
     }
@@ -1328,8 +1333,6 @@ export default function WorkflowOperationNode({ data }: any) {
       document.addEventListener("keydown", handleKeyDown);
     };
   }, [isEditable]);
-
-  console.log(nodeData, data, "NODEDATANODEDATA");
 
   return (
     <Box

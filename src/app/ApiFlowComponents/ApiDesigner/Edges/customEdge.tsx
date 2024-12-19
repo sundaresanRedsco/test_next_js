@@ -11,6 +11,7 @@ import "./buttonedge.css";
 import { useSelector } from "react-redux";
 import { RootStateType } from "../../../Redux/store";
 import { FlowReducer } from "../../../Redux/apiManagement/flowReducer";
+import { useRedoUndoStore } from "@/app/hooks/workflow/useRedoUndo";
 
 const onEdgeClick = (evt: any, id: any) => {
   evt.stopPropagation();
@@ -41,6 +42,7 @@ export default function CustomEdge({
     targetY,
     targetPosition,
   });
+  const { setNodeFunction } = useRedoUndoStore();
 
   const onEdgeClick = () => {
     setEdges((edges) => edges.filter((edge) => edge.id !== id));
@@ -53,6 +55,11 @@ export default function CustomEdge({
         edges: { id: id }, // Assuming edge.id is the id of the current edge
       };
       edgeMap.set(id, updatedEdge); // Assuming edge.id is the key
+      setNodeFunction({
+        id: id,
+        method: "DELETE_EDGES",
+        obj: null,
+      });
     } else {
       console.log("Yjs Map 'edges' is not initialized.");
     }

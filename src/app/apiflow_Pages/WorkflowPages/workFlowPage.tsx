@@ -122,7 +122,9 @@ import NavigationIcon from "@mui/icons-material/Navigation";
 import ChangeHistoryDesigner from "@/app/apiflow_components/WorkflowComponents/ChangeHistoryDesigner";
 import { useWebSocket } from "@/app/hooks/useWebSocket";
 import UndoRedo from "@/app/apiflow_components/WorkflowComponents/UndoRedo";
-import useRedoUndo from "@/app/hooks/workflow/useRedoUndo";
+import useRedoUndo, {
+  useRedoUndoStore,
+} from "@/app/hooks/workflow/useRedoUndo";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -970,13 +972,18 @@ const WorkflowDesigner = (props: any) => {
   //--------------------------------------constants---------------------------------------------------------
   const {
     settotalCounts,
-    storedNodes,
-    setstoredNodes,
     count,
-    setcount,
     handleUndo,
     handleRedo,
-  } = useRedoUndo(ydoc, { edges, setEdges, nodes, setNodes });
+    handleStoredNodeUpdate,
+  } = useRedoUndo(ydoc, {
+    edges,
+    setEdges,
+    nodes,
+    setNodes,
+  });
+  const { storedNodes, setstoredNodes, setNodeFunction, nodeFunctions } =
+    useRedoUndoStore();
   const open = Boolean(anchorEl2);
   const id = open ? "simple-popover" : undefined;
 
@@ -1686,13 +1693,13 @@ const WorkflowDesigner = (props: any) => {
       });
 
       let tempData: any = dropItem;
-      console.log(tempData, "OnD1");
+
       let count = 0;
       if (isEditable) {
         for (const node of nodes) {
           if (node.data) {
             const nodeDataV2 = JSON.parse(node.data);
-            console.log(nodeDataV2, tempData?.id, "OnD2");
+
             if (nodeDataV2.operation_id === tempData?.id) {
               count++;
             }
@@ -1789,7 +1796,11 @@ const WorkflowDesigner = (props: any) => {
             const nodeMap = ydoc?.getMap<any>("nodes");
             if (nodeMap) {
               nodeMap.set(updatedNode.id, updatedNode);
-
+              setNodeFunction({
+                id: updatedNode.id,
+                method: "ADD_NODE",
+                obj: newNode,
+              });
               const startNode = nodes.find(
                 (node) => node.type === "startButtonNode"
               );
@@ -1907,6 +1918,11 @@ const WorkflowDesigner = (props: any) => {
     const edgeMap = ydoc?.getMap<any>("edges");
     if (edgeMap) {
       edgeMap.set(updatedEdge.id, updatedEdge);
+      setNodeFunction({
+        id: updatedEdge.id,
+        method: "ADD_EDGES",
+        obj: edge,
+      });
     } else {
     }
   };
@@ -2875,10 +2891,7 @@ const WorkflowDesigner = (props: any) => {
               edgesArr: edgesApiData,
             });
             if (storedNodes.length == 0) {
-              setstoredNodes((prev: any) => [
-                ...prev,
-                { nodes: nodesApiData, edges: edgesApiData },
-              ]);
+              setstoredNodes([{ nodes: nodesApiData, edges: edgesApiData }]);
             }
             // Get nodes and edges from ydoc
             const nodeMap = ydoc?.getMap<any>("nodes");
@@ -3153,17 +3166,16 @@ const WorkflowDesigner = (props: any) => {
   }, [ydoc]);
 
   const { selectedFlowIds, removeFlowId } = useGlobalStore();
-  console.log(selectedFlowIds, "selectedFlowIds");
-  console.log(nodes, "selectedFlowIds");
 
   const [copiedNodes, setCopiedNodes] = useState<any[]>([]);
+  const [cutNodes, setCutNodes] = useState<any[]>([]);
 
-  const copyNodes = () => {
+  const handleCopyNodes = () => {
     if (selectedFlowIds?.length > 0) {
       const copiedval = selectedFlowIds?.flatMap((val: any) =>
         nodes?.filter((item) => item?.id === val)
       );
-      console.log(copiedval, "COPYPASTE1");
+
       // copiedval?.map((item: any) => {
       //   setdropItems({
       //     id: item?.id,
@@ -3190,7 +3202,6 @@ const WorkflowDesigner = (props: any) => {
   };
 
   const viewport = rfInstance?.getViewport();
-  console.log(viewport, "ViewPortViewPort");
 
   const [lastCursorPosition, setLastCursorPosition] = useState({ x: 0, y: 0 });
 
@@ -3203,16 +3214,14 @@ const WorkflowDesigner = (props: any) => {
   };
 
   const gettingAllNodes = getNodes();
-  console.log(gettingAllNodes, "gettingAllNodes");
 
-  const pasteNodes = (event?: React.MouseEvent) => {
+  const handlePasteNodes = (event?: React.MouseEvent) => {
     if (copiedNodes?.length === 0) return;
 
     const position = event
       ? screenToFlowPosition({ x: event.clientX, y: event.clientY })
       : lastCursorPosition;
 
-    // console.log(newNodes, "COPYPASTE");
     // setNodes((prevNodes) => [
     //   ...prevNodes, // Keep existing nodes
     //   ...copiedNodes.map((node) => ({
@@ -3224,8 +3233,6 @@ const WorkflowDesigner = (props: any) => {
     //     },
     //   })),
     // ]);
-
-    console.log(copiedNodes, dropItem, "COPYPASTE2");
 
     // setNodes((prevNodes) => {
     //   const existingIds = new Set(prevNodes.map((node) => node.id));
@@ -3247,23 +3254,17 @@ const WorkflowDesigner = (props: any) => {
     //   return [...prevNodes, ...newNodes];
     // });
 
-    const gettingAllNodes = getNodes();
-    console.log(gettingAllNodes, "gettingAllNodes");
-
     let tempData: any = dropItem;
-    console.log(tempData, "Reach1");
 
     let count = 0;
-    console.log(nodes, "NODESNODES");
+
     for (const node of nodes) {
-      // console.log(node?.name, "Reach99");
       // if (node?.data) {
       const nodeDataV2 = JSON.parse(node?.data);
-      console.log(nodeDataV2, tempData, "Reach77");
+
       // if (nodeDataV2?.name === tempData?.name) {
       if (nodeDataV2?.operation_id === tempData?.id) {
         count++;
-        console.log(count, "Reach2");
       }
       // }
     }
@@ -3271,15 +3272,12 @@ const WorkflowDesigner = (props: any) => {
     let name: string = tempData?.name;
     let node_name = name + (count === 0 ? "" : "_" + count);
 
-    console.log(node_name, "Reach3");
-
     if (tempData?.type === "operationNode") {
       let id: string = uuidv4();
-      console.log(id, "Reach4");
+
       let matchedPaths = extractPlaceholdersFromPath(
         tempData?.nodes?.full_url || null
       );
-      console.log(matchedPaths, "Reach5");
 
       let queryParams: any = [];
 
@@ -3288,7 +3286,6 @@ const WorkflowDesigner = (props: any) => {
           const updatedData: any = queryParams?.filter(
             (x: any) => x?.name !== params && x?.scope !== "path"
           );
-          console.log(updatedData, "Reach6");
 
           queryParams = [
             ...updatedData,
@@ -3338,9 +3335,7 @@ const WorkflowDesigner = (props: any) => {
         height: 120,
       };
 
-      console.log(newNode, "Reach7");
       const parsedData = JSON?.parse(newNode?.data);
-      console.log(parsedData, "Reach8");
 
       if (parsedData?.operation_id !== null) {
         let updatedNode: any = {
@@ -3351,13 +3346,10 @@ const WorkflowDesigner = (props: any) => {
           nodes: newNode,
         };
 
-        console.log(updatedNode, "Reach9");
-
         const nodeMap = ydoc?.getMap<any>("nodes");
-        console.log(nodeMap, "Reach10");
+
         if (nodeMap) {
           nodeMap?.set(updatedNode?.id, updatedNode);
-          console.log(nodeMap, "Reach11");
         }
       }
     }
@@ -3366,16 +3358,25 @@ const WorkflowDesigner = (props: any) => {
     selectedFlowIds?.map((idVal: any) => removeFlowId(idVal));
   };
 
-  console.log(nodes, "COPYPASTE3");
+  const handleCutNodes = () => {
+    if (selectedFlowIds?.length > 0) {
+      const cutNodeVal = selectedFlowIds?.flatMap((val: any) =>
+        nodes?.filter((item) => item?.id === val)
+      );
+      console.log(cutNodeVal, "cutNodeValcutNodeVal");
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event?.ctrlKey && event?.key === "c") {
-        copyNodes();
+        handleCopyNodes();
       } else if (event?.ctrlKey && event?.key === "v") {
         // selectedFlowIds?.map((idVal: any) => removeFlowId(idVal));
         // setCopiedNodes([]);
-        pasteNodes();
+        handlePasteNodes();
+      } else if (event?.ctrlKey && event?.key === "x") {
+        handleCutNodes();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -3383,29 +3384,23 @@ const WorkflowDesigner = (props: any) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [selectedFlowIds.length, copiedNodes, lastCursorPosition, nodes.length]);
-  console.log(selectedFlowIds, "COPYPASTE4");
-  console.log(cursors, "CURSORSCURSORS");
 
   useEffect(() => {
     if (nodes?.length === 0) return;
     const nodeMap = ydoc?.getMap<any>("nodes");
     const nodeIds = nodes?.map((val: any) => val?.id);
-    console.log(nodeIds, "NODEIDSNODEIDS");
+
     nodeIds.forEach((id) => {
       if (!selectedFlowIds.includes(id)) {
-        selectedFlowIds?.map((id: any) => {
-          const nodeDetails = getNode(id);
-          let tempData = { ...nodeDetails };
-          tempData.selected = false;
-          console.log(tempData, "TEMPSELECT");
-          nodeMap?.set(id, { action: "ADD_NODE", nodes: tempData, id });
-        });
+        const nodeDetails = getNode(id);
+        let tempData = { ...nodeDetails };
+        tempData.selected = false;
+        nodeMap?.set(id, { action: "ADD_NODE", nodes: tempData, id });
       } else {
         selectedFlowIds?.map((id: any) => {
           const nodeDetails = getNode(id);
           let tempData = { ...nodeDetails };
           tempData.selected = true;
-          console.log(tempData, "TEMPSELECT");
           nodeMap?.set(id, { action: "ADD_NODE", nodes: tempData, id });
         });
       }
@@ -3463,18 +3458,18 @@ const WorkflowDesigner = (props: any) => {
             <div
               className="position-relative"
               ref={mouseRef}
-              onMouseMove={(event) => {
-                if (mouseRef.current) {
-                  const rect = mouseRef.current.getBoundingClientRect();
-                  const offsetX = event.clientX - rect.left;
-                  const offsetY = event.clientY - rect.top;
+              // onMouseMove={(event) => {
+              //   if (mouseRef.current) {
+              //     const rect = mouseRef.current.getBoundingClientRect();
+              //     const offsetX = event.clientX - rect.left;
+              //     const offsetY = event.clientY - rect.top;
 
-                  const position = { x: offsetX, y: offsetY };
+              //     const position = { x: offsetX, y: offsetY };
 
-                  const awareness = wWsProvider?.awareness;
-                  awareness?.setLocalStateField("cursor", position);
-                }
-              }}
+              //     const awareness = wWsProvider?.awareness;
+              //     awareness?.setLocalStateField("cursor", position);
+              //   }
+              // }}
             >
               <Grid container>
                 <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
@@ -3646,12 +3641,8 @@ const WorkflowDesigner = (props: any) => {
                       maxZoom={3.5}
                       minZoom={0.2}
                       onNodeDragStop={() => {
-                        if (isEditable) {
-                          setstoredNodes((prev: any) => [
-                            ...prev,
-                            { nodes, edges },
-                          ]);
-                          setcount((prev) => prev + 1);
+                        if (isEditable && !nodeFunctions.id) {
+                          handleStoredNodeUpdate();
                         }
                       }}
                     >
