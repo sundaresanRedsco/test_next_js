@@ -47,6 +47,7 @@ export default function UndoRedo({
         alignItems: "center",
         gap: 1,
         bottom: isHeightIncreased ? height + 20 : 20,
+        pointerEvents: "none",
       }}
     >
       {buttons.map((elem: any, index: number) => (
@@ -60,6 +61,7 @@ export default function UndoRedo({
           cursor={elem.disabled ? "not-allowed" : "pointer"}
           sx={{
             opacity: elem.disabled ? 0.5 : 1,
+            pointerEvents: "all",
           }}
         />
       ))}

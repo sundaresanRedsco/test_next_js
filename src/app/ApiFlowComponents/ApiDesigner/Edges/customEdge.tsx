@@ -11,7 +11,7 @@ import "./buttonedge.css";
 import { useSelector } from "react-redux";
 import { RootStateType } from "../../../Redux/store";
 import { FlowReducer } from "../../../Redux/apiManagement/flowReducer";
-import { useRedoUndoStore } from "@/app/hooks/workflow/useRedoUndo";
+import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 
 const onEdgeClick = (evt: any, id: any) => {
   evt.stopPropagation();
@@ -42,7 +42,7 @@ export default function CustomEdge({
     targetY,
     targetPosition,
   });
-  const { setNodeFunction } = useRedoUndoStore();
+  const { setNodeFunction } = useWorkflowStore();
 
   const onEdgeClick = () => {
     setEdges((edges) => edges.filter((edge) => edge.id !== id));

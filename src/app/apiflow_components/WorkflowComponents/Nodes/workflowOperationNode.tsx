@@ -66,7 +66,7 @@ import theme from "@/Theme/theme";
 import { debounce, method } from "lodash";
 import AceEditorComponent from "@/app/apiflow_components/WorkflowComponents/AceEditor/aceEditor";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
-import { useRedoUndoStore } from "@/app/hooks/workflow/useRedoUndo";
+import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 
 type YDoc = Y.Doc;
 
@@ -302,7 +302,7 @@ export default function WorkflowOperationNode({ data }: any) {
       }
     }
   }
-  const { setNodeFunction } = useRedoUndoStore();
+  const { setNodeFunction } = useWorkflowStore();
   const onClick = useCallback(() => {
     const nodeToRemoveId = nodeData?.id;
     // Find edges connected to the node being removed

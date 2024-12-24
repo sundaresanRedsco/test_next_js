@@ -37,6 +37,7 @@ import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
 import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
 import { useSideBarStore } from "@/app/hooks/sideBarStore";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
+import { v4 as uuidv4 } from "uuid";
 
 export const SecondaryTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
@@ -477,6 +478,17 @@ export default function WorkflowSidebar(props: any) {
 
       {/* Collections and Operations */}
       <Box sx={{ margin: recentlyModifiedProp === true ? "" : "10px 0px" }}>
+        <DraggableCard
+          // id={operation?.operation_id}
+          id={123}
+          name={"Frame"}
+          http_method={"GET"}
+          type={"groupNode"}
+          collection_id={123}
+          recentlyModifiedProp={recentlyModifiedProp}
+          // tabs={tabs}
+          // onSelectCurrentOperation={onSelectCurrentOperation}
+        />
         {collOperDetails?.map((item: any, index: number) => (
           <Accordion
             key={index}
@@ -612,7 +624,7 @@ export default function WorkflowSidebar(props: any) {
                   id={operation?.operation_id}
                   name={operation?.operation_name}
                   http_method={operation?.method}
-                  type="operations"
+                  type={"operations"}
                   collection_id={operation?.collection_id}
                   recentlyModifiedProp={recentlyModifiedProp}
                   full_url={operation?.full_url}

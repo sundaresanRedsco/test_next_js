@@ -1,3 +1,4 @@
+import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 import React, { useEffect, useState } from "react";
 import { useEdgesState, useNodesState, useReactFlow } from "reactflow";
 import * as Y from "yjs";
@@ -13,15 +14,6 @@ interface Store {
   setNodeFunction: (value: any) => void;
   resetNodeFunction: () => void;
 }
-
-export const useRedoUndoStore = create<Store>((set, get) => ({
-  storedNodes: [],
-  setstoredNodes: (value) => set({ storedNodes: value }),
-  nodeFunctions: { id: "", method: "", obj: null },
-  setNodeFunction: (value) => set({ nodeFunctions: value }),
-  resetNodeFunction: () =>
-    set({ nodeFunctions: { id: "", method: "", obj: null } }),
-}));
 
 const normalizeObject = (obj: any) => {
   // Normalize fields by sanitizing null-like mismatches or unnecessary differences
@@ -55,7 +47,7 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
   // const { getEdges } = useReactFlow();
   const { edges, setEdges, nodes, setNodes } = data;
   const { storedNodes, setstoredNodes, nodeFunctions, resetNodeFunction } =
-    useRedoUndoStore();
+    useWorkflowStore();
 
   const [count, setcount] = useState(0);
   const [totalCounts, settotalCounts] = useState({

@@ -122,9 +122,11 @@ import NavigationIcon from "@mui/icons-material/Navigation";
 import ChangeHistoryDesigner from "@/app/apiflow_components/WorkflowComponents/ChangeHistoryDesigner";
 import { useWebSocket } from "@/app/hooks/useWebSocket";
 import UndoRedo from "@/app/apiflow_components/WorkflowComponents/UndoRedo";
-import useRedoUndo, {
-  useRedoUndoStore,
-} from "@/app/hooks/workflow/useRedoUndo";
+import useRedoUndo from "@/app/hooks/workflow/useRedoUndo";
+import GroupNode from "@/app/apiflow_components/WorkflowComponents/Nodes/GroupNode";
+import { isPointInBox } from "@/app/Utilities";
+import useGroupNodes from "@/app/hooks/workflow/useGroupNodes";
+import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -182,6 +184,7 @@ const nodeTypes = {
   startButtonNode: WorkflowStartNode,
   // operationNode: OperationNode,
   operationNode: WorkflowOperationNode,
+  groupNode: GroupNode,
 };
 
 const edgeTypes = {
@@ -871,8 +874,14 @@ const WorkflowDesigner = (props: any) => {
 
   // const apiFlow_Id = "5409b548a1854ddfa9b297ad9d102488";
   const dispatch = useDispatch<any>();
-  const { deleteElements, getEdges, getNode, getNodes, addNodes } =
-    useReactFlow();
+  const {
+    deleteElements,
+    getEdges,
+    getNode,
+    getNodes,
+    addNodes,
+    getIntersectingNodes,
+  } = useReactFlow();
 
   const params = useParams();
   const router = useRouter();
@@ -983,7 +992,7 @@ const WorkflowDesigner = (props: any) => {
     setNodes,
   });
   const { storedNodes, setstoredNodes, setNodeFunction, nodeFunctions } =
-    useRedoUndoStore();
+    useWorkflowStore();
   const open = Boolean(anchorEl2);
   const id = open ? "simple-popover" : undefined;
 
@@ -1687,11 +1696,31 @@ const WorkflowDesigner = (props: any) => {
       if (!ItemTypes.CARD) {
         return;
       }
-      const dropPosition = screenToFlowPosition({
+      let dropPosition = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
 
+      const groupNodes = nodes.filter((node) => node.type == "groupNode");
+      const groupNode = groupNodes.find((groupNode) => {
+        return isPointInBox(
+          { x: dropPosition.x, y: dropPosition.y },
+          {
+            x: groupNode.position.x || 0,
+            y: groupNode.position.y || 0,
+            height: groupNode?.height || 0,
+            width: groupNode?.width || 0,
+          }
+        );
+      });
+      if (groupNode) {
+        const { x, y } = groupNode?.position || {
+          x: 0,
+          y: 0,
+        };
+        const { x: dragX, y: dragY } = dropPosition || { x: 0, y: 0 };
+        dropPosition = { x: dragX - x, y: dragY - y };
+      }
       let tempData: any = dropItem;
 
       let count = 0;
@@ -1778,6 +1807,7 @@ const WorkflowDesigner = (props: any) => {
             response: {},
             width: 230,
             height: 120,
+            parentId: groupNode?.id,
           };
 
           // Parse and access the variable
@@ -1843,6 +1873,42 @@ const WorkflowDesigner = (props: any) => {
             } else {
             }
           } else {
+          }
+        } else if (tempData?.type == "groupNode" && isEditable) {
+          let id = uuidv4();
+          const names = nodes
+            .filter((node) => node.type == "groupNode")
+            .map((node: any) => node?.name);
+          const node_name =
+            names.length > 0
+              ? tempData?.name + " " + names.length
+              : tempData?.name;
+          const newNode = {
+            id: id,
+            type: "groupNode",
+            name: node_name,
+            position: { x: dropPosition?.x, y: dropPosition?.y },
+            positionAbsolute: { x: dropPosition?.x, y: dropPosition?.y },
+            status: "null",
+            flow_id: apiFlow_Id,
+            version: versionValue,
+            created_by: userProfile.user.user_id,
+            data: { name: node_name, id },
+            response: {},
+            width: 400,
+            height: 400,
+          };
+          let updatedNode: any = {
+            action: "ADD_NODE",
+            status: "null",
+            flow_id: apiFlow_Id,
+            id: id,
+            nodes: newNode,
+          };
+
+          const nodeMap = ydoc?.getMap<any>("nodes");
+          if (nodeMap) {
+            nodeMap.set(updatedNode.id, updatedNode);
           }
         }
         // })
@@ -3170,22 +3236,43 @@ const WorkflowDesigner = (props: any) => {
   const [copiedNodes, setCopiedNodes] = useState<any[]>([]);
   const [cutNodes, setCutNodes] = useState<any[]>([]);
 
+  // const handleCopyNodes = () => {
+  //   if (selectedFlowIds?.length > 0) {
+  //     const copiedval = selectedFlowIds?.flatMap((val: any) =>
+  //       nodes?.filter((item) => item?.id === val)
+  //     );
+
+  //     // copiedval?.map((item: any) => {
+  //     //   setdropItems({
+  //     //     id: item?.id,
+  //     //     name: item?.name,
+  //     //     http_method: item?.http_method,
+  //     //     type: item?.type,
+  //     //     full_url: item?.full_url,
+  //     //     nodes: item,
+  //     //   });
+  //     // });
+  //     copiedval?.map((item: any) => {
+  //       const parseJson = JSON.parse(item?.data);
+  //       setdropItems({
+  //         id: parseJson?.operation_id,
+  //         name: parseJson?.name,
+  //         http_method: item?.http_method,
+  //         type: item?.type,
+  //         full_url: item?.full_url,
+  //         nodes: item,
+  //       });
+  //     });
+  //     setCopiedNodes(copiedval);
+  //   }
+  // };
+
   const handleCopyNodes = () => {
     if (selectedFlowIds?.length > 0) {
       const copiedval = selectedFlowIds?.flatMap((val: any) =>
         nodes?.filter((item) => item?.id === val)
       );
 
-      // copiedval?.map((item: any) => {
-      //   setdropItems({
-      //     id: item?.id,
-      //     name: item?.name,
-      //     http_method: item?.http_method,
-      //     type: item?.type,
-      //     full_url: item?.full_url,
-      //     nodes: item,
-      //   });
-      // });
       copiedval?.map((item: any) => {
         const parseJson = JSON.parse(item?.data);
         setdropItems({
@@ -3197,7 +3284,7 @@ const WorkflowDesigner = (props: any) => {
           nodes: item,
         });
       });
-      setCopiedNodes(copiedval);
+      setCopiedNodes(copiedval); // Keep copied nodes for multiple pastes
     }
   };
 
@@ -3215,58 +3302,165 @@ const WorkflowDesigner = (props: any) => {
 
   const gettingAllNodes = getNodes();
 
+  // const handlePasteNodes = (event?: React.MouseEvent) => {
+  //   if (copiedNodes?.length === 0) return;
+
+  //   const position = event
+  //     ? screenToFlowPosition({ x: event.clientX, y: event.clientY })
+  //     : lastCursorPosition;
+
+  //   // setNodes((prevNodes) => [
+  //   //   ...prevNodes, // Keep existing nodes
+  //   //   ...copiedNodes.map((node) => ({
+  //   //     ...node,
+  //   //     id: `${node.id}-copy-${Date.now()}`, // Ensure unique IDs for copied nodes
+  //   //     position: {
+  //   //       x: node.position.x + 50, // Offset to prevent overlap
+  //   //       y: node.position.y + 50,
+  //   //     },
+  //   //   })),
+  //   // ]);
+
+  //   // setNodes((prevNodes) => {
+  //   //   const existingIds = new Set(prevNodes.map((node) => node.id));
+  //   //   const newNodes = copiedNodes
+  //   //     .map((node, index) => ({
+  //   //       ...node,
+  //   //       id: `${node.id}-copy-${Date.now()}`, // Unique ID
+  //   //       position: {
+  //   //         x: position?.x,
+  //   //         y: position?.y,
+  //   //       },
+  //   //       // position: {
+  //   //       //   x: position.x + index * 50, // Offset for multiple nodes
+  //   //       //   y: position.y + index * 50,
+  //   //       // },
+  //   //     }))
+  //   //     .filter((node) => !existingIds.has(node.id)); // Avoid duplicates
+
+  //   //   return [...prevNodes, ...newNodes];
+  //   // });
+
+  //   let tempData: any = dropItem;
+
+  //   let count = 0;
+
+  //   for (const node of nodes) {
+  //     // if (node?.data) {
+  //     const nodeDataV2 = JSON.parse(node?.data);
+
+  //     // if (nodeDataV2?.name === tempData?.name) {
+  //     if (nodeDataV2?.operation_id === tempData?.id) {
+  //       count++;
+  //     }
+  //     // }
+  //   }
+
+  //   let name: string = tempData?.name;
+  //   let node_name = name + (count === 0 ? "" : "_" + count);
+
+  //   if (tempData?.type === "operationNode") {
+  //     let id: string = uuidv4();
+
+  //     let matchedPaths = extractPlaceholdersFromPath(
+  //       tempData?.nodes?.full_url || null
+  //     );
+
+  //     let queryParams: any = [];
+
+  //     for (let params of matchedPaths) {
+  //       if (params) {
+  //         const updatedData: any = queryParams?.filter(
+  //           (x: any) => x?.name !== params && x?.scope !== "path"
+  //         );
+
+  //         queryParams = [
+  //           ...updatedData,
+  //           {
+  //             name: params,
+  //             test_value: "",
+  //             scope: "path",
+  //             data_type: "string",
+  //           },
+  //         ];
+  //       }
+  //     }
+
+  //     const operHeaders = []?.map((x: any) => ({
+  //       name: x?.name,
+  //       test_value: x?.test_value,
+  //       data_type: x?.data_type,
+  //     }));
+
+  //     const newNode = {
+  //       id: id,
+  //       type: "operationNode",
+  //       name: node_name,
+  //       position: { x: position?.x, y: position?.y },
+  //       positionAbsolute: { x: position?.x, y: position?.y },
+  //       status: "null",
+  //       // ...tempData?.nodes,
+  //       flow_id: apiFlow_Id,
+  //       version: versionValue,
+  //       created_by: userProfile?.user?.user_id,
+  //       data: JSON?.stringify({
+  //         name,
+  //         id,
+  //         node_name,
+  //         operation_id: tempData?.id,
+  //         method: tempData?.nodes?.http_method,
+  //         full_url: tempData?.nodes?.full_url,
+  //         operations_header: operHeaders,
+  //         operations_input: [],
+  //         operations_auth: [],
+  //         operations_query_param: [],
+  //         raw_output: "",
+  //         raw_payload: "",
+  //       }),
+  //       response: {},
+  //       width: 230,
+  //       height: 120,
+  //     };
+
+  //     const parsedData = JSON?.parse(newNode?.data);
+
+  //     if (parsedData?.operation_id !== null) {
+  //       let updatedNode: any = {
+  //         action: "ADD_NODE",
+  //         status: "null",
+  //         flow_id: apiFlow_Id,
+  //         id: id,
+  //         nodes: newNode,
+  //       };
+
+  //       const nodeMap = ydoc?.getMap<any>("nodes");
+
+  //       if (nodeMap) {
+  //         nodeMap?.set(updatedNode?.id, updatedNode);
+  //       }
+  //     }
+  //   }
+
+  //   setCopiedNodes([]);
+  //   selectedFlowIds?.map((idVal: any) => removeFlowId(idVal));
+  // };
+
   const handlePasteNodes = (event?: React.MouseEvent) => {
-    if (copiedNodes?.length === 0) return;
+    if (!copiedNodes?.length) return;
 
     const position = event
       ? screenToFlowPosition({ x: event.clientX, y: event.clientY })
       : lastCursorPosition;
-
-    // setNodes((prevNodes) => [
-    //   ...prevNodes, // Keep existing nodes
-    //   ...copiedNodes.map((node) => ({
-    //     ...node,
-    //     id: `${node.id}-copy-${Date.now()}`, // Ensure unique IDs for copied nodes
-    //     position: {
-    //       x: node.position.x + 50, // Offset to prevent overlap
-    //       y: node.position.y + 50,
-    //     },
-    //   })),
-    // ]);
-
-    // setNodes((prevNodes) => {
-    //   const existingIds = new Set(prevNodes.map((node) => node.id));
-    //   const newNodes = copiedNodes
-    //     .map((node, index) => ({
-    //       ...node,
-    //       id: `${node.id}-copy-${Date.now()}`, // Unique ID
-    //       position: {
-    //         x: position?.x,
-    //         y: position?.y,
-    //       },
-    //       // position: {
-    //       //   x: position.x + index * 50, // Offset for multiple nodes
-    //       //   y: position.y + index * 50,
-    //       // },
-    //     }))
-    //     .filter((node) => !existingIds.has(node.id)); // Avoid duplicates
-
-    //   return [...prevNodes, ...newNodes];
-    // });
 
     let tempData: any = dropItem;
 
     let count = 0;
 
     for (const node of nodes) {
-      // if (node?.data) {
       const nodeDataV2 = JSON.parse(node?.data);
-
-      // if (nodeDataV2?.name === tempData?.name) {
       if (nodeDataV2?.operation_id === tempData?.id) {
         count++;
       }
-      // }
     }
 
     let name: string = tempData?.name;
@@ -3312,7 +3506,6 @@ const WorkflowDesigner = (props: any) => {
         position: { x: position?.x, y: position?.y },
         positionAbsolute: { x: position?.x, y: position?.y },
         status: "null",
-        // ...tempData?.nodes,
         flow_id: apiFlow_Id,
         version: versionValue,
         created_by: userProfile?.user?.user_id,
@@ -3354,9 +3547,17 @@ const WorkflowDesigner = (props: any) => {
       }
     }
 
-    setCopiedNodes([]);
     selectedFlowIds?.map((idVal: any) => removeFlowId(idVal));
   };
+
+  // const handleCutNodes = () => {
+  //   if (selectedFlowIds?.length > 0) {
+  //     const cutNodeVal = selectedFlowIds?.flatMap((val: any) =>
+  //       nodes?.filter((item) => item?.id === val)
+  //     );
+  //     console.log(cutNodeVal, "cutNodeValcutNodeVal");
+  //   }
+  // };
 
   const handleCutNodes = () => {
     if (selectedFlowIds?.length > 0) {
@@ -3367,13 +3568,29 @@ const WorkflowDesigner = (props: any) => {
     }
   };
 
+  // useEffect(() => {
+  //   const handleKeyDown = (event: KeyboardEvent) => {
+  //     if (event?.ctrlKey && event?.key === "c") {
+  //       handleCopyNodes();
+  //     } else if (event?.ctrlKey && event?.key === "v") {
+  //       // selectedFlowIds?.map((idVal: any) => removeFlowId(idVal));
+  //       // setCopiedNodes([]);
+  //       handlePasteNodes();
+  //     } else if (event?.ctrlKey && event?.key === "x") {
+  //       handleCutNodes();
+  //     }
+  //   };
+  //   window.addEventListener("keydown", handleKeyDown);
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, [selectedFlowIds.length, copiedNodes, lastCursorPosition, nodes.length]);
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event?.ctrlKey && event?.key === "c") {
         handleCopyNodes();
       } else if (event?.ctrlKey && event?.key === "v") {
-        // selectedFlowIds?.map((idVal: any) => removeFlowId(idVal));
-        // setCopiedNodes([]);
         handlePasteNodes();
       } else if (event?.ctrlKey && event?.key === "x") {
         handleCutNodes();
@@ -3406,7 +3623,11 @@ const WorkflowDesigner = (props: any) => {
       }
     });
   }, [selectedFlowIds.length, nodes?.length]);
-
+  const { isNodeWithinFrame, onDragEnd, onDragStart } = useGroupNodes({
+    nodes,
+    setNodes,
+    getIntersectingNodes,
+  });
   return (
     <Grid
       ref={boxRef}
@@ -3640,10 +3861,14 @@ const WorkflowDesigner = (props: any) => {
                       proOptions={{ hideAttribution: true }}
                       maxZoom={3.5}
                       minZoom={0.2}
-                      onNodeDragStop={() => {
+                      onNodeDrag={(event, dragNode) => {
+                        onDragStart(event, dragNode);
+                      }}
+                      onNodeDragStop={(event, dragNode) => {
                         if (isEditable && !nodeFunctions.id) {
                           handleStoredNodeUpdate();
                         }
+                        onDragEnd(event, dragNode);
                       }}
                     >
                       {Array.from(cursors?.entries()).map(
