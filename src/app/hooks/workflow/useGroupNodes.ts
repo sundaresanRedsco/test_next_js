@@ -12,7 +12,7 @@ export default function useGroupNodes({
   getIntersectingNodes,
   setNodes,
 }: Props) {
-  const { setNodeWithinFrame } = useWorkflowStore();
+  const { setNodeWithinFrame, dimensions } = useWorkflowStore();
   const overlappingNodeRef = useRef<any>(null);
   const isNodeWithinFrame = (dragNode: any) => {
     let node = null;
@@ -53,8 +53,8 @@ export default function useGroupNodes({
       let dragBottom = dragNode.position.y + 120;
       let dragLeft = dragNode.position.x + 230;
       let dragTop = dragNode.position.y + 120;
-      let nodeRight = node.position.x + 400;
-      let nodeBottom = node.position.y + 350;
+      let nodeRight = node.position.x + dimensions[node?.id]?.width;
+      let nodeBottom = node.position.y + dimensions[node?.id]?.height;
 
       if (dragNode?.parentId === node.id) {
         dragRight = node.position.x + dragNode.position.x + 230;
@@ -97,7 +97,6 @@ export default function useGroupNodes({
         top: node.position.y,
         bottom: nodeBottom,
       };
-      // console.log(dragNodeRect, nodeRect, "groupNode-position");
 
       return (
         dragNodeRect.left >= nodeRect.left &&
@@ -115,10 +114,6 @@ export default function useGroupNodes({
     } else {
       overlappingNodeRef.current = null;
     }
-    // console.log(
-    //   checkNodeWithinFrame(dragNode, overlappingNodeRef.current),
-    //   "groupNode"
-    // );
 
     if (
       checkNodeWithinFrame(dragNode, overlappingNodeRef.current) &&
@@ -222,5 +217,5 @@ export default function useGroupNodes({
       ]);
     }
   };
-  return { isNodeWithinFrame, onDragStart, onDragEnd };
+  return { onDragStart, onDragEnd };
 }

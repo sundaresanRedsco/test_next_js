@@ -1,30 +1,17 @@
 "use client";
 
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-// import WorkflowHeader from "@/app/apiflow_components/WorkflowComponents/workflowHeader";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
-import Draggable from "react-draggable";
+import * as Y from "yjs";
 
 import {
   clearResults,
   clearSingleApiData,
-  CreateGlobalKeys,
   FlowReducer,
   GetAllVerisons,
   GetApiDesignFlowByDesignFlowId,
-  GetDesignApiFlow,
-  GetGlobalKeys,
-  PostRecentModification,
   PublishVersion,
-  SaveFlowHandler,
   setChangeHistroy,
   setCompiling,
   setCurrentUserFlowColor,
@@ -46,41 +33,20 @@ import EditIcon from "@mui/icons-material/Edit";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { SaveAlt } from "@mui/icons-material";
 import Grid from "@mui/material/Grid2";
-// import WorkflowSidebar from "@/app/apiflow_components/WorkflowComponents/workflowSidebar";
-import { useDrop } from "react-dnd";
 import ReactFlow, {
   useNodesState,
   useEdgesState,
   useReactFlow,
   ReactFlowProvider,
-  ReactFlowInstance,
-  Connection,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { v4 as uuidv4 } from "uuid";
-import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
-
-import * as Y from "yjs";
-import { WebsocketProvider } from "y-websocket";
-
-import { useRouter, usePathname } from "next/navigation";
-import { AdminServices } from "@/app/Services/services";
 import {
   extractPlaceholdersFromPath,
   generateUniqueNodeName,
   getRandomColor,
-  prepareEdges,
-  prepareNodes,
-  replacePlaceholders,
   setCookies,
   validatePlaceholders,
 } from "@/app/Helpers/helpersFunctions";
-
-import WorkflowStartNode from "@/app/apiflow_components/WorkflowComponents/Nodes/workflowStartNode";
-import WorkflowOperationNode from "@/app/apiflow_components/WorkflowComponents/Nodes/workflowOperationNode";
-import CustomEdge from "@/app/ApiFlowComponents/ApiDesigner/Edges/customEdge";
-import ChangeEdge from "@/app/ApiFlowComponents/ApiDesigner/Edges/changeEdge";
 import {
   GetOperationById,
   projectReducer,
@@ -89,32 +55,19 @@ import { environmentReducer } from "@/app/Redux/apiManagement/environmentReducer
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
 import theme from "@/Theme/theme";
 import { GetCollectionOperationTree } from "@/app/Redux/apiManagement/endpointReducer";
-// import FLowBg from "../../Assests/images/FlowBg.png";
-// import WorkflowDrawer from "@/app/apiflow_components/WorkflowComponents/workflowDrawer";
-// import GDialogBox from "@/app/Components/Global/GDialogBox";
-// import DesignerImportPopup from "@/app/ApiFlowComponents/ApiDesigner/DesignerImportPopup";
-import html2canvas from "html2canvas";
 import WorkFlowLayout from "@/app/apiflow_components/WorkflowComponents/WorkFlowLayout";
-import GLoader from "@/app/apiflow_components/global/GLoader";
-import GlobalLoader from "@/app/Components/Global/GlobalLoader";
-
 import dynamic from "next/dynamic";
 import { CommonReducer, updateSessionPopup } from "@/app/Redux/commonReducer";
-import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
+import GCircularLoader from "@/app/apiflow_components/global/GCircularLoader";
 import WorkFlowHeaderSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkFlowHeaderSkeleton";
 import WorkflowDrawerSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkflowDrawerSkeleton";
 import WorkflowSidebarSkeleton from "@/app/apiflow_components/skeletons/DesignerFlow/WorkflowSidebarSkeleton";
-import _, { isEqual } from "lodash";
-import FlowDesigner from "@/app/ApiflowPages/ApiManagement/FlowDesigner";
-import DraggableDrawer from "@/app/ApiFlowComponents/ApiDesigner/drawer/draggableDrawer";
+import _ from "lodash";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import {
-  Badge,
   Box,
-  Popover,
   Tooltip,
   TooltipProps,
-  Typography,
   styled,
   tooltipClasses,
 } from "@mui/material";
@@ -123,10 +76,18 @@ import ChangeHistoryDesigner from "@/app/apiflow_components/WorkflowComponents/C
 import { useWebSocket } from "@/app/hooks/useWebSocket";
 import UndoRedo from "@/app/apiflow_components/WorkflowComponents/UndoRedo";
 import useRedoUndo from "@/app/hooks/workflow/useRedoUndo";
-import GroupNode from "@/app/apiflow_components/WorkflowComponents/Nodes/GroupNode";
-import { isPointInBox } from "@/app/Utilities";
+import Selecto from "react-selecto";
 import useGroupNodes from "@/app/hooks/workflow/useGroupNodes";
 import { useWorkflowStore } from "@/app/store/useWorkflowStore";
+import useSelectNodes from "@/app/hooks/workflow/useSelectNodes";
+import useWorkflow from "@/app/hooks/workflow/useWorkflow";
+import { usePathname } from "next/navigation";
+import {
+  edgeTypes,
+  nodeTypes,
+  runHandler,
+} from "@/app/hooks/workflow/helperFunctions";
+import toast from "react-hot-toast";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -157,7 +118,6 @@ const WorkflowSidebar = dynamic(
   }
 );
 
-// Dynamically import WorkflowDrawer
 const WorkflowDrawer = dynamic(
   () => import("@/app/apiflow_components/WorkflowComponents/workflowDrawer"),
   {
@@ -165,12 +125,10 @@ const WorkflowDrawer = dynamic(
   }
 );
 
-// Dynamically import GDialogBox
 const GDialogBox = dynamic(() => import("@/app/Components/Global/GDialogBox"), {
   ssr: false,
 });
 
-// Dynamically import DesignerImportPopup
 const DesignerImportPopup = dynamic(
   () => import("@/app/ApiFlowComponents/ApiDesigner/DesignerImportPopup"),
   { ssr: false }
@@ -180,714 +138,17 @@ export const ItemTypes = {
   CARD: "card",
 };
 
-const nodeTypes = {
-  startButtonNode: WorkflowStartNode,
-  // operationNode: OperationNode,
-  operationNode: WorkflowOperationNode,
-  groupNode: GroupNode,
-};
-
-const edgeTypes = {
-  buttonEdge: CustomEdge,
-  changeEdge: ChangeEdge,
-};
-
-type YDoc = Y.Doc;
-
-const threads = 5;
-let processedNodes = new Set();
-async function runHandler(
-  doc: any,
-  nodes: any,
-  edges: any,
-  tenant_id: string,
-  apiFlow_Id: string,
-  project_id: string,
-  workspace_id: string
-) {
-  const runMap = doc.getMap("run");
-  // const nodeMap = doc.getMap("nodes");
-  // const edgesMap = doc.getMap("edges");
-  const runData = runMap?.toJSON()?.run;
-
-  const globalkeys = doc.getArray("globalkeys");
-  const globalKeysArray = globalkeys.toArray();
-
-  if (runData?.status !== "COMPLETED") {
-    try {
-      let updatedNodes = nodes || [];
-      let updatedEdges = edges || [];
-
-      // // Update nodes and edges
-      // updateNodesAndEdges(nodeMap, updatedNodes);
-      // updateNodesAndEdges(edgesMap, updatedEdges, "edges");
-
-      let queue = [];
-      let currentEdge = getStartEdge(updatedEdges);
-
-      if (currentEdge) {
-        queue.push(currentEdge);
-      }
-
-      initializeRun(runMap, currentEdge?.target);
-
-      const incomingEdgesCount: Map<string, number> = new Map(); // Node ID -> Number of incoming edges
-      const nodesReadyToProcess: Map<string, Set<string>> = new Map(); // Node ID -> Set of processing dependencies
-
-      // Initialize incoming edge counts and dependencies
-      updatedEdges.forEach((edge: any) => {
-        const targetNode = edge.target;
-        if (!incomingEdgesCount.has(targetNode)) {
-          incomingEdgesCount.set(targetNode, 0);
-          nodesReadyToProcess.set(targetNode, new Set());
-        }
-        incomingEdgesCount.set(
-          targetNode,
-          incomingEdgesCount.get(targetNode)! + 1
-        );
-        nodesReadyToProcess.get(targetNode)?.add(edge.source);
-      });
-
-      let previousEdgeResponse: any = null;
-      let globalResponse = {};
-      processedNodes = new Set();
-      // Process nodes in parallel
-      while (queue.length > 0) {
-        const currentEdges = queue.splice(0, Math.min(threads, queue.length));
-        const results = await parallel(
-          currentEdges,
-          async (edge: any) => {
-            const result = await processNode(
-              doc,
-              edge,
-              updatedNodes,
-              updatedEdges,
-              runMap,
-              processedNodes,
-              previousEdgeResponse,
-              globalKeysArray,
-              globalResponse,
-              tenant_id,
-              apiFlow_Id,
-              project_id,
-              workspace_id
-            );
-            // Update previousEdgeResponse for each processed node
-            if (result.previousEdgeResponse) {
-              previousEdgeResponse = result.previousEdgeResponse;
-              globalResponse = {
-                ...globalResponse,
-                [result.current_node_id]:
-                  result?.previousEdgeResponse?.response?.apiResponse,
-              };
-            }
-
-            result.nextEdges.forEach((nextEdge: any) => {
-              const targetNode = nextEdge.target;
-              // Decrement the count of remaining incoming edges
-              if (incomingEdgesCount.has(targetNode)) {
-                incomingEdgesCount.set(
-                  targetNode,
-                  incomingEdgesCount.get(targetNode)! - 1
-                );
-
-                // If all incoming edges are processed, add the node to the queue
-                if (incomingEdgesCount.get(targetNode) === 0) {
-                  queue.push(nextEdge);
-                  incomingEdgesCount.delete(targetNode);
-                }
-              }
-            });
-
-            return result.nextEdges;
-          },
-          threads
-        );
-
-        // results.forEach((nextEdges: any) => {
-        //   if (nextEdges && nextEdges.length > 0) {
-        //     queue.push(...nextEdges);
-        //   }
-        // });
-
-        // Add results to the queue
-        results.flat().forEach((nextEdges: any) => {
-          if (nextEdges && nextEdges.length > 0) {
-            nextEdges.forEach((nextEdge: any) => {
-              const targetNode = nextEdge.target;
-              // Ensure nodes with multiple incoming edges are correctly handled
-              if (!incomingEdgesCount.has(targetNode)) {
-                incomingEdgesCount.set(targetNode, 0);
-                nodesReadyToProcess.set(targetNode, new Set());
-              }
-
-              // Check if all dependencies are processed
-              const dependencies = nodesReadyToProcess.get(targetNode);
-              if (dependencies && dependencies.size === 0) {
-                queue.push(nextEdge);
-              } else {
-                dependencies?.delete(nextEdge.source);
-              }
-            });
-          }
-        });
-      }
-      finalizeRun(runMap, queue.length === 0, globalResponse);
-    } catch (error) {
-      console.error("Error occurred:", error);
-      stopRun(runMap);
-    }
-  }
-}
-
-function initializeRun(runMap: any, target: any) {
-  if (runMap) {
-    const updateData = runMap.get("run");
-    if (updateData) {
-      updateData.status = "RUNNING";
-      updateData.next_node = [target];
-      updateData.run_result = [];
-      updateData.running_nodes = [target];
-      runMap.set("run", updateData);
-    }
-  }
-}
-
-async function processNode(
-  doc: any,
-  currentEdge: any,
-  updatedNodes: any,
-  updatedEdges: any,
-  runMap: any,
-  processedNodes: any,
-  previousEdgeResponse: any,
-  globalKeysArray: any,
-  globalResponse: any,
-  tenant_id: string,
-  apiFlow_Id: string,
-  project_id: string,
-  workspace_id: string
-) {
-  let currentNode = updatedNodes.find((x: any) => x.id === currentEdge?.target);
-  if (!currentNode || processedNodes?.has(currentNode.id))
-    return { nextEdges: [] };
-  processedNodes?.add(currentNode.id);
-  const parsedData =
-    typeof currentNode?.data === "string"
-      ? JSON.parse(currentNode.data)
-      : currentNode?.data;
-  currentNode = { ...currentNode, data: parsedData };
-
-  updateRunStatus(runMap, currentEdge?.target);
-  let nextEdges = [];
-  let newPreviousEdgeResponse = previousEdgeResponse;
-  let requestBody = {};
-  if (currentNode?.type === "operationNode") {
-    requestBody = createRequestBody(
-      currentNode,
-      previousEdgeResponse,
-      globalKeysArray,
-      globalResponse
-    );
-    const operationSuccess = await performOperation(
-      doc,
-      currentEdge.target,
-      apiFlow_Id,
-      project_id,
-      currentNode,
-      requestBody
-    );
-    newPreviousEdgeResponse = operationSuccess;
-
-    let changeManData = {
-      flow_id: apiFlow_Id,
-      node_id: operationSuccess?.node_id,
-      tenant_id: tenant_id,
-      project_id: project_id,
-      workspace_id: workspace_id,
-      operation_id: currentNode?.data.operation_id,
-      requestBody: {
-        serviceInput: JSON.stringify(operationSuccess?.serviceInput),
-        serviceOutput: JSON.stringify(operationSuccess?.response),
-        statusCode: operationSuccess?.statusCode,
-      },
-    };
-
-    // query need pas id
-    // let changeManResponse = await changeManagement(changeManData);
-
-    if (operationSuccess?.status === "SUCCESS") {
-      for (let key of globalKeysArray) {
-        if (key.node_id === currentNode.id) {
-          const response = newPreviousEdgeResponse?.response?.apiResponse;
-          let value = replacePlaceholders(
-            key.request_template,
-            { response },
-            null
-          );
-          updateKeys(doc, value, key.id, globalKeysArray);
-        }
-      }
-    }
-
-    nextEdges = getNextEdges(
-      updatedEdges,
-      currentEdge.target,
-      operationSuccess?.status == "SUCCESS",
-      "operationNode",
-      null
-    );
-  } else if (currentNode?.type === "responseNode") {
-    nextEdges = getNextEdges(
-      updatedEdges,
-      currentEdge.target,
-      true,
-      currentNode?.type,
-      newPreviousEdgeResponse?.statusCode
-    );
-  }
-  finalizeNode(runMap, currentEdge?.target, nextEdges, {
-    ...newPreviousEdgeResponse,
-    requestBody: requestBody,
-  });
-  let current_node_id = currentNode?.data?.node_name;
-  return {
-    nextEdges,
-    previousEdgeResponse: newPreviousEdgeResponse,
-    current_node_id,
-  };
-}
-
-function updateRunStatus(runMap: any, target: any) {
-  // Logging to indicate the function execution
-
-  // Check if runMap is provided
-  if (runMap) {
-    // Retrieve the data for the run key
-    const updateData = runMap.get("run");
-
-    // If updateData is available, proceed with the update
-    if (updateData) {
-      // Set the status to RUNNING
-      updateData.status = "RUNNING";
-
-      // Ensure next_node is an array
-      if (!Array.isArray(updateData.next_node)) {
-        updateData.next_node = [];
-      }
-
-      // Ensure running_nodes is an array
-      if (!Array.isArray(updateData.running_nodes)) {
-        updateData.running_nodes = [];
-      }
-
-      // Add target to next_node array
-      updateData.next_node = [...updateData.next_node, target];
-
-      // Add target to running_nodes array
-      updateData.running_nodes = [...updateData.running_nodes, target];
-
-      // Update the run key in the map with the modified data
-      runMap.set("run", updateData);
-    }
-  }
-
-  // Logging to indicate the function has completed execution
-}
-
-function createRequestBody(
-  currentNode: any,
-  previousEdgeResponse: any,
-  globalKeysArray: any,
-  globalResponse: any
-) {
-  // const object = previousEdgeResponse?.response;
-  // const response = previousEdgeResponse?.response?.apiResponse;
-  const response = globalResponse;
-
-  const payloadStr = currentNode?.data?.raw_payload || "{}";
-  // const payload = JSON.parse(payloadStr);
-  let payload = {};
-
-  try {
-    payload = JSON.parse(payloadStr);
-  } catch (error) {
-    console.error("Error parsing JSON payload:", payloadStr, error);
-    // Set payload to empty object if parsing fails
-    payload = {};
-  }
-
-  const new_payload = replacePlaceholders(
-    payload,
-    { response },
-    globalKeysArray
-  );
-
-  let headersArr = currentNode?.data?.operations_header || [];
-
-  let globalHeaders = globalKeysArray?.filter(
-    (x: any) => x.include === true && x.node_id !== currentNode.id
-  );
-
-  let globalBody = globalKeysArray?.filter(
-    (x: any) => x.body_include === true && x.node_id !== currentNode.id
-  );
-
-  if (globalHeaders.length > 0) {
-    for (let key of globalHeaders) {
-      let removeDupValues = headersArr?.filter(
-        (x: any) => x?.name !== key?.header_key
-      );
-      headersArr = [
-        ...removeDupValues,
-        {
-          name: key?.header_key,
-          test_value: key.prefix_value + " " + key?.value,
-          default_value: "",
-        },
-      ];
-    }
-  }
-
-  if (globalBody.length > 0) {
-    for (let key of globalBody) {
-      new_payload[key.body_key] = key.body_key; // or key.body_key = value if there is a corresponding value
-    }
-  }
-  const updateArray = (array: any) => {
-    if (Array.isArray(array)) {
-      return array.map((item) => {
-        const key = item.name;
-        let value =
-          // previousEdgeResponse?.status == "SUCCESS"
-          replacePlaceholders(item.test_value, { response }, globalKeysArray);
-        // : item.test_value;
-        value =
-          typeof value === "object" || Array.isArray(value)
-            ? JSON.stringify(value)
-            : value?.toString();
-        return { key, value };
-      });
-    }
-    return [];
-  };
-  return {
-    operation_inputs: updateArray(currentNode?.data?.operations_input),
-    operation_headers: updateArray(headersArr),
-    operation_authorization: updateArray(currentNode?.data?.operations_auth),
-    operation_query_params: updateArray(
-      currentNode?.data?.operations_query_param
-    ),
-    payload: new_payload ? JSON.stringify(new_payload) : "",
-  };
-}
-
-function finalizeNode(
-  runMap: any,
-  target: any,
-  nextEdges: any,
-  previousEdgeResponse: any
-) {
-  // Check if runMap is provided
-  if (runMap) {
-    // Retrieve the data for the run key
-    const updateData = runMap.get("run");
-
-    // If updateData is available, proceed with the update
-    if (updateData) {
-      // Set the status to RUNNING
-      updateData.status = "RUNNING";
-
-      // Ensure next_node is an array
-      if (!Array.isArray(updateData.next_node)) {
-        updateData.next_node = [];
-      }
-
-      // Update next_node by removing the target and adding next edges' targets
-      updateData.next_node = updateData.next_node
-        .filter((node: any) => node !== target)
-        .concat(nextEdges.map((edge: any) => edge?.target));
-
-      // Ensure run_result is an array
-      if (!Array.isArray(updateData.run_result)) {
-        updateData.run_result = [];
-      }
-
-      // Add the previousEdgeResponse to run_result
-      updateData.run_result = [
-        ...updateData.run_result,
-        previousEdgeResponse || {},
-      ];
-
-      // Ensure running_nodes is an array
-      if (!Array.isArray(updateData.running_nodes)) {
-        updateData.running_nodes = [];
-      }
-
-      // Update running_nodes by removing the target
-      updateData.running_nodes = updateData.running_nodes.filter(
-        (node: any) => node !== target
-      );
-
-      // Update the run key in the map with the modified data
-      runMap.set("run", updateData);
-    }
-  }
-}
-
-function finalizeRun(runMap: any, isQueueEmpty: any, globalResponse: any) {
-  // compareGlobalResponse(globalResponse);
-  if (runMap) {
-    const runData = runMap.get("run");
-    if (isQueueEmpty && runData?.status !== "COMPLETED") {
-      runData.status = "COMPLETED";
-      runData.next_node = [];
-      runData.running_nodes = [];
-      runData.userAction = ``;
-      runMap.set("run", runData);
-    }
-  }
-}
-
-function stopRun(runMap: any) {
-  if (runMap) {
-    const updateData = runMap.get("run");
-    if (updateData) {
-      updateData.status = "STOPPED";
-      updateData.next_node = [];
-      updateData.run_result = [];
-      updateData.running_nodes = [];
-      updateData.userAction = ``;
-      runMap.set("run", updateData);
-    }
-  }
-}
-
-async function parallel(arr: any, apiLikeFunction: any, threads: any) {
-  let index = 0;
-  const results: any = [];
-  const executing = new Set();
-
-  const enqueue = async () => {
-    if (index === arr.length) return;
-
-    const currentIndex = index++;
-    const promise = apiLikeFunction(arr[currentIndex]).then((result: any) => {
-      results[currentIndex] = result;
-      executing.delete(promise);
-    });
-
-    executing.add(promise);
-
-    // If we reach the thread limit, wait for any of the promises to resolve
-    if (executing.size >= threads) {
-      await Promise.race(executing);
-    }
-
-    await enqueue();
-  };
-
-  // Start the initial batch of requests
-  await Promise.all(Array.from({ length: threads }, enqueue));
-
-  // Wait for all remaining promises to settle
-  await Promise.all(executing);
-
-  return results;
-}
-
-const updateKeys = (ydoc: any, value: any, id: any, keysArray: any) => {
-  const newGlobalKeys = keysArray.map((item: any) =>
-    item.id === id ? { ...item, value: value } : item
-  );
-
-  if (ydoc) {
-    const keysArrayNew = ydoc.getArray("globalkeys");
-    const index = keysArrayNew
-      .toArray()
-      .findIndex((item: any) => item.id === id);
-    keysArrayNew.delete(index, 1); // Remove the old item
-    keysArrayNew.insert(index, [
-      newGlobalKeys.find((item: any) => item.id === id),
-    ]); // Insert the updated item
-  }
-};
-
-function getNextEdges(
-  edges: any,
-  targetId: any,
-  operationSuccess: any,
-  nodetype: any,
-  nodeEndVariable: any
-) {
-  if (nodetype === "operationNode") {
-    return edges.filter(
-      (edge: any) =>
-        edge.source === targetId &&
-        (operationSuccess
-          ? edge.sourceHandle.endsWith("_success")
-          : edge.sourceHandle.endsWith("_failure"))
-    );
-  } else if (nodetype === "responseNode") {
-    return edges.filter(
-      (edge: any) =>
-        edge.source === targetId &&
-        edge.sourceHandle.endsWith("_" + nodeEndVariable)
-    );
-  } else {
-    return edges.filter((edge: any) => edge.source === targetId);
-  }
-}
-
-// Other functions like getStartEdge, replacePlaceholders, performOperation, and shouldContinueFlow should be defined similarly
-
-async function performOperation(
-  doc: any,
-  targetId: any,
-  flow_id: any,
-  project_id: any,
-  currentNode: any,
-  requestBody: any
-) {
-  try {
-    // Define the URL of the API endpoint you want to call
-    // const nodeMap = doc.getMap("nodes");
-    // let particular_node = nodeMap.get(targetId).nodes;
-    let particular_node = currentNode;
-    const apiUrl = `Api/Api_design_flow_service/save_and_fetch_by_operation_id?operation_id=${particular_node?.data.operation_id}&flow_id=${flow_id}&node_id=${targetId}&project_id=${project_id}`;
-
-    // Make a POST request to the API endpoint
-
-    let method = "post";
-    const response = await AdminServices(method, apiUrl, requestBody);
-
-    // await axios.post(apiUrl, requestBody);
-
-    // Log the response data
-
-    // Return the response data
-
-    return response;
-  } catch (error) {
-    // Handle errors here
-    // console.error("Error:", error);
-    // You might want to throw the error here if you don't want to handle it locally
-    throw error;
-  }
-}
-
-async function changeManagement(data: any) {
-  try {
-    // const apiUrl = `${adminUrl}/Api/Api_design_flow_service/update_node_chaneges_to_changesmanagement?Flow_id=${data?.flow_id}&node_id=${data?.node_id}&tenant_id=${data?.tenant_id}&workspace_id=${data?.workspace_id}&project_id=${data?.project_id}&operation_id=${data?.operation_id}`;
-    const apiUrl = `Api/Api_design_flow_service/update_node_chaneges_to_changesmanagement?Flow_id=${data?.flow_id}&node_id=${data?.node_id}&tenant_id=${data?.tenant_id}&workspace_id=${data?.workspace_id}&project_id=${data?.project_id}&operation_id=${data?.operation_id}`;
-
-    const changeRes = await AdminServices("POST", apiUrl, data?.requestBody);
-
-    return changeRes?.data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-function calculateSimilarityScore(nodeA: any, nodeB: any) {
-  // Ensure both inputs are objects
-  if (
-    typeof nodeA !== "object" ||
-    nodeA === null ||
-    typeof nodeB !== "object" ||
-    nodeB === null
-  ) {
-    return 0; // Return 0 if either is not an object
-  }
-
-  // Get the unique keys from both objects
-  const keysA = Object.keys(nodeA);
-  const keysB = Object.keys(nodeB);
-  const totalKeys = new Set([...keysA, ...keysB]).size;
-
-  // Get the shared keys between the two objects
-  const sharedKeys = keysA.filter((key: string) => key in nodeB);
-  const sharedKeysCount = sharedKeys.length;
-
-  // Calculate value similarity for shared keys
-  let matchingValuesCount = 0;
-  sharedKeys.forEach((key: string) => {
-    if (nodeA[key] === nodeB[key]) {
-      matchingValuesCount++;
-    }
-  });
-
-  // Key Similarity Ratio: ratio of shared keys to total unique keys
-  const keySimilarityRatio = sharedKeysCount / totalKeys;
-
-  // Value Similarity Ratio: ratio of matching values to shared keys
-  const valueSimilarityRatio = matchingValuesCount / sharedKeysCount || 0; // Avoid division by 0
-
-  // Combine both ratios, weighted equally (50% key, 50% value)
-  const finalScore =
-    (keySimilarityRatio * 0.5 + valueSimilarityRatio * 0.5) * 100;
-
-  return finalScore;
-}
-
-function compareGlobalResponse(globalResponse: any) {
-  const nodeIds = Object.keys(globalResponse);
-  const results = [];
-
-  // Compare each node with every other node (excluding self-comparisons)
-  for (let i = 0; i < nodeIds.length; i++) {
-    for (let j = i + 1; j < nodeIds.length; j++) {
-      const nodeA = globalResponse[nodeIds[i]];
-      const nodeB = globalResponse[nodeIds[j]];
-      const score = calculateSimilarityScore(nodeA, nodeB);
-
-      // Only push comparison of distinct nodes
-      results.push({
-        nodes: [nodeIds[i], nodeIds[j]],
-        score: score,
-      });
-    }
-  }
-
-  // Log the similarity results
-  results.forEach((result) => {});
-}
-
-// Example usage with your globalResponse
-// const globalResponse = {
-//   node_hoavtkvj: { products: Array(30), total: 194, skip: 0, limit: 30 },
-//   node_bd4qp501: { users: Array(30), total: 208, skip: 0, limit: 30 }
-// };
-
-function getStartEdge(edges: any) {
-  // Find the start edge based on your criteria
-  return edges.find((edge: any) =>
-    edge.sourceHandle?.endsWith("_start_startHandle")
-  );
-}
-
 const WorkflowDesigner = (props: any) => {
   //-------------------------------------variable declarations-------------------------------------------
   const { recentlyModifiedProp } = props;
 
   const boxRef = useRef<HTMLDivElement>(null);
 
-  // const apiFlow_Id = "5409b548a1854ddfa9b297ad9d102488";
   const dispatch = useDispatch<any>();
-  const {
-    deleteElements,
-    getEdges,
-    getNode,
-    getNodes,
-    addNodes,
-    getIntersectingNodes,
-  } = useReactFlow();
+  const { getIntersectingNodes } = useReactFlow();
 
-  const params = useParams();
-  const router = useRouter();
   const pathname = usePathname();
   const reactFlowWrapper = useRef(null);
-  const connectingNodeId = useRef(null);
   const mouseRef = useRef<any>(null);
   const { screenToFlowPosition, getViewport } = useReactFlow();
 
@@ -915,7 +176,6 @@ const WorkflowDesigner = (props: any) => {
     globalKeys,
     isEditable,
     flowVersions,
-    userLists,
     currentFlowDetails,
   } = useSelector<RootStateType, FlowReducer>(
     (state) => state.apiManagement.apiFlowDesign
@@ -924,11 +184,6 @@ const WorkflowDesigner = (props: any) => {
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
   );
-
-  const { operationLists, operationByIdLoading } = useSelector<
-    RootStateType,
-    projectReducer
-  >((state) => state.apiManagement.projects);
 
   const { currentEnvironment, currentStage } = useSelector<
     RootStateType,
@@ -940,45 +195,31 @@ const WorkflowDesigner = (props: any) => {
   );
 
   //-------------------------------useState----------------------------------------------------------------
-  const [actionProgress, setActionProgress] = useState<any>(false);
   const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [history, setHistory] = useState<any[]>([]);
   const [ydoc, setYdoc] = useState<Y.Doc | null>(null);
   const [apiFlowName, setApiFlowName] = useState("");
-  const [flowDetails, setFlowDetails] = useState<any>({});
   const [userColor, setCurrentColor] = useState(getRandomColor());
   const [wWsProvider, setWWsProvider] = useState<any>(null);
   const [cursors, setCursors] = useState(new Map());
-  const [localCursor, setLocalCursor] = useState<any>(null);
   const [versionValue, setVersionValue] = useState("");
-  const [saveFlow, setSaveFlow] = useState(false);
-  const [showText, setShowText] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
   const [updatedNodesNew, setUpdatedNodesNew] = useState<any>();
   const [updatedEdgesNew, setUpdatedEdgesNew] = useState<any>();
-  const [showTopLeftText, setShowTopLeftText] = useState(false);
-  const [showTopRightText, setShowTopRightText] = useState(false);
-  const [showBottomLeftText, setShowBottomLeftText] = useState(false);
-  const [showBottomRightText, setShowBottomRightText] = useState(false);
   const [changehistorySlider, setChangehistorySlider] = useState(false);
-  const [PublishConfirmation, setPublishConfirmation] = useState(false);
-  const [PublishSavePopup, setPublishSavePopup] = useState(false);
   const [Importopen, setImportOpen] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<any | null>(null);
-  const [userAction, setUserAction] = useState("");
   const [errorBoole, setErrorBoole] = useState<any>(false);
   const [SuccessMessages, setSuccessMessages] = useState<any>();
   const [anchorEl2, setAnchorEl2] = useState(null);
-  const [hasEdited, setHasEdited] = useState(false);
   const [hasNewEdited, setHasNewEdited] = useState(isEditable);
   const [rfInstance, setRfInstance] = useState<any>(null);
+  const [lastCursorPosition, setLastCursorPosition] = useState({ x: 0, y: 0 });
 
-  const [fullUrl, setFullUrl] = useState("");
+  //--------------------------------------custom Hooks---------------------------------------------------------
 
-  //--------------------------------------constants---------------------------------------------------------
   const {
     settotalCounts,
     count,
@@ -991,8 +232,54 @@ const WorkflowDesigner = (props: any) => {
     nodes,
     setNodes,
   });
-  const { storedNodes, setstoredNodes, setNodeFunction, nodeFunctions } =
-    useWorkflowStore();
+  const {
+    storedNodes,
+    setstoredNodes,
+    nodeFunctions,
+    copyClicked,
+    setCopyClicked,
+  } = useWorkflowStore();
+
+  const customHookprops = {
+    setNodes,
+    setEdges,
+    count,
+    setErrors,
+    setHasNewEdited,
+    versionValue,
+    apiFlow_Id,
+    nodes,
+    onNodesChange,
+    edges,
+    lastCursorPosition,
+    boxRef,
+    settotalCounts,
+    ydoc,
+    wWsProvider,
+    userColor,
+  };
+
+  const {
+    actionProgress,
+    userAction,
+    setHasEdited,
+    isValidConnection,
+    onConnect,
+    onDrop,
+    handleNodeChange,
+    onSaveHandler,
+    saveFlow,
+    handleSaveClosePopup,
+    handlePublishPopup,
+    handlePublishClosePopup,
+    PublishSavePopup,
+    PublishConfirmation,
+    handleSavePopup,
+  } = useWorkflow(customHookprops);
+
+  useSelectNodes(customHookprops);
+  //--------------------------------------constants---------------------------------------------------------
+
   const open = Boolean(anchorEl2);
   const id = open ? "simple-popover" : undefined;
 
@@ -1088,69 +375,6 @@ const WorkflowDesigner = (props: any) => {
       reader.readAsText(file);
     }
   };
-
-  const captureSnapshot = async () => {
-    // if (dropContainer1.current) {
-    //   const canvas = await html2canvas(dropContainer1.current, {
-    //     backgroundColor: null, // Retain background transparency if any
-    //     useCORS: true, // Enables cross-origin image loading
-    //     scale: 2, // Higher scale for better quality (optional)
-    //   });
-
-    //   // Convert the canvas to an image URL (Base64 format)
-    //   const imageURL = canvas.toDataURL("image/png");
-
-    //   // Return the Base64 string
-    //   return imageURL;
-    // }
-    // return null; // Return null if container is not found
-
-    if (boxRef.current) {
-      const canvas = await html2canvas(boxRef.current, {
-        backgroundColor: null, // Retain transparency
-        useCORS: true, // Allow cross-origin images
-        scale: 2, // Optional: Higher quality
-      });
-
-      // Convert canvas to Base64 image URL
-      const imageURL = canvas.toDataURL("image/png");
-      return imageURL;
-
-      // // Optionally: Download the image
-      // const link = document.createElement("a");
-      // link.href = imageURL;
-      // link.download = "screenshot.png";
-      // link.click();
-    }
-  };
-
-  function isValidConnection(connection: Connection) {
-    const { source, target } = connection;
-
-    if (source === target) {
-      return false;
-    }
-
-    const isTargetConnectedToStartHandle = getEdges().some(
-      (edge) =>
-        edge.target === target && edge?.sourceHandle?.includes("_startHandle")
-    );
-
-    if (isTargetConnectedToStartHandle) {
-      // If the target is already connected to a "_startHandle", prevent any new connections
-      return false;
-    }
-
-    // Check if the source handle is already connected to the target handle
-    const isSourceConnectedToTarget = getEdges().some(
-      (edge) => edge.target === source && edge.source === target
-    );
-    if (isSourceConnectedToTarget) {
-      return false;
-    }
-
-    return true;
-  }
 
   const handleFileImports = () => {
     const file: any = fileContent;
@@ -1475,450 +699,10 @@ const WorkflowDesigner = (props: any) => {
     handleImportClose();
   };
 
-  const onConnect = useCallback(
-    (params: any) => {
-      if (
-        params.sourceHandle.endsWith("_start_startHandle") &&
-        params.targetHandle.endsWith("_input_er")
-      ) {
-        return null;
-      }
-
-      if (
-        params.sourceHandle.endsWith("_success") &&
-        params.targetHandle.endsWith("_input_er")
-      ) {
-        return null;
-      }
-
-      connectingNodeId.current = null;
-
-      addEdge(params);
-    },
-    [ydoc]
-  );
-
-  const onConnectStart = useCallback((_: any, { nodeId }: any) => {
-    connectingNodeId.current = nodeId;
-  }, []);
-
-  const onConnectEnd = useCallback(
-    (event: any) => {
-      if (!connectingNodeId.current) return;
-    },
-    [screenToFlowPosition]
-  );
-
-  // const [{ canDrop, isOver }, drop] = useDrop({
-  //   accept: ItemTypes.CARD,
-  //   drop: (item, monitor) => {
-  //     const container: any = document.getElementById("react-flow-container");
-  //     const rect = container.getBoundingClientRect();
-  //     const flowInstance: any = rfInstance;
-  //     const adjustdropPosition: any = monitor.getClientOffset();
-  //     const zoomLevel = flowInstance.getZoom();
-
-  //     const dropPosition: any = {
-  //       x: (adjustdropPosition.x - rect.left) / zoomLevel,
-  //       y: (adjustdropPosition.y - rect.top) / zoomLevel,
-  //     };
-
-  //     let tempData: any = item;
-
-  //     let count = 0;
-  //     if (isEditable) {
-  //       for (const node of nodes) {
-  //         if (node.data) {
-  //           const nodeDataV2 = JSON.parse(node.data);
-
-  //           if (nodeDataV2.operation_id === tempData?.id) {
-  //             count++;
-  //           }
-  //         }
-  //       }
-  //       let name: string = tempData?.name;
-  //       let node_name = name + (count == 0 ? "" : "_" + count);
-  //       // dispatch(
-  //       //   GetOperationById({
-  //       //     operation_id: tempData?.id,
-  //       //     project_id: currentFlowDetails?.project_id,
-  //       //   })
-  //       // )
-  //       // .unwrap()
-  //       // .then((operRes: any) => {
-  //
-
-  //       if (tempData?.type === "operations" && isEditable) {
-  //         // let name: string = tempData?.name;
-  //         let id: string = uuidv4();
-  //         // let node_name = generateUniqueNodeName();
-  //         let matchedPaths = extractPlaceholdersFromPath(null);
-  //
-
-  //         let queryParams: any = [];
-
-  //         for (let params of matchedPaths) {
-  //           if (params) {
-  //             const updatedData: any = queryParams?.filter(
-  //               (x: any) => x?.name !== params && x?.scope !== "path"
-  //             );
-
-  //             queryParams = [
-  //               ...updatedData,
-  //               {
-  //                 name: params,
-  //                 test_value: "",
-  //                 scope: "path",
-  //                 data_type: "string",
-  //               },
-  //             ];
-  //           }
-  //         }
-
-  //         const operHeaders = []?.map((x: any) => ({
-  //           name: x.name,
-  //           test_value: x.test_value,
-  //           data_type: x.data_type,
-  //         }));
-
-  //         const newNode = {
-  //           id: id,
-  //           type: "operationNode",
-  //           name: node_name,
-  //           position: { x: dropPosition?.x, y: dropPosition?.y },
-  //           positionAbsolute: { x: dropPosition?.x, y: dropPosition?.y },
-  //           status: "null",
-  //           flow_id: apiFlow_Id,
-  //           version: versionValue,
-  //           created_by: userProfile.user.user_id,
-  //           data: JSON.stringify({
-  //             name,
-  //             id,
-  //             node_name,
-  //             operation_id: tempData?.id,
-  //             method: tempData?.http_method,
-  //             full_url: tempData?.full_url,
-  //             operations_header: operHeaders,
-  //             operations_input: [],
-  //             operations_auth: [],
-  //             operations_query_param: [],
-  //             raw_output: "",
-  //             raw_payload: "",
-  //           }),
-  //           response: {},
-  //           width: 230,
-  //           height: 120,
-  //         };
-
-  //         // Parse and access the variable
-  //         const parsedData = JSON.parse(newNode?.data);
-
-  //         // Add the condition to allow dragging only if operation_id is not null
-  //         if (parsedData?.operation_id !== null) {
-  //           let updatedNode: any = {
-  //             action: "ADD_NODE",
-  //             status: "null",
-  //             flow_id: apiFlow_Id,
-  //             id: id,
-  //             nodes: newNode,
-  //           };
-
-  //           const nodeMap = ydoc?.getMap<any>("nodes");
-  //           if (nodeMap) {
-  //             nodeMap.set(updatedNode.id, updatedNode);
-
-  //             const startNode = nodes.find(
-  //               (node) => node.type === "startButtonNode"
-  //             );
-
-  //             if (startNode && nodes?.length == 1) {
-  //               let id = uuidv4();
-  //               let edge = {
-  //                 ...params,
-  //                 id: id,
-  //                 animated: true,
-  //                 name: "null",
-  //                 status: "null",
-  //                 source: startNode.id,
-  //                 flow_id: apiFlow_Id,
-  //                 sourceHandle: startNode.id + "_startHandle",
-  //                 target: updatedNode.id,
-  //                 targetHandle: updatedNode.id + "_input",
-  //                 version: versionValue,
-  //                 created_by: userProfile.user.user_id,
-  //                 style: {
-  //                   stroke: "#4CAF50",
-  //                   // stroke: "#55CCFF",
-  //                 },
-  //                 type: "buttonEdge",
-  //               };
-
-  //               let updatedEdge: any = {
-  //                 action: "ADD_EDGES",
-  //                 status: "null",
-  //                 flow_id: apiFlow_Id,
-  //                 id: id,
-  //                 edges: edge,
-  //               };
-
-  //               const edgeMap = ydoc?.getMap<any>("edges");
-  //               if (edgeMap) {
-  //                 edgeMap.set(updatedEdge.id, updatedEdge);
-  //               } else {
-
-  //               }
-  //             }
-  //           } else {
-
-  //           }
-  //         } else {
-
-  //         }
-  //       }
-  //       // })
-  //       // .catch((error: any) => {
-  //
-  //       // });
-  //     }
-  //   },
-  //   collect: (monitor) => ({
-  //     isOver: monitor.isOver(),
-  //     canDrop: monitor.canDrop(),
-  //   }),
-  // });
   const dropContainer1 = useRef<HTMLDivElement>(null);
-  // drop(dropContainer1);
-  const { dropItem, setdropItems } = useGlobalStore();
-  const onDrop = useCallback(
-    (event: any) => {
-      event.preventDefault();
+  const { dropItem } = useGlobalStore();
 
-      if (!ItemTypes.CARD) {
-        return;
-      }
-      let dropPosition = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-
-      const groupNodes = nodes.filter((node) => node.type == "groupNode");
-      const groupNode = groupNodes.find((groupNode) => {
-        return isPointInBox(
-          { x: dropPosition.x, y: dropPosition.y },
-          {
-            x: groupNode.position.x || 0,
-            y: groupNode.position.y || 0,
-            height: groupNode?.height || 0,
-            width: groupNode?.width || 0,
-          }
-        );
-      });
-      if (groupNode) {
-        const { x, y } = groupNode?.position || {
-          x: 0,
-          y: 0,
-        };
-        const { x: dragX, y: dragY } = dropPosition || { x: 0, y: 0 };
-        dropPosition = { x: dragX - x, y: dragY - y };
-      }
-      let tempData: any = dropItem;
-
-      let count = 0;
-      if (isEditable) {
-        for (const node of nodes) {
-          if (node.data) {
-            const nodeDataV2 = JSON.parse(node.data);
-
-            if (nodeDataV2.operation_id === tempData?.id) {
-              count++;
-            }
-          }
-        }
-        let name: string = tempData?.name;
-        let node_name = name + (count == 0 ? "" : "_" + count);
-        // dispatch(
-        //   GetOperationById({
-        //     operation_id: tempData?.id,
-        //     project_id: currentFlowDetails?.project_id,
-        //   })
-        // )
-        // .unwrap()
-        // .then((operRes: any) => {
-
-        if (tempData?.type === "operations" && isEditable) {
-          // let name: string = tempData?.name;
-          let id: string = uuidv4();
-          // let node_name = generateUniqueNodeName();
-          // let matchedPaths = extractPlaceholdersFromPath(null);
-          let matchedPaths = extractPlaceholdersFromPath(
-            tempData?.full_url || null
-          );
-
-          let queryParams: any = [];
-
-          for (let params of matchedPaths) {
-            if (params) {
-              const updatedData: any = queryParams?.filter(
-                (x: any) => x?.name !== params && x?.scope !== "path"
-              );
-
-              queryParams = [
-                ...updatedData,
-                {
-                  name: params,
-                  test_value: "",
-                  scope: "path",
-                  data_type: "string",
-                },
-              ];
-            }
-          }
-
-          const operHeaders = []?.map((x: any) => ({
-            name: x.name,
-            test_value: x.test_value,
-            data_type: x.data_type,
-          }));
-
-          const newNode = {
-            id: id,
-            type: "operationNode",
-            name: node_name,
-            position: { x: dropPosition?.x, y: dropPosition?.y },
-            positionAbsolute: { x: dropPosition?.x, y: dropPosition?.y },
-            status: "null",
-            flow_id: apiFlow_Id,
-            version: versionValue,
-            created_by: userProfile.user.user_id,
-            data: JSON.stringify({
-              name,
-              id,
-              node_name,
-              operation_id: tempData?.id,
-              method: tempData?.http_method,
-              full_url: tempData?.full_url,
-              operations_header: operHeaders,
-              operations_input: [],
-              operations_auth: [],
-              operations_query_param: [],
-              raw_output: "",
-              raw_payload: "",
-            }),
-            response: {},
-            width: 230,
-            height: 120,
-            parentId: groupNode?.id,
-          };
-
-          // Parse and access the variable
-          const parsedData = JSON.parse(newNode?.data);
-
-          // Add the condition to allow dragging only if operation_id is not null
-          if (parsedData?.operation_id !== null) {
-            let updatedNode: any = {
-              action: "ADD_NODE",
-              status: "null",
-              flow_id: apiFlow_Id,
-              id: id,
-              nodes: newNode,
-            };
-
-            const nodeMap = ydoc?.getMap<any>("nodes");
-            if (nodeMap) {
-              nodeMap.set(updatedNode.id, updatedNode);
-              setNodeFunction({
-                id: updatedNode.id,
-                method: "ADD_NODE",
-                obj: newNode,
-              });
-              const startNode = nodes.find(
-                (node) => node.type === "startButtonNode"
-              );
-              if (startNode && nodes?.length == 1) {
-                let id = uuidv4();
-                let edge = {
-                  ...params,
-                  id: id,
-                  animated: true,
-                  name: "null",
-                  status: "null",
-                  source: startNode.id,
-                  flow_id: apiFlow_Id,
-                  sourceHandle: startNode.id + "_startHandle",
-                  target: updatedNode.id,
-                  targetHandle: updatedNode.id + "_input",
-                  version: versionValue,
-                  created_by: userProfile.user.user_id,
-                  style: {
-                    stroke: "#4CAF50",
-                    // stroke: "#55CCFF",
-                  },
-                  type: "buttonEdge",
-                };
-
-                let updatedEdge: any = {
-                  action: "ADD_EDGES",
-                  status: "null",
-                  flow_id: apiFlow_Id,
-                  id: id,
-                  edges: edge,
-                };
-
-                const edgeMap = ydoc?.getMap<any>("edges");
-                if (edgeMap) {
-                  edgeMap.set(updatedEdge.id, updatedEdge);
-                } else {
-                }
-              }
-            } else {
-            }
-          } else {
-          }
-        } else if (tempData?.type == "groupNode" && isEditable) {
-          let id = uuidv4();
-          const names = nodes
-            .filter((node) => node.type == "groupNode")
-            .map((node: any) => node?.name);
-          const node_name =
-            names.length > 0
-              ? tempData?.name + " " + names.length
-              : tempData?.name;
-          const newNode = {
-            id: id,
-            type: "groupNode",
-            name: node_name,
-            position: { x: dropPosition?.x, y: dropPosition?.y },
-            positionAbsolute: { x: dropPosition?.x, y: dropPosition?.y },
-            status: "null",
-            flow_id: apiFlow_Id,
-            version: versionValue,
-            created_by: userProfile.user.user_id,
-            data: { name: node_name, id },
-            response: {},
-            width: 400,
-            height: 400,
-          };
-          let updatedNode: any = {
-            action: "ADD_NODE",
-            status: "null",
-            flow_id: apiFlow_Id,
-            id: id,
-            nodes: newNode,
-          };
-
-          const nodeMap = ydoc?.getMap<any>("nodes");
-          if (nodeMap) {
-            nodeMap.set(updatedNode.id, updatedNode);
-          }
-        }
-        // })
-        // .catch((error: any) => {
-
-        // });
-      }
-    },
-    [screenToFlowPosition, dropItem]
-  );
+  const { selectedFlowIds, addFlowId } = useWorkflowStore();
 
   useEffect(() => {
     dispatch(
@@ -1932,66 +716,7 @@ const WorkflowDesigner = (props: any) => {
         // setFullUrl(operationRes?.[0]?.full_url);
       })
       .catch((error: any) => {});
-  }, []);
-
-  function parseData(data: any) {
-    // Check if data is an object
-    if (typeof data === "object") {
-      return data; // Return as is
-    } else {
-      try {
-        // Try to parse the data
-        return JSON.parse(data);
-      } catch (error) {
-        // If parsing fails, return null or handle the error accordingly
-        return null;
-      }
-    }
-  }
-
-  const addEdge = (params: any) => {
-    connectingNodeId.current = null;
-    let id = uuidv4();
-    let edge = {
-      ...params,
-      id: id,
-      name: "null",
-      animated: true,
-      status: "null",
-      flow_id: apiFlow_Id,
-      version: versionValue,
-      created_by: userProfile.user.user_id,
-      style: {
-        stroke: params?.sourceHandle.includes("success")
-          ? // ? "#4CAF50"
-            "#55CCFF"
-          : params?.sourceHandle.includes("failure")
-          ? // ? "#FF5252"
-            "#55CCFF"
-          : "",
-      },
-      type: "buttonEdge",
-    };
-
-    let updatedEdge: any = {
-      action: "ADD_EDGES",
-      status: "null",
-      flow_id: apiFlow_Id,
-      id: id,
-      edges: edge,
-    };
-
-    const edgeMap = ydoc?.getMap<any>("edges");
-    if (edgeMap) {
-      edgeMap.set(updatedEdge.id, updatedEdge);
-      setNodeFunction({
-        id: updatedEdge.id,
-        method: "ADD_EDGES",
-        obj: edge,
-      });
-    } else {
-    }
-  };
+  }, [dropItem?.id, currentFlowDetails?.project_id]);
 
   const validateNodes = (
     nodesArray: any,
@@ -2160,73 +885,6 @@ const WorkflowDesigner = (props: any) => {
     }
   };
 
-  const handleNodeChange = (
-    data: any,
-    nodes: any,
-    ydoc: YDoc | null,
-    wWsProvider: any,
-    userProfile: any,
-    userColor: string
-  ) => {
-    const awareness = wWsProvider?.awareness;
-    const nodesMap = ydoc?.getMap<any>("nodes");
-    let currentData = nodes?.find((x: any) => x?.id === data[0]?.id);
-    onNodesChange(data);
-
-    if (data[0]?.dragging === true) {
-      awareness?.setLocalStateField("dragging", {
-        nodeId: data[0]?.id,
-        dragging: true,
-      });
-
-      if (nodesMap) {
-        let dataNode = parseData(currentData?.data);
-        nodesMap.set(data[0]?.id, {
-          action: "EDIT_NODE",
-          status: "null",
-          id: data[0]?.id,
-          nodes: {
-            ...currentData,
-            position: data[0].position,
-            positionAbsolute: data[0].positionAbsolute,
-            dragging: true,
-            data: JSON.stringify({
-              ...dataNode,
-              dragger: userProfile?.user.email,
-              color: userColor,
-            }),
-          },
-        });
-      } else {
-      }
-    } else {
-      awareness?.setLocalStateField("dragging", {
-        nodeId: null,
-        dragging: false,
-      });
-
-      if (nodesMap) {
-        let dataNode = parseData(currentData?.data);
-        nodesMap.set(data[0]?.id, {
-          action: "EDIT_NODE",
-          status: "null",
-          id: data[0]?.id,
-          nodes: {
-            ...currentData,
-            dragging: false,
-            selected: false,
-            data: JSON.stringify({
-              ...dataNode,
-              dragger: null,
-              color: null,
-            }),
-          },
-        });
-      } else {
-      }
-    }
-  };
-
   const onPublishHandler = () => {
     onSaveHandler();
     const runMap = ydoc?.getMap<any>("run");
@@ -2334,133 +992,6 @@ const WorkflowDesigner = (props: any) => {
 
     // Clean up
     document.body.removeChild(link);
-  };
-
-  const handleSavePopup = () => {
-    setSaveFlow(true);
-  };
-
-  const handlePublishPopup = () => {
-    setPublishConfirmation(true);
-    setPublishSavePopup(true);
-  };
-
-  const handlePublishClosePopup = () => {
-    setPublishConfirmation(false);
-    setPublishSavePopup(false);
-  };
-
-  const handleSaveClosePopup = () => {
-    setSaveFlow(false);
-    setPublishConfirmation(false);
-  };
-
-  const onRecentModifyHanlder = async () => {
-    const base64Image = await captureSnapshot();
-    let data = {
-      flow_name: currentFlowDetails?.name,
-      flow_id: apiFlow_Id,
-      project_id: currentFlowDetails?.project_id,
-      screenshot: base64Image,
-    };
-
-    dispatch(PostRecentModification(data))
-      .unwrap()
-      .then((res: any) => {});
-  };
-
-  const onSaveHandler = async () => {
-    // handleSavePopup()
-    const nodeMap = ydoc?.getMap("nodes");
-    const edgesMap = ydoc?.getMap("edges");
-
-    const { nodeArray, deleteNodeId } = prepareNodes(nodeMap);
-    const { edgesArray, deleteEdgeId } = prepareEdges(edgesMap);
-
-    if (
-      nodeArray.length == 0 &&
-      edgesArray.length == 0 &&
-      deleteNodeId.length == 0 &&
-      deleteEdgeId.length == 0
-    ) {
-      setSaveFlow(false);
-      return;
-    }
-    const requestBody = {
-      nodes: nodeArray,
-      edges: edgesArray,
-      viewport: { x: 0, y: 0, zoom: 0 },
-      deleted_node_ids: deleteNodeId,
-      deleted_edge_ids: deleteEdgeId,
-    };
-    let updatedData = {
-      value: requestBody,
-      flow_id: apiFlow_Id,
-      version_id: versionValue,
-      user_id: userProfile.user.user_id,
-      tenant_id: userProfile.user.tenant_id,
-      project_id: currentFlowDetails?.project_id,
-    };
-
-    let updateData = {
-      action: "USER_ACTION",
-      flow_id: apiFlow_Id,
-      status: "START",
-      type: "SAVE",
-      next_node: [],
-      userAction: `${userProfile?.user?.email} initiated Save`,
-      errors: [],
-    };
-
-    const runMap = ydoc?.getMap<any>("run");
-    if (runMap) {
-      runMap.set("run", updateData);
-      dispatch(SaveFlowHandler(updatedData))
-        .unwrap()
-        .then((res: any) => {
-          const keysArrayNew = ydoc?.getArray("globalkeys");
-          const requestKeys = {
-            flow_id: apiFlow_Id,
-            version_id: versionValue,
-            globalKeys: JSON.stringify(keysArrayNew),
-            // tenant_id: userProfile.user.tenant_id,
-          };
-
-          dispatch(CreateGlobalKeys(requestKeys)).then((res: any) => {});
-
-          let updateData = {
-            action: "USER_ACTION",
-            flow_id: apiFlow_Id,
-            status: "COMPLETED",
-            next_node: [],
-            type: "SAVE",
-            userAction: ``,
-            errors: [], // Added field for errors
-          };
-          runMap.set("run", updateData);
-
-          if (nodeMap) {
-            nodeMap.clear(); // Remove all nodes from the map
-          }
-          if (edgesMap) {
-            edgesMap.clear(); // Remove all edges from the map
-          }
-
-          onRecentModifyHanlder();
-          handleSaveClosePopup();
-        })
-        .catch((err: any) => {
-          let updateData = {
-            action: "USER_ACTION",
-            flow_id: apiFlow_Id,
-            status: "STOPPED",
-            type: "SAVE",
-            next_node: [],
-            errors: [],
-          };
-        });
-    } else {
-    }
   };
 
   const handleEditClick = () => {
@@ -2623,454 +1154,6 @@ const WorkflowDesigner = (props: any) => {
   }, [versionValue, pathname]);
 
   useEffect(() => {
-    if (!ydoc) return;
-    const nodeMap = ydoc?.getMap<any>("nodes");
-    const edgeMap = ydoc?.getMap<any>("edges");
-    const keysArray = ydoc.getArray("globalkeys");
-    // const messagesArray = ydoc.getArray<any>("nodes");
-    // const edgesArray = ydoc.getArray<any>("edges");
-    // const runArray = ydoc?.getArray<any>("run");
-    const runMap = ydoc?.getMap<any>("run");
-    const errorMap = ydoc?.getMap<any>("errors");
-
-    // const editNodesArry = ydoc.getArray<any>("nodes");
-    const updateNodes = () => {
-      const newMessages: any = [];
-      let nodeJson = nodeMap?.toJSON();
-      Object.keys(nodeJson).forEach((key) => {
-        newMessages.push(nodeJson[key]);
-      });
-
-      setNodes((previousNodes) => {
-        const updatedNodes = newMessages.reduce(
-          (accumulator: any, message: any) => {
-            if (message?.action === "DELETE_NODES") {
-              // Extract the array of node IDs to delete from the deletion message
-              // const nodeIdsToDelete = message.nodeIds;
-              // Filter out all the deleted nodes from the accumulator array
-              // return accumulator.filter(
-              //   (node: any) => !nodeIdsToDelete.includes(node.id)
-              // );
-              const nodeIdsToDelete = message.nodes.id;
-              return accumulator.filter(
-                (node: any) => nodeIdsToDelete !== node.id
-              );
-            } else {
-              // Handle other actions (e.g., adding or updating nodes)
-              const node = message.nodes;
-              const index = accumulator?.findIndex(
-                (existingNode: any) => existingNode?.id === node?.id
-              );
-              if (index !== -1) {
-                // If node already exists, update it
-                accumulator[index] = node;
-              } else {
-                // If node doesn't exist, add it
-                accumulator.push(node);
-              }
-              return accumulator;
-            }
-          },
-          [...previousNodes]
-        );
-
-        return updatedNodes;
-      });
-    };
-
-    const updateEdges = () => {
-      // const newEdges = edgesArray.toArray();
-      const newEdges: any = [];
-      let edgeJson = edgeMap?.toJSON();
-      Object.keys(edgeJson).forEach((key) => {
-        newEdges.push(edgeJson[key]);
-      });
-
-      setEdges((previousEdges) => {
-        const updatedEdges = newEdges.reduce(
-          (accumulator: any, message: any) => {
-            if (message?.action === "DELETE_EDGES") {
-              // Extract the array of node IDs to delete from the deletion message
-              const edgesIdsToDelete = message.edges.id;
-              // Filter out all the deleted nodes from the accumulator array
-              // return accumulator.filter(
-              //   (edge: any) => !edgesIdsToDelete.includes(edge.id)
-              // );
-
-              return accumulator.filter(
-                (edge: any) => edgesIdsToDelete !== edge.id
-              );
-            } else {
-              // Handle other actions (e.g., adding or updating nodes)
-              const edge = message.edges;
-              const index = accumulator.findIndex(
-                (existingEdge: any) => existingEdge.id === message.id
-              );
-              if (index !== -1) {
-                // If node already exists, update it
-                accumulator[index] = edge;
-              } else {
-                // If node doesn't exist, add it
-                accumulator.push(edge);
-              }
-              return accumulator;
-            }
-          },
-          [...previousEdges]
-        );
-        return updatedEdges;
-      });
-    };
-    // const runFlow = () => {
-    //   let runData = runMap?.toJSON();
-
-    //   if (runData.run.action === "RUN") {
-    //     if (runData.run.status === "START") {
-    //       toast.success("Run Started", {
-    //         style: {
-    //           border: "1px solid #6B21A8",
-    //           padding: "16px",
-    //           color: "#6B21A8",
-    //         },
-    //         iconTheme: {
-    //           primary: "#6B21A8",
-    //           secondary: "#FFFAEE",
-    //         },
-    //       });
-    //       setActionProgress(true);
-    //       setUserAction(runData.run.userAction);
-    //       dispatch(setNextNode(runData.run.next_node));
-    //       dispatch(setIsEditable(false));
-    //     } else if (runData.run.status === "RUNNING") {
-    //       dispatch(setNextNode(runData.run.next_node));
-    //       setUserAction(runData.run.userAction);
-    //       // Additional handling if needed
-    //     } else if (runData?.run.status === "COMPLETED") {
-    //       if (hasEdited) {
-    //         dispatch(setIsEditable(true));
-
-    //         // Enable editing after saving if there were edits
-    //         setHasEdited(false); // Reset the flag after saving
-    //       }
-
-    //       // dispatch(setIsEditable(true));
-    //       setActionProgress(false);
-    //       dispatch(setNextNode(runData.run.next_node));
-    //       toast.success("Run Ended", {
-    //         style: {
-    //           border: "1px solid #6B21A8",
-    //           padding: "16px",
-    //           color: "#6B21A8",
-    //         },
-    //         iconTheme: {
-    //           primary: "#6B21A8",
-    //           secondary: "#FFFAEE",
-    //         },
-    //       });
-    //       setUserAction(runData.run.userAction);
-    //     } else if (runData?.run.status === "STOPPED") {
-    //       dispatch(setNextNode(runData.run.next_node));
-    //       setActionProgress(false);
-    //       dispatch(setIsEditable(true));
-    //       setUserAction(runData.run.userAction);
-    //       toast.success("Run Stopped", {
-    //         style: {
-    //           border: "1px solid #713200",
-    //           padding: "16px",
-    //           color: "#713200",
-    //         },
-    //         iconTheme: {
-    //           primary: "#713200",
-    //           secondary: "#FFFAEE",
-    //         },
-    //       });
-    //     }
-    //   } else if (runData.run.action === "USER_ACTION") {
-    //     if (runData.run.status === "START") {
-    //       dispatch(setIsEditable(false));
-    //       setActionProgress(true);
-    //       setUserAction(runData.run.userAction);
-    //     } else if (runData.run.status === "COMPLETED") {
-    //       // dispatch(setIsEditable(true));
-    //       // dispatch(setIsEditable(true));
-
-    //       if (hasEdited) {
-    //         dispatch(setIsEditable(true));
-    //         setHasNewEdited(true);
-
-    //         // Enable editing after saving if there were edits
-    //         setHasEdited(false); // Reset the flag after saving
-    //       }
-
-    //       // } else {
-    //       //   // No edits made, keep editing disabled
-    //       //   setIsEditable(false);
-    //       //   dispatch(setIsEditable(false));
-    //       // }
-
-    //       setActionProgress(false);
-    //       setUserAction(runData.run.userAction);
-    //       toast.success(`${runData.run.type} Successfulsss`);
-    //     } else if (runData.run.status === "STOPPED") {
-    //       dispatch(setIsEditable(true));
-    //       setActionProgress(false);
-    //       setUserAction(runData.run.userAction);
-    //       toast.error(`${runData.run.type} Not Succesful`);
-    //     }
-    //   }
-    // };
-
-    const runFlow = () => {
-      let runData = runMap?.toJSON();
-
-      if (runData.run.action === "RUN") {
-        if (runData.run.status === "START") {
-          toast.success("Run Started", {
-            style: {
-              border: "1px solid #6B21A8",
-              padding: "16px",
-              color: "#6B21A8",
-            },
-            iconTheme: {
-              primary: "#6B21A8",
-              secondary: "#FFFAEE",
-            },
-          });
-          setActionProgress(true);
-          setUserAction(runData.run.userAction);
-          dispatch(setNextNode(runData.run.next_node));
-          dispatch(setIsEditable(false)); // Disable editing while loading
-        } else if (runData.run.status === "RUNNING") {
-          dispatch(setNextNode(runData.run.next_node));
-          setUserAction(runData.run.userAction);
-          // Additional handling if needed
-        } else if (runData?.run.status === "COMPLETED") {
-          if (hasEdited) {
-            dispatch(setIsEditable(true)); // Enable editing after save completion
-            setHasEdited(false); // Reset the flag after saving
-          }
-          setActionProgress(false);
-          dispatch(setNextNode(runData.run.next_node));
-          toast.success("Run Ended", {
-            style: {
-              border: "1px solid #6B21A8",
-              padding: "16px",
-              color: "#6B21A8",
-            },
-            iconTheme: {
-              primary: "#6B21A8",
-              secondary: "#FFFAEE",
-            },
-          });
-          setUserAction(runData.run.userAction);
-        } else if (runData?.run.status === "STOPPED") {
-          dispatch(setNextNode(runData.run.next_node));
-          setActionProgress(false);
-          dispatch(setIsEditable(true)); // Enable editing after stop
-          setUserAction(runData.run.userAction);
-          toast.success("Run Stopped", {
-            style: {
-              border: "1px solid #713200",
-              padding: "16px",
-              color: "#713200",
-            },
-            iconTheme: {
-              primary: "#713200",
-              secondary: "#FFFAEE",
-            },
-          });
-        }
-      } else if (runData.run.action === "USER_ACTION") {
-        if (runData.run.status === "START") {
-          // dispatch(setIsEditable(false)); // Disable editing during user action
-          setActionProgress(true);
-          setUserAction(runData.run.userAction);
-        } else if (runData.run.status === "COMPLETED") {
-          if (hasEdited) {
-            dispatch(setIsEditable(true)); // Re-enable editing after completion
-            setHasNewEdited(true); // Mark as edited
-            setHasEdited(false); // Reset the flag
-          }
-          setActionProgress(false);
-          setUserAction(runData.run.userAction);
-          toast.success(`${runData.run.type} Successful`);
-        } else if (runData.run.status === "STOPPED") {
-          dispatch(setIsEditable(true)); // Enable editing after stop
-          setActionProgress(false);
-          setUserAction(runData.run.userAction);
-          toast.error(`${runData.run.type} Not Successful`);
-        }
-      }
-    };
-
-    const errorsFlow = () => {
-      let errData = errorMap?.toJSON();
-      setErrors(errData.errors);
-    };
-
-    const globalFlow = () => {
-      let globalData = keysArray.toArray();
-
-      dispatch(setGlobalKeys(globalData));
-    };
-
-    runMap.observe(runFlow);
-    errorMap.observe(errorsFlow);
-    edgeMap.observe(updateEdges);
-    nodeMap.observe(updateNodes);
-    keysArray.observe(globalFlow);
-
-    return () => {
-      runMap.unobserve(runFlow);
-      errorMap.unobserve(errorsFlow);
-      edgeMap.unobserve(updateEdges);
-      nodeMap.unobserve(updateNodes);
-      keysArray.unobserve(globalFlow);
-    };
-  }, [ydoc, count, storedNodes]);
-
-  useEffect(() => {
-    if (apiFlow_Id && userProfile.user.tenant_id) {
-      if (!ydoc) {
-        return;
-      }
-
-      const data = {
-        flow_id: apiFlow_Id,
-        version_id: versionValue,
-        tenant_id: userProfile?.user?.tenant_id,
-        project_id: currentFlowDetails?.project_id,
-      };
-
-      dispatch(GetDesignApiFlow(data))
-        .then((res: any) => {
-          if (res?.payload) {
-            setNodes([]);
-            setEdges([]);
-            // Extract nodes and edges from API response
-            const nodesApiData = res?.payload?.nodes || [];
-            const edgesApiData = res?.payload?.edges || [];
-            settotalCounts({
-              nodes: nodesApiData.length,
-              edges: edgesApiData.length,
-              nodesArr: nodesApiData,
-              edgesArr: edgesApiData,
-            });
-            if (storedNodes.length == 0) {
-              setstoredNodes([{ nodes: nodesApiData, edges: edgesApiData }]);
-            }
-            // Get nodes and edges from ydoc
-            const nodeMap = ydoc?.getMap<any>("nodes");
-            const edgeMap = ydoc?.getMap<any>("edges");
-
-            // Convert nodeMap and edgeMap to arrays
-            const nodeJson = nodeMap?.toJSON() || {};
-            const edgeJson = edgeMap?.toJSON() || {};
-
-            // Convert map data to arrays
-            const newNodes = Object.values(nodeJson);
-            const newEdges = Object.values(edgeJson);
-            let updatedNodes = [...nodesApiData];
-            // Process new nodes
-            newNodes.forEach((node: any) => {
-              if (node?.action === "DELETE_NODES") {
-                const nodeIdsToDelete = node.nodes.id;
-                // Remove nodes with these IDs from updatedNodes
-                updatedNodes = updatedNodes.filter(
-                  (existingNode: any) =>
-                    !nodeIdsToDelete.includes(existingNode.id)
-                );
-              } else {
-                const nodeToUpdate = node.nodes;
-                const index = updatedNodes.findIndex(
-                  (existingNode: any) => existingNode.id === nodeToUpdate.id
-                );
-
-                if (index !== -1) {
-                  // Update existing node
-                  updatedNodes[index] = nodeToUpdate;
-                } else {
-                  // Add new node
-                  updatedNodes.push(nodeToUpdate);
-                }
-              }
-            });
-            // Update nodes state
-            setNodes(updatedNodes);
-
-            // Directly modify the edges state
-            let updatedEdges = [...edgesApiData];
-
-            newEdges.forEach((edge: any) => {
-              if (edge?.action === "DELETE_EDGES") {
-                const edgeIdsToDelete = edge.edges.id;
-                // Remove edges with these IDs from updatedEdges
-                updatedEdges = updatedEdges.filter(
-                  (existingEdge: any) =>
-                    !edgeIdsToDelete.includes(existingEdge.id)
-                );
-              } else {
-                const edgeToUpdate = edge.edges;
-                const index = updatedEdges.findIndex(
-                  (existingEdge: any) => existingEdge.id === edgeToUpdate.id
-                );
-
-                if (index !== -1) {
-                  // Update existing edge
-                  updatedEdges[index] = edgeToUpdate;
-                } else {
-                  // Add new edge
-                  updatedEdges.push(edgeToUpdate);
-                }
-              }
-            });
-
-            // Update edges state
-            setEdges(updatedEdges);
-
-            // Update nodes state
-          }
-        })
-        .catch((error: any) => {
-          console.error("GetDesignApiFlow error:", error);
-          if (error?.message === "UNAUTHORIZED") {
-            dispatch(updateSessionPopup(true));
-          }
-        });
-
-      dispatch(GetGlobalKeys(data))
-        .unwrap()
-        .then((res: any) => {
-          const keysArray = ydoc.getArray("globalkeys");
-          let globalData = keysArray.toArray();
-          if (userLists.length > 0) {
-            dispatch(setGlobalKeys(globalData));
-          }
-          if (res.globalKeys) {
-            let keys = JSON.parse(res.globalKeys);
-            // dispatch(setGlobalKeys(keys));
-            let currentIndex = 0;
-            keys.forEach((key: any, i: any) => {
-              keysArray.insert(currentIndex + i, [key]);
-            });
-          }
-        })
-        .catch((error: any) => {
-          console.error("GetApiDesignFlowByDesignFlowId error:", error);
-          if (error?.message === "UNAUTHORIZED") {
-            dispatch(updateSessionPopup(true));
-          }
-        });
-    }
-  }, [
-    apiFlow_Id,
-    currentFlowDetails,
-    ydoc,
-    versionValue,
-    userProfile?.user?.tenant_id,
-  ]);
-
-  useEffect(() => {
     if (apiFlow_Id && userProfile?.user?.user_id) {
       dispatch(GetApiDesignFlowByDesignFlowId(apiFlow_Id))
         .unwrap()
@@ -3109,15 +1192,6 @@ const WorkflowDesigner = (props: any) => {
     }
   }, [apiFlow_Id, userProfile.user.tenant_id, userProfile?.user?.user_id]);
 
-  const proOptions = { hideAttribution: true };
-
-  // useEffect(() => {
-  //   dispatch(setCurrentUserFlowColor(userColor));
-  // }, [userColor]);
-
-  const [key, setKey] = useState(0);
-  const prevNodesRef = useRef(nodes);
-
   useEffect(() => {
     return () => {
       dispatch(clearResults({}));
@@ -3134,61 +1208,30 @@ const WorkflowDesigner = (props: any) => {
     };
   }, []);
 
-  // Throttled handler for onNodeDrag to test its effect
-  const onNodeDragWithThrottle = useCallback(
-    _.throttle((event, node) => {
-      // setNodes((nds) =>
-      //   // nds.map((n) =>
-      //   //   n.id === node.id ? { ...n, position: node.position } : n
-      //   // )
-      //   nds.map((n) => {
+  // let lastFrameTime = performance.now();
+  // let frameCount = 0;
 
-      //     return n.id === node.id ? { ...n, position: node.position } : n;
-      //   })
-      // );
+  // function measureFPS() {
+  //   const now = performance.now();
+  //   const delta = now - lastFrameTime;
+  //   lastFrameTime = now;
+  //   frameCount++;
 
-      requestAnimationFrame(() => {
-        setNodes((nds) => {
-          const updatedNodes = nds.map((n) =>
-            n.id === node.id ? { ...n, position: node.position } : n
-          );
-          return updatedNodes;
-        });
-      });
-    }, 50), // Throttle interval: 200ms
-    [setNodes]
-  );
-
-  let lastFrameTime = performance.now();
-  let frameCount = 0;
-
-  function measureFPS() {
-    const now = performance.now();
-    const delta = now - lastFrameTime;
-    lastFrameTime = now;
-    frameCount++;
-
-    if (delta > 1000) {
-      // Log FPS every second
-      frameCount = 0;
-    }
-    requestAnimationFrame(measureFPS);
-  }
+  //   if (delta > 1000) {
+  //     // Log FPS every second
+  //     frameCount = 0;
+  //   }
+  //   requestAnimationFrame(measureFPS);
+  // }
 
   const onDragOver = useCallback((event: any) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  const onNodeDragStop = useCallback((event: any, node: any) => {
-    setNodes((nds) =>
-      nds.map((n) => (n.id === node.id ? { ...n, position: node.position } : n))
-    );
-  }, []);
-
-  useEffect(() => {
-    measureFPS();
-  }, []);
+  // useEffect(() => {
+  //   measureFPS();
+  // }, []);
 
   const [tooltipPosition, setTooltipPosition] = React.useState({ x: 0, y: 0 });
 
@@ -3231,66 +1274,13 @@ const WorkflowDesigner = (props: any) => {
     };
   }, [ydoc]);
 
-  const { selectedFlowIds, removeFlowId } = useGlobalStore();
-
-  const [copiedNodes, setCopiedNodes] = useState<any[]>([]);
-  const [cutNodes, setCutNodes] = useState<any[]>([]);
-
-  // const handleCopyNodes = () => {
-  //   if (selectedFlowIds?.length > 0) {
-  //     const copiedval = selectedFlowIds?.flatMap((val: any) =>
-  //       nodes?.filter((item) => item?.id === val)
-  //     );
-
-  //     // copiedval?.map((item: any) => {
-  //     //   setdropItems({
-  //     //     id: item?.id,
-  //     //     name: item?.name,
-  //     //     http_method: item?.http_method,
-  //     //     type: item?.type,
-  //     //     full_url: item?.full_url,
-  //     //     nodes: item,
-  //     //   });
-  //     // });
-  //     copiedval?.map((item: any) => {
-  //       const parseJson = JSON.parse(item?.data);
-  //       setdropItems({
-  //         id: parseJson?.operation_id,
-  //         name: parseJson?.name,
-  //         http_method: item?.http_method,
-  //         type: item?.type,
-  //         full_url: item?.full_url,
-  //         nodes: item,
-  //       });
-  //     });
-  //     setCopiedNodes(copiedval);
-  //   }
-  // };
-
-  const handleCopyNodes = () => {
-    if (selectedFlowIds?.length > 0) {
-      const copiedval = selectedFlowIds?.flatMap((val: any) =>
-        nodes?.filter((item) => item?.id === val)
-      );
-
-      copiedval?.map((item: any) => {
-        const parseJson = JSON.parse(item?.data);
-        setdropItems({
-          id: parseJson?.operation_id,
-          name: parseJson?.name,
-          http_method: item?.http_method,
-          type: item?.type,
-          full_url: item?.full_url,
-          nodes: item,
-        });
-      });
-      setCopiedNodes(copiedval); // Keep copied nodes for multiple pastes
-    }
-  };
-
   const viewport = rfInstance?.getViewport();
 
-  const [lastCursorPosition, setLastCursorPosition] = useState({ x: 0, y: 0 });
+  const { onDragEnd, onDragStart } = useGroupNodes({
+    nodes,
+    setNodes,
+    getIntersectingNodes,
+  });
 
   const handleCanvasClick = (event: React.MouseEvent) => {
     const position = screenToFlowPosition({
@@ -3299,335 +1289,6 @@ const WorkflowDesigner = (props: any) => {
     });
     setLastCursorPosition(position);
   };
-
-  const gettingAllNodes = getNodes();
-
-  // const handlePasteNodes = (event?: React.MouseEvent) => {
-  //   if (copiedNodes?.length === 0) return;
-
-  //   const position = event
-  //     ? screenToFlowPosition({ x: event.clientX, y: event.clientY })
-  //     : lastCursorPosition;
-
-  //   // setNodes((prevNodes) => [
-  //   //   ...prevNodes, // Keep existing nodes
-  //   //   ...copiedNodes.map((node) => ({
-  //   //     ...node,
-  //   //     id: `${node.id}-copy-${Date.now()}`, // Ensure unique IDs for copied nodes
-  //   //     position: {
-  //   //       x: node.position.x + 50, // Offset to prevent overlap
-  //   //       y: node.position.y + 50,
-  //   //     },
-  //   //   })),
-  //   // ]);
-
-  //   // setNodes((prevNodes) => {
-  //   //   const existingIds = new Set(prevNodes.map((node) => node.id));
-  //   //   const newNodes = copiedNodes
-  //   //     .map((node, index) => ({
-  //   //       ...node,
-  //   //       id: `${node.id}-copy-${Date.now()}`, // Unique ID
-  //   //       position: {
-  //   //         x: position?.x,
-  //   //         y: position?.y,
-  //   //       },
-  //   //       // position: {
-  //   //       //   x: position.x + index * 50, // Offset for multiple nodes
-  //   //       //   y: position.y + index * 50,
-  //   //       // },
-  //   //     }))
-  //   //     .filter((node) => !existingIds.has(node.id)); // Avoid duplicates
-
-  //   //   return [...prevNodes, ...newNodes];
-  //   // });
-
-  //   let tempData: any = dropItem;
-
-  //   let count = 0;
-
-  //   for (const node of nodes) {
-  //     // if (node?.data) {
-  //     const nodeDataV2 = JSON.parse(node?.data);
-
-  //     // if (nodeDataV2?.name === tempData?.name) {
-  //     if (nodeDataV2?.operation_id === tempData?.id) {
-  //       count++;
-  //     }
-  //     // }
-  //   }
-
-  //   let name: string = tempData?.name;
-  //   let node_name = name + (count === 0 ? "" : "_" + count);
-
-  //   if (tempData?.type === "operationNode") {
-  //     let id: string = uuidv4();
-
-  //     let matchedPaths = extractPlaceholdersFromPath(
-  //       tempData?.nodes?.full_url || null
-  //     );
-
-  //     let queryParams: any = [];
-
-  //     for (let params of matchedPaths) {
-  //       if (params) {
-  //         const updatedData: any = queryParams?.filter(
-  //           (x: any) => x?.name !== params && x?.scope !== "path"
-  //         );
-
-  //         queryParams = [
-  //           ...updatedData,
-  //           {
-  //             name: params,
-  //             test_value: "",
-  //             scope: "path",
-  //             data_type: "string",
-  //           },
-  //         ];
-  //       }
-  //     }
-
-  //     const operHeaders = []?.map((x: any) => ({
-  //       name: x?.name,
-  //       test_value: x?.test_value,
-  //       data_type: x?.data_type,
-  //     }));
-
-  //     const newNode = {
-  //       id: id,
-  //       type: "operationNode",
-  //       name: node_name,
-  //       position: { x: position?.x, y: position?.y },
-  //       positionAbsolute: { x: position?.x, y: position?.y },
-  //       status: "null",
-  //       // ...tempData?.nodes,
-  //       flow_id: apiFlow_Id,
-  //       version: versionValue,
-  //       created_by: userProfile?.user?.user_id,
-  //       data: JSON?.stringify({
-  //         name,
-  //         id,
-  //         node_name,
-  //         operation_id: tempData?.id,
-  //         method: tempData?.nodes?.http_method,
-  //         full_url: tempData?.nodes?.full_url,
-  //         operations_header: operHeaders,
-  //         operations_input: [],
-  //         operations_auth: [],
-  //         operations_query_param: [],
-  //         raw_output: "",
-  //         raw_payload: "",
-  //       }),
-  //       response: {},
-  //       width: 230,
-  //       height: 120,
-  //     };
-
-  //     const parsedData = JSON?.parse(newNode?.data);
-
-  //     if (parsedData?.operation_id !== null) {
-  //       let updatedNode: any = {
-  //         action: "ADD_NODE",
-  //         status: "null",
-  //         flow_id: apiFlow_Id,
-  //         id: id,
-  //         nodes: newNode,
-  //       };
-
-  //       const nodeMap = ydoc?.getMap<any>("nodes");
-
-  //       if (nodeMap) {
-  //         nodeMap?.set(updatedNode?.id, updatedNode);
-  //       }
-  //     }
-  //   }
-
-  //   setCopiedNodes([]);
-  //   selectedFlowIds?.map((idVal: any) => removeFlowId(idVal));
-  // };
-
-  const handlePasteNodes = (event?: React.MouseEvent) => {
-    if (!copiedNodes?.length) return;
-
-    const position = event
-      ? screenToFlowPosition({ x: event.clientX, y: event.clientY })
-      : lastCursorPosition;
-
-    let tempData: any = dropItem;
-
-    let count = 0;
-
-    for (const node of nodes) {
-      const nodeDataV2 = JSON.parse(node?.data);
-      if (nodeDataV2?.operation_id === tempData?.id) {
-        count++;
-      }
-    }
-
-    let name: string = tempData?.name;
-    let node_name = name + (count === 0 ? "" : "_" + count);
-
-    if (tempData?.type === "operationNode") {
-      let id: string = uuidv4();
-
-      let matchedPaths = extractPlaceholdersFromPath(
-        tempData?.nodes?.full_url || null
-      );
-
-      let queryParams: any = [];
-
-      for (let params of matchedPaths) {
-        if (params) {
-          const updatedData: any = queryParams?.filter(
-            (x: any) => x?.name !== params && x?.scope !== "path"
-          );
-
-          queryParams = [
-            ...updatedData,
-            {
-              name: params,
-              test_value: "",
-              scope: "path",
-              data_type: "string",
-            },
-          ];
-        }
-      }
-
-      const operHeaders = []?.map((x: any) => ({
-        name: x?.name,
-        test_value: x?.test_value,
-        data_type: x?.data_type,
-      }));
-
-      const newNode = {
-        id: id,
-        type: "operationNode",
-        name: node_name,
-        position: { x: position?.x, y: position?.y },
-        positionAbsolute: { x: position?.x, y: position?.y },
-        status: "null",
-        flow_id: apiFlow_Id,
-        version: versionValue,
-        created_by: userProfile?.user?.user_id,
-        data: JSON?.stringify({
-          name,
-          id,
-          node_name,
-          operation_id: tempData?.id,
-          method: tempData?.nodes?.http_method,
-          full_url: tempData?.nodes?.full_url,
-          operations_header: operHeaders,
-          operations_input: [],
-          operations_auth: [],
-          operations_query_param: [],
-          raw_output: "",
-          raw_payload: "",
-        }),
-        response: {},
-        width: 230,
-        height: 120,
-      };
-
-      const parsedData = JSON?.parse(newNode?.data);
-
-      if (parsedData?.operation_id !== null) {
-        let updatedNode: any = {
-          action: "ADD_NODE",
-          status: "null",
-          flow_id: apiFlow_Id,
-          id: id,
-          nodes: newNode,
-        };
-
-        const nodeMap = ydoc?.getMap<any>("nodes");
-
-        if (nodeMap) {
-          nodeMap?.set(updatedNode?.id, updatedNode);
-        }
-      }
-    }
-
-    selectedFlowIds?.map((idVal: any) => removeFlowId(idVal));
-  };
-
-  // const handleCutNodes = () => {
-  //   if (selectedFlowIds?.length > 0) {
-  //     const cutNodeVal = selectedFlowIds?.flatMap((val: any) =>
-  //       nodes?.filter((item) => item?.id === val)
-  //     );
-  //     console.log(cutNodeVal, "cutNodeValcutNodeVal");
-  //   }
-  // };
-
-  const handleCutNodes = () => {
-    if (selectedFlowIds?.length > 0) {
-      const cutNodeVal = selectedFlowIds?.flatMap((val: any) =>
-        nodes?.filter((item) => item?.id === val)
-      );
-      console.log(cutNodeVal, "cutNodeValcutNodeVal");
-    }
-  };
-
-  // useEffect(() => {
-  //   const handleKeyDown = (event: KeyboardEvent) => {
-  //     if (event?.ctrlKey && event?.key === "c") {
-  //       handleCopyNodes();
-  //     } else if (event?.ctrlKey && event?.key === "v") {
-  //       // selectedFlowIds?.map((idVal: any) => removeFlowId(idVal));
-  //       // setCopiedNodes([]);
-  //       handlePasteNodes();
-  //     } else if (event?.ctrlKey && event?.key === "x") {
-  //       handleCutNodes();
-  //     }
-  //   };
-  //   window.addEventListener("keydown", handleKeyDown);
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyDown);
-  //   };
-  // }, [selectedFlowIds.length, copiedNodes, lastCursorPosition, nodes.length]);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event?.ctrlKey && event?.key === "c") {
-        handleCopyNodes();
-      } else if (event?.ctrlKey && event?.key === "v") {
-        handlePasteNodes();
-      } else if (event?.ctrlKey && event?.key === "x") {
-        handleCutNodes();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [selectedFlowIds.length, copiedNodes, lastCursorPosition, nodes.length]);
-
-  useEffect(() => {
-    if (nodes?.length === 0) return;
-    const nodeMap = ydoc?.getMap<any>("nodes");
-    const nodeIds = nodes?.map((val: any) => val?.id);
-
-    nodeIds.forEach((id) => {
-      if (!selectedFlowIds.includes(id)) {
-        const nodeDetails = getNode(id);
-        let tempData = { ...nodeDetails };
-        tempData.selected = false;
-        nodeMap?.set(id, { action: "ADD_NODE", nodes: tempData, id });
-      } else {
-        selectedFlowIds?.map((id: any) => {
-          const nodeDetails = getNode(id);
-          let tempData = { ...nodeDetails };
-          tempData.selected = true;
-          nodeMap?.set(id, { action: "ADD_NODE", nodes: tempData, id });
-        });
-      }
-    });
-  }, [selectedFlowIds.length, nodes?.length]);
-  const { isNodeWithinFrame, onDragEnd, onDragStart } = useGroupNodes({
-    nodes,
-    setNodes,
-    getIntersectingNodes,
-  });
   return (
     <Grid
       ref={boxRef}
@@ -3642,12 +1303,12 @@ const WorkflowDesigner = (props: any) => {
     >
       <WorkFlowLayout>
         <Grid container sx={{ position: "relative", height: "100%" }}>
-          <GlobalCircularLoader
+          <GCircularLoader
             open={DesignFlowloading}
             style={{ position: "absolute" }}
           />
           {/* {DesignFlowloading && (
-            <GlobalCircularLoader isBackdrop={true} borderRadius="15px" />
+            <GCircularLoader isBackdrop={true} borderRadius="15px" />
           )} */}
           <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
             <WorkflowHeader
@@ -3673,8 +1334,16 @@ const WorkflowDesigner = (props: any) => {
             />
           </Grid>
           <Grid
-            sx={{ padding: "10px" }}
-            size={{ xs: 12, sm: 12, md: 7.7, lg: 8.7, xl: 8.6 }}
+            sx={{
+              // padding: "10px",
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "85vh",
+            }}
+            size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+            // size={{ xs: 12, sm: 12, md: 7.7, lg: 8.7, xl: 8.6 }}
           >
             <div
               className="position-relative"
@@ -3691,11 +1360,21 @@ const WorkflowDesigner = (props: any) => {
               //     awareness?.setLocalStateField("cursor", position);
               //   }
               // }}
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
             >
-              <Grid container>
+              <Grid
+                container
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
                 <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
                   {/* {operationByIdLoading && (
-                    <GlobalCircularLoader
+                    <GCircularLoader
                       open={operationByIdLoading}
                       isBackdrop={true}
                     />
@@ -3703,122 +1382,46 @@ const WorkflowDesigner = (props: any) => {
                   <div
                     style={{
                       width: "100%",
-                      height: recentlyModifiedProp === true ? "20vh" : "80vh",
+                      height: "100%",
                     }}
+                    // style={{
+                    //   width: "100%",
+                    //   height: recentlyModifiedProp === true ? "20vh" : "80vh",
+                    // }}
                     ref={dropContainer1}
                     onClick={handleCanvasClick}
                   >
-                    {/* <ReactFlow
-                      onDrop={onDrop}
-                      id="react-flow-container"
-                      className="position-relative"
-                      ref={reactFlowWrapper}
-                      // onDragOver={(event) => {
-                      //   event.preventDefault();
-                      //   event.dataTransfer.dropEffect = "move";
-                      // }}
-                      onDragOver={onDragOver}
-                      elementsSelectable={true}
-                      nodes={nodes}
-                      edges={edges}
-                      // key={key}
-                      onNodesChange={(data) =>
-                        handleNodeChange(
-                          data,
-                          nodes,
-                          ydoc,
-                          wWsProvider,
-                          userProfile,
-                          userColor
-                        )
-                      }
-                      onNodeDrag={onNodeDragWithThrottle}
-                      // snapToGrid={true}
-                      // snapGrid={[15, 15]}
-                      onEdgesChange={onEdgesChange}
-                      nodesConnectable={isEditable}
-                      nodesDraggable={isEditable}
-                      onConnect={onConnect}
-                      onConnectStart={onConnectStart}
-                      onConnectEnd={onConnectEnd}
-                      // nodesConnectable={editMode}
-                      // nodesDraggable={editMode}
-                      // fitView
-                      // fitViewOptions={{ padding: 2 }}
-                      nodeTypes={nodeTypes}
-                      edgeTypes={edgeTypes}
-                      onInit={setRfInstance}
-                      onNodeDragStart={() => {
-                      }}
-                      // onNodeDragStop={() =>}
-                      onNodeDragStop={onNodeDragStop}
-                      // onNodeDragStart={() => {
-                      
-                      //   setDragCount(0);
-                      //   setEventTimestamps([]);
-                      // }}
-                      // onNodeDragStop={() => {
-                      
-                      
-                      // }}
-                      proOptions={proOptions}
-                      nodeOrigin={[0.5, 0]}
-                      // fitView
-                      fitViewOptions={{ padding: 700 }}
-                      attributionPosition="bottom-right"
-                      onMouseMove={(event) => {
-                        const position: ReactFlowInstance =
-                          rfInstance?.screenToFlowPosition({
-                            x: event?.clientX,
-                            y: event?.clientY,
-                          });
-                        setLocalCursor(position);
+                    {isEditable && (
+                      <Selecto
+                        container={(document as any).getElementById(
+                          "react-flow-container"
+                        )}
+                        selectableTargets={[".react-flow__node"]}
+                        selectByClick={true}
+                        selectFromInside={true}
+                        continueSelect={false}
+                        toggleContinueSelect={"shift"}
+                        hitRate={0}
+                        onSelect={(e) => {
+                          const selectedIds = e.selected.map((el) =>
+                            el.getAttribute("data-id")
+                          );
+                        }}
+                        onSelectEnd={(e) => {
+                          const selectedIds = e.selected.map((el) =>
+                            el.getAttribute("data-id")
+                          );
+                          if (selectedIds.length > 0) {
+                            selectedIds.forEach((id) => {
+                              if (!selectedFlowIds.includes(id)) {
+                                addFlowId(id);
+                              }
+                            });
+                          }
+                        }}
+                      />
+                    )}
 
-                        //   const awareness = wWsProvider.awareness;
-                        //   awareness.setLocalStateField("cursor", position);
-                      }}
-                      // style={{ width: "100%", height: "100%" }}
-                      // onNodesDelete={onNodesDelete}
-                    >
-                      
-                 
-                      {Array.from(cursors?.entries()).map(([clientId, position]: any) => (
-  <Draggable
-    key={clientId}
-    position={{ x: position?.x || 0, y: position?.y || 0 }} // Control position dynamically
-    onDrag={(e, data) => {
-      // Update the position during the drag
-      const updatedPosition = { x: data.x, y: data.y };
-      setCursors((prevCursors) =>
-        new Map(prevCursors).set(clientId, {
-          ...position,
-          ...updatedPosition,
-        })
-      );
-    }}
-    onStop={(e, data) => {
-      // Optionally update final position in shared state
-    }}
-  >
-    <div style={{ position: "absolute" }}>
-      <LightTooltip
-        title={position?.name}
-        open={true} // Tooltip remains visible
-      >
-        <NavigationIcon
-          sx={{
-            fill: position?.color,
-            transform: `rotate(-15deg)`,
-            cursor: "grab", // Change cursor to indicate dragging is enabled
-          }}
-        />
-      </LightTooltip>
-    </div>
-  </Draggable>
-))}
-
-
-                    </ReactFlow> */}
                     <ReactFlow
                       id="react-flow-container"
                       className="position-relative"
@@ -3828,6 +1431,8 @@ const WorkflowDesigner = (props: any) => {
                       nodes={nodes}
                       onDragOver={onDragOver}
                       edges={edges}
+                      nodesConnectable={isEditable}
+                      nodesDraggable={isEditable}
                       onNodesChange={(data) => {
                         handleNodeChange(
                           data,
@@ -3929,20 +1534,21 @@ const WorkflowDesigner = (props: any) => {
                 </Grid>
               </Grid>
             </div>
+            <Box
+              sx={{
+                position: "absolute",
+                right: 1,
+                zIndex: 1,
+                width: 350,
+              }}
+            >
+              <WorkflowSidebar
+                project_id={currentFlowDetails?.project_id}
+                recentlyModifiedProp={recentlyModifiedProp}
+              />
+            </Box>
           </Grid>
-          <Grid
-            size={{ xs: 12, sm: 12, md: 4.3, lg: 3.3, xl: 3.3 }}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <WorkflowSidebar
-              project_id={currentFlowDetails?.project_id}
-              recentlyModifiedProp={recentlyModifiedProp}
-            />
-          </Grid>
+
           <UndoRedo
             handleUndo={handleUndo}
             handleRedo={handleRedo}
@@ -3967,15 +1573,6 @@ const WorkflowDesigner = (props: any) => {
             project_id={currentEnvironment}
           />
         </Grid>
-
-        {/* <DraggableDrawer
-          containerRef={mouseRef}
-          openDrawer={true}
-          setOpenDrawer={setOpenDrawer}
-          errors={errors}
-          compiling={compiling}
-          SuccessMessages={SuccessMessages}
-        /> */}
 
         {(saveFlow || (PublishConfirmation && PublishSavePopup)) && (
           <GDialogBox
@@ -4017,7 +1614,6 @@ const MemoizedWorkFlowDesigner = memo(WorkflowDesigner);
 
 export default (props: any) => (
   <ReactFlowProvider>
-    {/* <WorkflowDesigner {...props} /> */}
     <MemoizedWorkFlowDesigner {...props} />
   </ReactFlowProvider>
 );

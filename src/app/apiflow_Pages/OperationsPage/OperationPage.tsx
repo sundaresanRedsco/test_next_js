@@ -3,32 +3,21 @@
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 import {
-  Typography,
   FormControl,
-  TextareaAutosize,
-  Button,
-  InputAdornment,
   MenuItem,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Select,
   Popover,
   Backdrop,
-  Container,
   Tooltip,
   useTheme,
   Stack,
   Tabs,
   Tab,
 } from "@mui/material";
-import { useRouter, usePathname } from "next/navigation"; // For Next.js 13+
+import { usePathname } from "next/navigation"; // For Next.js 13+
 import { Box, styled } from "@mui/system";
 import { GridColDef } from "@mui/x-data-grid";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import InfoIcon from "@mui/icons-material/Info";
-import WarningIcon from "@mui/icons-material/Warning";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import theme from "@/Theme/theme";
@@ -40,19 +29,14 @@ import {
 } from "@/app/Redux/commonReducer";
 import {
   BackgroundUrlList,
-  CreateCollections,
   CreateOperation,
-  CreateSoapOperations,
   GetOperationById,
   GetOperations,
   GetOpertionTest,
-  GetWsdlOperByCollId,
   projectReducer,
   SoapOperationById,
-  UpdateCollectionsById,
   UpdateOperation,
 } from "@/app/Redux/apiManagement/projectReducer";
-import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
 import {
   environmentReducer,
   GetAllStagesByProjectId,
@@ -60,11 +44,11 @@ import {
 import GInput from "@/app/apiflow_components/global/GInput";
 import { setCookies, translate } from "@/app/Helpers/helpersFunctions";
 import RadioCheckboxComponent from "@/app/Components/Global/radioCheckboxComponent";
-import { GetCollectionById } from "@/app/Redux/apiManagement/endpointReducer";
 import PageNotFound from "@/app/Pages/PageNotFound/pageNotFound";
 import Grid from "@mui/material/Grid2";
 import GlobalLoader from "@/app/Components/Global/GlobalLoader";
 import ApiInsights from "@/app/Components/ApiManagement/apiInsights";
+// import ApiInsights from "@/app/Components/ApiManagement/apiInsights";
 import GSelect from "@/app/apiflow_components/global/GSelect";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import GButton from "@/app/apiflow_components/global/GButton";
@@ -74,131 +58,26 @@ import GlobeIcon from "../../Assests/icons/globe.svg";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import OutputParamTable from "@/app/apiflow_components/Operations/OutputParamTable";
-import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
-
-export const HeadingTypography = styled(Typography)`
-  font-family: "FiraSans-regular";
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 16px;
-  wordwrap: break-word;
-`;
-export const PrimaryTypography = styled(Typography)`
-  font-family: "FiraSans-regular";
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 15px;
-  wordwrap: break-word;
-`;
-
-export const SecondaryTypography = styled(Typography)`
-  font-family: "FiraSans-regular";
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 15px;
-  wordwrap: break-word;
-`;
-
-const TextOutlinedInput = styled(TextareaAutosize)`
-  font-size: 0.7rem;
-  font-weight: 500;
-  line-height: 1.5;
-  font-family: "FiraSans-regular";
-  padding: 15px;
-  background: transparent;
-  border-radius: 10px;
-  color: #ffffff;
-  border: 1.5px solid #f3f3f340;
-`;
-
-// const StyledNavItem = styled(Button)`
-//   font-family: FiraSans-regular;
-//   padding: 0px;
-//   border-radius: 0px;
-//   font-size: 15px;
-//   color: #acaab3;
-
-//   &.active {
-//     color: #ffffff;
-//   }
-
-//   &.active::after {
-//     content: "";
-//     position: absolute;
-//     bottom: -5px;
-//     left: 50%;
-//     width: 70%;
-//     height: 1px;
-//     background-color: #7A43FE;
-//     transform: translateX(-50%);
-//   }
-
-//   ${({ theme }) => theme.breakpoints.up("sm")} {
-//     font-size: 0.7rem;
-//   }
-
-//   ${({ theme }) => theme.breakpoints.up("md")} {
-//     font-size: 0.7rem;
-//   }
-// `;
-
-const StyledNavItem = styled(Button)`
-  font-family: FiraSans-regular;
-  padding: 0;
-  border-radius: 0;
-  font-size: 15px;
-  color: #acaab3;
-
-  &.active {
-    color: #ffffff;
-  }
-
-  &.active::after {
-    content: "";
-    position: absolute;
-    top: 30px;
-    left: 5px;
-    margin: 0 auto;
-    width: 100%;
-    height: 5px; /* Set your desired thickness */
-    background-color: #7a43fe;
-    border-radius: 10px;
-  }
-
-  ${({ theme }) => theme.breakpoints.up("sm")} {
-    font-size: 0.7rem;
-  }
-
-  ${({ theme }) => theme.breakpoints.up("md")} {
-    font-size: 0.7rem;
-  }
-`;
-
-const CardContainer = styled(Box)`
-  box-sizing: border-box;
-  left: 0px;
-  top: 0px;
-  margin: 25px 15px 10px 0px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 20px;
-  background: rgba(18, 18, 18, 0.5);
-`;
+import {
+  HeadingTypography,
+  PrimaryTypography,
+  SecondaryTypography,
+  TextOutlinedInput,
+  CardContainer,
+  operationSecrityLevelData,
+  btnVal,
+} from "@/app/hooks/operations/useOperationHelpers";
+import { GetCollectionById } from "@/app/Redux/apiManagement/endpointReducer";
+import useOperation from "@/app/hooks/operations/useOperation";
 
 export default function OperationsPage(props: any) {
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-
   const theme = useTheme();
-  const { id, onCloseHandler } = props;
 
-  // const navigate = useNavigate();
-  const router = useRouter();
   const location = usePathname();
 
   const scrollableContentRef = useRef<any>();
+
+  //--------------------------------------------------Redux-----------------------------------------------------------------
 
   const dispatch = useDispatch<any>();
 
@@ -212,13 +91,8 @@ export default function OperationsPage(props: any) {
     environmentReducer
   >((state) => state.apiManagement.environment);
 
-  const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
-    (state) => state.apiManagement.workspace
-  );
-
   const {
     loading,
-    singleCollectionData,
     saveGetResponseData,
     singleOperationData,
     operationLists,
@@ -230,22 +104,15 @@ export default function OperationsPage(props: any) {
   );
 
   const locationVal = location.split("/");
-  console.log(locationVal, "locationValOper");
+
   let operationId = locationVal[6];
   const stageId = currentStage;
   const collectionIdVal = "";
   const operationIdVal = locationVal[6];
 
-  const operationSecrityLevelData = [
-    "Authenticated App Users",
-    "Anonymous App Users",
-    "Public(All Users)",
-    "Private(Internal Server only)",
-  ];
-
-  const btnVal = ["Input Parameters", "Output Parameters"];
-
   const initialCheckboxStates: any = {};
+
+  //------------------------------------------------------------useState--------------------------------------------------------------
 
   const [operSecurityLevelValue, setOperSecurityLevelValue] = useState(
     "Authenticated App Users"
@@ -256,23 +123,16 @@ export default function OperationsPage(props: any) {
   const [apiStageId, setApiStageId] = useState("");
 
   const [serviceVal, setServiceVal] = useState("");
-  const [saveAddBtnClicked, setSaveAddBtnClicked] = useState(false);
-  const [webServiceVal, setWebServiceVal] = useState("None");
   const [passThroughCookies, setPassThroughCookies] = useState("No");
   const [generateMockDate, setGenerateMockDate] = useState("No");
   const [valLabel, setValLabel] = useState("Body");
   const [val, setVal] = useState("Body");
   const [enablePassThrough, setEnablePassThrough] = useState(false);
   const [requestTemplate, setRequestTemplate] = useState(false);
-
-  const [serviceDetailsClicked, setServiceDetailsClicked] = useState(false);
-
   const [checkboxStates, setCheckBoxStates] = useState<any>(
     initialCheckboxStates
   );
-
   const [showTemplateDescription, setShowTemplateDescription] = useState("");
-
   const [rowsBody, setRowsBody] = useState<any[]>([
     {
       name: "",
@@ -421,10 +281,6 @@ export default function OperationsPage(props: any) {
     raw_output: "null",
   });
 
-  const [currentServiceType, setCurrentServiceType] = useState("");
-  const [errorname, setErrorname] = useState("");
-  const [errorbase_url, setErrorbase_url] = useState("");
-  const [errorwsdl_url, setErrorwsdl_url] = useState("");
   const [errorApiOperationName, setErrorApiOperationName] = useState("");
 
   const [saveGetResponseClicked, setSaveGetResponseClicked] = useState(false);
@@ -432,15 +288,6 @@ export default function OperationsPage(props: any) {
   const [rowsSelected, setRowsSelected] = useState(false);
   const [deleteRowClicked, setDeleteRowClicked] = useState(false);
   const [rowId, setRowId] = useState<any>([]);
-
-  const [anchorElVersion, setAnchorElVersion] = useState<null | HTMLElement>(
-    null
-  );
-  const [saveVersionVal, setSaveVersionVal] = useState("");
-  const [saveVersionDesc, setSaveVersionDesc] = useState("");
-  const [saveVersionClicked, setSaveVersionClicked] = useState(false);
-  const [versionVal, setVersionVal] = useState("1.0");
-  const [errorVersionVal, setErrorVersionVal] = useState("");
 
   const [currentLocation, setCurrentLocation] = useState("");
   const [prevOperations, setPrevOperations] = useState<any>({});
@@ -458,70 +305,9 @@ export default function OperationsPage(props: any) {
   const [backgroundUrlClicked, setBackgroundUrlClicked] = useState(false);
   const [backgroundUrlData, setBackgroundUrlData] = useState<any[]>([]);
 
-  const [wsdlPop, setWsdlPop] = useState(false);
-  const [anchorElWsdl, setAnchorElWsdl] = useState<HTMLElement | null>(null);
-
-  const [checkedWsdl, setCheckedWsdl] = useState<any[]>([]);
-  const [wsdlSearch, setWsdlSearch] = useState("");
-  const [soapOperations, setSoapOperations] = useState<any[]>([]);
   const [activeTab, setActiveTab] = React.useState(0);
 
   const open = Boolean(anchorEl);
-
-  const wsdlPopRef = useRef<HTMLDivElement>(null);
-
-  const handleTabChange = (event: any, newValue: any) => {
-    setActiveTab(newValue);
-    const selectedNav = navLinks[newValue];
-    navLinkHandler(selectedNav?.id, selectedNav?.label);
-    setEnablePassThrough(false);
-  };
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-    setBackgroundUrlClicked(true);
-    handleBackgroundUrlList();
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-    setBackgroundUrlClicked(false);
-  };
-
-  const handleClickVersion = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorElVersion(event.currentTarget);
-  };
-
-  const handleCloseVersionPopOver = () => {
-    setAnchorElVersion(null);
-    setSaveVersionClicked(false);
-    setSaveVersionVal("");
-    setSaveVersionDesc("");
-    setErrorVersionVal("");
-  };
-
-  const handleVersionSave = () => {
-    const hasValidationError = saveVersionVal.trim() === "";
-
-    if (hasValidationError) {
-      setErrorVersionVal("Version is required");
-    } else {
-      setErrorVersionVal("");
-      setAnchorElVersion(null);
-      setSaveVersionClicked(false);
-      setSaveVersionVal("");
-      setSaveVersionDesc("");
-    }
-  };
-
-  const handleVersionValue = (e: any) => {
-    let versionValue = e.target.value;
-    if (versionValue === undefined) {
-      setVersionVal("1.0");
-    } else {
-      setVersionVal(e.target.value);
-    }
-  };
 
   const columns: GridColDef[] = [
     {
@@ -743,67 +529,61 @@ export default function OperationsPage(props: any) {
     },
   ];
 
-  //functions
+  //--------------------------------------------------------------functions----------------------------------------------------------
 
-  const capitalizeFirstLetter = (word: any) => {
-    if (!word) return "-";
-    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-  };
-
-  const onOpTabChange = (e: any, row: any) => {
-    const tempEventInputs = JSON.parse(JSON.stringify(row));
-    if (e.target) {
-      tempEventInputs[e.target.id] = e.target.value;
-    }
-
-    let stateToUpdate;
-    let rowIndex: any;
-    switch (valLabel) {
-      case "Body":
-        stateToUpdate = setRowsBody;
-        rowIndex = rowsBody?.findIndex((details) => details?.id === row?.id);
-        break;
-      case "Header":
-        stateToUpdate = setRowsHeader;
-        rowIndex = rowsHeader?.findIndex((details) => details?.id === row?.id);
-        break;
-      case "Authorization":
-        stateToUpdate = setRowsAuthorization;
-        rowIndex = rowsAuthorization?.findIndex(
-          (details) => details?.id === row?.id
-        );
-        break;
-      case "Query Parameters":
-        stateToUpdate = setRowsQueryParameters;
-        rowIndex = rowsQueryParameters?.findIndex(
-          (details) => details?.id === row?.id
-        );
-        break;
-      default:
-        return;
-    }
-    stateToUpdate((prevState: any) => {
-      let updatedData = [...prevState];
-      updatedData[rowIndex] = tempEventInputs;
-      return [...updatedData];
-    });
-  };
-
-  const handleCollectionDetails = (field: any, event: any) => {
-    setCurrentLocation(location);
-    setChangeOccuredColl(true);
-    setPrevCollections((prevValues: any) => ({
-      ...prevValues,
-      [field]: event,
-    }));
-    // }
-    setCollectionDetails((prevValues: any) => ({
-      ...prevValues,
-      [field]: event,
-    }));
-  };
+  const {
+    onOpTabChange,
+    capitalizeFirstLetter,
+    formatWithLineNumbers,
+    validateNameLength,
+    validateSpecialCharacters,
+    validateEmptyName,
+    validateOperationDetails,
+    getNavLinks,
+    getFormattedData,
+  } = useOperation({
+    valLabel,
+    setRowsBody,
+    rowsBody,
+    setRowsHeader,
+    rowsHeader,
+    setRowsAuthorization,
+    rowsAuthorization,
+    setRowsQueryParameters,
+    rowsQueryParameters,
+    operationDetails,
+    collectionDetails,
+  });
+  //predefined values
+  const navLinks = getNavLinks(valLabel);
+  const {
+    requestResponseStatus,
+    requestResponseStatusCode,
+    formattedRequest,
+    formattedResponse,
+    formattedServiceInput,
+    formattedServiceOutput,
+  } = getFormattedData(saveGetResponseData);
 
   useEffect(() => {}, [prevCollections, prevOperations]);
+
+  const handleTabChange = (event: any, newValue: any) => {
+    setActiveTab(newValue);
+    const selectedNav = navLinks[newValue];
+    navLinkHandler(selectedNav?.id, selectedNav?.label);
+    setEnablePassThrough(false);
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+    setBackgroundUrlClicked(true);
+    handleBackgroundUrlList();
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setBackgroundUrlClicked(false);
+  };
 
   const handleOperationDetails = (field: any, event: any) => {
     setCurrentLocation(location);
@@ -818,10 +598,6 @@ export default function OperationsPage(props: any) {
     }));
   };
 
-  const handleWebServiceVal = (val: any) => {
-    setWebServiceVal(val);
-  };
-
   const handlePassthroughCookies = (val: any) => {
     setPassThroughCookies(val);
   };
@@ -830,532 +606,25 @@ export default function OperationsPage(props: any) {
     setGenerateMockDate(val);
   };
 
-  // const handleCancelBtn = () => {
-  //   router.push(
-  //     `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}`
-  //   );
-  // };
-
-  const handleCollectionValidation = (type: any) => {
-    if (type === "collectionName") {
-      const hasValidationError = collectionDetails?.name.trim() === "";
-
-      const hasSpecialCharName = /[!@#$%^&*(),.?":{}|<>\s]/.test(
-        collectionDetails?.name
-      );
-
-      const hasNoSpaces = /\s/.test(collectionDetails?.base_url);
-      const isOverLimit = collectionDetails?.name?.length > 50;
-
-      if (hasValidationError) {
-        setErrorname("Collection Name is required");
-      } else if (collectionDetails?.name.trim() === "") {
-        setErrorname("Collection Name is required");
-      } else if (hasSpecialCharName) {
-        setErrorname("Special Characters and spaces are not allowed");
-      } else if (hasNoSpaces) {
-        setErrorbase_url("Spaces are not allowed");
-      } else if (isOverLimit) {
-        setErrorname("Collection name should not exceed 50 characters");
-      } else {
-        dispatch(updateTourStep(tourStep + 1));
-      }
-    }
-
-    if (type === "collectionBaseUrl") {
-      const hasValidationError = collectionDetails?.base_url.trim() === "";
-
-      const hasNoSpaces = /\s/.test(collectionDetails?.base_url);
-      const restrictSlash = collectionDetails?.base_url?.endsWith("/");
-
-      if (hasValidationError) {
-        setErrorbase_url("Api Base Url is required");
-      } else if (collectionDetails?.base_url.trim() === "") {
-        setErrorbase_url("Api Base Url is required");
-      } else if (hasNoSpaces) {
-        setErrorbase_url("Spaces are not allowed");
-      } else if (restrictSlash) {
-        setErrorbase_url(
-          "Invalid collection URL format: remove the ending slash."
-        );
-      } else {
-        dispatch(updateTourStep(tourStep + 1));
-      }
-    }
-
-    if (type === "collectionWsdlUrl") {
-      const hasValidationError = collectionDetails?.wsdl_url.trim() === "";
-
-      const hasNoSpaces = /\s/.test(collectionDetails?.wsdl_url);
-      const restrictSlash = collectionDetails?.wsdl_url?.endsWith("/");
-
-      if (hasValidationError) {
-        setErrorwsdl_url("Api Wsdl Url is required");
-      } else if (collectionDetails?.wsdl_url.trim() === "") {
-        setErrorwsdl_url("Api Wsdl Url is required");
-      } else if (hasNoSpaces) {
-        setErrorwsdl_url("Spaces are not allowed");
-      } else if (restrictSlash) {
-        setErrorwsdl_url(
-          "Invalid collection URL format: remove the ending slash."
-        );
-      } else {
-        dispatch(updateTourStep(tourStep + 1));
-      }
-    }
-  };
-
-  const handleSaveBtn = () => {
-    dispatch(GetAllStagesByProjectId(currentEnvironment))
-      .unwrap()
-      .then((res: any) => {
-        console.log("StageId: ", res);
-        setApiStageId(res?.[0]?.apistage_id);
-      })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
-
-    if (currentLocation === location) {
-      setChangeOccuredColl(false);
-    }
-
-    const hasValidationError =
-      collectionDetails?.name.trim() === "" &&
-      collectionDetails?.base_url.trim() === "";
-
-    const wsdlUrlValidationCheck = collectionDetails?.wsdl_url?.trim() === "";
-
-    const hasSpecialCharName = /[!@#$%^&*(),.?":{}|<>\s]/.test(
-      collectionDetails?.name
-    );
-
-    const hasNoSpaces = /\s/.test(collectionDetails?.base_url);
-    const hasNoSpacesWsdl = /\s/.test(collectionDetails?.wsdl_url);
-    const isOverLimit = collectionDetails?.name?.length > 50;
-
-    const restrictSlash = collectionDetails?.base_url?.endsWith("/");
-    const restrictSlashWsdl = collectionDetails?.wsdl_url?.endsWith("/");
-
-    if (hasValidationError) {
-      setErrorname("Collection Name is required");
-      setErrorbase_url("Api Base Url is required");
-    } else if (collectionDetails?.name.trim() === "") {
-      setErrorname("Collection Name is required");
-    } else if (collectionDetails?.base_url.trim() === "") {
-      setErrorbase_url("Api Base Url is required");
-    } else if (hasSpecialCharName) {
-      setErrorname("Special Characters and spaces are not allowed");
-    } else if (hasNoSpaces) {
-      setErrorbase_url("Spaces are not allowed");
-    } else if (restrictSlash) {
-      setErrorbase_url(
-        "Invalid collection URL format: remove the ending slash."
-      );
-    } else if (isOverLimit) {
-      setErrorname("Collection name should not exceed 50 characters");
-    } else if (
-      wsdlUrlValidationCheck &&
-      (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP")
-    ) {
-      if (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP") {
-        setErrorwsdl_url("WSDL Url is required");
-      }
-    } else if (
-      hasNoSpacesWsdl &&
-      (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP")
-    ) {
-      if (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP") {
-        setErrorwsdl_url("Spaces are not allowed");
-      }
-    } else if (
-      restrictSlashWsdl &&
-      (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP")
-    ) {
-      if (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP") {
-        setErrorwsdl_url(
-          "Invalid collection URL format: remove the ending slash."
-        );
-      }
-    } else {
-      if (collectionIdVal !== undefined) {
-        let updatedData = {
-          // user_id: userProfile?.user?.user_id,
-          collection_id: collectionIdVal,
-          name: collectionDetails?.name,
-          description: collectionDetails?.description,
-          stage_id: apiStageId,
-        };
-
-        dispatch(UpdateCollectionsById(updatedData))
-          .unwrap()
-          .then((res: any) => {
-            let getOperationValues = {
-              project_id: currentEnvironment,
-              stage_id: stageId || currentStage,
-            };
-            dispatch(GetOperations(getOperationValues))
-              .unwrap()
-              .then((res: any) => {
-                console.log("REs: ", res);
-              })
-              .catch((error: any) => {
-                if (error?.message === "UNAUTHORIZED") {
-                  dispatch(updateSessionPopup(true));
-                }
-              });
-            toast.success("Collection updated successfully");
-            setCookies(
-              process.env.NEXT_PUBLIC_COOKIE_COLLID ?? "",
-              res?.collection_id,
-              userProfile?.user?.expiration_time
-            );
-            // router.push(
-            //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${res?.collection_id}`
-            // );
-          })
-          .catch((error: any) => {
-            toast.error(error?.message);
-            if (error?.message === "UNAUTHORIZED") {
-              dispatch(updateSessionPopup(true));
-            }
-          });
-      } else {
-        let createData = {
-          // user_id: userProfile?.user?.user_id,
-          project_id: currentEnvironment,
-          stage_id: apiStageId,
-          name: collectionDetails?.name,
-          type: "OWNER",
-          base_url: collectionDetails?.base_url,
-          web_service_authentication:
-            collectionDetails?.web_service_authentication,
-          description: collectionDetails?.description,
-          status: "ACTIVE",
-          service_type: serviceVal,
-          wsdl_url: collectionDetails?.wsdl_url,
-          activeVersionID: "null",
-          active_vesion: "null",
-        };
-
-        console.log("IN Savebtn: ", createData);
-        console.log("REach1");
-
-        dispatch(CreateCollections(createData))
-          .unwrap()
-          .then((res: any) => {
-            console.log("CreateCollectionRes: ", res);
-            console.log("REach2");
-            let getOperationValues = {
-              project_id: currentEnvironment,
-              stage_id: stageId || currentStage,
-            };
-            dispatch(GetOperations(getOperationValues))
-              .unwrap()
-              .then((res: any) => {
-                console.log("Res: ", res);
-                dispatch(updateTourStep(tourStep + 1));
-              })
-              .catch((error: any) => {
-                if (error?.message === "UNAUTHORIZED") {
-                  dispatch(updateSessionPopup(true));
-                }
-              });
-            toast.success("Service Details saved successfully");
-            setCookies(
-              process.env.NEXT_PUBLIC_COOKIE_COLLID ?? "",
-              res?.collection_id,
-              userProfile?.user?.expiration_time
-            );
-            if (
-              collectionDetails?.service_type === "SOAP" ||
-              serviceVal === "SOAP"
-            ) {
-              setWsdlPop(true);
-              setAnchorElWsdl(wsdlPopRef?.current);
-            } else {
-              // router.push(
-              //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${res?.collection_id}/operations`
-              // );
-            }
-          })
-          .catch((error: any) => {
-            toast.error(error?.message);
-            if (error?.message === "UNAUTHORIZED") {
-              dispatch(updateSessionPopup(true));
-            }
-          });
-      }
-    }
-  };
-
-  const handleSaveAddBtn = (e: any) => {
-    console.log("Working saveAdd");
-    if (currentLocation === location) {
-      setChangeOccuredColl(false);
-    }
-
-    setOperationDetails({});
-
-    const hasValidationError =
-      collectionDetails?.name?.trim() === "" ||
-      collectionDetails?.base_url?.trim() === "";
-
-    const wsdlUrlValidationCheck = collectionDetails?.wsdl_url?.trim() === "";
-
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>\s]/.test(
-      collectionDetails?.name
-    );
-
-    const isOverLimit = collectionDetails?.name?.length > 50;
-
-    const hasNoSpaces = /\s/.test(collectionDetails?.base_url);
-    const hasNoSpacesWsdl = /\s/.test(collectionDetails?.wsdl_url);
-
-    const restrictSlash = collectionDetails?.base_url?.endsWith("/");
-    const restrictSlashWsdl = collectionDetails?.wsdl_url?.endsWith("/");
-
-    if (hasValidationError) {
-      setErrorname("Collection Name is required");
-      setErrorbase_url("Api Base Url is required");
-    } else if (collectionDetails?.name.trim() === "") {
-      setErrorname("Collection Name is required");
-    } else if (collectionDetails?.base_url.trim() === "") {
-      setErrorbase_url("Api Base Url is required");
-    } else if (hasSpecialChar) {
-      setErrorname("Special Characters and spaces are not allowed");
-    } else if (hasNoSpaces) {
-      setErrorbase_url("Spaces are not allowed");
-    } else if (restrictSlash) {
-      setErrorbase_url(
-        "Invalid collection URL format: remove the ending slash."
-      );
-    } else if (isOverLimit) {
-      setErrorname("Collection name should not exceed 50 characters");
-    } else if (
-      wsdlUrlValidationCheck &&
-      (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP")
-    ) {
-      if (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP") {
-        setErrorwsdl_url("WSDL Url is required");
-      }
-    } else if (
-      hasNoSpacesWsdl &&
-      (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP")
-    ) {
-      if (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP") {
-        setErrorwsdl_url("Spaces are not allowed");
-      }
-    } else if (
-      restrictSlashWsdl &&
-      (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP")
-    ) {
-      if (collectionDetails?.wsdl_url === "SOAP" || serviceVal === "SOAP") {
-        setErrorwsdl_url(
-          "Invalid collection URL format: remove the ending slash."
-        );
-      }
-    } else {
-      dispatch(GetAllStagesByProjectId(currentEnvironment))
-        .unwrap()
-        .then((res: any) => {
-          setApiStageId(res?.[0]?.apistage_id);
-        })
-        .catch((error: any) => {
-          console.log("Error: ", error);
-        });
-
-      if (collectionIdVal !== undefined) {
-        let updatedData = {
-          // user_id: userProfile?.user?.user_id,
-          collection_id: collectionIdVal,
-          name: collectionDetails?.name,
-          description: collectionDetails?.description,
-          stage_id: apiStageId,
-        };
-
-        dispatch(UpdateCollectionsById(updatedData))
-          .unwrap()
-          .then((res: any) => {
-            console.log("RessUpdateCollection: ", res);
-            toast.success("Collection updated successfully");
-            setCookies(
-              process.env.NEXT_PUBLIC_COOKIE_COLLID ?? "",
-              collectionIdVal,
-              userProfile?.user?.expiration_time
-            );
-            if (
-              collectionDetails?.service_type === "SOAP" ||
-              serviceVal === "SOAP"
-            ) {
-              setWsdlPop(true);
-              handleWsdlOperations(collectionIdVal);
-            } else {
-              // router.push(
-              //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations`
-              // );
-            }
-
-            let getOperationValues = {
-              project_id: currentEnvironment,
-              stage_id: stageId || currentStage,
-            };
-
-            dispatch(GetOperations(getOperationValues))
-              .unwrap()
-              .then((res: any) => {})
-              .catch((error: any) => {
-                if (error?.message === "UNAUTHORIZED") {
-                  dispatch(updateSessionPopup(true));
-                }
-              });
-            setRowsBody([]);
-            setRowsHeader([]);
-            setRowsAuthorization([]);
-            setRowsQueryParameters([]);
-            setRowsOutput([]);
-          })
-          .catch((error: any) => {
-            if (error?.message === "UNAUTHORIZED") {
-              dispatch(updateSessionPopup(true));
-            }
-          });
-      } else {
-        console.log("Else part working: ", collectionDetails);
-        let createData = {
-          user_id: userProfile?.user?.user_id,
-          project_id: currentEnvironment,
-          stage_id: apiStageId,
-          name: collectionDetails?.name,
-          type: "OWNER",
-          base_url: collectionDetails?.base_url,
-          web_service_authentication:
-            collectionDetails?.web_service_authentication,
-          description: collectionDetails?.description,
-          status: "ACTIVE",
-          service_type: serviceVal,
-          wsdl_url: collectionDetails?.wsdl_url,
-          activeVersionID: "null",
-          active_vesion: "null",
-        };
-
-        console.log("CreateCollection: ", createData);
-
-        dispatch(CreateCollections(createData))
-          .unwrap()
-          .then((res: any) => {
-            console.log("REsCreateCollection: ", res);
-            let getOperationValues = {
-              project_id: currentEnvironment,
-              stage_id: stageId || currentStage,
-            };
-
-            dispatch(GetOperations(getOperationValues))
-              .unwrap()
-              .then((res: any) => {
-                console.log("REs: ", res);
-                dispatch(updateTourStep(tourStep + 1));
-              })
-              .catch((error: any) => {
-                if (error?.message === "UNAUTHORIZED") {
-                  dispatch(updateSessionPopup(true));
-                }
-              });
-            toast.success("Service Details saved successfully");
-            setCookies(
-              process.env.NEXT_PUBLIC_COOKIE_COLLID ?? "",
-              res?.collection_id,
-              userProfile?.user?.expiration_time
-            );
-
-            if (
-              collectionDetails?.service_type === "SOAP" ||
-              serviceVal === "SOAP"
-            ) {
-              setWsdlPop(true);
-              setAnchorElWsdl(wsdlPopRef?.current);
-              handleWsdlOperations(res?.collection_id);
-            } else {
-              // router.push(
-              //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${res?.collection_id}/operations`
-              // );
-            }
-
-            setRowsBody([]);
-            setRowsHeader([]);
-            setRowsAuthorization([]);
-            setRowsQueryParameters([]);
-            setRowsOutput([]);
-          })
-          .catch((error: any) => {
-            toast.error(error?.message);
-            if (error?.message === "UNAUTHORIZED") {
-              dispatch(updateSessionPopup(true));
-            }
-          });
-      }
-    }
-  };
-
   const handleOperationValidation = (type: any) => {
     if (type === "operationName") {
-      const hasValidationError = operationDetails?.name?.trim() === "";
+      const name = operationDetails?.name || "";
 
-      const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>\s]/.test(
-        operationDetails?.name
-      );
+      const error =
+        validateEmptyName(name) ||
+        validateSpecialCharacters(name) ||
+        validateNameLength(name);
 
-      const isOverLimit = operationDetails?.name?.length > 50;
-
-      if (hasValidationError) {
-        setErrorApiOperationName("Api Operation Name is required");
-      } else if (!operationDetails?.name?.trim()) {
-        setErrorApiOperationName("Api Operation Name is required");
-      } else if (hasSpecialChar) {
-        setErrorApiOperationName(
-          "Special Characters and spaces are not allowed"
-        );
-      } else if (isOverLimit) {
-        setErrorApiOperationName(
-          "Operation name should not exceed 50 characters"
-        );
+      if (error) {
+        setErrorApiOperationName(error);
       } else {
         dispatch(updateTourStep(tourStep + 1));
       }
     }
   };
 
-  // const handleCancelOperation = () => {
-  //   setSaveGetResponseClicked(false);
-  //   setOperationDetails({});
-  //   // router.push(
-  //   //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}`
-  //   // );
-  // };
-
-  const handleSaveOperationBtn = () => {
-    if (currentLocation === location) {
-      setChangeOccuredOper(false);
-    }
-
-    setSaveGetResponseClicked(false);
-
-    const hasValidationError =
-      operationDetails?.name?.trim() === "" ||
-      operationDetails?.method_name?.trim() === "";
-
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>\s]/.test(
-      operationDetails?.name
-    );
-
-    const isOverLimit = operationDetails?.name?.length > 50;
-
-    const hasNoSpaces = /\s/.test(operationDetails?.method_name);
-
-    const restrictSlash = operationDetails?.method_name?.startsWith("/");
-
+  const handleCreateOperationSave = () => {
     let createOperationDetails = {
-      // user_id: userProfile?.user?.user_id,
       collections_id: collectionIdVal,
       name: operationDetails?.name,
       description: operationDetails?.description || "",
@@ -1390,11 +659,45 @@ export default function OperationsPage(props: any) {
       raw_output: "null",
     };
 
+    dispatch(CreateOperation(createOperationDetails))
+      .unwrap()
+      .then((res: any) => {
+        toast.success("Operation created successfully");
+        setCookies(
+          process.env.NEXT_PUBLIC_COOKIE_OPERID ?? "",
+          res?.id,
+          userProfile?.user?.expiration_time
+        );
+
+        let getOperationValues = {
+          project_id: currentEnvironment,
+          stage_id: stageId || currentStage,
+        };
+
+        dispatch(GetOperations(getOperationValues))
+          .unwrap()
+          .then((res: any) => {
+            dispatch(updateTourStep(tourStep + 1));
+          })
+          .catch((error: any) => {
+            toast.error(error?.message);
+            if (error?.message === "UNAUTHORIZED") {
+              dispatch(updateSessionPopup(true));
+            }
+          });
+      })
+      .catch((error: any) => {
+        if (error?.message === "UNAUTHORIZED") {
+          dispatch(updateSessionPopup(true));
+        }
+      });
+  };
+
+  const handleUpdateOperationSave = () => {
     let updateOperationDetails = {
       // project_id: "2b9e61e83e9446a4b97c4e8120517e02",
       project_id: currentEnvironment,
       details: {
-        // user_id: userProfile?.user?.user_id,
         collection_id: collectionIdVal,
         operation_id: operationId,
         name: operationDetails?.name,
@@ -1431,99 +734,40 @@ export default function OperationsPage(props: any) {
       },
     };
 
-    console.log("OperationData: ", updateOperationDetails, operationDetails);
+    dispatch(UpdateOperation(updateOperationDetails))
+      .unwrap()
+      .then((res: any) => {
+        toast.success("Operation updated successfully");
+        setCookies(
+          process.env.NEXT_PUBLIC_COOKIE_OPERID ?? "",
+          operationId,
+          userProfile?.user?.expiration_time
+        );
 
-    if (operationId?.trim() === undefined) {
-      dispatch(CreateOperation(createOperationDetails))
-        .unwrap()
-        .then((res: any) => {
-          toast.success("Operation created successfully");
-          setCookies(
-            process.env.NEXT_PUBLIC_COOKIE_OPERID ?? "",
-            res?.id,
-            userProfile?.user?.expiration_time
-          );
-          // router.push(
-          //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations/${res?.id}`
-          // );
+        let getOperationValues = {
+          project_id: currentEnvironment,
+          stage_id: stageId || currentStage,
+        };
 
-          let getOperationValues = {
-            project_id: currentEnvironment,
-            stage_id: stageId || currentStage,
-          };
-
-          dispatch(GetOperations(getOperationValues))
-            .unwrap()
-            .then((res: any) => {
-              dispatch(updateTourStep(tourStep + 1));
-            })
-            .catch((error: any) => {
-              toast.error(error?.message);
-              if (error?.message === "UNAUTHORIZED") {
-                dispatch(updateSessionPopup(true));
-              }
-            });
-        })
-        .catch((error: any) => {
-          if (error?.message === "UNAUTHORIZED") {
-            dispatch(updateSessionPopup(true));
-          }
-        });
-    } else {
-      dispatch(UpdateOperation(updateOperationDetails))
-        .unwrap()
-        .then((res: any) => {
-          toast.success("Operation updated successfully");
-          setCookies(
-            process.env.NEXT_PUBLIC_COOKIE_OPERID ?? "",
-            operationId,
-            userProfile?.user?.expiration_time
-          );
-
-          let getOperationValues = {
-            project_id: currentEnvironment,
-            stage_id: stageId || currentStage,
-          };
-
-          dispatch(GetOperations(getOperationValues))
-            .unwrap()
-            .then((res: any) => {})
-            .catch((error: any) => {
-              if (error?.message === "UNAUTHORIZED") {
-                dispatch(updateSessionPopup(true));
-              }
-            });
-        })
-        .catch((error: any) => {
-          toast.error(error?.message);
-          if (error?.message === "UNAUTHORIZED") {
-            dispatch(updateSessionPopup(true));
-          }
-        });
-    }
+        dispatch(GetOperations(getOperationValues))
+          .unwrap()
+          .then((res: any) => {})
+          .catch((error: any) => {
+            if (error?.message === "UNAUTHORIZED") {
+              dispatch(updateSessionPopup(true));
+            }
+          });
+      })
+      .catch((error: any) => {
+        toast.error(error?.message);
+        if (error?.message === "UNAUTHORIZED") {
+          dispatch(updateSessionPopup(true));
+        }
+      });
   };
 
-  const handleSaveGetResponseBtn = () => {
-    if (currentLocation === location) {
-      setChangeOccuredOper(false);
-    }
-
-    const hasValidationError =
-      operationDetails?.name?.trim() === "" ||
-      operationDetails?.method_name?.trim() === "";
-
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>\s]/.test(
-      operationDetails?.name
-    );
-
-    const isOverLimit = operationDetails?.name?.length > 50;
-
-    const hasNoSpaces = /\s/.test(operationDetails?.method_name);
-
-    const restrictSlash = operationDetails?.method_name?.startsWith("/");
-
+  const handleCreateOperationSaveGet = () => {
     let createOperationDetails = {
-      // user_id: userProfile?.user?.user_id,
       collections_id: collectionIdVal,
       name: operationDetails?.name,
       description: operationDetails?.description || "",
@@ -1558,11 +802,49 @@ export default function OperationsPage(props: any) {
       raw_output: "null",
     };
 
+    dispatch(CreateOperation(createOperationDetails))
+      .unwrap()
+      .then((res: any) => {
+        toast.success("Operation created successfully");
+        setTimeout(() => {
+          dispatch(updateTourStep(tourStep + 1));
+        }, 5000);
+        setCookies(
+          process.env.NEXT_PUBLIC_COOKIE_OPERID ?? "",
+          operationId,
+          userProfile?.user?.expiration_time
+        );
+
+        // call test api
+        testOperation(res?.id);
+
+        let getOperationValues = {
+          project_id: currentEnvironment,
+          stage_id: stageId || currentStage,
+        };
+
+        dispatch(GetOperations(getOperationValues))
+          .unwrap()
+          .then((res: any) => {})
+          .catch((error: any) => {
+            if (error?.message === "UNAUTHORIZED") {
+              dispatch(updateSessionPopup(true));
+            }
+          });
+      })
+      .catch((error: any) => {
+        toast.error(error?.message);
+        if (error?.message === "UNAUTHORIZED") {
+          dispatch(updateSessionPopup(true));
+        }
+      });
+  };
+
+  const handleUpdateOperationSaveGet = () => {
     let updateOperationDetails = {
       project_id: currentEnvironment,
       // project_id: "2b9e61e83e9446a4b97c4e8120517e02",
       details: {
-        // user_id: userProfile?.user?.user_id,
         collection_id: collectionIdVal,
         operation_id: operationId,
         name: operationDetails?.name,
@@ -1598,85 +880,79 @@ export default function OperationsPage(props: any) {
         raw_output: "null",
       },
     };
+    dispatch(UpdateOperation(updateOperationDetails))
+      .unwrap()
+      .then((res: any) => {
+        toast.success("Operation updated successfully");
+        setCookies(
+          process.env.NEXT_PUBLIC_COOKIE_OPERID ?? "",
+          operationId,
+          userProfile?.user?.expiration_time
+        );
+        setTimeout(() => {
+          dispatch(updateTourStep(tourStep + 1));
+        }, 5000);
+        // call test api
+        testOperation(res?.id);
+
+        let getOperationValues = {
+          project_id: currentEnvironment,
+          stage_id: stageId || currentStage,
+        };
+
+        dispatch(GetOperations(getOperationValues))
+          .unwrap()
+          .then((res: any) => {})
+          .catch((error: any) => {
+            if (error?.message === "UNAUTHORIZED") {
+              dispatch(updateSessionPopup(true));
+            }
+          });
+      })
+      .catch((error: any) => {
+        toast.error(error?.message);
+        if (error?.message === "UNAUTHORIZED") {
+          dispatch(updateSessionPopup(true));
+        }
+      });
+  };
+
+  const handleSaveOperationBtn = () => {
+    if (currentLocation === location) {
+      setChangeOccuredOper(false);
+    }
+
+    setSaveGetResponseClicked(false);
+
+    const validationError = validateOperationDetails(operationDetails);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
 
     if (operationId?.trim() === undefined) {
-      dispatch(CreateOperation(createOperationDetails))
-        .unwrap()
-        .then((res: any) => {
-          toast.success("Operation created successfully");
-          setTimeout(() => {
-            dispatch(updateTourStep(tourStep + 1));
-          }, 5000);
-          setCookies(
-            process.env.NEXT_PUBLIC_COOKIE_OPERID ?? "",
-            operationId,
-            userProfile?.user?.expiration_time
-          );
-          // router.push(
-          //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations/${res?.id}`
-          // );
-
-          // call test api
-          testOperation(res?.id);
-
-          let getOperationValues = {
-            project_id: currentEnvironment,
-            stage_id: stageId || currentStage,
-          };
-
-          dispatch(GetOperations(getOperationValues))
-            .unwrap()
-            .then((res: any) => {})
-            .catch((error: any) => {
-              if (error?.message === "UNAUTHORIZED") {
-                dispatch(updateSessionPopup(true));
-              }
-            });
-        })
-        .catch((error: any) => {
-          toast.error(error?.message);
-          if (error?.message === "UNAUTHORIZED") {
-            dispatch(updateSessionPopup(true));
-          }
-        });
+      handleCreateOperationSave();
     } else {
-      dispatch(UpdateOperation(updateOperationDetails))
-        .unwrap()
-        .then((res: any) => {
-          toast.success("Operation updated successfully");
-          setCookies(
-            process.env.NEXT_PUBLIC_COOKIE_OPERID ?? "",
-            operationId,
-            userProfile?.user?.expiration_time
-          );
-          setTimeout(() => {
-            dispatch(updateTourStep(tourStep + 1));
-          }, 5000);
-          // call test api
-          testOperation(res?.id);
-
-          let getOperationValues = {
-            project_id: currentEnvironment,
-            stage_id: stageId || currentStage,
-          };
-
-          dispatch(GetOperations(getOperationValues))
-            .unwrap()
-            .then((res: any) => {})
-            .catch((error: any) => {
-              if (error?.message === "UNAUTHORIZED") {
-                dispatch(updateSessionPopup(true));
-              }
-            });
-        })
-        .catch((error: any) => {
-          toast.error(error?.message);
-          if (error?.message === "UNAUTHORIZED") {
-            dispatch(updateSessionPopup(true));
-          }
-        });
+      handleUpdateOperationSave();
     }
-    // }
+  };
+
+  const handleSaveGetResponseBtn = () => {
+    if (currentLocation === location) {
+      setChangeOccuredOper(false);
+    }
+
+    const validationError = validateOperationDetails(operationDetails);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
+
+    if (operationId?.trim() === undefined) {
+      handleCreateOperationSaveGet();
+    } else {
+      handleUpdateOperationSaveGet();
+    }
   };
 
   function testOperation(operationIDVal: any) {
@@ -1736,32 +1012,6 @@ export default function OperationsPage(props: any) {
         });
     }
   }
-
-  const requestResponseStatus =
-    saveGetResponseData?.serviceOutput?.response?.status;
-  const requestResponseStatusCode =
-    saveGetResponseData?.serviceOutput?.response?.statusCode;
-
-  const requestPart = saveGetResponseData?.request;
-  const serviceInputPart = saveGetResponseData?.serviceInput;
-  const serviceOutputPart = saveGetResponseData?.serviceOutput;
-  const responsePart = saveGetResponseData?.response;
-
-  const formatWithLineNumbers = (text: any) => {
-    return (text ?? "")
-      ?.split("\n")
-      ?.map((line: any, index: any) => `${index + 1}. ${line}`)
-      ?.join("\n");
-  };
-
-  const formattedRequest =
-    formatWithLineNumbers(JSON.stringify(requestPart, null, 2)) || "";
-  const formattedServiceInput =
-    formatWithLineNumbers(JSON.stringify(serviceInputPart, null, 2)) || "";
-  const formattedServiceOutput =
-    formatWithLineNumbers(JSON.stringify(serviceOutputPart, null, 2)) || "";
-  const formattedResponse =
-    formatWithLineNumbers(JSON.stringify(responsePart, null, 2)) || "";
 
   const handleAddRowButton = (val: any) => {
     let newRows = {
@@ -1877,79 +1127,6 @@ export default function OperationsPage(props: any) {
     setDeleteRowClicked(false);
   };
 
-  const handleWsdlSearch = (event: any) => {
-    setWsdlSearch(event?.target?.value);
-    console.log("SearchvalWsdl: ", event?.target?.value);
-  };
-
-  const filteredSoapOperations =
-    wsdlSearch?.trim() !== ""
-      ? soapOperations?.filter((filterVal) =>
-          filterVal?.name?.toLowerCase().includes(wsdlSearch?.toLowerCase())
-        )
-      : soapOperations;
-
-  console.log("filteredSoapOperations: ", filteredSoapOperations);
-
-  const handleCloseWsdl = () => {
-    setAnchorElWsdl(null);
-    setWsdlPop(false);
-    setCheckedWsdl([]);
-    setWsdlSearch("");
-  };
-
-  const handleWsdlCheckbox = (val: any) => {
-    setCheckedWsdl((prevCheckedItems) => {
-      if (prevCheckedItems?.includes(val)) {
-        return prevCheckedItems?.filter((filterVal: any) => filterVal !== val);
-      } else {
-        return [...prevCheckedItems, val];
-      }
-    });
-  };
-
-  const handleSelectAllChecked = (event: any) => {
-    if (event?.target?.checked) {
-      setCheckedWsdl(filteredSoapOperations);
-    } else {
-      setCheckedWsdl([]);
-    }
-  };
-
-  const isAllChecked =
-    filteredSoapOperations &&
-    checkedWsdl?.length === filteredSoapOperations?.length;
-
-  const handleSaveContinueWsdlPop = () => {
-    console.log("CheckedWsdlVal: ", checkedWsdl);
-    const idValues = checkedWsdl?.map((val: any) => val?.id);
-
-    if (idValues && idValues?.length > 0) {
-      let requestData = {
-        id: idValues,
-        collection_id: collectionIdVal,
-      };
-
-      dispatch(CreateSoapOperations(requestData))
-        .unwrap()
-        .then((createSoapRes: any) => {
-          console.log("CreateSoapRes: ", createSoapRes);
-          if (createSoapRes === "wsdl operation status updated successfully.") {
-            // router.push(
-            //   `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations`
-            // );
-          } else {
-            toast?.error("An error occured in the Soap Creation");
-          }
-        })
-        .catch((error: any) => {
-          console.log("Error: ", error);
-        });
-    } else {
-      toast?.error("Select atleast 1 operation to continue further!");
-    }
-  };
-
   const handleBackgroundUrlList = () => {
     // dispatch(BackgroundUrlList("ccd743827c4f4f07be7ac6c54654abf0"))
     dispatch(BackgroundUrlList(operationId))
@@ -1962,64 +1139,43 @@ export default function OperationsPage(props: any) {
       });
   };
 
-  const handleWsdlOperations = (collectionIdValue: any) => {
-    dispatch(GetWsdlOperByCollId(collectionIdValue))
-      .unwrap()
-      .then((wsdlRes: any) => {
-        console.log(wsdlRes, "wsdlRes");
-        setSoapOperations(wsdlRes);
-      })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
-  };
-
   const handleBtnClick = (val: any) => {
     setBtnValue(val);
   };
 
-  //predefined values
+  useEffect(() => {
+    if (collectionIdVal !== undefined) {
+      dispatch(GetCollectionById(collectionIdVal))
+        .unwrap()
+        .then((res: any) => {
+          setCollectionDetails({
+            user_id: userProfile?.user?.user_id,
+            collection_id: res?.collections_id,
+            project_id: res?.project_id,
+            stage_id: apiStageId,
+            name: res?.name,
+            type: res?.type,
+            base_url: res?.base_url,
+            web_service_authentication: res?.web_service_authentication,
+            description: res?.description,
+            status: "ACTIVE",
+            service_type: res?.service_type || serviceVal,
+            wsdl_url: res?.wsdl_url,
+            version: "1.0",
+            activeVersionID: "null",
+            active_vesion: "null",
+          });
+        })
+        .catch((error: any) => {
+          console.log("collectionResponseError: ", error);
+          if (error?.message === "UNAUTHORIZED") {
+            dispatch(updateSessionPopup(true));
+          }
+        });
+    }
 
-  const navLinks = [
-    {
-      label: `${translate("apiManagement.BODY")}`,
-      id: "body",
-      active: `${translate("apiManagement.BODY")}` === valLabel,
-    },
-    {
-      label: `${translate("apiManagement.HEADER")}`,
-      id: "header",
-      active: `${translate("apiManagement.HEADER")}` === valLabel,
-    },
-    {
-      label: `${translate("apiManagement.AUTHORIZATION")}`,
-      id: "authorization",
-      active: `${translate("apiManagement.AUTHORIZATION")}` === valLabel,
-    },
-    {
-      label: `${translate("apiManagement.QUERY_PARAMETERS")}`,
-      id: "queryParameters",
-      active: `${translate("apiManagement.QUERY_PARAMETERS")}` === valLabel,
-    },
-  ];
-
-  console.log(
-    collectionDetails,
-    operationDetails,
-    singleOperationData,
-    "CollectionOperationDetails"
-  );
-
-  //useEffect
-
-  // useEffect(() => {
-  //   setCollectionDetails(
-  //     location ===
-  //       `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}`
-  //       ? singleCollectionData
-  //       : collectionDetails
-  //   );
-  // }, [singleCollectionData, location]);
+    setSaveGetResponseClicked(false);
+  }, [collectionIdVal, operationId, location]);
 
   useEffect(() => {
     if (operationLists?.length > 0 && operationId !== undefined) {
@@ -2067,151 +1223,16 @@ export default function OperationsPage(props: any) {
         setRowsQueryParameters([...val?.operation_queryparamaeters]);
         setRowsOutput([]);
 
-        //for map
         return null;
       });
     }
   }, [singleOperationData, operationId]);
-
-  // useEffect(() => {
-  //   if (collectionIdVal !== undefined) {
-  //     dispatch(GetCollectionById(collectionIdVal))
-  //       .unwrap()
-  //       .then((res: any) => {
-  //         console.log(res, "collectionResponse");
-  //         setCollectionDetails({
-  //           user_id: userProfile?.user?.user_id,
-  //           collection_id: res?.collections_id,
-  //           project_id: res?.project_id,
-  //           stage_id: apiStageId,
-  //           name: res?.name,
-  //           type: res?.type,
-  //           base_url: res?.base_url,
-  //           web_service_authentication: res?.web_service_authentication,
-  //           description: res?.description,
-  //           status: "ACTIVE",
-  //           service_type: res?.service_type || serviceVal,
-  //           wsdl_url: res?.wsdl_url,
-  //           version: "1.0",
-  //           activeVersionID: "null",
-  //           active_vesion: "null",
-  //         });
-  //       })
-  //       .catch((error: any) => {
-  //         console.log("collectionResponseError: ", error);
-  //         if (error?.message === "UNAUTHORIZED") {
-  //           dispatch(updateSessionPopup(true));
-  //         }
-  //       });
-  //   }
-
-  //   setSaveGetResponseClicked(false);
-  // }, [collectionIdVal, operationId, location]);
-
-  // useEffect(() => {
-  //   if (
-  //     location ===
-  //     `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections`
-  //   ) {
-  //   } else if (
-  //     location ===
-  //     `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}`
-  //   ) {
-  //     setServiceVal(currentServiceType);
-  //   } else {
-  //     setServiceVal("");
-  //   }
-
-  //   if (
-  //     location ===
-  //     `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations/${operationId}`
-  //   ) {
-  //     setSaveAddBtnClicked(true);
-  //   }
-  // }, [currentServiceType, location]);
 
   useEffect(() => {
     if (saveGetResponseData?.operationOutputs !== undefined) {
       setRowsOutput(saveGetResponseData?.operationOutputs);
     }
   }, [saveGetResponseData]);
-
-  // useEffect(() => {
-  //   if (
-  //     location ===
-  //     `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections/${collectionIdVal}/operations`
-  //   ) {
-  //     setOperationDetails({
-  //       user_id: userProfile?.user?.user_id,
-  //       collections_id: collectionIdVal,
-  //       operation_id: operationId,
-  //       name: "",
-  //       description: "",
-  //       passThroughForHeaders: true,
-  //       passThroughForOutputs: true,
-  //       passThroughForInputs: true,
-  //       passThroughForAuthorization: "null",
-  //       passthroughqueryparameteres: "null",
-  //       status: "ACTIVE",
-  //       security_type: "Authenticated App Users",
-  //       serviceType: "",
-  //       soap_action: "null",
-  //       soap_version: "null",
-  //       endpoint_url: collectionDetails?.base_url,
-  //       response_encoding: "null",
-  //       server_auth_mode: "null",
-  //       binding_name: "null",
-  //       soap_input_message: "null",
-  //       http_method: "GET",
-  //       method_name: "",
-  //       operationHeaders: "",
-  //       operationInputs: "",
-  //       operation_authorization: "",
-  //       operationQueryparameters: "",
-  //       operationOutputs: "",
-  //       service_type: "",
-  //       publish_name: "null",
-  //       passThroughPayload: "null",
-  //       passThroughHeaders: "null",
-  //       passThrough_Cookies: "No",
-  //       generate_MockDate: "No",
-  //       endpoint_status: "",
-  //       private_or_public: "",
-  //       input_type: "FORM_DATA",
-  //       raw_payload: "null",
-  //       raw_output: "null",
-  //     });
-
-  //     setRowsBody([]);
-  //     setRowsHeader([]);
-  //     setRowsAuthorization([]);
-  //     setRowsQueryParameters([]);
-  //     setRowsOutput([]);
-  //   }
-
-  //   if (
-  //     location ===
-  //     `/userId/${userProfile?.user?.user_id}/workspaceId/${currentWorkspace?.id}/projects/${currentEnvironment}/collections`
-  //   ) {
-  //     setCollectionDetails({
-  //       user_id: userProfile?.user?.user_id,
-  //       collection_id: collectionIdVal,
-  //       project_id: currentEnvironment,
-  //       stage_id: apiStageId,
-  //       name: "",
-  //       type: "OWNER",
-  //       base_url: "",
-  //       web_service_authentication: "NONE",
-  //       description: "",
-  //       status: "ACTIVE",
-  //       service_type: serviceVal,
-  //       wsdl_url: "",
-  //       version: "1.0",
-  //       activeVersionID: "null",
-  //       active_vesion: "null",
-  //     });
-  //   }
-  // }, [location]);
 
   useEffect(() => {
     if (saveGetResponseClicked) {
@@ -2223,8 +1244,6 @@ export default function OperationsPage(props: any) {
           behavior: "smooth",
         });
       }
-    } else {
-      //  window.scrollTo({ behaviour: "smooth", top: 0 });
     }
   }, [saveGetResponseClicked]);
 
@@ -2237,50 +1256,12 @@ export default function OperationsPage(props: any) {
       if (changeOccuredColl === true || changeOccuredOper === true) {
         setChangeUrlDialog(true);
         setInvalidIdValues(false);
-        // router.push(`${currentLocation}`);
       } else {
         setCurrentLocation("");
         setChangeUrlDialog(false);
       }
     }
   }, [location]);
-
-  // useEffect(() => {
-  //   if (
-  //     currentEnvironment !== undefined &&
-  //     locationVal[6] !== undefined &&
-  //     !location.includes("/design-api")
-  //   ) {
-  //     if (currentEnvironment !== locationVal[6]) {
-  //       setInvalidIdValues(true);
-  //     } else {
-  //       if (collectionIdVal !== undefined && locationVal[8] !== undefined) {
-  //         if (collectionIdVal !== locationVal[8]) {
-  //           if (changeUrlDialog === true) {
-  //             setInvalidIdValues(false);
-  //           } else {
-  //             setInvalidIdValues(true);
-  //           }
-  //         } else {
-  //           if (locationVal[9] !== undefined) {
-  //             if (locationVal[9] !== "operations") {
-  //               setOpertionSpellValidation(true);
-  //             }
-  //           }
-  //           if (operationIdVal !== undefined && locationVal[10] !== undefined) {
-  //             if (operationIdVal !== locationVal[10]) {
-  //               if (changeUrlDialog === true) {
-  //                 setInvalidIdValues(false);
-  //               } else {
-  //                 setInvalidIdValues(true);
-  //               }
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }, [location]);
 
   useEffect(() => {
     dispatch(GetAllStagesByProjectId(currentEnvironment))
@@ -2305,7 +1286,6 @@ export default function OperationsPage(props: any) {
     dispatch(GetOperationById(data))
       .unwrap()
       .then((res: any) => {
-        console.log(res, "OPerationResponse");
         res?.map((val: any) => {
           setOperationDetails({
             operationId: val?.id,
@@ -2347,7 +1327,6 @@ export default function OperationsPage(props: any) {
           setRowsHeader([...val?.operationHeaders]);
           setRowsAuthorization([...val?.operation_Authorizations]);
           setRowsQueryParameters([...val?.operation_queryparamaeters]);
-          //for map function in order to return
           return null;
         });
         setChangeOccuredColl(false);
@@ -2360,8 +1339,6 @@ export default function OperationsPage(props: any) {
         }
       });
   }, [operationIdVal]);
-
-  console.log("operationDetails: ", operationDetails);
 
   if (operationSpellValidation) {
     return <PageNotFound />;
@@ -2396,7 +1373,6 @@ export default function OperationsPage(props: any) {
             <Stack
               direction={"row"}
               sx={{
-                // width: "100%",
                 alignItems: "center",
                 justifyContent: "space-between",
                 marginBottom: "15px",
@@ -2410,84 +1386,6 @@ export default function OperationsPage(props: any) {
                   gap: "30px",
                 }}
               >
-                {/* <>
-                {operationDetails?.endpoint_status?.trim() !== "" && (
-                  <SecondaryTypography
-                    style={
-                      {
-                        // // color:
-                        // //   operationDetails?.endpoint_status === "NORMAL"
-                        // //     ? "#0055ff"
-                        // //     : operationDetails?.endpoint_status === "SHADOW"
-                        // //     ? "#808080"
-                        // //     : operationDetails?.endpoint_status === "ZOMBIE"
-                        // //     ? "#cc6600"
-                        // //     : "",
-                        // borderRadius: "5px",
-                        // display: "inline-block",
-                        // padding:
-                        //   operationDetails?.endpoint_status === "NORMAL" ||
-                        //   operationDetails?.endpoint_status === "SHADOW" ||
-                        //   operationDetails?.endpoint_status === "ZOMBIE"
-                        //     ? "5px"
-                        //     : "",
-                        // transition: "background-color 0.3s, box-shadow 0.3s",
-                      }
-                    }
-                  >
-                    {operationDetails?.endpoint_status === "NORMAL" ||
-                    operationDetails?.endpoint_status === "null" ? (
-                      <>
-                        <span>
-                          <CheckCircleIcon
-                            style={{
-                              fontSize: "12px",
-                              marginRight: "3px",
-                              color: `#0055ff`,
-                              fontWeight: 900,
-                            }}
-                          />
-                          {`Marked as Established`}
-                        </span>
-                      </>
-                    ) : operationDetails?.endpoint_status === "SHADOW" ? (
-                      <>
-                        <span>
-                          <InfoIcon
-                            style={{
-                              fontSize: "15px",
-                              marginRight: "3px",
-                              color: "#808080",
-                              fontWeight: 900,
-                            }}
-                          />
-                          {`Marked as ${capitalizeFirstLetter(
-                            operationDetails?.endpoint_status
-                          )}`}
-                        </span>
-                      </>
-                    ) : operationDetails?.endpoint_status === "ZOMBIE" ? (
-                      <>
-                        <span>
-                          <WarningIcon
-                            style={{
-                              fontSize: "15px",
-                              marginRight: "3px",
-                              color: `#cc6600`,
-                              fontWeight: 900,
-                            }}
-                          />
-                          {`Marked as ${capitalizeFirstLetter(
-                            operationDetails?.endpoint_status
-                          )}`}
-                        </span>
-                      </>
-                    ) : (
-                      ""
-                    )}
-                  </SecondaryTypography>
-                )}
-              </> */}
                 <Box
                   sx={{
                     margin: "20px 0px",
@@ -2534,7 +1432,6 @@ export default function OperationsPage(props: any) {
                   fullWidth={true}
                   height="50px"
                   value={operationDetails?.name}
-                  // value="getUsers"
                   margin="10px 0px"
                   onChangeHandler={(e: any) => {
                     let name = e.target.value;
@@ -2640,19 +1537,6 @@ export default function OperationsPage(props: any) {
                       disabled={true}
                       disabledColor="#ACAAB3"
                       value={operationDetails?.endpoint_url}
-                      // value="getUsers"
-                      // margin="10px 0px"
-
-                      // onKeyUp={(event: any) => {
-                      //   if (event?.key === "Enter") {
-                      //     // dispatch(updateTourStep(tourStep + 1));
-                      //     handleOperationValidation("operationName");
-                      //   }
-                      // }}
-                      // error={errorApiOperationName}
-                      // errorHandler={(error: any) =>
-                      //   setErrorApiOperationName(error)
-                      // }
                     />
                   </Box>
                 </Grid>
@@ -2665,8 +1549,6 @@ export default function OperationsPage(props: any) {
                       height="50px"
                       border="none"
                       value={operationDetails?.method_name}
-                      // value="getUsers"
-                      // margin="10px 0px"
                       onChangeHandler={(e: any) => {
                         let methodName = e.target.value;
                         handleOperationDetails("method_name", methodName);
@@ -2677,10 +1559,6 @@ export default function OperationsPage(props: any) {
                           handleOperationValidation("operationUrl");
                         }
                       }}
-                      //  error={errorApiOperationUrl}
-                      //     errorHandler={(error: any) =>
-                      //       setErrorApiOperationUrl(error)
-                      //     }
                     />
                   </Box>
                 </Grid>
@@ -2695,8 +1573,7 @@ export default function OperationsPage(props: any) {
                         fontSize: "0.7rem",
                         fontWeight: 600,
                         fontFamily: "FiraSans-regular",
-                        // borderTopRightRadius: "10px",
-                        // borderBottomRightRadius: "10px",
+
                         "& .MuiOutlinedInput-notchedOutline": {
                           border: "none",
                         },
@@ -2727,12 +1604,10 @@ export default function OperationsPage(props: any) {
               lg: "row",
               xl: "row",
             }}
-            // spacing={{ xs: 0, sm: 0, md: 0, lg: 10, xl: 10 }}
             sx={{
               display: "flex",
               alignItems: "center",
               marginTop: "15px",
-              // justifyContent: "space-between",
             }}
           >
             <Grid size={{ xs: 12, sm: 12, md: 12, lg: 4, xl: 4 }}>
@@ -2937,7 +1812,6 @@ export default function OperationsPage(props: any) {
                 background={btnValue === item ? "#7A43FE" : "transparent"}
                 color={btnValue === item ? "#EEEEEE" : "#FFFFFF"}
                 border="1px solid"
-                // borderColor={btnValue === item ? "#7A43FE" : "#7946FD"}
                 borderColor={btnValue === item ? "#7A43FE" : "#F3F3F340"}
                 fontWeight={btnValue === item ? 600 : 400}
                 radius="8px"
@@ -2958,31 +1832,6 @@ export default function OperationsPage(props: any) {
               <>
                 <Grid container spacing={10} alignItems="center">
                   <Grid size={{ xs: 12 }} className="pr-0">
-                    {/* {navLinks?.map((nav, index) => (
-                      <>
-                        <StyledNavItem
-                          key={nav?.id}
-                          className={nav?.active ? "active" : ""}
-                          onClick={() => {
-                            navLinkHandler(nav?.id, nav?.label);
-                            setEnablePassThrough(false);
-                          }}
-                        >
-                          <SecondaryTypography
-                            style={{
-                              textTransform: "none",
-                              marginLeft: "10px",
-                              color: nav.active ? `#FFFFFF` : "#acaab3",
-                              fontWeight: 300,
-                              fontSize: "15px",
-                            }}
-                          >
-                            {nav?.label}
-                          </SecondaryTypography>
-                        </StyledNavItem>
-                      </>
-                    ))} */}
-
                     <Tabs
                       value={activeTab}
                       onChange={handleTabChange}
@@ -3065,7 +1914,6 @@ export default function OperationsPage(props: any) {
                                 {translate("apiManagement.ENABLE_PASS_THROUGH")}
                               </SecondaryTypography>
                               <RadioCheckboxComponent
-                                // radioButton
                                 fontSize="15px"
                                 buttonWidth="15px"
                                 buttonColor={
@@ -3107,7 +1955,6 @@ export default function OperationsPage(props: any) {
                                       )}
                                     </SecondaryTypography>
                                     <RadioCheckboxComponent
-                                      // radioButton
                                       buttonWidth="15px"
                                       fontSize="15px"
                                       buttonColor={
@@ -3280,8 +2127,6 @@ export default function OperationsPage(props: any) {
                         buttonType="primary"
                         fontSize="15px"
                         label={`Add ${valLabel} Row`}
-                        // background={`${theme.palette.LGrayishBlue.main}`}
-                        // icon={
                         icon={
                           <AddIcon
                             style={{
@@ -3301,7 +2146,6 @@ export default function OperationsPage(props: any) {
                             fontSize="15px"
                             label={`Delete row`}
                             background="transparent"
-                            // icon={
                             icon={
                               <DeleteIcon
                                 style={{
@@ -3340,18 +2184,15 @@ export default function OperationsPage(props: any) {
                             borderRight: "1.5px solid #F3F3F340",
                           }}
                         >
-                          {/* <OperationTable  headers={columns} /> */}
                           <GDataGrid
                             hideFooter
                             checkboxSelection
                             dataGridType={"primary"}
-                            // editMode='row'
                             columns={columns}
                             rows={rowsBody}
                             disableColumnMenu={true}
                             fontSize="0.6rem"
                             fontWeight={800}
-                            // backgroundColor="transparent"
                             color={`black`}
                             onRowSelect={(val: any) => {
                               handleRowDelete(val);
@@ -3375,11 +2216,9 @@ export default function OperationsPage(props: any) {
                             dataGridType={"primary"}
                             columns={columns}
                             rows={rowsHeader}
-                            // editMode='row'
                             disableColumnMenu={true}
                             fontSize="0.6rem"
                             fontWeight={800}
-                            // backgroundColor="transparent"
                             color={`black`}
                             onRowSelect={(val: any) => {
                               handleRowDelete(val);
@@ -3414,11 +2253,9 @@ export default function OperationsPage(props: any) {
                             dataGridType={"primary"}
                             columns={columns}
                             rows={rowsAuthorization}
-                            // editMode='row'
                             disableColumnMenu={true}
                             fontSize="0.6rem"
                             fontWeight={800}
-                            // backgroundColor="transparent"
                             color={`black`}
                             onRowSelect={(val: any) => {
                               handleRowDelete(val);
@@ -3454,11 +2291,9 @@ export default function OperationsPage(props: any) {
                             dataGridType={"primary"}
                             columns={columns}
                             rows={rowsQueryParameters}
-                            // editMode='row'
                             disableColumnMenu={true}
                             fontSize="0.6rem"
                             fontWeight={800}
-                            // backgroundColor="transparent"
                             color={`black`}
                             onRowSelect={(val: any) => {
                               handleRowDelete(val);
@@ -3495,7 +2330,6 @@ export default function OperationsPage(props: any) {
                             buttonType="secondary"
                             label={`Add ${valLabel} Row`}
                             background={`${theme.palette.LGrayishBlue.main}`}
-                            // icon={
                             icon={
                               <AddIcon
                                 style={{
@@ -3514,7 +2348,6 @@ export default function OperationsPage(props: any) {
                                 buttonType="secondary"
                                 label={`Delete row`}
                                 background={`${theme.palette.LGrayishBlue.main}`}
-                                // icon={
                                 icon={
                                   <DeleteIcon
                                     style={{
@@ -3549,18 +2382,15 @@ export default function OperationsPage(props: any) {
                                       overflow: "auto",
                                     }}
                                   >
-                                    {/* <OperationTable  headers={columns} /> */}
                                     <GDataGrid
                                       hideFooter
                                       checkboxSelection
                                       dataGridType={"primary"}
-                                      // editMode='row'
                                       columns={columns}
                                       rows={rowsBody}
                                       disableColumnMenu={true}
                                       fontSize="0.6rem"
                                       fontWeight={800}
-                                      // backgroundColor="transparent"
                                       color={`black`}
                                       onRowSelect={(val: any) => {
                                         handleRowDelete(val);
@@ -3585,11 +2415,9 @@ export default function OperationsPage(props: any) {
                                       dataGridType={"primary"}
                                       columns={columns}
                                       rows={rowsHeader}
-                                      // editMode='row'
                                       disableColumnMenu={true}
                                       fontSize="0.6rem"
                                       fontWeight={800}
-                                      // backgroundColor="transparent"
                                       color={`black`}
                                       onRowSelect={(val: any) => {
                                         handleRowDelete(val);
@@ -3631,11 +2459,9 @@ export default function OperationsPage(props: any) {
                                       dataGridType={"primary"}
                                       columns={columns}
                                       rows={rowsAuthorization}
-                                      // editMode='row'
                                       disableColumnMenu={true}
                                       fontSize="0.6rem"
                                       fontWeight={800}
-                                      // backgroundColor="transparent"
                                       color={`black`}
                                       onRowSelect={(val: any) => {
                                         handleRowDelete(val);
@@ -3679,11 +2505,9 @@ export default function OperationsPage(props: any) {
                                       dataGridType={"primary"}
                                       columns={columns}
                                       rows={rowsQueryParameters}
-                                      // editMode='row'
                                       disableColumnMenu={true}
                                       fontSize="0.6rem"
                                       fontWeight={800}
-                                      // backgroundColor="transparent"
                                       color={`black`}
                                       onRowSelect={(val: any) => {
                                         handleRowDelete(val);
@@ -3726,7 +2550,6 @@ export default function OperationsPage(props: any) {
                                       height: "400px",
                                       fontSize: "15px",
                                     }}
-                                    // minRows={10}
                                     placeholder=""
                                     value={showTemplateDescription}
                                     onChange={(e: any) => {
@@ -3776,18 +2599,8 @@ export default function OperationsPage(props: any) {
                 marginTop: "10px",
               }}
             >
-              {/* <GButton
-                buttonType="primary"
-                fontSize="13px"
-                color={`#FFFFFF`}
-                label={`${translate("apiManagement.CANCEL")}`}
-                margin={"10px"}
-                background="transparent"
-                onClickHandler={handleCancelOperation}
-              /> */}
               <GButton
                 buttonType="primary"
-                // background={`${theme.palette.v2PrimaryColor.main}`}
                 fontSize="13px"
                 label={`${translate("apiManagement.SAVE")}`}
                 margin={"10px"}
@@ -3801,7 +2614,6 @@ export default function OperationsPage(props: any) {
               >
                 <GButton
                   buttonType="primary"
-                  // background={`${theme.palette.v2PrimaryColor.main}`}
                   fontSize="13px"
                   label={`${translate("apiManagement.SAVE_GET_RESPONSE")}`}
                   margin={"10px"}
@@ -3814,9 +2626,7 @@ export default function OperationsPage(props: any) {
           </Grid>
           <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
             {(saveAndGetResponseLoading || testLoading) && <GlobalLoader />}
-            {/* {testLoading && (
-              <GlobalCircularLoader open={testLoading} isBackdrop={true} />
-            )} */}
+
             <div ref={scrollableContentRef}>
               {saveGetResponseClicked === true && (
                 <div className="api_operation_saveGetResponse">
@@ -3832,7 +2642,7 @@ export default function OperationsPage(props: any) {
                         width: "100%",
                         height: "100%",
                         background: "rgba(255, 255, 255, 0.15)",
-                        // background: "#E2E8F0",
+
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
@@ -3920,7 +2730,6 @@ export default function OperationsPage(props: any) {
                           </PrimaryTypography>
                           <div
                             style={{
-                              // background: "#F1F5F9",
                               background: "#362F47",
                               marginTop: "10px",
                               padding: "5px 10px",

@@ -67,6 +67,10 @@ import { debounce, method } from "lodash";
 import AceEditorComponent from "@/app/apiflow_components/WorkflowComponents/AceEditor/aceEditor";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import { useWorkflowStore } from "@/app/store/useWorkflowStore";
+import { checkConnections } from "@/app/hooks/workflow/helperFunctions";
+import useNodes from "@/app/hooks/workflow/useNodes";
+import { BiCopy } from "react-icons/bi";
+import { BiCut } from "react-icons/bi";
 
 type YDoc = Y.Doc;
 
@@ -105,110 +109,6 @@ export const TertiaryTypogrpahy = styled(Typography)`
   font-size: 12px;
 `;
 
-const extractAllVariables = (inputString: any) => {
-  const variablePattern = /\{response\.([^\}\.]+)(?:\.[^\}]*)?\}/g;
-  const variables = [];
-  let match;
-
-  while ((match = variablePattern.exec(inputString)) !== null) {
-    variables.push(match[1]); // Extracted variable name
-  }
-
-  return variables;
-};
-
-const checkConnections = (
-  node_id: string,
-  request_variable: string,
-  current_node: string,
-  edgesArray: any,
-  nodesArray: any,
-  ydoc: YDoc | null,
-  apiFlowId: string,
-  user_id: string
-) => {
-  let matches = extractAllVariables(request_variable);
-
-  for (const match of matches) {
-    for (const node of nodesArray) {
-      if (node.type !== "startButtonNode" && node.data) {
-        const nodeData = JSON.parse(node.data);
-        if (nodeData.node_name === match) {
-          let update_data = nodeData.id;
-          let existingEdge = edgesArray.find(
-            (x: any) => x.source === update_data && x.target === node_id
-          );
-
-          if (!existingEdge) {
-            addEdges_new(ydoc, node_id, update_data, apiFlowId, user_id);
-            return {
-              error: "",
-            };
-          } else {
-            return {
-              error: "",
-            };
-
-            // return {
-            //   error: existingEdge
-            //     ? ""
-            //     : `Edge from ${current_node} to ${nodeData.node_name} not found.`,
-            // };
-          }
-        }
-      }
-    }
-  }
-
-  return { error: "" };
-};
-
-const addEdges_new = (
-  ydoc: YDoc | null,
-  target_node: any,
-  source_node: any,
-  apiFlowId: string,
-  user_id: string
-) => {
-  let id = uuidv4();
-  const storedVersionValue = sessionStorage.getItem("versionValue");
-  let edge = {
-    // ...params,
-    flow_id: apiFlowId,
-    created_by: user_id,
-    id: id,
-    animated: true,
-    version: storedVersionValue,
-    name: "null",
-    status: "null",
-    source: source_node,
-    sourceHandle: source_node + "_success",
-    target: target_node,
-    targetHandle: target_node + "_input",
-    style: {
-      //   stroke: "#4CAF50",
-      stroke: "#55CCFF",
-    },
-    type: "buttonEdge",
-  };
-
-  let updatedEdge: any = {
-    action: "ADD_EDGES",
-    status: "null",
-    flow_id: apiFlowId,
-    id: id,
-    edges: edge,
-  };
-
-  // setEdges([...edges, edge]);
-  const edgeMap = ydoc ? ydoc?.getMap<any>("edges") : null;
-  if (edgeMap) {
-    edgeMap.set(updatedEdge.id, updatedEdge);
-  } else {
-    console.log("Yjs Map 'edgeMap' is not initialized.");
-  }
-};
-
 export default function WorkflowOperationNode({ data }: any) {
   //--------------------variable declarations-----------------------------------------
   const { deleteElements, getEdges, getNode, getNodes } = useReactFlow();
@@ -237,6 +137,17 @@ export default function WorkflowOperationNode({ data }: any) {
     (state) => state.common
   );
 
+  const {
+    addFlowId,
+    removeFlowId,
+    selectedFlowIds,
+    setNodeFunction,
+    copyClicked,
+    setCopyClicked,
+    setCutClicked,
+  } = useWorkflowStore();
+
+  const { isValidConnection, onClick } = useNodes({ nodeData });
   //-----------------------------useState-------------------------------------------------------
   const [headers, setHeaders] = useState<any>(
     nodeData?.operations_header ? [...nodeData?.operations_header] : []
@@ -301,94 +212,6 @@ export default function WorkflowOperationNode({ data }: any) {
         return null;
       }
     }
-  }
-  const { setNodeFunction } = useWorkflowStore();
-  const onClick = useCallback(() => {
-    const nodeToRemoveId = nodeData?.id;
-    // Find edges connected to the node being removed
-    const edgesToRemove = getEdges().filter(
-      (edge) => edge.source === nodeToRemoveId || edge.target === nodeToRemoveId
-    );
-
-    const payload = {
-      nodes: [{ id: nodeToRemoveId }], // Node to be removed
-      edges: edgesToRemove.map((edge) => ({ id: edge.id })), // Edges connected to the node
-    };
-
-    // Delete the node and its associated edges
-    // deleteElements(payload);
-
-    let updatedNode: any = {
-      action: "DELETE_NODES",
-      status: "null",
-      id: nodeToRemoveId,
-      // flow_id: apiFlowId,
-      nodes: {
-        id: nodeToRemoveId,
-      },
-    };
-
-    const edgeMap = flowYdoc?.getMap<any>("edges");
-    if (edgeMap) {
-      edgesToRemove.forEach((edge) => {
-        let updatedEdge: any = {
-          action: "DELETE_EDGES",
-          status: "null",
-          // flow_id: apiFlowId,
-          edges: { id: edge.id }, // Assuming edge.id is the id of the current edge
-        };
-        edgeMap.set(edge.id, updatedEdge); // Assuming edge.id is the key
-      });
-    } else {
-      console.log("Yjs Map 'edges' is not initialized.");
-    }
-
-    const nodesMap = flowYdoc?.getMap<any>("nodes");
-    if (nodesMap) {
-      nodesMap?.set(nodeToRemoveId, updatedNode);
-      setNodeFunction({
-        id: nodeToRemoveId,
-        method: "DELETE_NODES",
-        obj: null,
-      });
-    } else {
-      console.log("Yjs Map 'run' is not initialized.");
-    }
-  }, [nodeData?.id, deleteElements, getEdges]);
-
-  function isValidConnection(connection: Connection) {
-    const { source, target } = connection;
-
-    //   const isTargetConnected = getEdges().some((edge) => edge.target === target);
-    //   if (isTargetConnected) {
-    //     return false;
-    //   }
-
-    // Check if the source and target are the same
-    if (source === target) {
-      return false;
-    }
-
-    // Check if the target handle is already connected to a source handle with "_startHandle"
-    const isTargetConnectedToStartHandle = getEdges().some(
-      (edge) =>
-        edge.target === target && edge?.sourceHandle?.includes("_startHandle")
-    );
-
-    if (isTargetConnectedToStartHandle) {
-      // If the target is already connected to a "_startHandle", prevent any new connections
-      return false;
-    }
-
-    // Check if the source handle is already connected to the target handle
-    const isSourceConnectedToTarget = getEdges().some(
-      (edge) => edge.target === source && edge.source === target
-    );
-    if (isSourceConnectedToTarget) {
-      return false;
-    }
-
-    return true;
   }
 
   // const handleInputDataFromAceEditor = useCallback(
@@ -1297,22 +1120,34 @@ export default function WorkflowOperationNode({ data }: any) {
     );
   }, [nodeData]);
 
-  const { addFlowId, removeFlowId, selectedFlowIds } = useGlobalStore();
   const nodeSelected = isEditable && selectedFlowIds?.includes(nodeData?.id);
   const selectedNodeData = getNode(nodeData?.id);
 
   const handleClickNode = (id: any) => {
     if (isEditable) {
+      const nodeMap = flowYdoc?.getMap<any>("nodes");
       if (selectedFlowIds?.includes(id)) {
         removeFlowId(id);
       } else {
         addFlowId(id);
+        // if (nodeMap) {
+        //   nodeMap?.set(nodeData?.id, {
+        //     ...nodeData,
+        //     dragger: userProfile?.user?.email,
+        //   });
+        // }
+        if (nodeMap) {
+          nodeMap?.set(id, {
+            ...nodeMap.get(id),
+            dragger: userProfile?.user?.email,
+          });
+        }
       }
     }
   };
 
   // Handle click outside the box
-  const handleClickOutside = (event: any) => {
+  const handleClickOutsideSelecto = (event: any) => {
     if (event.target.closest("#selectable-box") === null && isEditable) {
       removeFlowId(nodeData?.id);
     }
@@ -1326,129 +1161,154 @@ export default function WorkflowOperationNode({ data }: any) {
 
   useEffect(() => {
     // Add event listener to detect clicks outside the box
-    document.addEventListener("click", handleClickOutside);
+    // document.addEventListener("click", handleClickOutsideSelecto);
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener("click", handleClickOutside);
-      document.addEventListener("keydown", handleKeyDown);
+      // document.removeEventListener("click", handleClickOutsideSelecto);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isEditable]);
 
   return (
-    <Box
-      id="selectable-box"
-      sx={{
-        // minWidth: 200,
-        // minHeight: 120,
-        width: "230px",
-        height: "120px",
-        // borderColor: "#F3F3F340",
-        // backdropFilter: "blur(14.19)",
-        background: "rgba(243, 243, 243, 0.15)",
-        boxShadow: "inset 0px 4.73px 11.82px rgba(255, 255, 255, 0.17)",
-        backdropFilter: "blur(7.09px)", // Note: minimal browser support
-        borderRadius: "15px", // Rounded to 2 decimal places
-        // background: "transparent",
-        animation:
-          nextNode?.includes(nodeData?.id) ||
-          currentNodeRun ||
-          nodeSelected ||
-          selectedNodeData?.selected
-            ? "blinkShadow 3s infinite"
-            : "",
-        border:
-          currentResultRun?.status == "SUCCESS"
-            ? "2px solid #48C9B0"
-            : currentResultRun?.status == "FAILED"
-            ? "2px solid #FF5252"
-            : nodeSelected || selectedNodeData?.selected
-            ? // ? "2px solid rgba(122, 67, 254, 0.35)"
-              "2px solid white"
-            : "2px solid transparent",
-        transition: "border-color 0.3s ease-in-out",
-      }}
-      onClick={() => {
-        handleClickNode(nodeData?.id);
-      }}
-      // className="rounded"
-    >
-      {nodeData?.dragger && userProfile?.user?.email !== nodeData?.dragger && (
-        <div
-          style={{
-            position: "absolute",
-            top: "-20px",
-            left: "25px",
-            backgroundColor: "white",
-            padding: "3px",
-            borderRadius: "5px",
-            fontSize: "8px",
-            whiteSpace: "nowrap",
-            pointerEvents: "none",
-          }}
-        >
-          {nodeData?.dragger}
-        </div>
+    <Box>
+      {isEditable && selectedFlowIds?.includes(nodeData?.id) && (
+        <>
+          <BiCopy
+            style={{
+              marginRight: "10px",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setCopyClicked(true);
+            }}
+          />
+          <BiCut
+            style={{
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setCutClicked(true);
+            }}
+          />
+        </>
       )}
-
-      {backgroundUrlClicked === true && (
-        <div>
-          <Popover
-            open={backgroundUrlClicked}
-            anchorEl={backgroundUrlClicked || null}
-            onClose={() => {
-              setbackgroundUrlClicked(false);
-            }}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            sx={{
-              zIndex: 9999,
-              "& .MuiPaper-root": {
-                backgroundColor: theme.palette.signInUpWhite.main,
-                width: "400px",
-                height: "350px",
-                position: "absolute",
-                marginLeft: "10px",
-                top: "131px !important",
-              },
-            }}
-          >
+      <Box
+        id="selectable-box"
+        sx={{
+          // minWidth: 200,
+          // minHeight: 120,
+          width: "230px",
+          height: "120px",
+          // borderColor: "#F3F3F340",
+          // backdropFilter: "blur(14.19)",
+          background: "rgba(243, 243, 243, 0.15)",
+          boxShadow: "inset 0px 4.73px 11.82px rgba(255, 255, 255, 0.17)",
+          backdropFilter: "blur(7.09px)", // Note: minimal browser support
+          borderRadius: "15px", // Rounded to 2 decimal places
+          // background: "transparent",
+          animation:
+            nextNode?.includes(nodeData?.id) ||
+            currentNodeRun ||
+            nodeSelected ||
+            selectedNodeData?.selected
+              ? "blinkShadow 3s infinite"
+              : "",
+          border:
+            currentResultRun?.status == "SUCCESS"
+              ? "2px solid #48C9B0"
+              : currentResultRun?.status == "FAILED"
+              ? "2px solid #FF5252"
+              : nodeSelected ||
+                selectedNodeData?.selected ||
+                selectedFlowIds.includes(nodeData?.id)
+              ? // ? "2px solid rgba(122, 67, 254, 0.35)"
+                "2px solid white"
+              : "2px solid transparent",
+          transition: "border-color 0.3s ease-in-out",
+        }}
+        onClick={() => {
+          handleClickNode(nodeData?.id);
+        }}
+        // className="rounded"
+      >
+        {nodeData?.dragger &&
+          userProfile?.user?.email !== nodeData?.dragger && (
             <div
               style={{
-                padding: "20px",
+                position: "absolute",
+                top: "-20px",
+                left: "25px",
+                backgroundColor: "white",
+                padding: "3px",
+                borderRadius: "5px",
+                fontSize: "8px",
+                whiteSpace: "nowrap",
+                pointerEvents: "none",
               }}
             >
-              <CloseIcon
-                style={{
-                  width: "10px",
-                  height: "10px",
-                  position: "absolute",
-                  top: "18px",
-                  right: "18px",
-                  cursor: "pointer",
-                  zIndex: "1",
-                  color: `${theme.palette.primaryBlack.main}`,
-                  marginBottom: "10px",
-                }}
-                onClick={() => {
-                  setbackgroundUrlClicked(false);
-                }}
-              />
-              <HeadingTypography
-                style={{ color: `${theme.palette.DarkBlack.main}` }}
-              >
-                Operation Details
-              </HeadingTypography>
+              {nodeData?.dragger}
+            </div>
+          )}
 
+        {backgroundUrlClicked === true && (
+          <div>
+            <Popover
+              open={backgroundUrlClicked}
+              anchorEl={backgroundUrlClicked || null}
+              onClose={() => {
+                setbackgroundUrlClicked(false);
+              }}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              sx={{
+                zIndex: 9999,
+                "& .MuiPaper-root": {
+                  backgroundColor: theme.palette.signInUpWhite.main,
+                  width: "400px",
+                  height: "350px",
+                  position: "absolute",
+                  marginLeft: "10px",
+                  top: "131px !important",
+                },
+              }}
+            >
               <div
                 style={{
-                  padding: "10px",
+                  padding: "20px",
                 }}
               >
-                <pre>
-                  <TextTypography>
-                    {`. Location: ${operationDetails?.location}\n
+                <CloseIcon
+                  style={{
+                    width: "10px",
+                    height: "10px",
+                    position: "absolute",
+                    top: "18px",
+                    right: "18px",
+                    cursor: "pointer",
+                    zIndex: "1",
+                    color: `${theme.palette.primaryBlack.main}`,
+                    marginBottom: "10px",
+                  }}
+                  onClick={() => {
+                    setbackgroundUrlClicked(false);
+                  }}
+                />
+                <HeadingTypography
+                  style={{ color: `${theme.palette.DarkBlack.main}` }}
+                >
+                  Operation Details
+                </HeadingTypography>
+
+                <div
+                  style={{
+                    padding: "10px",
+                  }}
+                >
+                  <pre>
+                    <TextTypography>
+                      {`. Location: ${operationDetails?.location}\n
      URL Type: ${
        !operationDetails?.private_or_public ||
        operationDetails?.private_or_public === "null"
@@ -1467,51 +1327,51 @@ export default function WorkflowOperationNode({ data }: any) {
         ? operationDetails?.endpoint_status
         : "-"
     }\n`}
-                  </TextTypography>
-                </pre>
+                    </TextTypography>
+                  </pre>
 
-                <TextTypography
-                  style={{
-                    color: `${theme.palette.teritiaryColor.main}`,
-                    marginLeft: "10px",
-                  }}
-                >
-                  Here is the list of background url for the operation{" "}
-                </TextTypography>
-                {backgroundUrlData?.length === 0 ? (
-                  <>
-                    <PrimaryTypography
-                      style={{
-                        alignItems: "center",
-                        textAlign: "center",
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        color: `${theme.palette.teritiaryColor.main}`,
-                        fontWeight: 900,
-                      }}
-                    >
-                      No data found
-                    </PrimaryTypography>
-                  </>
-                ) : (
-                  <>
-                    <div
-                      style={{
-                        padding: "5px",
-                      }}
-                    ></div>
-                    {backgroundUrlData?.map((val: any, index: number) => (
+                  <TextTypography
+                    style={{
+                      color: `${theme.palette.teritiaryColor.main}`,
+                      marginLeft: "10px",
+                    }}
+                  >
+                    Here is the list of background url for the operation{" "}
+                  </TextTypography>
+                  {backgroundUrlData?.length === 0 ? (
+                    <>
+                      <PrimaryTypography
+                        style={{
+                          alignItems: "center",
+                          textAlign: "center",
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          color: `${theme.palette.teritiaryColor.main}`,
+                          fontWeight: 900,
+                        }}
+                      >
+                        No data found
+                      </PrimaryTypography>
+                    </>
+                  ) : (
+                    <>
                       <div
-                        key={val?.id}
                         style={{
                           padding: "5px",
                         }}
-                      >
-                        <pre>
-                          <TextTypography>
-                            {`${index + 1}. Type: ${val?.type}\n
+                      ></div>
+                      {backgroundUrlData?.map((val: any, index: number) => (
+                        <div
+                          key={val?.id}
+                          style={{
+                            padding: "5px",
+                          }}
+                        >
+                          <pre>
+                            <TextTypography>
+                              {`${index + 1}. Type: ${val?.type}\n
     Background URL: ${
       !val?.background_url || val?.background_url === "null"
         ? "-"
@@ -1529,485 +1389,485 @@ export default function WorkflowOperationNode({ data }: any) {
     }\n
     Updated at: ${val?.updated_at ?? "-"}\n
     Created at: ${val?.created_at ?? "-"}`}
-                          </TextTypography>
-                        </pre>
-                      </div>
-                    ))}
-                  </>
-                )}
-              </div>
-            </div>
-          </Popover>
-        </div>
-      )}
-
-      <WorkflowCustomHandle
-        type="target"
-        position={Position.Left}
-        id={nodeData?.id + "_input"}
-        // isConnectable={3}
-        style={{
-          height: "7px",
-          width: "6px",
-          background: "#55CCFF",
-          borderRadius: "inherit",
-          borderColor: "#D2D2D2",
-          boxShadow: "0 0 12px 2px rgb(85, 204, 255)",
-        }}
-        isValidConnection={isValidConnection}
-      />
-      <Box
-        // className="p-2 rounded"
-        sx={{
-          background: "rgba(243, 243, 243, 0.25)",
-          backdropFilter: "blur(7.09px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          height: "40%",
-          padding: "10px",
-          // borderTopLeftRadius: "10px",
-          // borderTopRightRadius: "10px",
-          borderRadius: "15px 15px 0px 0px",
-        }}
-      >
-        <div style={{ display: "flex" }}>
-          <TotalNewProjectIcon />
-          <SecondaryTypography
-            style={{
-              color:
-                nodeData?.method === "GET"
-                  ? "#3DD775"
-                  : nodeData?.method === "POST"
-                  ? "#FDA556"
-                  : nodeData?.method === "PUT"
-                  ? `${theme.palette.primaryBlue.main}`
-                  : nodeData?.method === "DELETE"
-                  ? `${theme.palette.mainRed.main}`
-                  : "",
-              marginLeft: "3px",
-              fontSize: "12px",
-            }}
-          >
-            {nodeData?.method}
-          </SecondaryTypography>
-          <SecondaryTypography
-            style={{
-              marginLeft: "5px",
-              maxWidth: "150px",
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-              textOverflow: "ellipsis",
-              fontSize: "12px",
-            }}
-          >
-            {nodeData?.node_name}
-          </SecondaryTypography>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <Button
-              sx={{
-                "&.MuiButton-root:hover path": {
-                  fill: "red",
-                },
-                backgroundColor: "unset !important",
-                marginLeft: "auto",
-                minWidth: "auto",
-              }}
-            >
-              {isEditable && (
-                <DeleteIcon
-                  className="position-absolute"
-                  style={{
-                    width: "15px",
-                    height: "15px",
-                    fill: theme.palette.mainRed.main,
-                    right: "5px",
-                    cursor: "pointer",
-                    transition: "fill 0.1s ease",
-                    marginBottom: "5px ",
-                  }}
-                  onClick={onClick}
-                />
-              )}
-            </Button>
-          </div>
-          <PlayArrowIcon
-            style={{
-              color: `#FFFFFF`,
-              fontSize: "18px",
-              backgroundColor: "#7E59DC",
-              borderRadius: "4px",
-            }}
-            onClick={() => {
-              RunHandler();
-            }}
-          />
-        </div>
-      </Box>
-
-      <Box
-        sx={{
-          overflowWrap: "anywhere",
-          // background: "#F3F3F326",
-          // backdropFilter: "blur(14.19)",
-          // //  boxShadow: "inset 0px 4px 10px 0px rgba(0, 0, 0, 0.25)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "5px 10px",
-          }}
-          onClick={handleClick}
-        >
-          <TertiaryTypogrpahy>Input</TertiaryTypogrpahy>
-          <KeyboardArrowRightIcon
-            style={{ fontSize: "16px", color: "#FFFFFF", cursor: "pointer" }}
-          />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "5px 10px",
-          }}
-          onClick={handleClickResponse}
-        >
-          <TertiaryTypogrpahy>Response</TertiaryTypogrpahy>
-          <KeyboardArrowRightIcon
-            style={{ fontSize: "16px", color: "#FFFFFF", cursor: "pointer" }}
-          />
-        </div>
-        <Popover
-          id={id}
-          open={isEditable && open}
-          anchorEl={anchorEl}
-          ref={popoverRef}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-        >
-          <div>
-            <Box
-              sx={{
-                minWidth: 100,
-                minHeight: 50,
-                padding: "10px",
-              }}
-            >
-              <TextTypography
-                aria-owns={open ? "mouse-over-popover" : undefined}
-                aria-haspopup="true"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  fontSize: "9px",
-                  cursor: "pointer",
-                  marginBottom: "10px",
-                }}
-                onClick={handleClickInput}
-                // onMouseEnter={handleClickInput}
-                // onMouseLeave={handleCloseInput}
-              >
-                Input
-                <span>
-                  <ChevronRightOutlinedIcon
-                    style={{
-                      fontSize: "15px",
-                    }}
-                  />
-                </span>
-              </TextTypography>
-              {/* <hr /> */}
-              <TextTypography
-                aria-owns={open ? "mouse-over-popover" : undefined}
-                aria-haspopup="true"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  fontSize: "9px",
-                  cursor: "pointer",
-                  marginBottom: "10px",
-                }}
-                onClick={handleClickHeader}
-                // onMouseEnter={handleClickHeader}
-                // onMouseLeave={handleCloseInput}
-              >
-                Header
-                <span>
-                  <ChevronRightOutlinedIcon
-                    style={{
-                      fontSize: "15px",
-                    }}
-                  />
-                </span>
-              </TextTypography>
-              <TextTypography
-                aria-owns={open ? "mouse-over-popover" : undefined}
-                aria-haspopup="true"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  fontSize: "9px",
-                  cursor: "pointer",
-                  marginBottom: "10px",
-                }}
-                onClick={handleClickQuery}
-                // onMouseEnter={handleClickHeader}
-                // onMouseLeave={handleCloseInput}
-              >
-                Query Params
-                <span>
-                  <ChevronRightOutlinedIcon
-                    style={{
-                      fontSize: "15px",
-                    }}
-                  />
-                </span>
-              </TextTypography>
-              <TextTypography
-                aria-owns={open ? "mouse-over-popover" : undefined}
-                aria-haspopup="true"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  fontSize: "9px",
-                  cursor: "pointer",
-                  marginBottom: "10px",
-                }}
-                onClick={handleGlobalKeys}
-                // onMouseEnter={handleClickHeader}
-                // onMouseLeave={handleCloseInput}
-              >
-                Global keys
-                <span>
-                  <ChevronRightOutlinedIcon
-                    style={{
-                      fontSize: "15px",
-                    }}
-                  />
-                </span>
-              </TextTypography>
-              {/* <hr /> */}
-            </Box>
-            <Popover
-              // id={id}
-              id="mouse-over-popover"
-              open={Boolean(anchorElInput)}
-              anchorEl={anchorElInput}
-              onClose={handleCloseInput}
-              anchorOrigin={{
-                vertical: "center",
-                horizontal: "right",
-              }}
-              PaperProps={{
-                sx:
-                  inputClicked === true
-                    ? {
-                        // minWidth: "180px",
-                        // overflowY: "auto",
-                        overflow: "hidden",
-                        // pointerEvents: 'none',
-                        background: "transparent",
-                        boxShadow: "none",
-                      }
-                    : {
-                        padding: "15px",
-                        overflowY: "auto",
-                        maxHeight: "200px",
-                        width: "350px",
-                      },
-              }}
-              disableRestoreFocus
-            >
-              {inputClicked === true ? (
-                <div
-                  style={{
-                    position: "relative",
-                    height: "55vh",
-                    width: "40vw",
-                  }}
-                >
-                  {/*Ace Editor*/}
-                  <AceEditorComponent
-                    onInputVal={handleInputDataFromAceEditor}
-                    defaultInputVal={inputsPayload}
-                    currentNode={nodeData.node_name}
-                    // suggestionVal={previousOpRaw}
-                  />
-                </div>
-              ) : headerClicked === true ? (
-                <>
-                  <>
-                    <PrimaryTypography
-                      style={{
-                        fontWeight: 900,
-                      }}
-                    >
-                      Operation Headers
-                    </PrimaryTypography>
-
-                    <>
-                      {headers?.length === 0 && (
-                        <>
-                          <RenderNoDataFound />
-                        </>
-                      )}
-                      <GButton
-                        buttonType="primary"
-                        label="Add"
-                        onClickHandler={() => {
-                          setHeaders([
-                            ...headers,
-                            {
-                              name: "",
-                              test_value: "",
-                              data_type: "STRING",
-                            },
-                          ]);
-                          // setWarning(null);
-                          onClickHeaderHandler();
-                        }}
-                      />
-
-                      {headers?.map((val: any, index: number) => (
-                        <div key={index}>
-                          <div style={{ marginTop: "1rem" }}>
-                            {warning[index] && val && (
-                              <label
-                                style={{
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  backgroundColor: "#E50001", // Soft pink background
-                                  color: "white", // White text color
-                                  fontWeight: "bold", // Bold text
-                                  padding: "8px 12px", // Padding around the label
-                                  borderRadius: "20px", // Rounded corners
-                                  fontSize: "14px", // Font size for the text
-                                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Slight shadow for depth
-                                }}
-                              >
-                                <span style={{ fontSize: "10px" }}>
-                                  {warning[index]}
-                                </span>
-                              </label>
-                            )}
-                          </div>
-
-                          <TextTypography>
-                            {`Name: `}
-                            <input
-                              value={val?.name}
-                              className="form-control my-1"
-                              name="name"
-                              onChange={(e) => {
-                                onChangeHandler(
-                                  "name",
-                                  e.target.value,
-                                  val,
-                                  index,
-                                  "headers"
-                                );
-                              }}
-                            />
-                          </TextTypography>
-
-                          <TextTypography style={{ margin: "1rem 0rem" }}>
-                            Data Type:
-                            <GSelect
-                              fullWidth={true}
-                              borderHeight="40px"
-                              size={"small"}
-                              radius="0px"
-                              options={dataTypes?.map((data: any) => ({
-                                label: data?.label,
-                                value: data.id,
-                              }))}
-                              defaultValue={"1"}
-                              onChange={(value: any, e: any) => {
-                                onChangeHandler(
-                                  "data_type",
-                                  e.target.value,
-                                  val,
-                                  index,
-                                  "headers"
-                                );
-                              }}
-                              value={val.data_type}
-                            />
-                          </TextTypography>
-
-                          <TextTypography>
-                            {`Value: `}
-                            <TextEditor
-                              inputData={val?.test_value}
-                              currentNode={nodeData?.node_name}
-                              onChange={(value: any) => {
-                                onChangeHandler(
-                                  "test_value",
-                                  value,
-                                  val,
-                                  index,
-                                  "headers"
-                                );
-                              }}
-                              multiline
-                            />
-                          </TextTypography>
-
-                          <GButton
-                            buttonType="secondary"
-                            label={"Remove"}
-                            onClickHandler={() => {
-                              const updatedHeaders = headers.filter(
-                                (_: any, i: number) => i !== index
-                              );
-                              updateNodeData(updatedHeaders, "header");
-                              setHeaders(updatedHeaders);
-
-                              // Also remove the warning for this field
-                              // setWarning((prevWarnings: any[]) => {
-                              //   return prevWarnings.filter(
-                              //     (_: any, i: number) => i !== index
-                              //   );
-                              // });
-                            }}
-                          />
+                            </TextTypography>
+                          </pre>
                         </div>
                       ))}
                     </>
-                    {/* // )} */}
-                  </>
-                </>
-              ) : queryClicked === true ? (
-                <>
-                  <>
-                    <PrimaryTypography
+                  )}
+                </div>
+              </div>
+            </Popover>
+          </div>
+        )}
+
+        <WorkflowCustomHandle
+          type="target"
+          position={Position.Left}
+          id={nodeData?.id + "_input"}
+          // isConnectable={3}
+          style={{
+            height: "7px",
+            width: "6px",
+            background: "#55CCFF",
+            borderRadius: "inherit",
+            borderColor: "#D2D2D2",
+            boxShadow: "0 0 12px 2px rgb(85, 204, 255)",
+          }}
+          isValidConnection={isValidConnection}
+        />
+        <Box
+          // className="p-2 rounded"
+          sx={{
+            background: "rgba(243, 243, 243, 0.25)",
+            backdropFilter: "blur(7.09px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+            height: "40%",
+            padding: "10px",
+            // borderTopLeftRadius: "10px",
+            // borderTopRightRadius: "10px",
+            borderRadius: "15px 15px 0px 0px",
+          }}
+        >
+          <div style={{ display: "flex" }}>
+            <TotalNewProjectIcon />
+            <SecondaryTypography
+              style={{
+                color:
+                  nodeData?.method === "GET"
+                    ? "#3DD775"
+                    : nodeData?.method === "POST"
+                    ? "#FDA556"
+                    : nodeData?.method === "PUT"
+                    ? `${theme.palette.primaryBlue.main}`
+                    : nodeData?.method === "DELETE"
+                    ? `${theme.palette.mainRed.main}`
+                    : "",
+                marginLeft: "3px",
+                fontSize: "12px",
+              }}
+            >
+              {nodeData?.method}
+            </SecondaryTypography>
+            <SecondaryTypography
+              style={{
+                marginLeft: "5px",
+                maxWidth: "150px",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                fontSize: "12px",
+              }}
+            >
+              {nodeData?.node_name}
+            </SecondaryTypography>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <div>
+              <Button
+                sx={{
+                  "&.MuiButton-root:hover path": {
+                    fill: "red",
+                  },
+                  backgroundColor: "unset !important",
+                  marginLeft: "auto",
+                  minWidth: "auto",
+                }}
+              >
+                {isEditable && (
+                  <DeleteIcon
+                    className="position-absolute"
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                      fill: theme.palette.mainRed.main,
+                      right: "5px",
+                      cursor: "pointer",
+                      transition: "fill 0.1s ease",
+                      marginBottom: "5px ",
+                    }}
+                    onClick={onClick}
+                  />
+                )}
+              </Button>
+            </div>
+            <PlayArrowIcon
+              style={{
+                color: `#FFFFFF`,
+                fontSize: "18px",
+                backgroundColor: "#7E59DC",
+                borderRadius: "4px",
+              }}
+              onClick={() => {
+                RunHandler();
+              }}
+            />
+          </div>
+        </Box>
+
+        <Box
+          sx={{
+            overflowWrap: "anywhere",
+            // background: "#F3F3F326",
+            // backdropFilter: "blur(14.19)",
+            // //  boxShadow: "inset 0px 4px 10px 0px rgba(0, 0, 0, 0.25)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "5px 10px",
+            }}
+            onClick={handleClick}
+          >
+            <TertiaryTypogrpahy>Input</TertiaryTypogrpahy>
+            <KeyboardArrowRightIcon
+              style={{ fontSize: "16px", color: "#FFFFFF", cursor: "pointer" }}
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "5px 10px",
+            }}
+            onClick={handleClickResponse}
+          >
+            <TertiaryTypogrpahy>Response</TertiaryTypogrpahy>
+            <KeyboardArrowRightIcon
+              style={{ fontSize: "16px", color: "#FFFFFF", cursor: "pointer" }}
+            />
+          </div>
+          <Popover
+            id={id}
+            open={isEditable && open}
+            anchorEl={anchorEl}
+            ref={popoverRef}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+          >
+            <div>
+              <Box
+                sx={{
+                  minWidth: 100,
+                  minHeight: 50,
+                  padding: "10px",
+                }}
+              >
+                <TextTypography
+                  aria-owns={open ? "mouse-over-popover" : undefined}
+                  aria-haspopup="true"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    fontSize: "9px",
+                    cursor: "pointer",
+                    marginBottom: "10px",
+                  }}
+                  onClick={handleClickInput}
+                  // onMouseEnter={handleClickInput}
+                  // onMouseLeave={handleCloseInput}
+                >
+                  Input
+                  <span>
+                    <ChevronRightOutlinedIcon
                       style={{
-                        fontWeight: 900,
+                        fontSize: "15px",
                       }}
-                    >
-                      Operation query Parameters
-                    </PrimaryTypography>
-                    {/* {warning && (
+                    />
+                  </span>
+                </TextTypography>
+                {/* <hr /> */}
+                <TextTypography
+                  aria-owns={open ? "mouse-over-popover" : undefined}
+                  aria-haspopup="true"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    fontSize: "9px",
+                    cursor: "pointer",
+                    marginBottom: "10px",
+                  }}
+                  onClick={handleClickHeader}
+                  // onMouseEnter={handleClickHeader}
+                  // onMouseLeave={handleCloseInput}
+                >
+                  Header
+                  <span>
+                    <ChevronRightOutlinedIcon
+                      style={{
+                        fontSize: "15px",
+                      }}
+                    />
+                  </span>
+                </TextTypography>
+                <TextTypography
+                  aria-owns={open ? "mouse-over-popover" : undefined}
+                  aria-haspopup="true"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    fontSize: "9px",
+                    cursor: "pointer",
+                    marginBottom: "10px",
+                  }}
+                  onClick={handleClickQuery}
+                  // onMouseEnter={handleClickHeader}
+                  // onMouseLeave={handleCloseInput}
+                >
+                  Query Params
+                  <span>
+                    <ChevronRightOutlinedIcon
+                      style={{
+                        fontSize: "15px",
+                      }}
+                    />
+                  </span>
+                </TextTypography>
+                <TextTypography
+                  aria-owns={open ? "mouse-over-popover" : undefined}
+                  aria-haspopup="true"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    fontSize: "9px",
+                    cursor: "pointer",
+                    marginBottom: "10px",
+                  }}
+                  onClick={handleGlobalKeys}
+                  // onMouseEnter={handleClickHeader}
+                  // onMouseLeave={handleCloseInput}
+                >
+                  Global keys
+                  <span>
+                    <ChevronRightOutlinedIcon
+                      style={{
+                        fontSize: "15px",
+                      }}
+                    />
+                  </span>
+                </TextTypography>
+                {/* <hr /> */}
+              </Box>
+              <Popover
+                // id={id}
+                id="mouse-over-popover"
+                open={Boolean(anchorElInput)}
+                anchorEl={anchorElInput}
+                onClose={handleCloseInput}
+                anchorOrigin={{
+                  vertical: "center",
+                  horizontal: "right",
+                }}
+                PaperProps={{
+                  sx:
+                    inputClicked === true
+                      ? {
+                          // minWidth: "180px",
+                          // overflowY: "auto",
+                          overflow: "hidden",
+                          // pointerEvents: 'none',
+                          background: "transparent",
+                          boxShadow: "none",
+                        }
+                      : {
+                          padding: "15px",
+                          overflowY: "auto",
+                          maxHeight: "200px",
+                          width: "350px",
+                        },
+                }}
+                disableRestoreFocus
+              >
+                {inputClicked === true ? (
+                  <div
+                    style={{
+                      position: "relative",
+                      height: "55vh",
+                      width: "40vw",
+                    }}
+                  >
+                    {/*Ace Editor*/}
+                    <AceEditorComponent
+                      onInputVal={handleInputDataFromAceEditor}
+                      defaultInputVal={inputsPayload}
+                      currentNode={nodeData.node_name}
+                      // suggestionVal={previousOpRaw}
+                    />
+                  </div>
+                ) : headerClicked === true ? (
+                  <>
+                    <>
+                      <PrimaryTypography
+                        style={{
+                          fontWeight: 900,
+                        }}
+                      >
+                        Operation Headers
+                      </PrimaryTypography>
+
+                      <>
+                        {headers?.length === 0 && (
+                          <>
+                            <RenderNoDataFound />
+                          </>
+                        )}
+                        <GButton
+                          buttonType="primary"
+                          label="Add"
+                          onClickHandler={() => {
+                            setHeaders([
+                              ...headers,
+                              {
+                                name: "",
+                                test_value: "",
+                                data_type: "STRING",
+                              },
+                            ]);
+                            // setWarning(null);
+                            onClickHeaderHandler();
+                          }}
+                        />
+
+                        {headers?.map((val: any, index: number) => (
+                          <div key={index}>
+                            <div style={{ marginTop: "1rem" }}>
+                              {warning[index] && val && (
+                                <label
+                                  style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    backgroundColor: "#E50001", // Soft pink background
+                                    color: "white", // White text color
+                                    fontWeight: "bold", // Bold text
+                                    padding: "8px 12px", // Padding around the label
+                                    borderRadius: "20px", // Rounded corners
+                                    fontSize: "14px", // Font size for the text
+                                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Slight shadow for depth
+                                  }}
+                                >
+                                  <span style={{ fontSize: "10px" }}>
+                                    {warning[index]}
+                                  </span>
+                                </label>
+                              )}
+                            </div>
+
+                            <TextTypography>
+                              {`Name: `}
+                              <input
+                                value={val?.name}
+                                className="form-control my-1"
+                                name="name"
+                                onChange={(e) => {
+                                  onChangeHandler(
+                                    "name",
+                                    e.target.value,
+                                    val,
+                                    index,
+                                    "headers"
+                                  );
+                                }}
+                              />
+                            </TextTypography>
+
+                            <TextTypography style={{ margin: "1rem 0rem" }}>
+                              Data Type:
+                              <GSelect
+                                fullWidth={true}
+                                borderHeight="40px"
+                                size={"small"}
+                                radius="0px"
+                                options={dataTypes?.map((data: any) => ({
+                                  label: data?.label,
+                                  value: data.id,
+                                }))}
+                                defaultValue={"1"}
+                                onChange={(value: any, e: any) => {
+                                  onChangeHandler(
+                                    "data_type",
+                                    e.target.value,
+                                    val,
+                                    index,
+                                    "headers"
+                                  );
+                                }}
+                                value={val.data_type}
+                              />
+                            </TextTypography>
+
+                            <TextTypography>
+                              {`Value: `}
+                              <TextEditor
+                                inputData={val?.test_value}
+                                currentNode={nodeData?.node_name}
+                                onChange={(value: any) => {
+                                  onChangeHandler(
+                                    "test_value",
+                                    value,
+                                    val,
+                                    index,
+                                    "headers"
+                                  );
+                                }}
+                                multiline
+                              />
+                            </TextTypography>
+
+                            <GButton
+                              buttonType="secondary"
+                              label={"Remove"}
+                              onClickHandler={() => {
+                                const updatedHeaders = headers.filter(
+                                  (_: any, i: number) => i !== index
+                                );
+                                updateNodeData(updatedHeaders, "header");
+                                setHeaders(updatedHeaders);
+
+                                // Also remove the warning for this field
+                                // setWarning((prevWarnings: any[]) => {
+                                //   return prevWarnings.filter(
+                                //     (_: any, i: number) => i !== index
+                                //   );
+                                // });
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </>
+                      {/* // )} */}
+                    </>
+                  </>
+                ) : queryClicked === true ? (
+                  <>
+                    <>
+                      <PrimaryTypography
+                        style={{
+                          fontWeight: 900,
+                        }}
+                      >
+                        Operation query Parameters
+                      </PrimaryTypography>
+                      {/* {warning && (
                         <div
                           style={{
                             color: "red",
@@ -2032,144 +1892,144 @@ export default function WorkflowOperationNode({ data }: any) {
                         </div>
                       )} */}
 
-                    <>
-                      {querys?.length === 0 && (
-                        <>
-                          <RenderNoDataFound />
-                        </>
-                      )}
-                      <GButton
-                        buttonType="primary"
-                        label="Add"
-                        onClickHandler={() => {
-                          setQuerys([
-                            ...querys,
-                            {
-                              name: "",
-                              test_value: "",
-                              data_type: "string",
-                            },
-                          ]);
-                          onClickQueryHandler();
-                        }}
-                      />
-                      {querys?.map((val: any, index: number) => (
-                        <div key={index}>
-                          <div style={{ marginTop: "1rem" }}>
-                            {Querywarning[index] && val?.name && (
-                              <label
-                                style={{
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  backgroundColor: "#E50001", // Soft pink background
-                                  color: "white", // White text color
-                                  fontWeight: "bold", // Bold text
-                                  padding: "8px 12px", // Padding around the label
-                                  borderRadius: "20px", // Rounded corners
-                                  fontSize: "14px", // Font size for the text
-                                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Slight shadow for depth
+                      <>
+                        {querys?.length === 0 && (
+                          <>
+                            <RenderNoDataFound />
+                          </>
+                        )}
+                        <GButton
+                          buttonType="primary"
+                          label="Add"
+                          onClickHandler={() => {
+                            setQuerys([
+                              ...querys,
+                              {
+                                name: "",
+                                test_value: "",
+                                data_type: "string",
+                              },
+                            ]);
+                            onClickQueryHandler();
+                          }}
+                        />
+                        {querys?.map((val: any, index: number) => (
+                          <div key={index}>
+                            <div style={{ marginTop: "1rem" }}>
+                              {Querywarning[index] && val?.name && (
+                                <label
+                                  style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    backgroundColor: "#E50001", // Soft pink background
+                                    color: "white", // White text color
+                                    fontWeight: "bold", // Bold text
+                                    padding: "8px 12px", // Padding around the label
+                                    borderRadius: "20px", // Rounded corners
+                                    fontSize: "14px", // Font size for the text
+                                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Slight shadow for depth
+                                  }}
+                                >
+                                  <span style={{ fontSize: "10px" }}>
+                                    {Querywarning[index]}
+                                  </span>
+                                </label>
+                              )}
+                            </div>
+
+                            <TextTypography>
+                              {`Name (${val.scope || "query"}): `}
+                              <input
+                                value={val?.name}
+                                disabled={val?.scope === "path"}
+                                className="form-control my-1"
+                                name="name"
+                                onChange={(e) => {
+                                  onChangeHandler(
+                                    "name",
+                                    e.target.value,
+                                    val,
+                                    index,
+                                    "query"
+                                  );
                                 }}
-                              >
-                                <span style={{ fontSize: "10px" }}>
-                                  {Querywarning[index]}
-                                </span>
-                              </label>
+                              />
+                            </TextTypography>
+
+                            <TextTypography>
+                              {`Value: `}
+                              <TextEditor
+                                inputData={val?.test_value}
+                                currentNode={nodeData?.node_name}
+                                onChange={(value: any) => {
+                                  onChangeHandler(
+                                    "test_value",
+                                    value,
+                                    val,
+                                    index,
+                                    "query"
+                                  );
+                                }}
+                                multiline
+                              />
+                            </TextTypography>
+
+                            <TextTypography style={{ margin: "1rem 0rem" }}>
+                              Data Type:
+                              <GSelect
+                                fullWidth={true}
+                                borderHeight="40px"
+                                size={"small"}
+                                radius="0px"
+                                options={dataTypes?.map((data: any) => ({
+                                  label: data?.label,
+                                  value: data.id,
+                                }))}
+                                defaultValue={"1"}
+                                onChange={(value: any, e: any) => {
+                                  onChangeHandler(
+                                    "data_type",
+                                    e.target.value,
+                                    val,
+                                    index,
+                                    "query"
+                                  );
+                                }}
+                                value={val?.data_type}
+                              />
+                            </TextTypography>
+
+                            {val?.scope !== "path" && (
+                              <GButton
+                                buttonType="secondary"
+                                label={"Remove"}
+                                onClickHandler={() => {
+                                  const updatedQuery = querys.filter(
+                                    (_: any, i: any) => i !== index
+                                  );
+
+                                  updateNodeData(updatedQuery, "query");
+                                  setQuerys(updatedQuery);
+                                }}
+                              />
                             )}
                           </div>
-
-                          <TextTypography>
-                            {`Name (${val.scope || "query"}): `}
-                            <input
-                              value={val?.name}
-                              disabled={val?.scope === "path"}
-                              className="form-control my-1"
-                              name="name"
-                              onChange={(e) => {
-                                onChangeHandler(
-                                  "name",
-                                  e.target.value,
-                                  val,
-                                  index,
-                                  "query"
-                                );
-                              }}
-                            />
-                          </TextTypography>
-
-                          <TextTypography>
-                            {`Value: `}
-                            <TextEditor
-                              inputData={val?.test_value}
-                              currentNode={nodeData?.node_name}
-                              onChange={(value: any) => {
-                                onChangeHandler(
-                                  "test_value",
-                                  value,
-                                  val,
-                                  index,
-                                  "query"
-                                );
-                              }}
-                              multiline
-                            />
-                          </TextTypography>
-
-                          <TextTypography style={{ margin: "1rem 0rem" }}>
-                            Data Type:
-                            <GSelect
-                              fullWidth={true}
-                              borderHeight="40px"
-                              size={"small"}
-                              radius="0px"
-                              options={dataTypes?.map((data: any) => ({
-                                label: data?.label,
-                                value: data.id,
-                              }))}
-                              defaultValue={"1"}
-                              onChange={(value: any, e: any) => {
-                                onChangeHandler(
-                                  "data_type",
-                                  e.target.value,
-                                  val,
-                                  index,
-                                  "query"
-                                );
-                              }}
-                              value={val?.data_type}
-                            />
-                          </TextTypography>
-
-                          {val?.scope !== "path" && (
-                            <GButton
-                              buttonType="secondary"
-                              label={"Remove"}
-                              onClickHandler={() => {
-                                const updatedQuery = querys.filter(
-                                  (_: any, i: any) => i !== index
-                                );
-
-                                updateNodeData(updatedQuery, "query");
-                                setQuerys(updatedQuery);
-                              }}
-                            />
-                          )}
-                        </div>
-                      ))}
+                        ))}
+                      </>
                     </>
                   </>
-                </>
-              ) : globalKeysClicked === true ? (
-                <>
+                ) : globalKeysClicked === true ? (
                   <>
-                    <PrimaryTypography
-                      style={{
-                        fontWeight: 900,
-                      }}
-                    >
-                      Global
-                    </PrimaryTypography>
+                    <>
+                      <PrimaryTypography
+                        style={{
+                          fontWeight: 900,
+                        }}
+                      >
+                        Global
+                      </PrimaryTypography>
 
-                    {/* {warning && (
+                      {/* {warning && (
                         <div
                           style={{
                             color: "red",
@@ -2186,88 +2046,89 @@ export default function WorkflowOperationNode({ data }: any) {
                         </div>
                       )} */}
 
-                    <>
-                      {globalKeys?.length === 0 && (
-                        <>
-                          <RenderNoDataFound />
-                        </>
-                      )}
-                      <GButton
-                        buttonType="primary"
-                        label={"Add"}
-                        onClickHandler={() => {
-                          // Update the state
-                          const newkeys = {
-                            id: uuidv4(),
-                            key_name: "",
-                            body_key: "",
-                            value: "",
-                            request_template: "",
-                            global_key: "",
-                            flow_id: initialFlowId,
-                            node_id: nodeData.id,
-                            include: false,
-                            body_include: false,
-                            header_key: "",
-                            prefix_value: "",
-                            node_name: nodeData?.node_name,
-                          };
-
-                          // Assuming ydoc is accessible in this scope and has a method to update it
-                          if (flowYdoc) {
-                            const keysArray = flowYdoc.getArray("globalkeys");
-                            keysArray.push([newkeys]);
-                          }
-                        }}
-                      />
-
-                      {globalKeys
-                        ?.filter((x) => x.node_id == nodeData.id)
-                        ?.map((val: any, index: number) => (
+                      <>
+                        {globalKeys?.length === 0 && (
                           <>
-                            <div style={{ marginTop: "1rem" }}>
-                              {Globalwarning[index] && val?.key_name && (
-                                <label
-                                  style={{
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    backgroundColor: "#E50001", // Soft pink background
-                                    color: "white", // White text color
-                                    fontWeight: "bold", // Bold text
-                                    padding: "8px 12px", // Padding around the label
-                                    borderRadius: "20px", // Rounded corners
-                                    fontSize: "14px", // Font size for the text
-                                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Slight shadow for depth
+                            <RenderNoDataFound />
+                          </>
+                        )}
+                        <GButton
+                          buttonType="primary"
+                          label={"Add"}
+                          onClickHandler={() => {
+                            // Update the state
+                            const newkeys = {
+                              id: uuidv4(),
+                              key_name: "",
+                              body_key: "",
+                              value: "",
+                              request_template: "",
+                              global_key: "",
+                              flow_id: initialFlowId,
+                              node_id: nodeData.id,
+                              include: false,
+                              body_include: false,
+                              header_key: "",
+                              prefix_value: "",
+                              node_name: nodeData?.node_name,
+                            };
+
+                            // Assuming ydoc is accessible in this scope and has a method to update it
+                            if (flowYdoc) {
+                              const keysArray = flowYdoc.getArray("globalkeys");
+                              keysArray.push([newkeys]);
+                            }
+                          }}
+                        />
+
+                        {globalKeys
+                          ?.filter((x) => x.node_id == nodeData.id)
+                          ?.map((val: any, index: number) => (
+                            <>
+                              <div style={{ marginTop: "1rem" }}>
+                                {Globalwarning[index] && val?.key_name && (
+                                  <label
+                                    style={{
+                                      display: "inline-flex",
+                                      alignItems: "center",
+                                      backgroundColor: "#E50001", // Soft pink background
+                                      color: "white", // White text color
+                                      fontWeight: "bold", // Bold text
+                                      padding: "8px 12px", // Padding around the label
+                                      borderRadius: "20px", // Rounded corners
+                                      fontSize: "14px", // Font size for the text
+                                      boxShadow:
+                                        "0px 2px 4px rgba(0, 0, 0, 0.2)", // Slight shadow for depth
+                                    }}
+                                  >
+                                    <span style={{ fontSize: "10px" }}>
+                                      {Globalwarning[index]}
+                                    </span>
+                                  </label>
+                                )}
+                              </div>
+
+                              <TextTypography>
+                                {`Name: `}
+
+                                <input
+                                  value={val?.key_name}
+                                  className="form-control my-1"
+                                  name="key_name"
+                                  onChange={(e) => {
+                                    onKeyHandler(
+                                      "key_name",
+                                      e.target.value,
+                                      val.id
+                                    );
                                   }}
-                                >
-                                  <span style={{ fontSize: "10px" }}>
-                                    {Globalwarning[index]}
-                                  </span>
-                                </label>
-                              )}
-                            </div>
+                                />
+                              </TextTypography>
 
-                            <TextTypography>
-                              {`Name: `}
+                              <TextTypography>
+                                {`Value: `}
 
-                              <input
-                                value={val?.key_name}
-                                className="form-control my-1"
-                                name="key_name"
-                                onChange={(e) => {
-                                  onKeyHandler(
-                                    "key_name",
-                                    e.target.value,
-                                    val.id
-                                  );
-                                }}
-                              />
-                            </TextTypography>
-
-                            <TextTypography>
-                              {`Value: `}
-
-                              {/* <input
+                                {/* <input
                                   value={val?.request_template}
                                   className="form-control my-1"
                                   name="request_template"
@@ -2280,7 +2141,7 @@ export default function WorkflowOperationNode({ data }: any) {
                                   }}
                                 /> */}
 
-                              {/* <TextEditor
+                                {/* <TextEditor
                                   inputData={val?.request_template}
                                   objectToSuggest={currentResponse || {}}
                                   onChange={(value: any) => {
@@ -2293,1029 +2154,1041 @@ export default function WorkflowOperationNode({ data }: any) {
                                   multiline
                                 /> */}
 
-                              <TextEditor
-                                inputData={val?.request_template}
-                                currentNode={nodeData?.node_name}
-                                objectToSuggest={
-                                  currentResultRun?.response?.apiResponse
-                                }
-                                onChange={(value: any) => {
-                                  onKeyHandler(
-                                    "request_template",
-                                    value,
-                                    val.id
-                                  );
-                                }}
-                                multiline
-                              />
-                            </TextTypography>
-
-                            <TextTypography>
-                              {`include in Global Header: `}
-                              <input
-                                type="checkbox"
-                                checked={val?.include || false}
-                                className="form-check-input my-1"
-                                name="include"
-                                onChange={(e) => {
-                                  onKeyHandler(
-                                    "include",
-                                    e.target.checked,
-                                    val.id
-                                  );
-                                }}
-                              />
-                            </TextTypography>
-
-                            {val?.include && (
-                              <>
-                                <TextTypography>
-                                  {`Key name: `}
-                                  <input
-                                    value={val?.header_key || ""}
-                                    className="form-control my-1"
-                                    name="header_key"
-                                    onChange={(e) => {
-                                      onKeyHandler(
-                                        "header_key",
-                                        e.target.value,
-                                        val.id
-                                      );
-                                    }}
-                                  />
-                                </TextTypography>
-
-                                <TextTypography>
-                                  {`prefix value: `}
-                                  <input
-                                    value={val?.prefix_value || ""}
-                                    className="form-control my-1"
-                                    name="prefix_value"
-                                    onChange={(e) => {
-                                      onKeyHandler(
-                                        "prefix_value",
-                                        e.target.value,
-                                        val.id
-                                      );
-                                    }}
-                                  />
-                                </TextTypography>
-                              </>
-                            )}
-
-                            <TextTypography>
-                              {`include in Global Body: `}
-                              <input
-                                type="checkbox"
-                                checked={val?.body_include || false}
-                                className="form-check-input my-1"
-                                name="body_include"
-                                onChange={(e) => {
-                                  onKeyHandler(
-                                    "body_include",
-                                    e.target.checked,
-                                    val.id
-                                  );
-                                }}
-                              />
-                            </TextTypography>
-
-                            {val?.body_include && (
-                              <>
-                                <TextTypography>
-                                  {`Body Key: `}
-                                  <input
-                                    value={val?.body_key || ""}
-                                    className="form-control my-1"
-                                    name="header_key"
-                                    onChange={(e) => {
-                                      onKeyHandler(
-                                        "body_key",
-                                        e.target.value,
-                                        val.id
-                                      );
-                                    }}
-                                  />
-                                </TextTypography>
-                              </>
-                            )}
-
-                            <GButton
-                              buttonType="secondary"
-                              label={"Remove"}
-                              onClickHandler={() => {
-                                const keysArray =
-                                  flowYdoc?.getArray("globalkeys");
-                                const itemsArray: any = keysArray?.toArray();
-
-                                const index = itemsArray?.findIndex(
-                                  (item: any) => item?.id === val?.id
-                                );
-                                if (index !== -1) {
-                                  keysArray?.delete(index, 1);
-                                }
-                              }}
-                            />
-                          </>
-                        ))}
-                    </>
-                  </>
-                </>
-              ) : (
-                <>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    <PrimaryTypography
-                      style={{
-                        fontWeight: 900,
-                      }}
-                    >
-                      Operation Response
-                    </PrimaryTypography>
-                  </div>
-                  <>
-                    {
-                      // ((currentResultRun === null) || (currentResultRun === undefined)) ?
-                      JSON?.stringify(currentResultRun) === "{}" ? (
-                        <>
-                          <RenderNoDataFound />
-                        </>
-                      ) : (
-                        <>
-                          <div
-                            style={{ marginTop: "-5px", marginLeft: "-18px" }}
-                          >
-                            <Accordion
-                              style={{
-                                background: "transparent",
-                                boxShadow: "none",
-                              }}
-                              onClick={() => {
-                                setSizeAccClicked(!sizeAccClicked);
-                              }}
-                            >
-                              <AccordionSummary
-                                aria-controls="panel1a-content"
-                                id="panel1a-header"
-                                expandIcon={<ExpandMoreIcon />}
-                              >
-                                <div>
-                                  <TextTypography
-                                    style={{
-                                      fontWeight: 900,
-                                    }}
-                                  >
-                                    Size:{" "}
-                                    <span
-                                      style={{
-                                        color: `${theme.palette.v2PrimaryColor.main}`,
-                                        fontWeight: 900,
-                                      }}
-                                    >
-                                      {/* {currentResultRun?.size?.response_BodySize} KB */}
-                                      {/* {currentResultRun?.size && `${currentResultRun?.size?.request_HeaderSize + currentResultRun?.size?.request_BodySize + currentResultRun?.size?.response_BodySize + currentResultRun?.size?.response_HeaderSize}`} KB */}
-                                      {calculateTotalSize()} KB
-                                    </span>
-                                  </TextTypography>
-                                </div>
-                              </AccordionSummary>
-                              <AccordionDetails>
-                                <div
-                                  style={{
-                                    marginTop: "-25px",
-                                    marginLeft: "15px",
+                                <TextEditor
+                                  inputData={val?.request_template}
+                                  currentNode={nodeData?.node_name}
+                                  objectToSuggest={
+                                    currentResultRun?.response?.apiResponse
+                                  }
+                                  onChange={(value: any) => {
+                                    onKeyHandler(
+                                      "request_template",
+                                      value,
+                                      val.id
+                                    );
                                   }}
-                                >
-                                  <Box
-                                    sx={{
-                                      width: "100%",
-                                      height: "100%",
-                                      background:
-                                        theme.palette.primaryWhite.main,
-                                    }}
-                                  >
-                                    <div
-                                      style={{
-                                        display: "grid",
-                                        gridTemplateColumns: "auto auto",
-                                        rowGap: "4px",
-                                        // columnGap: '5px'
-                                      }}
-                                    >
-                                      <TextTypography>
-                                        Request Body Size:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-105px",
-                                        }}
-                                      >
-                                        {
-                                          currentResultRun?.size
-                                            ?.request_BodySize
-                                        }{" "}
-                                        KB
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Request Header Size:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-105px",
-                                        }}
-                                      >
-                                        {
-                                          currentResultRun?.size
-                                            ?.request_HeaderSize
-                                        }{" "}
-                                        KB
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Response Body Size:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-105px",
-                                        }}
-                                      >
-                                        {
-                                          currentResultRun?.size
-                                            ?.response_BodySize
-                                        }{" "}
-                                        KB
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Responce Header Size:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-105px",
-                                        }}
-                                      >
-                                        {
-                                          currentResultRun?.size
-                                            ?.response_HeaderSize
-                                        }{" "}
-                                        KB
-                                      </TextTypography>
-                                    </div>
-                                  </Box>
-                                </div>
-                              </AccordionDetails>
-                            </Accordion>
-                          </div>
-                          <div
-                            style={{
-                              marginTop: "-25px",
-                              marginLeft: "-18px",
-                            }}
-                          >
-                            <Accordion
-                              style={{
-                                background: "transparent",
-                                boxShadow: "none",
-                              }}
-                              onClick={() => {
-                                setTimeAccClicked(!timeAccClicked);
-                              }}
-                            >
-                              <AccordionSummary
-                                aria-controls="panel1a-content"
-                                id="panel1a-header"
-                                expandIcon={<ExpandMoreIcon />}
-                              >
-                                <div>
-                                  <TextTypography
-                                    style={{
-                                      fontWeight: 900,
-                                    }}
-                                  >
-                                    Time:{" "}
-                                    <span
-                                      style={{
-                                        color: `${theme.palette.v2PrimaryColor.main}`,
-                                        fontWeight: 900,
-                                      }}
-                                    >
-                                      {/* {convertToMilliSeconds(currentResultRun?.lookups?.totalTime)} ms */}
-                                      {calculateTotalTime()} ms
-                                    </span>
-                                  </TextTypography>
-                                </div>
-                              </AccordionSummary>
-                              <AccordionDetails>
-                                <div
-                                  style={{
-                                    marginTop: "-25px",
-                                    marginLeft: "15px",
-                                  }}
-                                >
-                                  <Box
-                                    sx={{
-                                      width: "100%",
-                                      height: "100%",
-                                      background:
-                                        theme.palette.primaryWhite.main,
-                                    }}
-                                  >
-                                    <div
-                                      style={{
-                                        display: "grid",
-                                        gridTemplateColumns: "auto auto",
-                                        rowGap: "4px",
-                                        // columnGap: '5px'
-                                      }}
-                                    >
-                                      <TextTypography>
-                                        Dns Lookup Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.dnsLookupTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Download Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.downloadTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Response Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.responseTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        SSL Handshake Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.sslHandshakeTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Total Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups?.totalTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        TransferStart Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.transferStartTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        TCP Handshake Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.tcpHandshakeTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                    </div>
-                                  </Box>
-                                </div>
-                              </AccordionDetails>
-                            </Accordion>
-                          </div>
-                          <div style={{ marginTop: "-10px" }}>
-                            <TextTypography>
-                              <span
-                                style={{
-                                  fontWeight: 900,
-                                }}
-                              >
-                                {`StatusCode: `}
-                              </span>
-                              <span
-                                style={{
-                                  fontWeight: 900,
-                                }}
-                              >
-                                {/* {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`} */}
-                                {currentResultRun?.statusCode >= 100 &&
-                                currentResultRun?.statusCode <= 199 ? (
-                                  <span
-                                    style={{
-                                      color: `${theme.palette.primaryBlue.main}`,
-                                    }}
-                                  >
-                                    {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                                  </span>
-                                ) : currentResultRun?.statusCode >= 200 &&
-                                  currentResultRun?.statusCode <= 299 ? (
-                                  <span
-                                    style={{
-                                      color: `#16A34A`,
-                                    }}
-                                  >
-                                    {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                                  </span>
-                                ) : currentResultRun?.statusCode >= 300 &&
-                                  currentResultRun?.statusCode <= 399 ? (
-                                  <span
-                                    style={{
-                                      color: `#D8A805`,
-                                    }}
-                                  >
-                                    {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                                  </span>
-                                ) : currentResultRun?.statusCode >= 400 &&
-                                  currentResultRun?.statusCode <= 499 ? (
-                                  <span
-                                    style={{
-                                      color: `#FF8C00`,
-                                    }}
-                                  >
-                                    {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                                  </span>
-                                ) : currentResultRun?.statusCode >= 500 &&
-                                  currentResultRun?.statusCode <= 509 ? (
-                                  <span
-                                    style={{
-                                      color: `${theme.palette.mainRed.main}`,
-                                    }}
-                                  >
-                                    {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                                  </span>
-                                ) : (
-                                  ""
-                                )}
-                              </span>
-                            </TextTypography>
-                          </div>
-
-                          {data?.currentResultRun?.node_id !== undefined ? (
-                            <>
-                              <TextTypography
-                                style={{
-                                  margin: "10px",
-                                  fontSize: "12px",
-                                  fontWeight: 900,
-                                  color: `${theme.palette.teritiaryColor.main}`,
-                                }}
-                              >
-                                No data found
+                                  multiline
+                                />
                               </TextTypography>
-                            </>
-                          ) : (
-                            <>
-                              <div style={{ marginTop: "5px" }}>
-                                <TextTypography
-                                  style={{
-                                    fontWeight: 900,
+
+                              <TextTypography>
+                                {`include in Global Header: `}
+                                <input
+                                  type="checkbox"
+                                  checked={val?.include || false}
+                                  className="form-check-input my-1"
+                                  name="include"
+                                  onChange={(e) => {
+                                    onKeyHandler(
+                                      "include",
+                                      e.target.checked,
+                                      val.id
+                                    );
                                   }}
-                                >
-                                  Response:
-                                </TextTypography>
-                                <pre
-                                  style={{
-                                    fontSize: "9px",
+                                />
+                              </TextTypography>
+
+                              {val?.include && (
+                                <>
+                                  <TextTypography>
+                                    {`Key name: `}
+                                    <input
+                                      value={val?.header_key || ""}
+                                      className="form-control my-1"
+                                      name="header_key"
+                                      onChange={(e) => {
+                                        onKeyHandler(
+                                          "header_key",
+                                          e.target.value,
+                                          val.id
+                                        );
+                                      }}
+                                    />
+                                  </TextTypography>
+
+                                  <TextTypography>
+                                    {`prefix value: `}
+                                    <input
+                                      value={val?.prefix_value || ""}
+                                      className="form-control my-1"
+                                      name="prefix_value"
+                                      onChange={(e) => {
+                                        onKeyHandler(
+                                          "prefix_value",
+                                          e.target.value,
+                                          val.id
+                                        );
+                                      }}
+                                    />
+                                  </TextTypography>
+                                </>
+                              )}
+
+                              <TextTypography>
+                                {`include in Global Body: `}
+                                <input
+                                  type="checkbox"
+                                  checked={val?.body_include || false}
+                                  className="form-check-input my-1"
+                                  name="body_include"
+                                  onChange={(e) => {
+                                    onKeyHandler(
+                                      "body_include",
+                                      e.target.checked,
+                                      val.id
+                                    );
                                   }}
-                                >
-                                  {formatWithLineNumbers(
-                                    JSON.stringify(
-                                      currentResultRun?.response,
-                                      null,
-                                      2
-                                    )
-                                  )}
-                                </pre>
-                              </div>
+                                />
+                              </TextTypography>
+
+                              {val?.body_include && (
+                                <>
+                                  <TextTypography>
+                                    {`Body Key: `}
+                                    <input
+                                      value={val?.body_key || ""}
+                                      className="form-control my-1"
+                                      name="header_key"
+                                      onChange={(e) => {
+                                        onKeyHandler(
+                                          "body_key",
+                                          e.target.value,
+                                          val.id
+                                        );
+                                      }}
+                                    />
+                                  </TextTypography>
+                                </>
+                              )}
+
+                              <GButton
+                                buttonType="secondary"
+                                label={"Remove"}
+                                onClickHandler={() => {
+                                  const keysArray =
+                                    flowYdoc?.getArray("globalkeys");
+                                  const itemsArray: any = keysArray?.toArray();
+
+                                  const index = itemsArray?.findIndex(
+                                    (item: any) => item?.id === val?.id
+                                  );
+                                  if (index !== -1) {
+                                    keysArray?.delete(index, 1);
+                                  }
+                                }}
+                              />
                             </>
-                          )}
-                        </>
-                      )
-                    }
-                  </>
-                </>
-              )}
-            </Popover>
-          </div>
-        </Popover>
-        {/* Response section */}
-        <Popover
-          id="mouse-over-popover"
-          open={Boolean(anchorElResponse)}
-          anchorEl={anchorElResponse}
-          onClose={handleCloseResponse}
-          anchorOrigin={{
-            vertical: "center",
-            horizontal: "right",
-          }}
-          PaperProps={{
-            sx: {
-              width: "400px",
-              // minWidth: "180px",
-              padding: "15px",
-              maxHeight: "200px",
-              // overflowY: "auto",
-              overflow: "auto",
-              // pointerEvents: 'none',
-            },
-          }}
-          disableRestoreFocus
-        >
-          <>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                marginBottom: "5px",
-              }}
-            >
-              <PrimaryTypography
-                style={{
-                  fontWeight: 900,
-                }}
-              >
-                Operation Response
-              </PrimaryTypography>
-            </div>
-            <>
-              {
-                // ((currentResultRun === null) || (currentResultRun === undefined)) ?
-                JSON?.stringify(currentResultRun) === "{}" ? (
-                  <>
-                    <RenderNoDataFound />
+                          ))}
+                      </>
+                    </>
                   </>
                 ) : (
                   <>
-                    <div style={{ marginTop: "-5px", marginLeft: "-18px" }}>
-                      <Accordion
-                        style={{
-                          background: "transparent",
-                          boxShadow: "none",
-                        }}
-                        onClick={() => {
-                          setSizeAccClicked(!sizeAccClicked);
-                        }}
-                      >
-                        <AccordionSummary
-                          aria-controls="panel1a-content"
-                          id="panel1a-header"
-                          expandIcon={<ExpandMoreIcon />}
-                        >
-                          <div>
-                            <TextTypography
-                              style={{
-                                fontWeight: 900,
-                              }}
-                            >
-                              Size:{" "}
-                              <span
-                                style={{
-                                  color: `${theme.palette.v2PrimaryColor.main}`,
-                                  fontWeight: 900,
-                                }}
-                              >
-                                {/* {currentResultRun?.size?.response_BodySize} KB */}
-                                {/* {currentResultRun?.size && `${currentResultRun?.size?.request_HeaderSize + currentResultRun?.size?.request_BodySize + currentResultRun?.size?.response_BodySize + currentResultRun?.size?.response_HeaderSize}`} KB */}
-                                {calculateTotalSize()} KB
-                              </span>
-                            </TextTypography>
-                          </div>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <div
-                            style={{
-                              marginTop: "-25px",
-                              marginLeft: "15px",
-                            }}
-                          >
-                            <Box
-                              sx={{
-                                width: "100%",
-                                height: "100%",
-                                background: theme.palette.primaryWhite.main,
-                              }}
-                            >
-                              <div
-                                style={{
-                                  display: "grid",
-                                  gridTemplateColumns: "auto auto",
-                                  rowGap: "4px",
-                                  // columnGap: '5px'
-                                }}
-                              >
-                                <TextTypography>
-                                  Request Body Size:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-105px",
-                                  }}
-                                >
-                                  {currentResultRun?.size?.request_BodySize} KB
-                                </TextTypography>
-                                <TextTypography>
-                                  Request Header Size:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-105px",
-                                  }}
-                                >
-                                  {currentResultRun?.size?.request_HeaderSize}{" "}
-                                  KB
-                                </TextTypography>
-                                <TextTypography>
-                                  Response Body Size:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-105px",
-                                  }}
-                                >
-                                  {currentResultRun?.size?.response_BodySize} KB
-                                </TextTypography>
-                                <TextTypography>
-                                  Response Header Size:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-105px",
-                                  }}
-                                >
-                                  {currentResultRun?.size?.response_HeaderSize}{" "}
-                                  KB
-                                </TextTypography>
-                              </div>
-                            </Box>
-                          </div>
-                        </AccordionDetails>
-                      </Accordion>
-                    </div>
                     <div
                       style={{
-                        marginTop: "-25px",
-                        marginLeft: "-18px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginBottom: "5px",
                       }}
                     >
-                      <Accordion
+                      <PrimaryTypography
                         style={{
-                          background: "transparent",
-                          boxShadow: "none",
-                        }}
-                        onClick={() => {
-                          setTimeAccClicked(!timeAccClicked);
+                          fontWeight: 900,
                         }}
                       >
-                        <AccordionSummary
-                          aria-controls="panel1a-content"
-                          id="panel1a-header"
-                          expandIcon={<ExpandMoreIcon />}
-                        >
-                          <div>
-                            <TextTypography
+                        Operation Response
+                      </PrimaryTypography>
+                    </div>
+                    <>
+                      {
+                        // ((currentResultRun === null) || (currentResultRun === undefined)) ?
+                        JSON?.stringify(currentResultRun) === "{}" ? (
+                          <>
+                            <RenderNoDataFound />
+                          </>
+                        ) : (
+                          <>
+                            <div
+                              style={{ marginTop: "-5px", marginLeft: "-18px" }}
+                            >
+                              <Accordion
+                                style={{
+                                  background: "transparent",
+                                  boxShadow: "none",
+                                }}
+                                onClick={() => {
+                                  setSizeAccClicked(!sizeAccClicked);
+                                }}
+                              >
+                                <AccordionSummary
+                                  aria-controls="panel1a-content"
+                                  id="panel1a-header"
+                                  expandIcon={<ExpandMoreIcon />}
+                                >
+                                  <div>
+                                    <TextTypography
+                                      style={{
+                                        fontWeight: 900,
+                                      }}
+                                    >
+                                      Size:{" "}
+                                      <span
+                                        style={{
+                                          color: `${theme.palette.v2PrimaryColor.main}`,
+                                          fontWeight: 900,
+                                        }}
+                                      >
+                                        {/* {currentResultRun?.size?.response_BodySize} KB */}
+                                        {/* {currentResultRun?.size && `${currentResultRun?.size?.request_HeaderSize + currentResultRun?.size?.request_BodySize + currentResultRun?.size?.response_BodySize + currentResultRun?.size?.response_HeaderSize}`} KB */}
+                                        {calculateTotalSize()} KB
+                                      </span>
+                                    </TextTypography>
+                                  </div>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                  <div
+                                    style={{
+                                      marginTop: "-25px",
+                                      marginLeft: "15px",
+                                    }}
+                                  >
+                                    <Box
+                                      sx={{
+                                        width: "100%",
+                                        height: "100%",
+                                        background:
+                                          theme.palette.primaryWhite.main,
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          display: "grid",
+                                          gridTemplateColumns: "auto auto",
+                                          rowGap: "4px",
+                                          // columnGap: '5px'
+                                        }}
+                                      >
+                                        <TextTypography>
+                                          Request Body Size:{" "}
+                                        </TextTypography>
+                                        <TextTypography
+                                          style={{
+                                            color: `${theme.palette.v2PrimaryColor.main}`,
+                                            fontWeight: 900,
+                                            marginLeft: "-105px",
+                                          }}
+                                        >
+                                          {
+                                            currentResultRun?.size
+                                              ?.request_BodySize
+                                          }{" "}
+                                          KB
+                                        </TextTypography>
+                                        <TextTypography>
+                                          Request Header Size:{" "}
+                                        </TextTypography>
+                                        <TextTypography
+                                          style={{
+                                            color: `${theme.palette.v2PrimaryColor.main}`,
+                                            fontWeight: 900,
+                                            marginLeft: "-105px",
+                                          }}
+                                        >
+                                          {
+                                            currentResultRun?.size
+                                              ?.request_HeaderSize
+                                          }{" "}
+                                          KB
+                                        </TextTypography>
+                                        <TextTypography>
+                                          Response Body Size:{" "}
+                                        </TextTypography>
+                                        <TextTypography
+                                          style={{
+                                            color: `${theme.palette.v2PrimaryColor.main}`,
+                                            fontWeight: 900,
+                                            marginLeft: "-105px",
+                                          }}
+                                        >
+                                          {
+                                            currentResultRun?.size
+                                              ?.response_BodySize
+                                          }{" "}
+                                          KB
+                                        </TextTypography>
+                                        <TextTypography>
+                                          Responce Header Size:{" "}
+                                        </TextTypography>
+                                        <TextTypography
+                                          style={{
+                                            color: `${theme.palette.v2PrimaryColor.main}`,
+                                            fontWeight: 900,
+                                            marginLeft: "-105px",
+                                          }}
+                                        >
+                                          {
+                                            currentResultRun?.size
+                                              ?.response_HeaderSize
+                                          }{" "}
+                                          KB
+                                        </TextTypography>
+                                      </div>
+                                    </Box>
+                                  </div>
+                                </AccordionDetails>
+                              </Accordion>
+                            </div>
+                            <div
                               style={{
-                                fontWeight: 900,
+                                marginTop: "-25px",
+                                marginLeft: "-18px",
                               }}
                             >
-                              Time:{" "}
-                              <span
+                              <Accordion
                                 style={{
-                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  background: "transparent",
+                                  boxShadow: "none",
+                                }}
+                                onClick={() => {
+                                  setTimeAccClicked(!timeAccClicked);
+                                }}
+                              >
+                                <AccordionSummary
+                                  aria-controls="panel1a-content"
+                                  id="panel1a-header"
+                                  expandIcon={<ExpandMoreIcon />}
+                                >
+                                  <div>
+                                    <TextTypography
+                                      style={{
+                                        fontWeight: 900,
+                                      }}
+                                    >
+                                      Time:{" "}
+                                      <span
+                                        style={{
+                                          color: `${theme.palette.v2PrimaryColor.main}`,
+                                          fontWeight: 900,
+                                        }}
+                                      >
+                                        {/* {convertToMilliSeconds(currentResultRun?.lookups?.totalTime)} ms */}
+                                        {calculateTotalTime()} ms
+                                      </span>
+                                    </TextTypography>
+                                  </div>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                  <div
+                                    style={{
+                                      marginTop: "-25px",
+                                      marginLeft: "15px",
+                                    }}
+                                  >
+                                    <Box
+                                      sx={{
+                                        width: "100%",
+                                        height: "100%",
+                                        background:
+                                          theme.palette.primaryWhite.main,
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          display: "grid",
+                                          gridTemplateColumns: "auto auto",
+                                          rowGap: "4px",
+                                          // columnGap: '5px'
+                                        }}
+                                      >
+                                        <TextTypography>
+                                          Dns Lookup Time:{" "}
+                                        </TextTypography>
+                                        <TextTypography
+                                          style={{
+                                            color: `${theme.palette.v2PrimaryColor.main}`,
+                                            fontWeight: 900,
+                                            marginLeft: "-90px",
+                                          }}
+                                        >
+                                          {convertToMilliSeconds(
+                                            currentResultRun?.lookups
+                                              ?.dnsLookupTime
+                                          )}{" "}
+                                          ms
+                                        </TextTypography>
+                                        <TextTypography>
+                                          Download Time:{" "}
+                                        </TextTypography>
+                                        <TextTypography
+                                          style={{
+                                            color: `${theme.palette.v2PrimaryColor.main}`,
+                                            fontWeight: 900,
+                                            marginLeft: "-90px",
+                                          }}
+                                        >
+                                          {convertToMilliSeconds(
+                                            currentResultRun?.lookups
+                                              ?.downloadTime
+                                          )}{" "}
+                                          ms
+                                        </TextTypography>
+                                        <TextTypography>
+                                          Response Time:{" "}
+                                        </TextTypography>
+                                        <TextTypography
+                                          style={{
+                                            color: `${theme.palette.v2PrimaryColor.main}`,
+                                            fontWeight: 900,
+                                            marginLeft: "-90px",
+                                          }}
+                                        >
+                                          {convertToMilliSeconds(
+                                            currentResultRun?.lookups
+                                              ?.responseTime
+                                          )}{" "}
+                                          ms
+                                        </TextTypography>
+                                        <TextTypography>
+                                          SSL Handshake Time:{" "}
+                                        </TextTypography>
+                                        <TextTypography
+                                          style={{
+                                            color: `${theme.palette.v2PrimaryColor.main}`,
+                                            fontWeight: 900,
+                                            marginLeft: "-90px",
+                                          }}
+                                        >
+                                          {convertToMilliSeconds(
+                                            currentResultRun?.lookups
+                                              ?.sslHandshakeTime
+                                          )}{" "}
+                                          ms
+                                        </TextTypography>
+                                        <TextTypography>
+                                          Total Time:{" "}
+                                        </TextTypography>
+                                        <TextTypography
+                                          style={{
+                                            color: `${theme.palette.v2PrimaryColor.main}`,
+                                            fontWeight: 900,
+                                            marginLeft: "-90px",
+                                          }}
+                                        >
+                                          {convertToMilliSeconds(
+                                            currentResultRun?.lookups?.totalTime
+                                          )}{" "}
+                                          ms
+                                        </TextTypography>
+                                        <TextTypography>
+                                          TransferStart Time:{" "}
+                                        </TextTypography>
+                                        <TextTypography
+                                          style={{
+                                            color: `${theme.palette.v2PrimaryColor.main}`,
+                                            fontWeight: 900,
+                                            marginLeft: "-90px",
+                                          }}
+                                        >
+                                          {convertToMilliSeconds(
+                                            currentResultRun?.lookups
+                                              ?.transferStartTime
+                                          )}{" "}
+                                          ms
+                                        </TextTypography>
+                                        <TextTypography>
+                                          TCP Handshake Time:{" "}
+                                        </TextTypography>
+                                        <TextTypography
+                                          style={{
+                                            color: `${theme.palette.v2PrimaryColor.main}`,
+                                            fontWeight: 900,
+                                            marginLeft: "-90px",
+                                          }}
+                                        >
+                                          {convertToMilliSeconds(
+                                            currentResultRun?.lookups
+                                              ?.tcpHandshakeTime
+                                          )}{" "}
+                                          ms
+                                        </TextTypography>
+                                      </div>
+                                    </Box>
+                                  </div>
+                                </AccordionDetails>
+                              </Accordion>
+                            </div>
+                            <div style={{ marginTop: "-10px" }}>
+                              <TextTypography>
+                                <span
+                                  style={{
+                                    fontWeight: 900,
+                                  }}
+                                >
+                                  {`StatusCode: `}
+                                </span>
+                                <span
+                                  style={{
+                                    fontWeight: 900,
+                                  }}
+                                >
+                                  {/* {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`} */}
+                                  {currentResultRun?.statusCode >= 100 &&
+                                  currentResultRun?.statusCode <= 199 ? (
+                                    <span
+                                      style={{
+                                        color: `${theme.palette.primaryBlue.main}`,
+                                      }}
+                                    >
+                                      {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                                    </span>
+                                  ) : currentResultRun?.statusCode >= 200 &&
+                                    currentResultRun?.statusCode <= 299 ? (
+                                    <span
+                                      style={{
+                                        color: `#16A34A`,
+                                      }}
+                                    >
+                                      {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                                    </span>
+                                  ) : currentResultRun?.statusCode >= 300 &&
+                                    currentResultRun?.statusCode <= 399 ? (
+                                    <span
+                                      style={{
+                                        color: `#D8A805`,
+                                      }}
+                                    >
+                                      {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                                    </span>
+                                  ) : currentResultRun?.statusCode >= 400 &&
+                                    currentResultRun?.statusCode <= 499 ? (
+                                    <span
+                                      style={{
+                                        color: `#FF8C00`,
+                                      }}
+                                    >
+                                      {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                                    </span>
+                                  ) : currentResultRun?.statusCode >= 500 &&
+                                    currentResultRun?.statusCode <= 509 ? (
+                                    <span
+                                      style={{
+                                        color: `${theme.palette.mainRed.main}`,
+                                      }}
+                                    >
+                                      {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                                    </span>
+                                  ) : (
+                                    ""
+                                  )}
+                                </span>
+                              </TextTypography>
+                            </div>
+
+                            {data?.currentResultRun?.node_id !== undefined ? (
+                              <>
+                                <TextTypography
+                                  style={{
+                                    margin: "10px",
+                                    fontSize: "12px",
+                                    fontWeight: 900,
+                                    color: `${theme.palette.teritiaryColor.main}`,
+                                  }}
+                                >
+                                  No data found
+                                </TextTypography>
+                              </>
+                            ) : (
+                              <>
+                                <div style={{ marginTop: "5px" }}>
+                                  <TextTypography
+                                    style={{
+                                      fontWeight: 900,
+                                    }}
+                                  >
+                                    Response:
+                                  </TextTypography>
+                                  <pre
+                                    style={{
+                                      fontSize: "9px",
+                                    }}
+                                  >
+                                    {formatWithLineNumbers(
+                                      JSON.stringify(
+                                        currentResultRun?.response,
+                                        null,
+                                        2
+                                      )
+                                    )}
+                                  </pre>
+                                </div>
+                              </>
+                            )}
+                          </>
+                        )
+                      }
+                    </>
+                  </>
+                )}
+              </Popover>
+            </div>
+          </Popover>
+          {/* Response section */}
+          <Popover
+            id="mouse-over-popover"
+            open={Boolean(anchorElResponse)}
+            anchorEl={anchorElResponse}
+            onClose={handleCloseResponse}
+            anchorOrigin={{
+              vertical: "center",
+              horizontal: "right",
+            }}
+            PaperProps={{
+              sx: {
+                width: "400px",
+                // minWidth: "180px",
+                padding: "15px",
+                maxHeight: "200px",
+                // overflowY: "auto",
+                overflow: "auto",
+                // pointerEvents: 'none',
+              },
+            }}
+            disableRestoreFocus
+          >
+            <>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: "5px",
+                }}
+              >
+                <PrimaryTypography
+                  style={{
+                    fontWeight: 900,
+                  }}
+                >
+                  Operation Response
+                </PrimaryTypography>
+              </div>
+              <>
+                {
+                  // ((currentResultRun === null) || (currentResultRun === undefined)) ?
+                  JSON?.stringify(currentResultRun) === "{}" ? (
+                    <>
+                      <RenderNoDataFound />
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ marginTop: "-5px", marginLeft: "-18px" }}>
+                        <Accordion
+                          style={{
+                            background: "transparent",
+                            boxShadow: "none",
+                          }}
+                          onClick={() => {
+                            setSizeAccClicked(!sizeAccClicked);
+                          }}
+                        >
+                          <AccordionSummary
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                            expandIcon={<ExpandMoreIcon />}
+                          >
+                            <div>
+                              <TextTypography
+                                style={{
                                   fontWeight: 900,
                                 }}
                               >
-                                {/* {convertToMilliSeconds(currentResultRun?.lookups?.totalTime)} ms */}
-                                {calculateTotalTime()} ms
-                              </span>
-                            </TextTypography>
-                          </div>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <div
-                            style={{
-                              marginTop: "-25px",
-                              marginLeft: "15px",
-                            }}
-                          >
-                            <Box
-                              sx={{
-                                width: "100%",
-                                height: "100%",
-                                background: theme.palette.primaryWhite.main,
+                                Size:{" "}
+                                <span
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                  }}
+                                >
+                                  {/* {currentResultRun?.size?.response_BodySize} KB */}
+                                  {/* {currentResultRun?.size && `${currentResultRun?.size?.request_HeaderSize + currentResultRun?.size?.request_BodySize + currentResultRun?.size?.response_BodySize + currentResultRun?.size?.response_HeaderSize}`} KB */}
+                                  {calculateTotalSize()} KB
+                                </span>
+                              </TextTypography>
+                            </div>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <div
+                              style={{
+                                marginTop: "-25px",
+                                marginLeft: "15px",
                               }}
                             >
-                              <div
-                                style={{
-                                  display: "grid",
-                                  gridTemplateColumns: "auto auto",
-                                  rowGap: "4px",
-                                  // columnGap: '5px'
+                              <Box
+                                sx={{
+                                  width: "100%",
+                                  height: "100%",
+                                  background: theme.palette.primaryWhite.main,
                                 }}
                               >
-                                <TextTypography>
-                                  Dns Lookup Time:{" "}
-                                </TextTypography>
-                                <TextTypography
+                                <div
                                   style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
+                                    display: "grid",
+                                    gridTemplateColumns: "auto auto",
+                                    rowGap: "4px",
+                                    // columnGap: '5px'
                                   }}
                                 >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.dnsLookupTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>Download Time: </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.downloadTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>Response Time: </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.responseTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>
-                                  SSL Handshake Time:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.sslHandshakeTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>Total Time: </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.totalTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>
-                                  TransferStart Time:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.transferStartTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>
-                                  TCP Handshake Time:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.tcpHandshakeTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                              </div>
-                            </Box>
-                          </div>
-                        </AccordionDetails>
-                      </Accordion>
-                    </div>
-                    <div style={{ marginTop: "-10px" }}>
-                      <TextTypography>
-                        <span
+                                  <TextTypography>
+                                    Request Body Size:{" "}
+                                  </TextTypography>
+                                  <TextTypography
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                      marginLeft: "-105px",
+                                    }}
+                                  >
+                                    {currentResultRun?.size?.request_BodySize}{" "}
+                                    KB
+                                  </TextTypography>
+                                  <TextTypography>
+                                    Request Header Size:{" "}
+                                  </TextTypography>
+                                  <TextTypography
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                      marginLeft: "-105px",
+                                    }}
+                                  >
+                                    {currentResultRun?.size?.request_HeaderSize}{" "}
+                                    KB
+                                  </TextTypography>
+                                  <TextTypography>
+                                    Response Body Size:{" "}
+                                  </TextTypography>
+                                  <TextTypography
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                      marginLeft: "-105px",
+                                    }}
+                                  >
+                                    {currentResultRun?.size?.response_BodySize}{" "}
+                                    KB
+                                  </TextTypography>
+                                  <TextTypography>
+                                    Response Header Size:{" "}
+                                  </TextTypography>
+                                  <TextTypography
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                      marginLeft: "-105px",
+                                    }}
+                                  >
+                                    {
+                                      currentResultRun?.size
+                                        ?.response_HeaderSize
+                                    }{" "}
+                                    KB
+                                  </TextTypography>
+                                </div>
+                              </Box>
+                            </div>
+                          </AccordionDetails>
+                        </Accordion>
+                      </div>
+                      <div
+                        style={{
+                          marginTop: "-25px",
+                          marginLeft: "-18px",
+                        }}
+                      >
+                        <Accordion
                           style={{
-                            fontWeight: 900,
+                            background: "transparent",
+                            boxShadow: "none",
+                          }}
+                          onClick={() => {
+                            setTimeAccClicked(!timeAccClicked);
                           }}
                         >
-                          {`StatusCode: `}
-                        </span>
-                        <span
-                          style={{
-                            fontWeight: 900,
-                          }}
-                        >
-                          {/* {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`} */}
-                          {currentResultRun?.statusCode >= 100 &&
-                          currentResultRun?.statusCode <= 199 ? (
-                            <span
+                          <AccordionSummary
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                            expandIcon={<ExpandMoreIcon />}
+                          >
+                            <div>
+                              <TextTypography
+                                style={{
+                                  fontWeight: 900,
+                                }}
+                              >
+                                Time:{" "}
+                                <span
+                                  style={{
+                                    color: `${theme.palette.v2PrimaryColor.main}`,
+                                    fontWeight: 900,
+                                  }}
+                                >
+                                  {/* {convertToMilliSeconds(currentResultRun?.lookups?.totalTime)} ms */}
+                                  {calculateTotalTime()} ms
+                                </span>
+                              </TextTypography>
+                            </div>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <div
                               style={{
-                                color: `${theme.palette.primaryBlue.main}`,
+                                marginTop: "-25px",
+                                marginLeft: "15px",
                               }}
                             >
-                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                            </span>
-                          ) : currentResultRun?.statusCode >= 200 &&
-                            currentResultRun?.statusCode <= 299 ? (
-                            <span
-                              style={{
-                                color: `#16A34A`,
-                              }}
-                            >
-                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                            </span>
-                          ) : currentResultRun?.statusCode >= 300 &&
-                            currentResultRun?.statusCode <= 399 ? (
-                            <span
-                              style={{
-                                color: `#D8A805`,
-                              }}
-                            >
-                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                            </span>
-                          ) : currentResultRun?.statusCode >= 400 &&
-                            currentResultRun?.statusCode <= 499 ? (
-                            <span
-                              style={{
-                                color: `#FF8C00`,
-                              }}
-                            >
-                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                            </span>
-                          ) : currentResultRun?.statusCode >= 500 &&
-                            currentResultRun?.statusCode <= 509 ? (
-                            <span
-                              style={{
-                                color: `${theme.palette.mainRed.main}`,
-                              }}
-                            >
-                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                            </span>
-                          ) : (
-                            ""
-                          )}
-                        </span>
-                      </TextTypography>
-                    </div>
-
-                    {data?.currentResultRun?.node_id !== undefined ? (
-                      <>
-                        <TextTypography
-                          style={{
-                            margin: "10px",
-                            fontSize: "12px",
-                            fontWeight: 900,
-                            color: `${theme.palette.teritiaryColor.main}`,
-                          }}
-                        >
-                          No data found
-                        </TextTypography>
-                      </>
-                    ) : (
-                      <>
-                        <div style={{ marginTop: "5px" }}>
-                          <TextTypography
+                              <Box
+                                sx={{
+                                  width: "100%",
+                                  height: "100%",
+                                  background: theme.palette.primaryWhite.main,
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "grid",
+                                    gridTemplateColumns: "auto auto",
+                                    rowGap: "4px",
+                                    // columnGap: '5px'
+                                  }}
+                                >
+                                  <TextTypography>
+                                    Dns Lookup Time:{" "}
+                                  </TextTypography>
+                                  <TextTypography
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                      marginLeft: "-90px",
+                                    }}
+                                  >
+                                    {convertToMilliSeconds(
+                                      currentResultRun?.lookups?.dnsLookupTime
+                                    )}{" "}
+                                    ms
+                                  </TextTypography>
+                                  <TextTypography>
+                                    Download Time:{" "}
+                                  </TextTypography>
+                                  <TextTypography
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                      marginLeft: "-90px",
+                                    }}
+                                  >
+                                    {convertToMilliSeconds(
+                                      currentResultRun?.lookups?.downloadTime
+                                    )}{" "}
+                                    ms
+                                  </TextTypography>
+                                  <TextTypography>
+                                    Response Time:{" "}
+                                  </TextTypography>
+                                  <TextTypography
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                      marginLeft: "-90px",
+                                    }}
+                                  >
+                                    {convertToMilliSeconds(
+                                      currentResultRun?.lookups?.responseTime
+                                    )}{" "}
+                                    ms
+                                  </TextTypography>
+                                  <TextTypography>
+                                    SSL Handshake Time:{" "}
+                                  </TextTypography>
+                                  <TextTypography
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                      marginLeft: "-90px",
+                                    }}
+                                  >
+                                    {convertToMilliSeconds(
+                                      currentResultRun?.lookups
+                                        ?.sslHandshakeTime
+                                    )}{" "}
+                                    ms
+                                  </TextTypography>
+                                  <TextTypography>Total Time: </TextTypography>
+                                  <TextTypography
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                      marginLeft: "-90px",
+                                    }}
+                                  >
+                                    {convertToMilliSeconds(
+                                      currentResultRun?.lookups?.totalTime
+                                    )}{" "}
+                                    ms
+                                  </TextTypography>
+                                  <TextTypography>
+                                    TransferStart Time:{" "}
+                                  </TextTypography>
+                                  <TextTypography
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                      marginLeft: "-90px",
+                                    }}
+                                  >
+                                    {convertToMilliSeconds(
+                                      currentResultRun?.lookups
+                                        ?.transferStartTime
+                                    )}{" "}
+                                    ms
+                                  </TextTypography>
+                                  <TextTypography>
+                                    TCP Handshake Time:{" "}
+                                  </TextTypography>
+                                  <TextTypography
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                      marginLeft: "-90px",
+                                    }}
+                                  >
+                                    {convertToMilliSeconds(
+                                      currentResultRun?.lookups
+                                        ?.tcpHandshakeTime
+                                    )}{" "}
+                                    ms
+                                  </TextTypography>
+                                </div>
+                              </Box>
+                            </div>
+                          </AccordionDetails>
+                        </Accordion>
+                      </div>
+                      <div style={{ marginTop: "-10px" }}>
+                        <TextTypography>
+                          <span
                             style={{
                               fontWeight: 900,
                             }}
                           >
-                            Response:
-                          </TextTypography>
-                          <pre
+                            {`StatusCode: `}
+                          </span>
+                          <span
                             style={{
-                              fontSize: "9px",
+                              fontWeight: 900,
                             }}
                           >
-                            {formatWithLineNumbers(
-                              JSON.stringify(
-                                currentResultRun?.response,
-                                null,
-                                2
-                              )
+                            {/* {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`} */}
+                            {currentResultRun?.statusCode >= 100 &&
+                            currentResultRun?.statusCode <= 199 ? (
+                              <span
+                                style={{
+                                  color: `${theme.palette.primaryBlue.main}`,
+                                }}
+                              >
+                                {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                              </span>
+                            ) : currentResultRun?.statusCode >= 200 &&
+                              currentResultRun?.statusCode <= 299 ? (
+                              <span
+                                style={{
+                                  color: `#16A34A`,
+                                }}
+                              >
+                                {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                              </span>
+                            ) : currentResultRun?.statusCode >= 300 &&
+                              currentResultRun?.statusCode <= 399 ? (
+                              <span
+                                style={{
+                                  color: `#D8A805`,
+                                }}
+                              >
+                                {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                              </span>
+                            ) : currentResultRun?.statusCode >= 400 &&
+                              currentResultRun?.statusCode <= 499 ? (
+                              <span
+                                style={{
+                                  color: `#FF8C00`,
+                                }}
+                              >
+                                {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                              </span>
+                            ) : currentResultRun?.statusCode >= 500 &&
+                              currentResultRun?.statusCode <= 509 ? (
+                              <span
+                                style={{
+                                  color: `${theme.palette.mainRed.main}`,
+                                }}
+                              >
+                                {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                              </span>
+                            ) : (
+                              ""
                             )}
-                          </pre>
-                        </div>
-                      </>
-                    )}
-                  </>
-                )
-              }
-            </>
-          </>
-        </Popover>
-      </Box>
+                          </span>
+                        </TextTypography>
+                      </div>
 
-      {/* <Handle type="source" position={Position.Right} id="a" /> */}
-      {/* <WorkflowCustomHandle
+                      {data?.currentResultRun?.node_id !== undefined ? (
+                        <>
+                          <TextTypography
+                            style={{
+                              margin: "10px",
+                              fontSize: "12px",
+                              fontWeight: 900,
+                              color: `${theme.palette.teritiaryColor.main}`,
+                            }}
+                          >
+                            No data found
+                          </TextTypography>
+                        </>
+                      ) : (
+                        <>
+                          <div style={{ marginTop: "5px" }}>
+                            <TextTypography
+                              style={{
+                                fontWeight: 900,
+                              }}
+                            >
+                              Response:
+                            </TextTypography>
+                            <pre
+                              style={{
+                                fontSize: "9px",
+                              }}
+                            >
+                              {formatWithLineNumbers(
+                                JSON.stringify(
+                                  currentResultRun?.response,
+                                  null,
+                                  2
+                                )
+                              )}
+                            </pre>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )
+                }
+              </>
+            </>
+          </Popover>
+        </Box>
+
+        {/* <Handle type="source" position={Position.Right} id="a" /> */}
+        {/* <WorkflowCustomHandle
         type="source"
         position={Position.Right}
         id={nodeData?.id + "_success" || nodeData?.id + "_failure"}
@@ -3329,39 +3202,39 @@ export default function WorkflowOperationNode({ data }: any) {
         isValidConnection={isValidConnection}
       /> */}
 
-      <WorkflowCustomHandle
-        type="source"
-        position={Position.Right}
-        id={nodeData?.id + "_success"}
-        style={{
-          height: "8px",
-          width: "8px",
-          // background: "#55CCFF",
-          background: "#4CAF50",
-          borderRadius: "inherit",
-          borderColor: "#D2D2D2",
-          boxShadow: "0 0 10px 2px rgb(76, 175, 80, 0.5)",
-        }}
-        isValidConnection={isValidConnection}
-      />
-      <WorkflowCustomHandle
-        type="source"
-        position={Position.Right}
-        id={nodeData?.id + "_failure"}
-        style={{
-          height: "8px",
-          width: "8px",
-          // background: "#55CCFF",
-          background: "#FF5252",
-          borderRadius: "inherit",
-          borderColor: "#D2D2D2",
-          marginTop: "20px",
-          boxShadow: "0 0 10px 2px rgba(255, 82, 82, 0.5)",
-        }}
-        isValidConnection={isValidConnection}
-      />
+        <WorkflowCustomHandle
+          type="source"
+          position={Position.Right}
+          id={nodeData?.id + "_success"}
+          style={{
+            height: "8px",
+            width: "8px",
+            // background: "#55CCFF",
+            background: "#4CAF50",
+            borderRadius: "inherit",
+            borderColor: "#D2D2D2",
+            boxShadow: "0 0 10px 2px rgb(76, 175, 80, 0.5)",
+          }}
+          isValidConnection={isValidConnection}
+        />
+        <WorkflowCustomHandle
+          type="source"
+          position={Position.Right}
+          id={nodeData?.id + "_failure"}
+          style={{
+            height: "8px",
+            width: "8px",
+            // background: "#55CCFF",
+            background: "#FF5252",
+            borderRadius: "inherit",
+            borderColor: "#D2D2D2",
+            marginTop: "20px",
+            boxShadow: "0 0 10px 2px rgba(255, 82, 82, 0.5)",
+          }}
+          isValidConnection={isValidConnection}
+        />
 
-      {/* <CustomHandle
+        {/* <CustomHandle
         type="source"
         position={Position.Right}
         id={nodeData?.id + "_success"}
@@ -3370,7 +3243,7 @@ export default function WorkflowOperationNode({ data }: any) {
         style={{ height: "15px", width: "2px", background: "yellow" }}
         isValidConnection={isValidConnection}
       /> */}
-      {/* <CustomHandle
+        {/* <CustomHandle
         type="source"
         position={Position.Right}
         id={nodeData?.id + "_failure"}
@@ -3383,8 +3256,8 @@ export default function WorkflowOperationNode({ data }: any) {
         }}
         isValidConnection={isValidConnection}
       /> */}
-      <style>
-        {`
+        <style>
+          {`
           @keyframes blinkShadow {
             0% {
               box-shadow: 0 0 5px rgba(107, 33, 168, 0.8); /* Start with the shadow color */
@@ -3397,7 +3270,8 @@ export default function WorkflowOperationNode({ data }: any) {
             }
           }
         `}
-      </style>
+        </style>
+      </Box>
     </Box>
   );
 }

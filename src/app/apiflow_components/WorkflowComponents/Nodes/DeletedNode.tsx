@@ -1,16 +1,8 @@
 import {
   convertToMilliSeconds,
   getCookies,
-  // replacePlaceholders,
-  updateArray,
 } from "@/app/Helpers/helpersFunctions";
-import { replacePlaceholders } from "@/app/DesignHelpers/flowHelpers";
-import {
-  FlowReducer,
-  GetNodeChangeManByFlowNodeId,
-  RunSingleNode,
-  setGlobalResponse,
-} from "@/app/Redux/apiManagement/flowReducer";
+import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
 import { CommonReducer } from "@/app/Redux/commonReducer";
 import { RootStateType } from "@/app/Redux/store";
 import {
@@ -18,48 +10,26 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
-  Button,
   Popover,
   Typography,
   useTheme,
 } from "@mui/material";
-import { borderColor, borderRadius, fontWeight, styled } from "@mui/system";
+import { styled } from "@mui/system";
 import { usePathname } from "next/navigation";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import toast from "react-hot-toast";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Connection, Handle, Position, useReactFlow } from "reactflow";
+import { Position, useReactFlow } from "reactflow";
 import * as Y from "yjs";
 import { v4 as uuidv4 } from "uuid";
-import CustomHandle from "@/app/ApiFlowComponents/ApiDesigner/customHandle";
-import ChangeCircleOutlinedIcon from "@mui/icons-material/ChangeCircleOutlined";
 import { PrimaryTypography } from "@/app/Styles/signInUp";
-import {
-  DeleteIcon,
-  InfoIcon,
-  TotalProjects,
-  TotalNewProjectIcon,
-  CloseIcon,
-} from "@/app/Assests/icons";
-import { ManageAccounts } from "@mui/icons-material";
-import {
-  BackgroundUrlList,
-  GetOperationById,
-} from "@/app/Redux/apiManagement/projectReducer";
+import { TotalNewProjectIcon } from "@/app/Assests/icons";
+
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { RenderNoDataFound } from "@/app/ApiFlowComponents/ApiDesigner/renderNoDataFound";
 import GButton from "@/app/apiflow_components/global/GButton";
-import { ChangeNodeManage } from "@/app/ApiFlowComponents/ApiDesigner/ChangeHistoryDesigner/ChangeNodeManage";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 import GSelect from "@/app/apiflow_components/global/GSelect";
 import TextEditor from "@/app/apiflow_components/WorkflowComponents/TextEditor/textEditor";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import WorkflowCustomHandle from "../workflowCustomHandle";
 import theme from "@/Theme/theme";
@@ -103,109 +73,6 @@ export const TertiaryTypogrpahy = styled(Typography)`
   font-size: 12px;
 `;
 
-const extractAllVariables = (inputString: any) => {
-  const variablePattern = /\{response\.([^\}\.]+)(?:\.[^\}]*)?\}/g;
-  const variables = [];
-  let match;
-
-  while ((match = variablePattern.exec(inputString)) !== null) {
-    variables.push(match[1]); // Extracted variable name
-  }
-
-  return variables;
-};
-
-const checkConnections = (
-  node_id: string,
-  request_variable: string,
-  current_node: string,
-  edgesArray: any,
-  nodesArray: any,
-  ydoc: YDoc | null,
-  apiFlowId: string,
-  user_id: string
-) => {
-  let matches = extractAllVariables(request_variable);
-
-  for (const match of matches) {
-    for (const node of nodesArray) {
-      if (node.type !== "startButtonNode" && node.data) {
-        const nodeData = JSON.parse(node.data);
-        if (nodeData.node_name === match) {
-          let update_data = nodeData.id;
-          let existingEdge = edgesArray.find(
-            (x: any) => x.source === update_data && x.target === node_id
-          );
-
-          if (!existingEdge) {
-            addEdges_new(ydoc, node_id, update_data, apiFlowId, user_id);
-            return {
-              error: "",
-            };
-          } else {
-            return {
-              error: "",
-            };
-
-            // return {
-            //   error: existingEdge
-            //     ? ""
-            //     : `Edge from ${current_node} to ${nodeData.node_name} not found.`,
-            // };
-          }
-        }
-      }
-    }
-  }
-
-  return { error: "" };
-};
-
-const addEdges_new = (
-  ydoc: YDoc | null,
-  target_node: any,
-  source_node: any,
-  apiFlowId: string,
-  user_id: string
-) => {
-  let id = uuidv4();
-  const storedVersionValue = sessionStorage.getItem("versionValue");
-  let edge = {
-    // ...params,
-    flow_id: apiFlowId,
-    created_by: user_id,
-    id: id,
-    animated: true,
-    version: storedVersionValue,
-    name: "null",
-    status: "null",
-    source: source_node,
-    sourceHandle: source_node + "_success",
-    target: target_node,
-    targetHandle: target_node + "_input",
-    style: {
-      //   stroke: "#4CAF50",
-      stroke: "#55CCFF",
-    },
-    type: "buttonEdge",
-  };
-
-  let updatedEdge: any = {
-    action: "ADD_EDGES",
-    status: "null",
-    flow_id: apiFlowId,
-    id: id,
-    edges: edge,
-  };
-
-  // setEdges([...edges, edge]);
-  const edgeMap = ydoc ? ydoc?.getMap<any>("edges") : null;
-  if (edgeMap) {
-    edgeMap.set(updatedEdge.id, updatedEdge);
-  } else {
-  }
-};
-
 export default function DeletedNode({ data }: any) {
   //--------------------variable declarations-----------------------------------------
   const { deleteElements, getEdges, getNode, getNodes } = useReactFlow();
@@ -219,16 +86,10 @@ export default function DeletedNode({ data }: any) {
   const flowIdVal = getCookies(process.env.NEXT_PUBLIC_COOKIE_FLOWID ?? "");
 
   //--------------------state declarations----------------------------------------------
-  const {
-    nextNode,
-    flowYdoc,
-    globalKeys,
-    globalResponse,
-    isEditable,
-    currentFlowDetails,
-  } = useSelector<RootStateType, FlowReducer>(
-    (state) => state.apiManagement.apiFlowDesign
-  );
+  const { nextNode, flowYdoc, globalKeys } = useSelector<
+    RootStateType,
+    FlowReducer
+  >((state) => state.apiManagement.apiFlowDesign);
 
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
@@ -251,9 +112,6 @@ export default function DeletedNode({ data }: any) {
     nodeData?.operations_query_param ? [...nodeData.operations_query_param] : []
   );
 
-  const [backgroundUrlClicked, setbackgroundUrlClicked] = useState<any>(false);
-  const [operationDetails, setOperationDetails] = useState<any>(false);
-  const [backgroundUrlData, setBackgroundUrlData] = useState<any>([]);
   const [sizeAccClicked, setSizeAccClicked] = useState(false);
   const [timeAccClicked, setTimeAccClicked] = useState(false);
 
@@ -274,12 +132,6 @@ export default function DeletedNode({ data }: any) {
   const [warning, setWarning] = useState<any>("");
   const [Querywarning, setQueryWarning] = useState<any>("");
   const [Globalwarning, setGlobalWarning] = useState<any>("");
-  const [operationDeleteEditStatus, setOperationDeleteEditStatus] =
-    useState("");
-
-  const [changeManClicked, setChangeManClicked] = useState(false);
-  const [changeManResponse, setChangeManResponse] = useState<any>({});
-
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
@@ -299,113 +151,6 @@ export default function DeletedNode({ data }: any) {
       }
     }
   }
-
-  const onClick = useCallback(() => {
-    const nodeToRemoveId = nodeData?.id;
-
-    // Find edges connected to the node being removed
-    const edgesToRemove = getEdges().filter(
-      (edge) => edge.source === nodeToRemoveId || edge.target === nodeToRemoveId
-    );
-
-    const payload = {
-      nodes: [{ id: nodeToRemoveId }], // Node to be removed
-      edges: edgesToRemove.map((edge) => ({ id: edge.id })), // Edges connected to the node
-    };
-
-    // Delete the node and its associated edges
-    // deleteElements(payload);
-
-    let updatedNode: any = {
-      action: "DELETE_NODES",
-      status: "null",
-      id: nodeToRemoveId,
-      // flow_id: apiFlowId,
-      nodes: {
-        id: nodeToRemoveId,
-      },
-    };
-
-    const edgeMap = flowYdoc?.getMap<any>("edges");
-    if (edgeMap) {
-      edgesToRemove.forEach((edge) => {
-        let updatedEdge: any = {
-          action: "DELETE_EDGES",
-          status: "null",
-          // flow_id: apiFlowId,
-          edges: { id: edge.id }, // Assuming edge.id is the id of the current edge
-        };
-        edgeMap.set(edge.id, updatedEdge); // Assuming edge.id is the key
-      });
-    } else {
-    }
-
-    const nodesMap = flowYdoc?.getMap<any>("nodes");
-    if (nodesMap) {
-      nodesMap?.set(nodeToRemoveId, updatedNode);
-    } else {
-    }
-  }, [nodeData?.id, deleteElements, getEdges]);
-
-  function isValidConnection(connection: Connection) {
-    const { source, target } = connection;
-
-    //   const isTargetConnected = getEdges().some((edge) => edge.target === target);
-    //   if (isTargetConnected) {
-    //     return false;
-    //   }
-
-    // Check if the source and target are the same
-    if (source === target) {
-      return false;
-    }
-
-    // Check if the target handle is already connected to a source handle with "_startHandle"
-    const isTargetConnectedToStartHandle = getEdges().some(
-      (edge) =>
-        edge.target === target && edge?.sourceHandle?.includes("_startHandle")
-    );
-
-    if (isTargetConnectedToStartHandle) {
-      // If the target is already connected to a "_startHandle", prevent any new connections
-      return false;
-    }
-
-    // Check if the source handle is already connected to the target handle
-    const isSourceConnectedToTarget = getEdges().some(
-      (edge) => edge.target === source && edge.source === target
-    );
-    if (isSourceConnectedToTarget) {
-      return false;
-    }
-
-    return true;
-  }
-
-  // const handleInputDataFromAceEditor = useCallback(
-  //   (val: any) => {
-  //     setInputsPayload(val);
-  //     const nodesMap = flowYdoc?.getMap<any>("nodes");
-  //     const currentData = getNode(nodeData?.id);
-
-  //     if (nodesMap) {
-  //       nodesMap.set(nodeData?.id, {
-  //         action: "EDIT_NODE",
-  //         status: "null",
-  //         id: nodeData?.id,
-  //         nodes: {
-  //           ...currentData,
-  //           data: JSON.stringify({
-  //             ...nodeData,
-  //             raw_payload: val,
-  //           }),
-  //         },
-  //       });
-  //     }
-  //   },
-  //   [flowYdoc, nodeData?.id]
-  // );
-
   const handleInputDataFromAceEditor = useCallback(
     debounce((val: any) => {
       if (val !== inputsPayload) {
@@ -958,163 +703,6 @@ export default function DeletedNode({ data }: any) {
     );
   }
 
-  function safeJSONParse(rawPayload: string) {
-    if (!rawPayload) return {};
-
-    // Preprocess the raw payload to ensure valid JSON
-    const preprocessedPayload = rawPayload
-      //   .replace(
-      //   /:\s*(&[a-zA-Z]+\(\{[^}]*\}\))/g, // Match unquoted functions like &upperCase({...})
-      //   (match: any, group: any) => `: "${group}"` // Wrap the match in quotes
-      // );
-      .replace(
-        /:\s*({[^}]*})/g, // Match unquoted object-like values (e.g., `{...}`)
-        (match, group) => `: "${group}"`
-      )
-      .replace(
-        /:\s*(&[a-zA-Z]+\(\{[^}]*\}\))/g, // Match unquoted functions like &upperCase({...})
-        (match, group) => `: "${group}"`
-      )
-      .replace(
-        /:\s*([^",\s}\]]+)/g, // Match unquoted standalone values (e.g., response.getAllProducts...)
-        (match, group) => `: "${group}"`
-      );
-
-    // Parse the preprocessed JSON string
-    try {
-      return JSON.parse(preprocessedPayload);
-    } catch (e) {
-      console.error("Invalid JSON format:", e);
-      return {};
-    }
-  }
-
-  const RunHandler = () => {
-    let payload;
-    try {
-      // payload = JSON.parse(nodeData?.raw_payload || "{}");
-      payload = safeJSONParse(nodeData.raw_payload);
-      // payload = nodeData?.raw_payload;
-    } catch (error: any) {
-      toast.error(
-        `${nodeData?.node_name || "Unknown Node"}:Input Error parsing JSON: ${
-          error.message
-        }`
-      );
-    }
-    // const payload = JSON.parse(nodeData?.raw_payload || "{}");
-
-    // let response = previousOpRaw || null;
-
-    let response = globalResponse || null;
-
-    const new_payload = replacePlaceholders(payload, { response }, globalKeys);
-
-    let headersArr = nodeData.operations_header || [];
-    let globalHeaders = globalKeys?.filter(
-      (x: any) => x.include === true && x.node_id !== nodeData.id
-    );
-
-    let globalBody = globalKeys?.filter(
-      (x: any) => x.body_include === true && x.node_id !== nodeData.id
-    );
-
-    // // "key":"value"
-
-    if (globalHeaders.length > 0) {
-      for (let key of globalHeaders) {
-        headersArr = [
-          ...headersArr,
-          {
-            name: key?.header_key,
-            test_value: key.prefix_value + "" + key?.value,
-            default_value: "",
-          },
-        ];
-      }
-    }
-
-    if (globalBody.length > 0) {
-      for (let key of globalBody) {
-        new_payload[key.body_key] = key.body_key; // or key.body_key = value if there is a corresponding value
-      }
-    }
-
-    let updatedData = {
-      operation_id: nodeData.operation_id,
-      flow_id: initialFlowId,
-      node_id: nodeData.id,
-      project_id: currentFlowDetails?.project_id,
-      data: {
-        // operation_inputs: updateArray(nodeData?.operations_input),
-        operation_inputs: [],
-        operation_headers: updateArray(
-          // nodeData?.operations_header,
-          headers,
-          response,
-          globalKeys
-        ),
-        operation_authorization: [],
-        operation_query_params: updateArray(
-          nodeData?.operations_query_param,
-          response,
-          globalKeys
-        ),
-        payload: new_payload ? JSON.stringify(new_payload) : "",
-      },
-    };
-
-    setCurrentNodeRun(true);
-    dispatch(RunSingleNode(updatedData))
-      .unwrap()
-
-      .then((res: any) => {
-        setCurrentNodeRun(false);
-        const responseResult = {
-          serviceInput: res?.serviceInput,
-          response: res?.response,
-          statusCode: res?.statusCode,
-        };
-
-        // if (res.statusCode >= 200 && res.statusCode < 300) {
-        const nodesMap = flowYdoc?.getMap<any>("nodes");
-        // let currentData: any = getNode(nodeData?.id);
-
-        // if (nodesMap) {
-        //   nodesMap.set(nodeData?.id, {
-        //     action: "EDIT_NODE",
-        //     status: "null",
-        //     id: nodeData?.id,
-        //     nodes: {
-        //       response: responseResult,
-        //       ...currentData,
-        //       data: JSON.stringify({
-        //         ...nodeData,
-        //         // raw_output: res?.response?.apiResponse,
-        //       }),
-        //     },
-        //   });
-        // } else {
-        // }
-        // setCurrentResponse(res.response.apiResponse);
-        // dispatch(setGlobalResponse({ ...globalResponse ,  }));
-
-        // dispatch(
-        //   setGlobalResponse({
-        //     ...globalResponse,
-        //     [nodeData?.node_name]: res.response.apiResponse,
-        //   })
-        // );
-
-        // }
-
-        setCurrentResultRun(res);
-      })
-      .catch((err: any) => {
-        setCurrentNodeRun(false);
-      });
-  };
-
   return (
     <Box
       sx={{
@@ -1216,25 +804,6 @@ export default function DeletedNode({ data }: any) {
             {nodeData?.node_name}
           </SecondaryTypography>
         </div>
-        {/* <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <PlayArrowIcon
-            style={{
-              color: `#FFFFFF`,
-              fontSize: "18px",
-              backgroundColor: "#7E59DC",
-              borderRadius: "4px",
-            }}
-            onClick={() => {
-              RunHandler();
-            }}
-          />
-        </div> */}
       </Box>
 
       <Box

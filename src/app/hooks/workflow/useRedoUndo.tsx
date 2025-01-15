@@ -56,7 +56,7 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
     edgesArr: [],
     nodesArr: [],
   });
-  console.log(storedNodes, "node&Edge", count);
+
   /**
    * Removes edges connected to a node during undo
    */
@@ -313,7 +313,6 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
       document.removeEventListener("keydown", handleUndoShortcut);
     };
   }, [storedNodes, count]);
-  // console.log(count, "nodeEdge123", storedNodes);
 
   return {
     settotalCounts,
