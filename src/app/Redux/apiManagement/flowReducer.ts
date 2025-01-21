@@ -589,7 +589,7 @@ export const GetNodeChangeManByFlowNodeId = createAsyncThunk(
     try {
       return await AdminServices(
         "get",
-        `Api/Api_design_flow_service/get_node_changemanagment_by_flowandnode_id?flow_id=${data?.flow_id}&node_id=${data?.node_id}`,
+        `Api/Api_design_flow_service/get_node_changemanagment_by_flowandnode_id?flow_id=${data?.flow_id}&node_id=${data?.node_id}&project_id=${data?.project_id}`,
         null,
         null
       );
@@ -627,7 +627,7 @@ export const GetNodeChangesTrackingOffset = createAsyncThunk(
     try {
       return await AdminServices(
         "get",
-        `Api/Api_design_flow_service/get_node_changestracking_offset?flow_di=${data?.flow_id}&node_id=${data?.node_id}&offset=${data?.offset}&limit=${data?.limit}`,
+        `Api/Api_design_flow_service/get_node_changestracking_offset?flow_id=${data?.flow_id}&project_id=${data?.project_id}&node_id=${data?.node_id}&offset=${data?.offset}&limit=${data?.limit}`,
         null,
         null
       );

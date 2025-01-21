@@ -28,6 +28,7 @@ import {
 import { useParams } from "react-router-dom";
 import * as Y from "yjs";
 import html2canvas from "html2canvas";
+import useNodeErr from "./useNodeErr";
 
 type YDoc = Y.Doc;
 
@@ -67,15 +68,31 @@ export default function useWorkflow({
 
   const connectingNodeId = useRef(null);
   const params = useParams();
+
+  //--------------------------------------Custom Hooks---------------------------------------------------------
+
+  const { handleAddInitialErrors } = useNodeErr();
+
   //--------------------------------------Stores---------------------------------------------------------
 
   const { getEdges, getIntersectingNodes, screenToFlowPosition } =
     useReactFlow();
-  const { storedNodes, setNodeFunction, setDimension, setstoredNodes } =
-    useWorkflowStore();
+  const {
+    storedNodes,
+    setNodeFunction,
+    setDimension,
+    setstoredNodes,
+    resetWorkFlowState,
+    inputdatas,
+    setParticularInputData,
+  } = useWorkflowStore();
   const { dropItem } = useGlobalStore();
 
   //--------------------------------------UseEffects---------------------------------------------------------
+
+  useEffect(() => {
+    resetWorkFlowState("storedNodes");
+  }, []);
 
   useEffect(() => {
     if (!flowYdoc) return;
@@ -315,7 +332,9 @@ export default function useWorkflow({
             });
             if (storedNodes.length == 0) {
               setstoredNodes([{ nodes: nodesApiData, edges: edgesApiData }]);
+              handleAddInitialErrors(nodesApiData);
             }
+
             // Get nodes and edges from ydoc
             const nodeMap = flowYdoc?.getMap<any>("nodes");
             const edgeMap = flowYdoc?.getMap<any>("edges");
@@ -657,6 +676,12 @@ export default function useWorkflow({
             const nodeMap = flowYdoc?.getMap<any>("nodes");
             if (nodeMap) {
               nodeMap.set(updatedNode.id, updatedNode);
+              setParticularInputData(updatedNode.id, {
+                input: { input: "", isErr: false },
+                header: [{ input: "", isErr: false }],
+                params: [{ input: "", isErr: false }],
+                edge: [{ input: [], isErr: false }],
+              });
               setNodeFunction({
                 id: updatedNode.id,
                 method: "ADD_NODE",
@@ -754,6 +779,7 @@ export default function useWorkflow({
     },
     [screenToFlowPosition, dropItem]
   );
+
   function parseData(data: any) {
     // Check if data is an object
     if (typeof data === "object") {
@@ -970,6 +996,7 @@ export default function useWorkflow({
       .unwrap()
       .then((res: any) => {});
   };
+
   return {
     actionProgress,
     userAction,

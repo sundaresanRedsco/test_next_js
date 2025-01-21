@@ -6,6 +6,7 @@ import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
 import { CommonReducer } from "@/app/Redux/commonReducer";
 import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 import { useReactFlow } from "reactflow";
+import useReusableFunctions from "./useReusableFunctions";
 
 type Props = {
   nodes: any;
@@ -30,21 +31,18 @@ export default function useSelectNodes({
 }: Props) {
   const { screenToFlowPosition, getEdges, getNode } = useReactFlow();
 
+  const { handleCopyNodes, handleCutNodes } = useReusableFunctions();
+
   const {
     dimensions,
     setDimension,
     copiedData,
-    resetCopiedData,
-    setCopiedData,
-    resetSelectedFlowIds,
     selectedFlowIds,
-    setNodeFunction,
-    copyClicked,
     setCopyClicked,
-    cutClicked,
-    setCutClicked,
+    setParticularInputData,
+    resetWorkFlowState,
+    setNodeFunction,
   } = useWorkflowStore();
-
   const { isEditable, flowYdoc } = useSelector<RootStateType, FlowReducer>(
     (state) => state.apiManagement.apiFlowDesign
   );
@@ -202,6 +200,7 @@ export default function useSelectNodes({
     console.log(newNode, "AWARENSSDATA");
 
     nodeMap?.set(updatedNode?.id, updatedNode);
+
     if (isGroupNode) {
       setDimension(id, {
         width: dimensions[tempData.id]?.width || tempData?.width,
@@ -209,6 +208,20 @@ export default function useSelectNodes({
       });
       newGrpNodes[tempData.id] = id;
     }
+    setCopyClicked(tempData?.id, false);
+    if (newNode.type == "operationNode") {
+      setParticularInputData(id, {
+        input: { input: "", isErr: false },
+        header: [{ input: "", isErr: false }],
+        params: [{ input: "", isErr: false }],
+        edge: [{ input: [], isErr: false }],
+      });
+    }
+    setNodeFunction({
+      id: updatedNode?.id,
+      method: "ADD_NODE",
+      obj: newNode,
+    });
   };
 
   const addCopiedEdges = (nodeIdMapping: any, edgeMap: any) => {
@@ -217,13 +230,9 @@ export default function useSelectNodes({
       const newEdge = {
         ...edge,
         id: newEdgeId,
-        source: edge.source.includes("_start")
-          ? "" //to remove the edge from the starting node
-          : nodeIdMapping[edge.source] || edge.source,
+        source: nodeIdMapping[edge.source] || edge.source,
         target: nodeIdMapping[edge.target] || edge.target,
-        sourceHandle: edge.source.includes("_start")
-          ? "" //to remove the edge from the starting node
-          : nodeIdMapping[edge.source] + "_success" || edge.source,
+        sourceHandle: nodeIdMapping[edge.source] + "_success" || edge.source,
         targetHandle: nodeIdMapping[edge.target] + "_input" || edge.target,
       };
 
@@ -234,8 +243,9 @@ export default function useSelectNodes({
         id: newEdgeId,
         edges: newEdge,
       };
-
-      edgeMap?.set(newEdgeId, updatedEdge);
+      if (!edge.source.includes("_start")) {
+        edgeMap?.set(newEdgeId, updatedEdge);
+      }
     });
   };
   const handlePasteNodes = (event?: any) => {
@@ -259,74 +269,10 @@ export default function useSelectNodes({
       addCopiedEdges(nodeIdMapping, edgeMap);
     }
 
-    resetCopiedData();
-    resetSelectedFlowIds();
-    setCopyClicked(false);
-    setCutClicked(false);
+    // resetWorkFlowState("copiedData");
+    resetWorkFlowState("selectedFlowIds");
   };
 
-  const handleCutNodes = (id: any) => {
-    handlePrepareDeletion(id);
-  };
-  const handleCopyNodes = (isNodeCut?: boolean) => {
-    if (selectedFlowIds?.length > 0) {
-      const copiedNodesValue = selectedFlowIds?.flatMap((val: any) =>
-        nodes?.filter((item: any) => item?.id === val)
-      );
-
-      const copiedEdgesValue = edges?.filter(
-        (edge: any) =>
-          selectedFlowIds.includes(edge.source) ||
-          selectedFlowIds.includes(edge.target)
-      );
-
-      setCopiedData({
-        nodes: copiedNodesValue,
-        edges: copiedEdgesValue,
-      });
-
-      if (isNodeCut) {
-        copiedNodesValue.forEach((node: any) => {
-          handleCutNodes(node.id);
-        });
-      }
-    }
-  };
-  const handlePrepareDeletion = (id: any) => {
-    const nodeToRemoveId = id;
-    const edgesToRemove = getEdges().filter(
-      (edge) => edge.source === nodeToRemoveId || edge.target === nodeToRemoveId
-    );
-    let updatedNode: any = {
-      action: "DELETE_NODES",
-      status: "null",
-      id: nodeToRemoveId,
-      nodes: {
-        id: nodeToRemoveId,
-      },
-    };
-    const edgeMap = flowYdoc?.getMap<any>("edges");
-    if (edgeMap) {
-      edgesToRemove.forEach((edge: any) => {
-        let updatedEdge: any = {
-          action: "DELETE_EDGES",
-          status: "null",
-          edges: { id: edge.id },
-        };
-        edgeMap.set(edge.id, updatedEdge);
-      });
-    }
-    const nodesMap = flowYdoc?.getMap<any>("nodes");
-    if (nodesMap) {
-      nodesMap?.set(nodeToRemoveId, updatedNode);
-
-      setNodeFunction({
-        id: nodeToRemoveId,
-        method: "DELETE_NODES",
-        obj: null,
-      });
-    }
-  };
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event?.ctrlKey && event?.key === "c") {
@@ -342,18 +288,6 @@ export default function useSelectNodes({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [selectedFlowIds.length, lastCursorPosition, nodes.length]);
-
-  useEffect(() => {
-    if (copyClicked) {
-      handleCopyNodes();
-    }
-  }, [copyClicked]);
-
-  useEffect(() => {
-    if (cutClicked) {
-      handleCopyNodes(true);
-    }
-  }, [cutClicked]);
 
   useEffect(() => {
     if (nodes?.length === 0) return;

@@ -22,6 +22,9 @@ import { FQL_FUNCTIONS } from "@/app/Constants/JsonDatas";
 import { Close, ErrorOutline } from "@mui/icons-material";
 import useTextEditor from "@/app/hooks/useTextEditor";
 import { TeritaryTextTypography } from "@/app/Styles/signInUp";
+import useNodes from "@/app/hooks/workflow/useNodes";
+import useNodeErr from "@/app/hooks/workflow/useNodeErr";
+import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 
 interface TextEditorProps {
   inputData?: string | null;
@@ -31,6 +34,9 @@ interface TextEditorProps {
   multiline: boolean;
   currentNode: string;
   disabled?: boolean;
+  nodeId?: any;
+  keyName?: any;
+  index?: any;
 }
 
 const getNestedKeys = (obj: any, prefix = ""): string[] => {
@@ -73,7 +79,11 @@ const TextEditor: React.FC<TextEditorProps> = ({
   multiline,
   disabled = false,
   editorId,
+  nodeId,
+  keyName,
+  index,
 }) => {
+  const { updateInputData, inputdatas } = useWorkflowStore();
   const { globalKeys, globalResponse } = useSelector<
     RootStateType,
     FlowReducer
@@ -93,7 +103,12 @@ const TextEditor: React.FC<TextEditorProps> = ({
         : {}
     );
   }, [objectToSuggest, modifiedResponse]);
-  const { errorMsg, input, setInput } = useTextEditor(inputData);
+  const { errorMsg, input, setInput, handleValidation } = useTextEditor(
+    inputData,
+    keyName,
+    nodeId,
+    index
+  );
 
   // const [input, setInput] = useState<any>(inputData);
   const [suggestedKeys, setSuggestedKeys] = useState<string[]>([]);
@@ -313,6 +328,18 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const openError = Boolean(anchorEl);
   const id =
     openError && errorMsg ? "simpleopenError-popover" + editorId : undefined;
+  useEffect(() => {
+    const currentInputs = inputdatas[nodeId];
+    const currentKeyValues = currentInputs[keyName];
+    if (currentInputs && currentKeyValues && input != currentKeyValues[index]) {
+      updateInputData(nodeId, {
+        index,
+        value: { input, isErr: errorMsg ? true : false },
+        key: keyName,
+      });
+    }
+  }, [input, errorMsg, index, keyName, inputData]);
+
   return (
     <div style={{ position: "relative" }}>
       <Autocomplete

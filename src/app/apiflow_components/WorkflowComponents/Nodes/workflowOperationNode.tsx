@@ -19,7 +19,9 @@ import {
   AccordionSummary,
   Box,
   Button,
+  IconButton,
   Popover,
+  Stack,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -42,12 +44,11 @@ import ChangeCircleOutlinedIcon from "@mui/icons-material/ChangeCircleOutlined";
 import { PrimaryTypography } from "@/app/Styles/signInUp";
 import {
   DeleteIcon,
-  InfoIcon,
   TotalProjects,
   TotalNewProjectIcon,
   CloseIcon,
 } from "@/app/Assests/icons";
-import { ManageAccounts } from "@mui/icons-material";
+import { ManageAccounts, PriorityHighRounded } from "@mui/icons-material";
 import {
   BackgroundUrlList,
   GetOperationById,
@@ -55,7 +56,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { RenderNoDataFound } from "@/app/ApiFlowComponents/ApiDesigner/renderNoDataFound";
 import GButton from "@/app/apiflow_components/global/GButton";
-import { ChangeNodeManage } from "@/app/ApiFlowComponents/ApiDesigner/ChangeHistoryDesigner/ChangeNodeManage";
+import { ChangeNodeManage } from "../changeManagement/changeManagement";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 import GSelect from "@/app/apiflow_components/global/GSelect";
 import TextEditor from "@/app/apiflow_components/WorkflowComponents/TextEditor/textEditor";
@@ -69,8 +70,11 @@ import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 import { checkConnections } from "@/app/hooks/workflow/helperFunctions";
 import useNodes from "@/app/hooks/workflow/useNodes";
+import useTextEditor from "@/app/hooks/useTextEditor";
+import useNodeErr from "@/app/hooks/workflow/useNodeErr";
 import { BiCopy } from "react-icons/bi";
 import { BiCut } from "react-icons/bi";
+import useReusableFunctions from "@/app/hooks/workflow/useReusableFunctions";
 
 type YDoc = Y.Doc;
 
@@ -141,13 +145,15 @@ export default function WorkflowOperationNode({ data }: any) {
     addFlowId,
     removeFlowId,
     selectedFlowIds,
-    setNodeFunction,
+    nodeErrors,
     copyClicked,
     setCopyClicked,
     setCutClicked,
   } = useWorkflowStore();
-
-  const { isValidConnection, onClick } = useNodes({ nodeData });
+  const { handleCopyNodes } = useReusableFunctions();
+  const { isValidConnection, onClick, showErr } = useNodes({
+    nodeData,
+  });
   //-----------------------------useState-------------------------------------------------------
   const [headers, setHeaders] = useState<any>(
     nodeData?.operations_header ? [...nodeData?.operations_header] : []
@@ -172,6 +178,9 @@ export default function WorkflowOperationNode({ data }: any) {
   const [timeAccClicked, setTimeAccClicked] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [anchorElError, setAnchorElError] = useState<HTMLButtonElement | null>(
+    null
+  );
   const [anchorElInput, setAnchorElInput] = useState<HTMLButtonElement | null>(
     null
   );
@@ -193,9 +202,11 @@ export default function WorkflowOperationNode({ data }: any) {
 
   const [changeManClicked, setChangeManClicked] = useState(false);
   const [changeManResponse, setChangeManResponse] = useState<any>({});
-
+  const [isCopied, setIsCopied] = useState(false);
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+  const openError = Boolean(anchorElError);
+  const errId = openError ? "error-popover" + nodeData?.id : undefined;
 
   //-------------------------------------functions--------------------------------------------------------
   function parseData(data: any) {
@@ -317,6 +328,14 @@ export default function WorkflowOperationNode({ data }: any) {
 
     setQueryClicked(false);
     setGlobalKeysClicked(true);
+  };
+
+  const handleOpenError = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorElError(event.currentTarget);
+  };
+
+  const handleCloseError = () => {
+    setAnchorElError(null);
   };
 
   const checkSensitiveInformation = (text: any) => {
@@ -1169,17 +1188,26 @@ export default function WorkflowOperationNode({ data }: any) {
     };
   }, [isEditable]);
 
+  useEffect(() => {
+    setIsCopied(copyClicked[nodeData?.id]);
+  }, [copyClicked]);
+
   return (
-    <Box>
+    <Box sx={{ position: "relative" }}>
       {isEditable && selectedFlowIds?.includes(nodeData?.id) && (
-        <>
+        <Stack
+          direction={"row"}
+          sx={{ position: "absolute", top: -22, left: 5 }}
+        >
           <BiCopy
             style={{
               marginRight: "10px",
               cursor: "pointer",
+              color: isCopied ? "green" : "auto",
             }}
             onClick={() => {
-              setCopyClicked(true);
+              setCopyClicked(nodeData?.id, true);
+              handleCopyNodes();
             }}
           />
           <BiCut
@@ -1188,10 +1216,60 @@ export default function WorkflowOperationNode({ data }: any) {
             }}
             onClick={() => {
               setCutClicked(true);
+              handleCopyNodes(true);
             }}
           />
-        </>
+        </Stack>
       )}
+      {showErr &&
+        nodeErrors[nodeData?.id] &&
+        nodeErrors[nodeData?.id]?.length > 0 && (
+          <IconButton
+            aria-owns={errId}
+            aria-haspopup="true"
+            sx={{
+              position: "absolute",
+              top: -6,
+              right: -6,
+              zIndex: 1,
+              background: "orange",
+              height: "18px",
+              width: "18px",
+              "&:hover": {
+                background: "orange",
+              },
+            }}
+            onClick={handleOpenError}
+          >
+            <PriorityHighRounded sx={{ color: "white", fontSize: "16px" }} />
+          </IconButton>
+        )}
+      <Popover
+        id={"error-popover" + nodeData?.id}
+        open={openError}
+        anchorEl={anchorElError || null}
+        onClose={handleCloseError}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        sx={{
+          zIndex: 9999,
+          "& .MuiPaper-root": {
+            padding: "10px",
+          },
+        }}
+      >
+        <ul style={{ marginBottom: 0 }}>
+          {nodeErrors[nodeData?.id]?.map((error: any) => {
+            return <li key={error}>{error}</li>;
+          })}
+        </ul>
+      </Popover>
       <Box
         id="selectable-box"
         sx={{
@@ -1401,6 +1479,18 @@ export default function WorkflowOperationNode({ data }: any) {
           </div>
         )}
 
+        {changeManClicked === true && (
+          <ChangeNodeManage
+            node_id={nodeData?.id}
+            changeManClicked={changeManClicked}
+            setChangeManClicked={setChangeManClicked}
+            node_name={nodeData?.node_name}
+            changeManResponse={changeManResponse}
+            project_id={currentFlowDetails?.project_id}
+            flow_id={initialFlowId}
+          />
+        )}
+
         <WorkflowCustomHandle
           type="target"
           position={Position.Left}
@@ -1500,6 +1590,36 @@ export default function WorkflowOperationNode({ data }: any) {
                 )}
               </Button>
             </div>
+
+            <ChangeCircleOutlinedIcon
+              style={{
+                color: `${theme.palette.v2PrimaryColor.main}`,
+                fontSize: "18px",
+              }}
+              onClick={() => {
+                let data = {
+                  flow_id: initialFlowId,
+                  node_id: nodeData?.id,
+                  project_id: currentFlowDetails?.project_id,
+                };
+
+                // console.log("ChangeRes: ", changeRes);
+                // setChangeManResponse({});
+                // setChangeManClicked(true);
+
+                dispatch(GetNodeChangeManByFlowNodeId(data))
+                  .unwrap()
+                  .then((changeRes: any) => {
+                    console.log("ChangeRes: ", changeRes);
+                    setChangeManResponse(changeRes);
+                    setChangeManClicked(!changeManClicked);
+                  })
+                  .catch((error: any) => {
+                    console.log("Error: ", error);
+                    toast.error("no data found");
+                  });
+              }}
+            />
             <PlayArrowIcon
               style={{
                 color: `#FFFFFF`,
@@ -1711,6 +1831,7 @@ export default function WorkflowOperationNode({ data }: any) {
                       onInputVal={handleInputDataFromAceEditor}
                       defaultInputVal={inputsPayload}
                       currentNode={nodeData.node_name}
+                      nodeId={nodeData.id}
                       // suggestionVal={previousOpRaw}
                     />
                   </div>
@@ -1818,6 +1939,9 @@ export default function WorkflowOperationNode({ data }: any) {
                             <TextTypography>
                               {`Value: `}
                               <TextEditor
+                                index={index}
+                                keyName="header"
+                                nodeId={nodeData.id}
                                 inputData={val?.test_value}
                                 currentNode={nodeData?.node_name}
                                 onChange={(value: any) => {
@@ -1959,6 +2083,9 @@ export default function WorkflowOperationNode({ data }: any) {
                             <TextTypography>
                               {`Value: `}
                               <TextEditor
+                                index={index}
+                                keyName="params"
+                                nodeId={nodeData.id}
                                 inputData={val?.test_value}
                                 currentNode={nodeData?.node_name}
                                 onChange={(value: any) => {
@@ -2155,6 +2282,9 @@ export default function WorkflowOperationNode({ data }: any) {
                                 /> */}
 
                                 <TextEditor
+                                  index={index}
+                                  keyName="keys"
+                                  nodeId={nodeData.id}
                                   inputData={val?.request_template}
                                   currentNode={nodeData?.node_name}
                                   objectToSuggest={

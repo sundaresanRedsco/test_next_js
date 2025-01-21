@@ -80,9 +80,7 @@ export default function useSignUp() {
     confirmPassword: string,
     password: string
   ): string | undefined {
-    return signUpFormData.password === confirmPassword
-      ? undefined
-      : "Passwords do not matchs";
+    return password === confirmPassword ? undefined : "Passwords do not matchs";
   }
 
   function signUpHandler(): any {
@@ -153,6 +151,7 @@ export default function useSignUp() {
     );
     if (confirmPasswordError) {
       newErrors.confirm_password = confirmPasswordError;
+      setIsLoading(false);
     }
     setError(newErrors);
     if (Object.keys(newErrors).length === 0) {

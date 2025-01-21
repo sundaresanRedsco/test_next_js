@@ -13,6 +13,8 @@ import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import { PrimaryTypography } from "@/app/Styles/signInUp";
 import { Box } from "@mui/material";
 import useTextEditor from "@/app/hooks/useTextEditor";
+import useNodes from "@/app/hooks/workflow/useNodes";
+import useNodeErr from "@/app/hooks/workflow/useNodeErr";
 
 interface ObjectToSuggest {
   firstName: string;
@@ -148,7 +150,8 @@ const AceEditorComponent = (props: any) => {
   );
   const [highlightedFunction, setHighlightedFunction] = useState<any>(null); // Default to first function
 
-  const { onInputVal, defaultInputVal, disabled = false } = props;
+  const { onInputVal, defaultInputVal, disabled = false, nodeId } = props;
+  const { handleErrors } = useNodeErr();
   console.log(defaultInputVal, "defaultInputValdkkd");
 
   console.log(onInputVal, "onInputValsdsd");

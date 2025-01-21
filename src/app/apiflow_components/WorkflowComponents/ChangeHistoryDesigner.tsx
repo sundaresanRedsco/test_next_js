@@ -422,9 +422,9 @@ function ChangeHistoryDesigner(props: any) {
             }}
             style={{
               cursor: "pointer",
-              color: "white",
-              fontSize: "13px",
-              fontFamily: "Firasans-regular",
+              color: "#64748B",
+              fontSize: "0.6rem",
+              fontFamily: "Inter-regular",
             }}
           >
             Back

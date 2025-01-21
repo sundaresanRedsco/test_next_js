@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { RootStateType } from "../../../Redux/store";
 import { FlowReducer } from "../../../Redux/apiManagement/flowReducer";
 import { useWorkflowStore } from "@/app/store/useWorkflowStore";
+import useNodeErr from "@/app/hooks/workflow/useNodeErr";
 
 const onEdgeClick = (evt: any, id: any) => {
   evt.stopPropagation();
@@ -33,7 +34,7 @@ export default function CustomEdge({
     (state) => state.apiManagement.apiFlowDesign
   );
 
-  const { setEdges } = useReactFlow();
+  const { getEdge, setEdges } = useReactFlow();
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -43,8 +44,13 @@ export default function CustomEdge({
     targetPosition,
   });
   const { setNodeFunction } = useWorkflowStore();
+  const { handleEdgeError } = useNodeErr();
 
+  const edge = getEdge(id);
   const onEdgeClick = () => {
+    // if (edge) {
+    //   handleEdgeError(edge.target, true);
+    // }
     setEdges((edges) => edges.filter((edge) => edge.id !== id));
     const edgeMap = flowYdoc?.getMap<any>("edges");
     if (edgeMap) {
@@ -54,6 +60,7 @@ export default function CustomEdge({
         // flow_id: apiFlowId,
         edges: { id: id }, // Assuming edge.id is the id of the current edge
       };
+
       edgeMap.set(id, updatedEdge); // Assuming edge.id is the key
       setNodeFunction({
         id: id,

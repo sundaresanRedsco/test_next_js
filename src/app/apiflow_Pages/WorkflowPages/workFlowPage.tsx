@@ -88,6 +88,8 @@ import {
   runHandler,
 } from "@/app/hooks/workflow/helperFunctions";
 import toast from "react-hot-toast";
+import { useLocation } from "react-router-dom";
+import GlobalContextMenu from "@/app/hooks/workflow/GlobalContextMenu";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -145,26 +147,27 @@ const WorkflowDesigner = (props: any) => {
   const boxRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch<any>();
-  const { getIntersectingNodes } = useReactFlow();
 
   const pathname = usePathname();
   const reactFlowWrapper = useRef(null);
   const mouseRef = useRef<any>(null);
-  const { screenToFlowPosition, getViewport } = useReactFlow();
+  const { screenToFlowPosition, getViewport, getIntersectingNodes } =
+    useReactFlow();
 
   const [apiFlow_Id, setWorkflowId] = useState<any>(null);
 
-  useEffect(() => {
-    // Extracting the workflowId from the pathname
-    const pathParts = pathname.split("/"); // Split the pathname by '/'
+  // useEffect(() => {
+  //   // Extracting the workflowId from the pathname
+  //   const pathParts = pathname.split("/"); // Split the pathname by '/'
 
-    // Assuming the structure is /userId/{userId}/workspaceId/{workspaceId}/workflow/{workflowId}
-    const workflowIndex = pathParts.indexOf("workflow"); // Find the index of 'workflow'
+  //   // Assuming the structure is /userId/{userId}/workspaceId/{workspaceId}/workflow/{workflowId}
+  //   const workflowIndex = pathParts.indexOf("workflow"); // Find the index of 'workflow'
 
-    if (workflowIndex !== -1 && workflowIndex + 1 < pathParts.length) {
-      setWorkflowId(pathParts[workflowIndex + 1]); // The next part will be the workflowId
-    }
-  }, [pathname]);
+  //   if (workflowIndex !== -1 && workflowIndex + 1 < pathParts.length) {
+  //     setWorkflowId(pathParts[workflowIndex + 1]); // The next part will be the workflowId
+
+  //   }
+  // }, [pathname]);
 
   // Add secretKey to the connection headers
 
@@ -238,6 +241,7 @@ const WorkflowDesigner = (props: any) => {
     nodeFunctions,
     copyClicked,
     setCopyClicked,
+    resetWorkFlowState,
   } = useWorkflowStore();
 
   const customHookprops = {
@@ -1093,6 +1097,20 @@ const WorkflowDesigner = (props: any) => {
   ];
   const { getWsProvider } = useWebSocket();
   // -----------------------------------------useEffect-------------------------------------------------------
+
+  useEffect(() => {
+    // Extracting the workflowId from the pathname
+    const pathParts = pathname.split("/"); // Split the pathname by '/'
+
+    // Assuming the structure is /userId/{userId}/workspaceId/{workspaceId}/workflow/{workflowId}
+    const workflowIndex = pathParts.indexOf("workflow"); // Find the index of 'workflow'
+
+    if (workflowIndex !== -1 && workflowIndex + 1 < pathParts.length) {
+      setWorkflowId(pathParts[workflowIndex + 1]); // The next part will be the workflowId
+      resetWorkFlowState("copiedData");
+    }
+  }, [pathname]);
+
   useEffect(() => {
     if (versionValue && apiFlow_Id && userProfile.user.tenant_id) {
       setNodes([]);
@@ -1289,6 +1307,29 @@ const WorkflowDesigner = (props: any) => {
     });
     setLastCursorPosition(position);
   };
+
+  const [contextMenu, setContextMenu] = useState({ show: false, x: 0, y: 0 });
+
+  const reactFlowWrapperMenu = useRef<any>();
+
+  const menuItems = [
+    {
+      id: 0,
+      label: "Paste Nodes",
+      onclick: () => alert("Pasting nodes!"),
+    },
+  ];
+
+  const openContextMenuHandler = (e: any) => {
+    e.preventDefault();
+    const { pageX, pageY } = e;
+    setContextMenu({ show: true, x: pageX, y: pageY });
+  };
+
+  const closeContextMenuHandler = () => {
+    setContextMenu({ show: false, x: 0, y: 0 });
+  };
+
   return (
     <Grid
       ref={boxRef}
@@ -1348,7 +1389,7 @@ const WorkflowDesigner = (props: any) => {
             <div
               className="position-relative"
               ref={mouseRef}
-              // onMouseMove={(event) => {
+              // onMouseMove={(event: any) => {
               //   if (mouseRef.current) {
               //     const rect = mouseRef.current.getBoundingClientRect();
               //     const offsetX = event.clientX - rect.left;

@@ -3,17 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useEdgesState, useNodesState, useReactFlow } from "reactflow";
 import * as Y from "yjs";
 import { create } from "zustand";
-interface Store {
-  storedNodes: any;
-  setstoredNodes: (value: any) => void;
-  nodeFunctions: {
-    id: any;
-    method: "DELETE_NODES" | "ADD_NODE" | "DELETE_EDGES" | "ADD_EDGES" | "";
-    obj: any;
-  };
-  setNodeFunction: (value: any) => void;
-  resetNodeFunction: () => void;
-}
 
 const normalizeObject = (obj: any) => {
   // Normalize fields by sanitizing null-like mismatches or unnecessary differences
@@ -46,7 +35,7 @@ export const deepEqual = (arr1: any[], arr2: any[]) => {
 export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
   // const { getEdges } = useReactFlow();
   const { edges, setEdges, nodes, setNodes } = data;
-  const { storedNodes, setstoredNodes, nodeFunctions, resetNodeFunction } =
+  const { storedNodes, setstoredNodes, nodeFunctions, resetWorkFlowState } =
     useWorkflowStore();
 
   const [count, setcount] = useState(0);
@@ -262,7 +251,7 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
       type == "node" ? { nodes: newData, edges } : { nodes, edges: newData };
     setstoredNodes(tempStoredData);
     setcount((prev: any) => prev + 1);
-    resetNodeFunction();
+    resetWorkFlowState("nodeFunctions");
   };
   const handleAdd = (type: "node" | "edge") => {
     const tempStoredData = [...storedNodes];
@@ -274,7 +263,7 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
       type == "node" ? { nodes: newDatas, edges } : { nodes, edges: newDatas };
     setstoredNodes(tempStoredData);
     setcount((prev: any) => prev + 1);
-    resetNodeFunction();
+    resetWorkFlowState("nodeFunctions");
   };
   useEffect(() => {
     if (nodeFunctions.id) {

@@ -10,6 +10,7 @@ import { NodeResizer, useReactFlow } from "reactflow";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import { BiCopy } from "react-icons/bi";
 import { BiCut } from "react-icons/bi";
+import useReusableFunctions from "@/app/hooks/workflow/useReusableFunctions";
 
 export const TextTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
@@ -55,6 +56,7 @@ export default function GroupNode({ data }: Props) {
     selectedFlowIds,
     setCopyClicked,
     setCutClicked,
+    copyClicked,
   } = useWorkflowStore();
 
   const childNodes = getNodes().filter((node) => node.parentId == nodeData?.id);
@@ -199,6 +201,14 @@ export default function GroupNode({ data }: Props) {
     return 400; // Default minimum height
   }, [nodeData?.id, flowYdoc, childNodes]);
 
+  const { handleCopyNodes } = useReusableFunctions();
+
+  const [isCopied, setIsCopied] = useState(false);
+
+  useEffect(() => {
+    setIsCopied(copyClicked[nodeData?.id]);
+  }, [copyClicked]);
+
   return (
     <>
       <NodeResizer
@@ -243,19 +253,20 @@ export default function GroupNode({ data }: Props) {
                 style={{
                   marginRight: "10px",
                   cursor: "pointer",
-                  marginTop: "10px",
+                  color: isCopied ? "green" : "auto",
                 }}
                 onClick={() => {
-                  setCopyClicked(true);
+                  setCopyClicked(nodeData?.id, true);
+                  handleCopyNodes();
                 }}
               />
               <BiCut
                 style={{
-                  marginTop: "10px",
                   cursor: "pointer",
                 }}
                 onClick={() => {
                   setCutClicked(true);
+                  handleCopyNodes(true);
                 }}
               />
             </>

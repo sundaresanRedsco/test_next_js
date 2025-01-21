@@ -1,16 +1,18 @@
 import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
 import { RootStateType } from "@/app/Redux/store";
 import { useWorkflowStore } from "@/app/store/useWorkflowStore";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Connection, useReactFlow } from "reactflow";
+import useNodeErr from "./useNodeErr";
+import useTextEditor from "../useTextEditor";
 
 type Props = {};
 
 export default function useNodes({ nodeData }: any) {
+  const { handleErrors, handleEdgeError } = useNodeErr();
   const { deleteElements, getEdges, getNode, getNodes } = useReactFlow();
-  const { addFlowId, removeFlowId, selectedFlowIds, setNodeFunction } =
-    useWorkflowStore();
+  const { setNodeFunction, inputdatas } = useWorkflowStore();
   const { nextNode, flowYdoc, globalKeys } = useSelector<
     RootStateType,
     FlowReducer
@@ -102,6 +104,74 @@ export default function useNodes({ nodeData }: any) {
 
     return true;
   }
+  const inputErr = inputdatas[nodeData?.id];
+  const isHeaderErr =
+    inputErr && inputErr["header"]
+      ? inputErr["header"]?.some((err: any) => err.isErr == true)
+      : false;
+  const isParamsErr =
+    inputErr && inputErr["params"]
+      ? inputErr["params"]?.some((err: any) => err.isErr == true)
+      : false;
+  const isInputErr =
+    inputErr && inputErr["input"] ? inputErr["input"]?.isErr : false;
+  const isEdgeErr =
+    inputErr && inputErr["edge"]
+      ? inputErr["edge"]?.some((err: any) => err.isErr == true)
+      : false;
+  // const showErr = isHeaderErr || isParamsErr || isInputErr;
+  // console.log(isHeaderErr, isParamsErr, isInputErr, nodeData?.id, "showErr");
+  const [showErr, setshowErr] = useState(false);
+  useEffect(() => {
+    if (isHeaderErr || isParamsErr || isInputErr || isEdgeErr) {
+      setshowErr(true);
+    } else {
+      setshowErr(false);
+    }
+  }, [isHeaderErr, isParamsErr, isInputErr, isEdgeErr]);
+  const { handleValidation } = useTextEditor();
+  const inputDatas = inputdatas[nodeData?.id];
 
-  return { isValidConnection, onClick };
+  useEffect(() => {
+    if (inputDatas) {
+      const inputDataKeys = ["input", "header", "params", "edge", "keys"];
+      for (let i = 0; inputDataKeys.length > i; i++) {
+        const key: any = inputDataKeys[i];
+
+        if (inputDatas[key] && inputDatas[key].length > 0 && key != "input") {
+          if (key != "edge") {
+            inputDatas[key]?.forEach((elem: any, index: number) => {
+              if (elem.input) {
+                handleValidation(elem.input, key, nodeData?.id, index);
+              }
+            });
+          } else {
+            const edges = getEdges().filter((edge) =>
+              edge.target.includes(nodeData?.id)
+            );
+            handleEdgeError(nodeData?.id, edges.length > 0 ? false : true);
+          }
+        }
+      }
+    }
+  }, [showErr]);
+
+  useEffect(() => {
+    const keys = ["input", "header", "params", "edge", "keys"];
+    keys.forEach((elem: any) => {
+      handleErrors(nodeData?.id);
+    });
+  }, [inputDatas, showErr]);
+  const edges = getEdges();
+  useEffect(() => {
+    // const existingEdge = edges.filter((edge) =>
+    //   edge.target.includes(nodeData?.id)
+    // );
+    handleEdgeError(nodeData?.id, false);
+    // if (existingEdge.length > 0 && existingEdge[0].target) {
+    //   handleEdgeError(existingEdge[0].target, false);
+    // }
+  }, [edges.length]);
+
+  return { isValidConnection, onClick, showErr };
 }

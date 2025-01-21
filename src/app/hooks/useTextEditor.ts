@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { FQL_FUNCTIONS } from "../Constants/JsonDatas";
+import { useWorkflowStore } from "../store/useWorkflowStore";
 
 type Props = {};
 
-export default function useTextEditor(inputData?: any) {
+export default function useTextEditor(
+  inputData?: any,
+  mainKey?: string,
+  mainId?: string,
+  mainIndex?: number
+) {
   const [errorMsg, seterrMsg] = useState("");
-  const [input, setInput] = useState(inputData);
+  const { setInputDataErr } = useWorkflowStore();
+  const [input, setInput] = useState(inputData || "");
   function getKeyByValue(
     obj: Record<string, any>,
     value: any
@@ -210,10 +217,77 @@ export default function useTextEditor(inputData?: any) {
       (opening === "(" && closing === ")")
     );
   }
+
+  const handleValidation = (
+    inputData: any,
+    type: any,
+    id: any,
+    index?: number
+  ) => {
+    const input = inputData;
+    if (id && type && inputData) {
+      const placeholderRegex = /\{([a-zA-Z0-9_.]+)\}/g;
+      let placeholderMatch;
+      while ((placeholderMatch = placeholderRegex.exec(input)) !== null) {
+        const placeholder = placeholderMatch[1]; // e.g., response.node_id
+        // You can add additional validation here to verify that the placeholder is valid (e.g., check known keys)
+        // For example, if you want to verify response.node_id format, you can add more specific checks
+        if (!placeholder.includes("response")) {
+          setInputDataErr(id, type, true, index);
+        }
+      }
+      if (input && input?.includes("&")) {
+        try {
+          const sanitizedInput = input.replace(
+            /&[a-zA-Z_][a-zA-Z0-9_]*\([^\)]*\)/g,
+            '""'
+          ); // Replace function calls with dummy quotes
+          JSON.parse(sanitizedInput); // Now try parsing the sanitized version
+          setInputDataErr(id, type, false, index);
+        } catch (e: any) {
+          setInputDataErr(id, type, true, index);
+        }
+      } else {
+        try {
+          const sanitizedInput = input.replace(/\{[a-zA-Z0-9_.\[\]]+\}/g, '""'); // Replace placeholders with dummy quotes
+          JSON.parse(sanitizedInput); // Now try parsing the sanitized version
+          setInputDataErr(id, type, false, index);
+        } catch (e: any) {
+          setInputDataErr(id, type, true, index);
+        }
+      }
+
+      const unclosedBracesRegex = /{[^}]*$/g;
+      const matchUnclosed = input?.match(unclosedBracesRegex);
+      if (matchUnclosed) {
+        setInputDataErr(id, type, true, index);
+      }
+
+      const functionRegex = /&([a-zA-Z]+)\(/g;
+      let match;
+      while ((match = functionRegex.exec(input)) !== null) {
+        const functionName = match[1] + "()";
+        const validFunction = FQL_FUNCTIONS.find(
+          (func) => func.name === functionName
+        );
+
+        if (!validFunction) {
+          setInputDataErr(id, type, true, index);
+        }
+      }
+      if (!input.includes("{") && !input.includes("&")) {
+        setInputDataErr(id, type, true, index);
+      }
+    }
+  };
+
   useEffect(() => {
     if (inputData) {
       if (input == "") {
         seterrMsg("");
+        if (mainId && mainKey) {
+          setInputDataErr(mainId, mainKey, false, mainIndex);
+        }
       } else {
         const placeholderRegex = /\{([a-zA-Z0-9_.]+)\}/g;
         let placeholderMatch;
@@ -223,9 +297,12 @@ export default function useTextEditor(inputData?: any) {
           // For example, if you want to verify response.node_id format, you can add more specific checks
           if (!placeholder.includes("response")) {
             seterrMsg(`Invalid placeholder "${placeholder}"`);
+            if (mainId && mainKey) {
+              setInputDataErr(mainId, mainKey, true, mainIndex);
+            }
           }
         }
-        if (input.includes("&")) {
+        if (input && input?.includes("&")) {
           try {
             const sanitizedInput = input.replace(
               /&[a-zA-Z_][a-zA-Z0-9_]*\([^\)]*\)/g,
@@ -233,8 +310,14 @@ export default function useTextEditor(inputData?: any) {
             ); // Replace function calls with dummy quotes
             JSON.parse(sanitizedInput); // Now try parsing the sanitized version
             seterrMsg("");
+            if (mainId && mainKey) {
+              setInputDataErr(mainId, mainKey, false, mainIndex);
+            }
           } catch (e: any) {
             seterrMsg("Unclosed round brace");
+            if (mainId && mainKey) {
+              setInputDataErr(mainId, mainKey, true, mainIndex);
+            }
           }
         } else {
           try {
@@ -244,15 +327,24 @@ export default function useTextEditor(inputData?: any) {
             ); // Replace placeholders with dummy quotes
             JSON.parse(sanitizedInput); // Now try parsing the sanitized version
             seterrMsg("");
+            if (mainId && mainKey) {
+              setInputDataErr(mainId, mainKey, false, mainIndex);
+            }
           } catch (e: any) {
             seterrMsg("Unclosed curly brace");
+            if (mainId && mainKey) {
+              setInputDataErr(mainId, mainKey, true, mainIndex);
+            }
           }
         }
 
         const unclosedBracesRegex = /{[^}]*$/g;
-        const matchUnclosed = input.match(unclosedBracesRegex);
+        const matchUnclosed = input?.match(unclosedBracesRegex);
         if (matchUnclosed) {
           seterrMsg("Unclosed curly brace or invalid key-value structure");
+          if (mainId && mainKey) {
+            setInputDataErr(mainId, mainKey, true, mainIndex);
+          }
         }
 
         const functionRegex = /&([a-zA-Z]+)\(/g;
@@ -265,13 +357,26 @@ export default function useTextEditor(inputData?: any) {
 
           if (!validFunction) {
             seterrMsg(`Invalid function "${functionName}"`);
+            if (mainId && mainKey) {
+              setInputDataErr(mainId, mainKey, true, mainIndex);
+            }
           }
         }
         if (!input.includes("{") && !input.includes("&")) {
           seterrMsg("Not a valid input");
+          if (mainId && mainKey) {
+            setInputDataErr(mainId, mainKey, true, mainIndex);
+          }
         }
       }
     }
-  }, [input]);
-  return { input, setInput, errorMsg, handleBraces };
+  }, [input, mainId, mainKey, mainIndex]);
+
+  return {
+    input,
+    setInput,
+    errorMsg,
+    handleBraces,
+    handleValidation,
+  };
 }

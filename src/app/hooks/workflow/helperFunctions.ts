@@ -211,6 +211,22 @@ export async function processNode(
       currentNode,
       requestBody
     );
+
+    let changeManData = {
+      flow_id: apiFlow_Id,
+      node_id: operationSuccess?.node_id,
+      tenant_id: tenant_id,
+      project_id: project_id,
+      workspace_id: workspace_id,
+      operation_id: currentNode?.data.operation_id,
+      requestBody: {
+        serviceInput: JSON.stringify(operationSuccess?.serviceInput),
+        serviceOutput: JSON.stringify(operationSuccess?.response),
+        statusCode: operationSuccess?.statusCode,
+      },
+    };
+
+    const changeManage = await changeManagement(changeManData);
     newPreviousEdgeResponse = operationSuccess;
 
     if (operationSuccess?.status === "SUCCESS") {
