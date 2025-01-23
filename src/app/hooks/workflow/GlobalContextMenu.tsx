@@ -11,7 +11,7 @@ const GlobalContextMenu = ({
 }: {
   x: number;
   y: number;
-  onCloseContextMenu: () => void;
+  onCloseContextMenu?: () => void;
   parentRef: React.RefObject<HTMLElement>;
   children: ReactNode;
 }) => {
@@ -31,7 +31,7 @@ const GlobalContextMenu = ({
     const clickListener = (event: MouseEvent) => {
       const menuParent = parentRef?.current;
       if (!menuParent || !menuParent.contains(event.target as Node)) {
-        onCloseContextMenu();
+        onCloseContextMenu?.();
       }
     };
 

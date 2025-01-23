@@ -149,6 +149,9 @@ export default function WorkflowOperationNode({ data }: any) {
     copyClicked,
     setCopyClicked,
     setCutClicked,
+    copiedData,
+    multiSelectClicked,
+    resetWorkFlowState,
   } = useWorkflowStore();
   const { handleCopyNodes } = useReusableFunctions();
   const { isValidConnection, onClick, showErr } = useNodes({
@@ -1166,27 +1169,41 @@ export default function WorkflowOperationNode({ data }: any) {
   };
 
   // Handle click outside the box
+
   const handleClickOutsideSelecto = (event: any) => {
-    if (event.target.closest("#selectable-box") === null && isEditable) {
-      removeFlowId(nodeData?.id);
+    if (multiSelectClicked) return;
+
+    if (
+      event.target.closest("#selectable-box") === null &&
+      isEditable &&
+      !multiSelectClicked &&
+      !event?.target?.closest(".exclude-click-outside")
+    ) {
+      // removeFlowId(nodeData?.id);
+      resetWorkFlowState("selectedFlowIds");
     }
   };
 
   const handleKeyDown = (event: any) => {
     if (event?.key === "Escape" && isEditable) {
-      removeFlowId(nodeData?.id);
+      // removeFlowId(nodeData?.id);
+      resetWorkFlowState("selectedFlowIds");
     }
   };
 
   useEffect(() => {
     // Add event listener to detect clicks outside the box
-    // document.addEventListener("click", handleClickOutsideSelecto);
+    if (!multiSelectClicked) {
+      document.addEventListener("click", handleClickOutsideSelecto);
+    }
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      // document.removeEventListener("click", handleClickOutsideSelecto);
+      if (!multiSelectClicked) {
+        document.removeEventListener("click", handleClickOutsideSelecto);
+      }
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isEditable]);
+  }, [isEditable, multiSelectClicked]);
 
   useEffect(() => {
     setIsCopied(copyClicked[nodeData?.id]);
@@ -1200,6 +1217,7 @@ export default function WorkflowOperationNode({ data }: any) {
           sx={{ position: "absolute", top: -22, left: 5 }}
         >
           <BiCopy
+            className="exclude-click-outside"
             style={{
               marginRight: "10px",
               cursor: "pointer",
@@ -1211,6 +1229,7 @@ export default function WorkflowOperationNode({ data }: any) {
             }}
           />
           <BiCut
+            className="exclude-click-outside"
             style={{
               cursor: "pointer",
             }}

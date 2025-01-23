@@ -36,6 +36,8 @@ interface Store {
   setParticularInputData: (key: any, value: any) => void;
   cutClicked: boolean;
   setCutClicked: (value: boolean) => void;
+  multiSelectClicked: boolean;
+  setMultiSelectClicked: (value: boolean) => void;
   resetWorkFlowState: (value: any) => void;
 }
 const initialStates: any = {
@@ -49,6 +51,7 @@ const initialStates: any = {
   inputdatas: {},
   copyClicked: {},
   cutClicked: false,
+  multiSelectClicked: false,
 };
 export const useWorkflowStore = create<Store>((set, get) => ({
   ...initialStates,
@@ -186,5 +189,6 @@ export const useWorkflowStore = create<Store>((set, get) => ({
       };
     }),
   setCutClicked: (value: boolean) => set({ cutClicked: value }),
+  setMultiSelectClicked: (value: boolean) => set({ multiSelectClicked: value }),
   resetWorkFlowState: (name) => set({ [name]: initialStates[name] }),
 }));

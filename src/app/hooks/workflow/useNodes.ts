@@ -12,7 +12,7 @@ type Props = {};
 export default function useNodes({ nodeData }: any) {
   const { handleErrors, handleEdgeError } = useNodeErr();
   const { deleteElements, getEdges, getNode, getNodes } = useReactFlow();
-  const { setNodeFunction, inputdatas } = useWorkflowStore();
+  const { setNodeFunction, inputdatas, removeFlowId } = useWorkflowStore();
   const { nextNode, flowYdoc, globalKeys } = useSelector<
     RootStateType,
     FlowReducer
@@ -68,6 +68,8 @@ export default function useNodes({ nodeData }: any) {
     } else {
       console.log("Yjs Map 'run' is not initialized.");
     }
+
+    removeFlowId(nodeData?.id);
   }, [nodeData?.id, deleteElements, getEdges]);
 
   function isValidConnection(connection: Connection) {

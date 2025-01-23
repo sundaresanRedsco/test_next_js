@@ -23,6 +23,7 @@ import {
   setUserLists,
   setWSprovider,
 } from "@/app/Redux/apiManagement/flowReducer";
+import { RxGroup } from "react-icons/rx";
 import PublishOutlinedIcon from "@mui/icons-material/PublishOutlined";
 import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
 import ScheduleSendIcon from "@mui/icons-material/ScheduleSend";
@@ -242,6 +243,9 @@ const WorkflowDesigner = (props: any) => {
     copyClicked,
     setCopyClicked,
     resetWorkFlowState,
+    copiedData,
+    multiSelectClicked,
+    setMultiSelectClicked,
   } = useWorkflowStore();
 
   const customHookprops = {
@@ -281,7 +285,8 @@ const WorkflowDesigner = (props: any) => {
     handleSavePopup,
   } = useWorkflow(customHookprops);
 
-  useSelectNodes(customHookprops);
+  // useSelectNodes(customHookprops);
+  const { handlePasteNodes } = useSelectNodes(customHookprops);
   //--------------------------------------constants---------------------------------------------------------
 
   const open = Boolean(anchorEl2);
@@ -1055,6 +1060,7 @@ const WorkflowDesigner = (props: any) => {
       disabled: actionProgress,
       dropDown: "false",
     },
+
     {
       onClick: handleEditClick,
       ariaLabel: "Edit",
@@ -1064,7 +1070,15 @@ const WorkflowDesigner = (props: any) => {
       disabled: actionProgress,
       dropDown: "true",
     },
-
+    isEditable && {
+      onClick: () => setMultiSelectClicked(!multiSelectClicked),
+      ariaLabel: "Multi-Select",
+      tooltipTitle: "Multi-Select",
+      IconComponent: RxGroup,
+      isActive: multiSelectClicked,
+      disabled: actionProgress,
+      dropDown: "true",
+    },
     {
       onClick: () => setOpenDrawer(!openDrawer),
       ariaLabel: "Open Terminal",
@@ -1108,6 +1122,7 @@ const WorkflowDesigner = (props: any) => {
     if (workflowIndex !== -1 && workflowIndex + 1 < pathParts.length) {
       setWorkflowId(pathParts[workflowIndex + 1]); // The next part will be the workflowId
       resetWorkFlowState("copiedData");
+      // resetWorkFlowState("selectedFlowIds");
     }
   }, [pathname]);
 
@@ -1312,18 +1327,31 @@ const WorkflowDesigner = (props: any) => {
 
   const reactFlowWrapperMenu = useRef<any>();
 
+  const handleContextMenuPaste = (e: any) => {
+    handlePasteNodes(e);
+    closeContextMenuHandler();
+  };
+
   const menuItems = [
     {
       id: 0,
-      label: "Paste Nodes",
-      onclick: () => alert("Pasting nodes!"),
+      label: "Paste Here",
+      // onclick: handleContextMenuPaste(),
     },
   ];
 
   const openContextMenuHandler = (e: any) => {
+    if (!isEditable && copiedData?.nodes?.length === 0) return;
+
     e.preventDefault();
-    const { pageX, pageY } = e;
-    setContextMenu({ show: true, x: pageX, y: pageY });
+    const wrapperBounds =
+      reactFlowWrapperMenu?.current?.getBoundingClientRect();
+    // const position = screenToFlowPosition({ x: e.clientX, y: e.clientY });
+    const position = {
+      x: e.clientX - wrapperBounds?.left,
+      y: e.clientY - wrapperBounds?.top,
+    };
+    setContextMenu({ show: true, x: position?.x, y: position?.y });
   };
 
   const closeContextMenuHandler = () => {
@@ -1375,6 +1403,8 @@ const WorkflowDesigner = (props: any) => {
             />
           </Grid>
           <Grid
+            ref={reactFlowWrapperMenu}
+            onContextMenu={openContextMenuHandler}
             sx={{
               // padding: "10px",
               position: "relative",
@@ -1432,7 +1462,7 @@ const WorkflowDesigner = (props: any) => {
                     ref={dropContainer1}
                     onClick={handleCanvasClick}
                   >
-                    {isEditable && (
+                    {isEditable && multiSelectClicked && (
                       <Selecto
                         container={(document as any).getElementById(
                           "react-flow-container"
@@ -1589,6 +1619,34 @@ const WorkflowDesigner = (props: any) => {
               />
             </Box>
           </Grid>
+
+          {contextMenu?.show && isEditable && copiedData?.nodes?.length > 0 && (
+            <GlobalContextMenu
+              x={contextMenu?.x}
+              y={contextMenu?.y}
+              // onCloseContextMenu={closeContextMenuHandler}
+              parentRef={reactFlowWrapperMenu}
+            >
+              <div className="flex flex-col gap-2">
+                {menuItems.map((item: any) => (
+                  <div
+                    key={item?.id}
+                    style={{
+                      color: "black",
+                      cursor: "pointer",
+                    }}
+                    onClick={(e?: any) => {
+                      // item.onclick();
+                      handleContextMenuPaste(e);
+                      // closeContextMenuHandler();
+                    }}
+                  >
+                    {item?.label}
+                  </div>
+                ))}
+              </div>
+            </GlobalContextMenu>
+          )}
 
           <UndoRedo
             handleUndo={handleUndo}

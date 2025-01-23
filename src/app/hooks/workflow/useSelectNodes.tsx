@@ -311,4 +311,6 @@ export default function useSelectNodes({
       }
     });
   }, [selectedFlowIds.length, nodes?.length]);
+
+  return { handlePasteNodes };
 }
