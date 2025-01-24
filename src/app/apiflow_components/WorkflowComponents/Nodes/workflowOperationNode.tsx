@@ -1628,7 +1628,12 @@ export default function WorkflowOperationNode({ data }: any) {
               }
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                 setbackgroundUrlClicked(event.currentTarget);
-                dispatch(GetOperationById(nodeData?.operation_id))
+                dispatch(
+                  GetOperationById({
+                    operation_id: nodeData?.operation_id,
+                    project_id: currentFlowDetails?.project_id,
+                  })
+                )
                   .unwrap()
                   .then((operRes: any) => {
                     setOperationDetails(operRes[0]);
