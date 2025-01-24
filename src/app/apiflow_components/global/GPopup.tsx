@@ -45,7 +45,7 @@ export default function GPopup({
           flexDirection: "column",
           minWidth: "200px",
           paddingX: "40px",
-          maxWidth: "60%",
+          maxWidth: "80%",
         }}
       >
         <WarningIcon />

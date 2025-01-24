@@ -95,6 +95,7 @@ import TwoArrowMinimizedIcon from "./TwoArrowMinimized.svg";
 import UnionMinimizedIcon from "./UnionMinimized.svg";
 import ChipCloseIcon from "./ChipCloseIcon.svg";
 import ChannelPlusIcon from "./ChannelPlusIcon.svg";
+import LogStash from "./logstash.svg";
 
 export {
   NounV2Menu,
@@ -188,4 +189,5 @@ export {
   ChannelPlusIcon,
   AzureIcon,
   GoogleIcon,
+  LogStash,
 };

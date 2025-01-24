@@ -10,6 +10,7 @@ import apiIntelligenceReducer from "./apiIntelligenceReducer";
 import apiTestingReducer from "./apiTestingReducer";
 import apiTeamReducer from "./apiTeamReducer";
 import settingsReducer from "./settingsReducer";
+import apiChannelReducer from "./apiChannelReducer";
 
 const rootReducer = combineReducers({
   login: loginReducer,
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   apiTesting: apiTestingReducer,
   apiTeam: apiTeamReducer,
   settings: settingsReducer,
+  channels: apiChannelReducer,
 });
 
 export default rootReducer;

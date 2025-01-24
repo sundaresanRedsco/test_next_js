@@ -288,12 +288,16 @@ function SidebarComponent(props: any) {
       },
     },
     {
-      label: "Search",
-      path: "",
-      id: "search",
+      label: "Integration",
+      // path: "",
+      id: "integration",
       icon: <MenuSearch style={{ height: "60%", width: "60%" }} />,
       onClickHandler: (id: any, index?: number) => {
-        commonFunctions(id, index);
+        // commonFunctions(id, index);
+        router?.push(`${baseUrl}/integration`);
+        setSelectedLink(id);
+        setIsSidebarCollapsed(true);
+        removeItem(`/sidebarMenuId/${userProfile?.user?.user_id}`);
       },
     },
 

@@ -313,7 +313,22 @@ export default function WorkflowDrawer(props: any) {
                       padding: "0px 20px",
                     }}
                   >
-                    {runResult?.length <= 0 ? (
+                    {errors?.length > 0 ? (
+                      <>
+                        {errors?.map((x: string) => (
+                          <TeritaryTextTypography
+                            key={x}
+                            style={{
+                              marginTop: "5px",
+                              fontSize: "0.7rem",
+                              color: "#FF0000",
+                            }}
+                          >
+                            {x}
+                          </TeritaryTextTypography>
+                        ))}
+                      </>
+                    ) : runResult?.length <= 0 ? (
                       <TeritaryTextTypography
                         style={{
                           top: "50%",

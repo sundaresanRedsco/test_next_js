@@ -1,15 +1,29 @@
 import { TeritaryTextTypography } from "@/app/Styles/signInUp";
-import { Avatar, Box, Button, IconButton, Stack } from "@mui/material";
-import React from "react";
+import { Avatar, Box, IconButton, Popover, Stack } from "@mui/material";
+import React, { useState } from "react";
 import { FaRegComment } from "react-icons/fa";
-import { EmojiEmotions, ExpandMore } from "@mui/icons-material";
-import EmojiPicker from "emoji-picker-react";
+import { AddReaction, ArrowDropDown, Send } from "@mui/icons-material";
+import EmojiPicker, { Emoji } from "emoji-picker-react";
+import CommentBubble from "./CommentBubble";
+import GInput from "../../global/GInput";
+import { useSelector } from "react-redux";
+import { RootStateType } from "@/app/Redux/store";
+import { CommonReducer } from "@/app/Redux/commonReducer";
+import CustomEmojiPicker from "./CustomEmojiPicker";
+import CommentsContainer from "./CommentsContainer";
+import useComments from "@/app/hooks/posts/useComments";
+
 type Props = {
   type: "me" | "other";
   isLiked: boolean;
-  handleLike: () => void;
+  handleLike: (code: any) => void;
   text: string;
   name: string;
+  id: any;
+  imageUrl?: any;
+  commentsCount?: any;
+  likes: any;
+  likesCount?: any;
 };
 
 export default function PostBubble({
@@ -18,7 +32,37 @@ export default function PostBubble({
   handleLike,
   text,
   name,
+  id,
+  imageUrl,
+  likes,
+  likesCount,
+  commentsCount,
 }: Props) {
+  const [isHover, setisHover] = useState(false);
+
+  const { userProfile } = useSelector<RootStateType, CommonReducer>(
+    (state) => state.common
+  );
+  const {
+    openComments,
+    setopenCommentAnchorEl,
+    openCommentAnchorEl,
+    commentsLoading,
+    comments,
+    createComment,
+    commentCreationLoading,
+  } = useComments(id);
+  const popOverId = openComments ? "simple-popover" : undefined;
+
+  const handlePopoverOpen = (event: any) => {
+    setopenCommentAnchorEl(event.currentTarget);
+  };
+  const handlePopoverClose = (event: any) => {
+    setopenCommentAnchorEl(null);
+  };
+
+  // console.log(userProfile.user, "showErr-user");
+
   return (
     <Stack
       spacing={1}
@@ -28,6 +72,8 @@ export default function PostBubble({
         justifyContent: type == "me" ? "end" : "start",
       }}
       direction={type == "me" ? "row-reverse" : "row"}
+      onMouseEnter={() => setisHover(true)}
+      onMouseLeave={() => setisHover(false)}
     >
       <Stack
         sx={{
@@ -36,14 +82,41 @@ export default function PostBubble({
           borderRadius:
             type == "me" ? "10px 10px 0 10px" : "0px 10px 10px 10px",
           width: "70%",
+          position: "relative",
         }}
         spacing={1}
       >
+        {likesCount != 0 && (
+          <Stack
+            direction={"row"}
+            sx={{
+              position: "absolute",
+              bottom: "-8px",
+              right: type == "me" ? "auto" : "-2px",
+              left: type == "me" ? "-2px" : "auto",
+              paddingX: "10px",
+              borderRadius: "20px",
+              background: "#f2e7ff",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 0 1px 1px #c6c6c6",
+              gap: "5px",
+              paddingY: "2px",
+            }}
+          >
+            {likes?.map((elem: any, index: number) => {
+              return <Emoji key={index} unified={elem.emojis} size={13} />;
+            })}
+            <TeritaryTextTypography sx={{ fontSize: "11px", color: "black" }}>
+              {likesCount}
+            </TeritaryTextTypography>
+          </Stack>
+        )}
         <Stack direction={"row"} spacing={1} sx={{ alignItems: "center" }}>
           <Avatar sx={{ width: 30, height: 30 }} />
           <TeritaryTextTypography>{name}</TeritaryTextTypography>
         </Stack>
-        <Box component={"img"} src="/media.avif" />
+        {imageUrl && <Box component={"img"} src={imageUrl} />}
         <Box
           sx={{
             width: "100%",
@@ -55,18 +128,50 @@ export default function PostBubble({
         >
           <TeritaryTextTypography>{text}</TeritaryTextTypography>
           <Stack direction={"row"}>
-            <IconButton size="small">
-              <FaRegComment size={"15px"} />1
+            <IconButton
+              aria-owns={popOverId}
+              aria-haspopup={true}
+              onClick={handlePopoverOpen}
+              size="small"
+            >
+              <FaRegComment size={"15px"} />
+              {commentsCount ? commentsCount : ""}
             </IconButton>
+
+            <Popover
+              sx={{
+                "& .MuiPaper-root": {
+                  background: "transparent",
+                  boxShadow: "none",
+                  padding: "17px 10px",
+                  // padding: "28px 10px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                  width: "300px",
+                },
+              }}
+              open={openComments}
+              onClose={handlePopoverClose}
+              anchorEl={openCommentAnchorEl}
+              id={popOverId}
+              transformOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+            >
+              <CommentsContainer postId={id} type={type} />
+            </Popover>
           </Stack>
         </Box>
       </Stack>
-      <EmojiPicker
-        reactionsDefaultOpen={true}
-        onReactionClick={(e) => {
-          console.log("showErr", e);
-        }}
-      />
+
+      <CustomEmojiPicker id={id} />
     </Stack>
   );
 }

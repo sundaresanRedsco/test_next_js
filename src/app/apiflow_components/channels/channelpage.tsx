@@ -8,11 +8,13 @@ import Grid from "@mui/material/Grid2";
 import TextsmsIcon from "@mui/icons-material/Textsms";
 import GInput from "@/app/apiflow_components/global/GInput";
 import GButton from "@/app/apiflow_components/global/GButton";
-import { CreateChannel } from "@/app/Redux/channel/ChannelReducer";
+import { CreateChannel, getChannels } from "@/app/Redux/channel/ChannelReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
 import { CommonReducer } from "@/app/Redux/commonReducer";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const HeadingTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
@@ -43,9 +45,13 @@ interface userDataErrorsType {
 
 function Channel() {
   const dispatch = useDispatch<any>();
-
+  const router = useRouter();
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
+  );
+
+  const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
+    (state) => state.apiManagement.workspace
   );
 
   const [selectedImageBase64, setSelectedImageBase64] = useState<string | null>(
@@ -141,7 +147,7 @@ function Channel() {
     if (validateForm()) {
       let ChannelDetails;
       ChannelDetails = {
-        workspace_id: null,
+        workspace_id: currentWorkspace?.id,
         project_id: null,
         channel_name: channelData?.channel_name,
         description: channelData?.description || "",
@@ -162,11 +168,22 @@ function Channel() {
       dispatch(CreateChannel(ChannelDetails))
         .unwrap()
         .then((res: any) => {
-          console.log("UpdateResponse: ", res);
+          dispatch(
+            getChannels({
+              workspace_id: currentWorkspace?.id,
+              start: 1,
+              end: 5,
+            })
+          )
+            .unwrap()
+            .then(() => {
+              console.log("UpdateResponse: ", res);
+              router.push(`/userId/${userProfile?.user?.user_id}/channel`);
+              toast.success("channel Created");
+            });
         })
         .catch((error: any) => {
           console.log(error, "error OccurredWork");
-          
         });
     } else {
       console.log("Form has errors.");
@@ -257,7 +274,6 @@ function Channel() {
               )}
             </Avatar>
 
-
             <Box
               sx={{
                 width: "40px",
@@ -337,7 +353,7 @@ function Channel() {
             </Grid>
           </Grid>
         </Box>
-        <Grid
+        {/* <Grid
           size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
           sx={{ marginTop: "10px" }}
         >
@@ -408,8 +424,8 @@ function Channel() {
               }}
             />
           ))}
-        </Grid>
-        <Grid
+        </Grid> */}
+        {/* <Grid
           size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
           sx={{ marginTop: "10px" }}
         >
@@ -480,7 +496,7 @@ function Channel() {
               }}
             />
           ))}
-        </Grid>
+        </Grid> */}
       </Box>
       <Box
         sx={{
@@ -510,7 +526,7 @@ function Channel() {
           padding="5px 20px"
           fontSize={"12px"}
           radius="10px"
-          onClickHandler={validateForm}
+          onClickHandler={handleSubmit}
         />
       </Box>
     </Box>

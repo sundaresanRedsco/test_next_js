@@ -180,6 +180,7 @@ const userInitialState = {
     team_workspace_id: "",
     first_login: false,
     role_id: "",
+    user_name: "",
   },
 };
 
@@ -204,6 +205,7 @@ const initialState: CommonInitialStateType = {
       team_workspace_id: "",
       first_login: false,
       role_id: "",
+      user_name: "",
     },
   },
   sessionExpireTime: null,

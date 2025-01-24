@@ -1414,12 +1414,14 @@ export default function WorkflowOperationNode({ data }: any) {
               <pre>
                 <TextTypography>
                   {`. Location: ${operationDetails?.location}\n
-     URL Type: ${
+     URL Type: 
+     ${
        !operationDetails?.private_or_public ||
        operationDetails?.private_or_public === "null"
-         ? "-"
+         ? "PUBLIC"
          : operationDetails?.private_or_public
-     }\n
+     }
+     \n
     Orphan: ${
       operationDetails?.orphan_status &&
       operationDetails?.orphan_status !== "null"
@@ -1478,20 +1480,41 @@ export default function WorkflowOperationNode({ data }: any) {
                         <TextTypography>
                           {`${index + 1}. Type: ${val?.type}\n
     Background URL: ${
-      !val?.background_url || val?.background_url === "null"
+      !val?.background_url ||
+      (val?.background_url === "null" && val?.background_url === "NULL")
         ? "-"
         : val?.background_url
     }\n
-    Method: ${val?.method && val?.method !== "null" ? val?.method : "-"}\n
-    Region: ${val?.region && val?.region !== "null" ? val?.region : "-"}\n
+    Method: ${
+      val?.method && val?.method !== "null" && val?.method === "NULL"
+        ? val?.method
+        : "-"
+    }\n
+    Region: ${
+      val?.region && val?.region !== "null" && val?.region === "NULL"
+        ? val?.region
+        : "-"
+    }\n
     Api Type: ${
-      val?.api_type && val?.api_type !== "null" ? val?.api_type : "-"
+      val?.api_type && val?.api_type !== "null" && val?.api_type === "NULL"
+        ? val?.api_type
+        : "-"
     }\n
     Function name: ${
-      val?.function_name && val?.function_name !== "null"
+      val?.function_name &&
+      val?.function_name !== "null" &&
+      val?.function_name === "NULL"
         ? val?.function_name
         : "-"
     }\n
+
+        Connection Type: ${
+          val?.connection_type &&
+          val?.connection_type !== "null" &&
+          val?.connection_type === "NULL"
+            ? val?.connection_type
+            : "-"
+        }\n
     Updated at: ${val?.updated_at ?? "-"}\n
     Created at: ${val?.created_at ?? "-"}`}
                         </TextTypography>

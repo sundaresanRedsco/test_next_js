@@ -282,6 +282,19 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
                     color: "#FFFFFF", // Change text color on hover
                   },
                 }}
+                onClick={() => {
+                  if (
+                    pathname !=
+                    `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/collections/${col?.id}`
+                  ) {
+                    setIsPageLoading(true);
+                  }
+
+                  router.push(
+                    // `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/operations/${op?.id}`
+                    `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/collections/${col?.id}`
+                  );
+                }}
               >
                 <Box
                   sx={{

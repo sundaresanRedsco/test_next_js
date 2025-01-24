@@ -16,4 +16,5 @@ export interface userInterface {
   team_workspace_id: string;
   first_login: boolean;
   role_id: string;
+  user_name: string;
 }

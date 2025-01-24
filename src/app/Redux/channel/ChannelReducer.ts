@@ -21,11 +21,31 @@ export const CreateChannel = createAsyncThunk(
   }
 );
 
+export const getChannels = createAsyncThunk(
+  "channel/getChannels",
+  async (value: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        `Api/Post/get_channel_by_workspace_id_offset?workspace_id=${value.workspace_id}&start=${value.start}&end=${value.end}`,
+        value,
+        null
+      );
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
+      throw new Error(errorHandling(error));
+    }
+  }
+);
+
 type InitialStateType = {
   //   createLoading: boolean;
   //   violatingLoading: boolean;
   //   standardLoading: boolean;
   loading: boolean;
+  channels: any;
   //   getKeys: any;
   //   collectionsLists: any;
 };
@@ -34,7 +54,7 @@ const initialState: InitialStateType = {
   //   createLoading: false,
   //   violatingLoading: false,
   //   standardLoading: false,
-
+  channels: [],
   loading: false,
   //   getKeys: [],
   //   collectionsLists: [],
@@ -54,6 +74,19 @@ export const channelSlice = createSlice({
     });
 
     builder.addCase(CreateChannel.rejected, (state, action) => {
+      state.loading = false;
+    });
+
+    builder.addCase(getChannels.pending, (state, action) => {
+      state.loading = true;
+    });
+
+    builder.addCase(getChannels.fulfilled, (state, action) => {
+      state.channels = action.payload;
+      state.loading = false;
+    });
+
+    builder.addCase(getChannels.rejected, (state, action) => {
       state.loading = false;
     });
   },

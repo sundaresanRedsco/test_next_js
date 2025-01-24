@@ -16,6 +16,9 @@ import dynamic from "next/dynamic";
 import EnvironmentPageSkeleton from "@/app/apiflow_components/skeletons/EnvironmentPageSkeleton";
 import EnviromentTableSkeleton from "@/app/apiflow_components/skeletons/EnviromentTableSkeleton";
 import LinearSkeleton from "@/app/apiflow_components/skeletons/LinearSkeleton";
+import { CommonReducer } from "@/app/Redux/commonReducer";
+import { useRouter } from "next/navigation";
+import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
 
 const ButtonPlusIcon = dynamic(
   () => import("@/app/Assests/icons/ButtonIcon.svg")
@@ -112,6 +115,18 @@ const ProjectHomePage = () => {
 
   console.log(currentProject, "currentProjectsdsd");
   console.log(currentProjectDetails, "currentProjectDetailsNew");
+
+  const { userProfile } = useSelector<RootStateType, CommonReducer>(
+    (state) => state.common
+  );
+
+  const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
+    (state) => state.apiManagement.workspace
+  );
+
+  const router = useRouter();
+  const baseUrl = `/userId/${userProfile.user.user_id}/workspaceId/${currentWorkspace?.id}/project`;
+
   return (
     <div>
       <HeadingTypography style={{ fontSize: "25px" }}>
@@ -147,6 +162,22 @@ const ProjectHomePage = () => {
                 direction={{ xs: "column", sm: "row" }}
                 spacing={{ xs: 1, sm: 2, md: 4 }}
               >
+                <GlobalButton
+                  padding="6px 15px"
+                  label={"Project Integration"}
+                  iconPosition="start"
+                  fontWeight={500}
+                  // type={"submit"}
+                  // buttonType="primary"
+                  // width={"100%"}
+                  background="#7A43FE26"
+                  color="#FFFFFF"
+                  border="solid 1px #FFFFFF40"
+                  marginRight="5px"
+                  onClickHandler={() => {
+                    router?.push(`${baseUrl}/projectIntegration`);
+                  }}
+                />
                 <GlobalButton
                   padding="6px 15px"
                   label={"New Environment"}

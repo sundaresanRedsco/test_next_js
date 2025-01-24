@@ -6,6 +6,7 @@ import OverviewChannel from "@/app/apiflow_Pages/pages/Channel/overViewChannel";
 import { styled } from "@mui/system";
 import { Typography } from "@mui/material";
 import HomeChannel from "@/app/apiflow_Pages/pages/Channel/home";
+import Chats from "@/app/apiflow_Pages/pages/Channel/chats";
 
 const HeadingTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
@@ -26,7 +27,7 @@ export default async function Home(context: {
         userPermissions={userPermissions}
       /> */}
       <HeadingTypography> Channel</HeadingTypography>
-      <HomeChannel />
+      <Chats />
     </div>
   );
 }

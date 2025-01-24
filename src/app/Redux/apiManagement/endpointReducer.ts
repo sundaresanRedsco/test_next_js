@@ -189,8 +189,9 @@ export const ImportSwaggerDocument = createAsyncThunk(
     try {
       return await AdminServices(
         "post",
-        "api/Import_/Swagger_doc_import_api",
-        value,
+        "api/Import_/Swagger_doc_import_api?workspace_id=" +
+          value?.workspace_id,
+        value.data,
         null
       );
     } catch (error: any) {

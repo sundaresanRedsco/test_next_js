@@ -48,22 +48,10 @@ function ChannelComponent() {
   );
   const channelDatas = [
     {
-      label: "Organization",
+      label: "Channels",
       onClick: undefined,
-      icon: false,
       isDropDown: false,
       dropDownData: [],
-    },
-    {
-      label: "Project",
-      onClick: undefined,
-      icon: false,
-      isDropDown: false,
-      dropDownData: [],
-    },
-    {
-      label: "Personal",
-      onClick: undefined,
       icon: (
         <ChannelPlusIcon
           style={{ cursor: "pointer" }}
@@ -74,16 +62,28 @@ function ChannelComponent() {
           }}
         />
       ),
-      isDropDown: false,
-      dropDownData: [],
     },
-    {
-      label: "External",
-      onClick: undefined,
-      icon: false,
-      isDropDown: false,
-      dropDownData: [],
-    },
+    // {
+    //   label: "Project",
+    //   onClick: undefined,
+    //   icon: false,
+    //   isDropDown: false,
+    //   dropDownData: [],
+    // },
+    // {
+    //   label: "Personal",
+    //   onClick: undefined,
+
+    //   isDropDown: false,
+    //   dropDownData: [],
+    // },
+    // {
+    //   label: "External",
+    //   onClick: undefined,
+    //   icon: false,
+    //   isDropDown: false,
+    //   dropDownData: [],
+    // },
   ];
   return (
     <Box sx={{ color: "white" }}>

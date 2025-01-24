@@ -93,7 +93,7 @@ import {
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import GlobalContextMenu from "@/app/hooks/workflow/GlobalContextMenu";
-import useWorkflowPost from "@/app/hooks/workflow/useWorkflowPost";
+import useWorkflowPost from "@/app/hooks/posts/useWorkflowPost";
 import WorkflowPosts from "@/app/apiflow_components/WorkflowComponents/workflowPosts";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -718,17 +718,19 @@ const WorkflowDesigner = (props: any) => {
   const { selectedFlowIds, addFlowId } = useWorkflowStore();
 
   useEffect(() => {
-    dispatch(
-      GetOperationById({
-        operation_id: dropItem?.id,
-        project_id: currentFlowDetails?.project_id,
-      })
-    )
-      .unwrap()
-      .then((operationRes: any) => {
-        // setFullUrl(operationRes?.[0]?.full_url);
-      })
-      .catch((error: any) => {});
+    if (dropItem?.id && currentFlowDetails?.project_id) {
+      dispatch(
+        GetOperationById({
+          operation_id: dropItem?.id,
+          project_id: currentFlowDetails?.project_id,
+        })
+      )
+        .unwrap()
+        .then((operationRes: any) => {
+          // setFullUrl(operationRes?.[0]?.full_url);
+        })
+        .catch((error: any) => {});
+    }
   }, [dropItem?.id, currentFlowDetails?.project_id]);
 
   const validateNodes = (
@@ -1712,7 +1714,7 @@ const WorkflowDesigner = (props: any) => {
           errorBoole={errorBoole}
         />
       </WorkFlowLayout>
-      <IconButton
+      {/* <IconButton
         aria-owns={apiFlow_Id}
         aria-haspopup={true}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -1753,7 +1755,7 @@ const WorkflowDesigner = (props: any) => {
         }}
       >
         <WorkflowPosts />
-      </Popover>
+      </Popover> */}
     </Grid>
   );
 };

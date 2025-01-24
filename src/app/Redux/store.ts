@@ -30,6 +30,7 @@ import permissionReducer from "./permissionReducer/permissionReducer";
 import postReducer from "./PostReducer/postReducer";
 import apiPostReducer from "./apiPostReducer";
 import apiInvitationReducer from "./apiInvitationReducer";
+import apiChannelReducer from "./apiChannelReducer";
 
 const socket = new Socket(); // Create an instance of the Socket class
 const store = configureStore({
@@ -51,7 +52,7 @@ const store = configureStore({
     // posts: postReducer,
     apiPosts: apiPostReducer,
     apiInvitation: apiInvitationReducer,
-
+    channels: apiChannelReducer,
 
     // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(resetMiddleware),
     // app: appReducer,
