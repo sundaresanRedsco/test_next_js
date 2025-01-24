@@ -138,7 +138,7 @@ export default function useWorkspace(userData?: any) {
             const { data }: any = await axios.post(
               "https://api.apiflow.pro/Api/Workspace_/update_workspace",
               {
-                workspaceId: apiDataStore?.workspace?.id,
+                workspace_id: apiDataStore?.workspace?.id,
                 name: formData.workspace_name,
                 descriptions: formData.description,
                 profile_picture: "",
