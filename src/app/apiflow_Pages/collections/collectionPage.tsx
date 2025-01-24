@@ -220,11 +220,11 @@ export default function CollectionPage() {
       }}
     >
       <Grid2 container spacing={2} sx={{ padding: "0px 15px" }}>
-        <Grid2 item sm={4} sx={{ marginTop: "0.3rem" }}>
+        <Grid2 sx={{ marginTop: "0.3rem" }}>
           <HeadingTypography>API Documentation</HeadingTypography>
         </Grid2>
 
-        <Grid2 item sm={4} sx={{ marginTop: "0.3rem" }}>
+        <Grid2 sx={{ marginTop: "0.3rem" }}>
           <HeadingTypography>
             {swaggerDocs?.id ? "Success" : "Pending"}
             <span
@@ -242,7 +242,7 @@ export default function CollectionPage() {
         </Grid2>
         {crudDoc == "EDIT" && swaggerDocs?.id && (
           <>
-            <Grid2 item sm={4} sx={{ marginTop: "0.3rem" }}>
+            <Grid2 sx={{ marginTop: "0.3rem" }}>
               <DoNotTouch style={{ height: "5px", width: "5px" }} />
               <Typography
                 style={{
@@ -253,7 +253,7 @@ export default function CollectionPage() {
               </Typography>
             </Grid2>
 
-            <Grid2 item sm={4} sx={{ marginTop: "0.3rem" }}>
+            <Grid2 sx={{ marginTop: "0.3rem" }}>
               <HeadingTypography>
                 {swaggerDocs.type === "FILE" ? "File" : swaggerDocs.url}
               </HeadingTypography>
@@ -304,7 +304,7 @@ export default function CollectionPage() {
                     type="text"
                     color={"#000000"}
                     background={"#ffffff"}
-                    fontWeight={700}
+                    fontWeight={"700"}
                     radius="5px"
                     labelShrink={true}
                     dataTest={"email-input"}
