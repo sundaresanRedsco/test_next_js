@@ -69,6 +69,26 @@ const tableBodyCellCommonStyle = {
 
 // Sample data for four rows
 const tableData: any = [
+  {
+    id: 1,
+    col1: "Method override",
+    col2: "GetAllProducts",
+    col3: "-",
+    col4: "-",
+    col5: "8",
+    col6: "2025-01-09, 10:00:40 AM",
+    type: "-",
+  },
+  {
+    id: 2,
+    col1: "Cross-site Scripting",
+    col2: "GetAllUsers",
+    col3: "-",
+    col4: "-",
+    col5: "8",
+    col6: "2025-01-19, 11:45:58 AM",
+    type: "-",
+  },
   // {
   //   id: 1,
   //   col1: "SQL",
@@ -178,9 +198,9 @@ function ThreatTable() {
                     borderBottom: "solid 1px #FFFFFF26",
                   }}
                 >
-                  <NodeIconTable />{" "}
+                  {/* <NodeIconTable />{" "} */}
                   <TableTypography>{row?.col3}</TableTypography>{" "}
-                  <GButton
+                  {/* <GButton
                     background="#FFFFFF26"
                     label={"+8"}
                     color="#FFFFFF"
@@ -188,7 +208,7 @@ function ThreatTable() {
                     padding="0px"
                     border="none"
                     fontSize="12px"
-                  />
+                  /> */}
                 </TableCell>
                 <TableCell
                   sx={{

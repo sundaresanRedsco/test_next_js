@@ -3,8 +3,21 @@ import React from "react";
 import useTextEditor from "../useTextEditor";
 import { useReactFlow } from "reactflow";
 
-type Props = {};
-
+function parseData(data: any) {
+  // Check if data is an object
+  if (typeof data === "object") {
+    return data; // Return as is
+  } else {
+    try {
+      // Try to parse the data
+      return JSON.parse(data);
+    } catch (error) {
+      // If parsing fails, return null or handle the error accordingly
+      console.error("Error parsing data:", error);
+      return null;
+    }
+  }
+}
 export default function useNodeErr() {
   const { handleBraces } = useTextEditor();
   const { getEdges, getNodes } = useReactFlow();
@@ -32,41 +45,37 @@ export default function useNodeErr() {
           node?.type != "groupNode" && node?.type != "startButtonNode"
       )
       .forEach((node: any) => {
-        let data = null;
-        let inputdata = "";
-        try {
-          data = node?.data ? JSON.parse(node?.data) : null;
-          inputdata = data?.raw_payload ? JSON.parse(data?.raw_payload) : "";
-        } catch (error) {
-          data = {};
+        let data = node?.data ? JSON.parse(node?.data) : null;
+        let inputdata =
+          data && data?.raw_payload
+            ? parseData(data?.raw_payload) || data?.raw_payload
+            : "";
+        if (inputdata) {
+          setInputData(node.id, {
+            key: "input",
+            value: {
+              input: inputdata,
+              isErr: handleBraces(inputdata) ? true : false,
+            },
+          });
         }
-
-        // if (inputdata) {
-        //   setInputData(node.id, {
-        //     key: "input",
-        //     value: {
-        //       input: inputdata,
-        //       isErr: handleBraces(inputdata) ? true : false,
-        //     },
-        //   });
-        // }
         setNodeErrors(node.id, []);
-        // if (data?.operations_header) {
-        //   data?.operations_header.forEach((input: any) => {
-        //     setInputData(node.id, {
-        //       key: "header",
-        //       value: { input: input.test_value, isErr: false },
-        //     });
-        //   });
-        // }
-        // if (data?.operations_query_param) {
-        //   data?.operations_query_param.forEach((input: any) => {
-        //     setInputData(node.id, {
-        //       key: "params",
-        //       value: { input: input.test_value, isErr: false },
-        //     });
-        //   });
-        // }
+        if (data?.operations_header) {
+          data?.operations_header.forEach((input: any) => {
+            setInputData(node.id, {
+              key: "header",
+              value: { input: input.test_value, isErr: false },
+            });
+          });
+        }
+        if (data?.operations_query_param) {
+          data?.operations_query_param.forEach((input: any) => {
+            setInputData(node.id, {
+              key: "params",
+              value: { input: input.test_value, isErr: false },
+            });
+          });
+        }
         setInputData(node.id, {
           key: "edge",
           value: { input: [], isErr: false },
@@ -82,21 +91,24 @@ export default function useNodeErr() {
       const key = keys[index];
       const element = inputs ? inputs[key] : null;
 
-      // if (element && Array.isArray(element) && key != "edge") {
-      //   if (element?.some((elem: any) => elem.isErr == true)) {
-      //     nodeErrKeys.push(key);
-      //   } else {
-      //     if (nodeErrKeys.includes(key)) {
-      //       nodeErrKeys = nodeErrKeys.filter((elem: any) => elem != key);
-      //     }
-      //   }
-      // } else
-      if (element && Array.isArray(element) && key == "edge") {
+      if (element && Array.isArray(element) && key != "edge") {
+        if (element?.some((elem: any) => elem.isErr == true)) {
+          nodeErrKeys.push(key);
+        } else {
+          if (nodeErrKeys.includes(key)) {
+            nodeErrKeys = nodeErrKeys.filter((elem: any) => elem != key);
+          }
+        }
+      } else if (element && Array.isArray(element) && key == "edge") {
         element[0].input.forEach((elem: any) => {
           if (!nodeErrKeys.includes(elem)) {
             nodeErrKeys.push(elem);
           }
         });
+      } else if (key == "input") {
+        handleBraces(element.input) && !nodeErrKeys.includes(key)
+          ? nodeErrKeys.push(key)
+          : null;
       }
     }
     const errMessage: any = {
@@ -159,5 +171,6 @@ export default function useNodeErr() {
       });
     }
   };
+
   return { handleAddInitialErrors, handleErrors, handleEdgeError };
 }

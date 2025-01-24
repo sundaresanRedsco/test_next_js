@@ -93,6 +93,10 @@ export default function useInvites(userData?: any) {
           throw new Error("UNAUTHORIZED");
         }
         //   setFormNewerror(error?.response?.data?.Error);
+        if (error?.response?.data?.Error) {
+          handleErrForm("email", error?.response?.data?.Error);
+        }
+
         setIsLoading(false);
 
         // throw new Error(errorHandling(error));

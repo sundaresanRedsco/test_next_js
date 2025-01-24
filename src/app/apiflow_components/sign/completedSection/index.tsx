@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import GlobalButton from "../../global/GButton";
 import { removeItem } from "@/app/Services/localstorage";
+import toast from "react-hot-toast";
 
 export default function CompletedSection({ clientSession }: any) {
   const router = useRouter();
@@ -18,6 +19,12 @@ export default function CompletedSection({ clientSession }: any) {
     resetApiData();
     resetForm();
     removeItem(`userId/${clientSession?.user?.user_id}`);
+    setTimeout(() => {
+      toast.success("Scan started");
+    }, 3000);
+    setTimeout(() => {
+      toast.success("Scan ended");
+    }, 15000);
   };
   return (
     <Stack

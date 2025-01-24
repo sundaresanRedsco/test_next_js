@@ -32,7 +32,7 @@ import TerminalIcon from "@mui/icons-material/Terminal";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import EditIcon from "@mui/icons-material/Edit";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { SaveAlt } from "@mui/icons-material";
+import { ChatBubble, SaveAlt } from "@mui/icons-material";
 import Grid from "@mui/material/Grid2";
 import ReactFlow, {
   useNodesState,
@@ -67,6 +67,8 @@ import _ from "lodash";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import {
   Box,
+  IconButton,
+  Popover,
   Tooltip,
   TooltipProps,
   styled,
@@ -91,6 +93,8 @@ import {
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import GlobalContextMenu from "@/app/hooks/workflow/GlobalContextMenu";
+import useWorkflowPost from "@/app/hooks/workflow/useWorkflowPost";
+import WorkflowPosts from "@/app/apiflow_components/WorkflowComponents/workflowPosts";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -1357,6 +1361,8 @@ const WorkflowDesigner = (props: any) => {
   const closeContextMenuHandler = () => {
     setContextMenu({ show: false, x: 0, y: 0 });
   };
+  const { openPosts, setopenPostAnchorEl, openPostAnchorEl } =
+    useWorkflowPost();
 
   return (
     <Grid
@@ -1367,6 +1373,7 @@ const WorkflowDesigner = (props: any) => {
         alignItems: "center",
         justifyContent: "center",
         padding: "10px 0px",
+        position: "relative",
       }}
       size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
     >
@@ -1468,8 +1475,8 @@ const WorkflowDesigner = (props: any) => {
                           "react-flow-container"
                         )}
                         selectableTargets={[".react-flow__node"]}
-                        selectByClick={true}
-                        selectFromInside={true}
+                        selectByClick={false}
+                        selectFromInside={false}
                         continueSelect={false}
                         toggleContinueSelect={"shift"}
                         hitRate={0}
@@ -1705,6 +1712,48 @@ const WorkflowDesigner = (props: any) => {
           errorBoole={errorBoole}
         />
       </WorkFlowLayout>
+      <IconButton
+        aria-owns={apiFlow_Id}
+        aria-haspopup={true}
+        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+          setopenPostAnchorEl(event.currentTarget);
+        }}
+        sx={{
+          position: "absolute",
+          right: 20,
+          bottom: 20,
+          zIndex: 1,
+          background:
+            "linear-gradient(90deg, rgb(155, 83, 176) 0%, rgb(122, 67, 254) 100%)",
+          color: "white",
+        }}
+      >
+        <ChatBubble />
+      </IconButton>
+      <Popover
+        id={apiFlow_Id}
+        open={openPosts}
+        anchorEl={openPostAnchorEl || null}
+        onClose={() => {
+          setopenPostAnchorEl(null);
+        }}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        sx={{
+          zIndex: 9999,
+          "& .MuiPaper-root": {
+            padding: "10px",
+          },
+        }}
+      >
+        <WorkflowPosts />
+      </Popover>
     </Grid>
   );
 };

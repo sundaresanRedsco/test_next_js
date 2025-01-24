@@ -1144,8 +1144,13 @@ export default function OperationsPage(props: any) {
   };
 
   useEffect(() => {
-    if (collectionIdVal !== undefined) {
-      dispatch(GetCollectionById(collectionIdVal))
+    if (collectionIdVal && currentEnvironment) {
+      dispatch(
+        GetCollectionById({
+          collection_id: collectionIdVal,
+          project_id: currentEnvironment,
+        })
+      )
         .unwrap()
         .then((res: any) => {
           setCollectionDetails({
@@ -1282,62 +1287,63 @@ export default function OperationsPage(props: any) {
       // // operation_id: "7323066c9e6642139fce3dabdc04e679",
       // operation_id: "c6370e9b3aab48408ed968dc28babf0e",
     };
-
-    dispatch(GetOperationById(data))
-      .unwrap()
-      .then((res: any) => {
-        res?.map((val: any) => {
-          setOperationDetails({
-            operationId: val?.id,
-            name: val?.name,
-            description: val?.description,
-            pass_through_forheaders: false,
-            pass_through_forinputs: false,
-            pass_through_foroutputs: false,
-            pass_through_authorization: "null",
-            pass_through_queryparameters: "null",
-            status: val?.status,
-            security_type: val?.security_type || "Authenticated App Users",
-            soap_action: val?.soap_action,
-            endpoint_url: val?.endpoint_url,
-            soap_version: val?.soap_version,
-            response_encoding: "null",
-            server_auth_mode: "null",
-            binding_name: val?.binding_name,
-            soap_input_message: val?.soap_input_message,
-            http_method: val?.http_method,
-            collections_id: val?.collections_id,
-            publish_name: "null",
-            method_name: val?.method_name,
-            generate_MockDate: "No",
-            operationHeaders: rowsHeader,
-            operationInputs: rowsBody,
-            operation_Authorizations: rowsAuthorization,
-            operation_queryparamaeters: rowsQueryParameters,
-            operationOutputs: rowsOutput,
-            passThroughPayload: "null",
-            passThroughHeaders: "null",
-            endpoint_status: val?.endpoint_status,
-            private_or_public: val?.private_or_public,
-            input_type: val?.input_type,
-            raw_payload: val?.raw_payload,
-            raw_output: val?.raw_output,
+    if (operationIdVal && currentEnvironment) {
+      dispatch(GetOperationById(data))
+        .unwrap()
+        .then((res: any) => {
+          res?.map((val: any) => {
+            setOperationDetails({
+              operationId: val?.id,
+              name: val?.name,
+              description: val?.description,
+              pass_through_forheaders: false,
+              pass_through_forinputs: false,
+              pass_through_foroutputs: false,
+              pass_through_authorization: "null",
+              pass_through_queryparameters: "null",
+              status: val?.status,
+              security_type: val?.security_type || "Authenticated App Users",
+              soap_action: val?.soap_action,
+              endpoint_url: val?.endpoint_url,
+              soap_version: val?.soap_version,
+              response_encoding: "null",
+              server_auth_mode: "null",
+              binding_name: val?.binding_name,
+              soap_input_message: val?.soap_input_message,
+              http_method: val?.http_method,
+              collections_id: val?.collections_id,
+              publish_name: "null",
+              method_name: val?.method_name,
+              generate_MockDate: "No",
+              operationHeaders: rowsHeader,
+              operationInputs: rowsBody,
+              operation_Authorizations: rowsAuthorization,
+              operation_queryparamaeters: rowsQueryParameters,
+              operationOutputs: rowsOutput,
+              passThroughPayload: "null",
+              passThroughHeaders: "null",
+              endpoint_status: val?.endpoint_status,
+              private_or_public: val?.private_or_public,
+              input_type: val?.input_type,
+              raw_payload: val?.raw_payload,
+              raw_output: val?.raw_output,
+            });
+            setRowsBody([...val?.operationInputs]);
+            setRowsHeader([...val?.operationHeaders]);
+            setRowsAuthorization([...val?.operation_Authorizations]);
+            setRowsQueryParameters([...val?.operation_queryparamaeters]);
+            return null;
           });
-          setRowsBody([...val?.operationInputs]);
-          setRowsHeader([...val?.operationHeaders]);
-          setRowsAuthorization([...val?.operation_Authorizations]);
-          setRowsQueryParameters([...val?.operation_queryparamaeters]);
-          return null;
+          setChangeOccuredColl(false);
+          setChangeOccuredOper(false);
+          setChangeUrlDialog(false);
+        })
+        .catch((error: any) => {
+          if (error?.message === "UNAUTHORIZED") {
+            dispatch(updateSessionPopup(true));
+          }
         });
-        setChangeOccuredColl(false);
-        setChangeOccuredOper(false);
-        setChangeUrlDialog(false);
-      })
-      .catch((error: any) => {
-        if (error?.message === "UNAUTHORIZED") {
-          dispatch(updateSessionPopup(true));
-        }
-      });
+    }
   }, [operationIdVal]);
 
   if (operationSpellValidation) {

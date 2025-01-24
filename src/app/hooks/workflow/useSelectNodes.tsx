@@ -42,6 +42,7 @@ export default function useSelectNodes({
     setParticularInputData,
     resetWorkFlowState,
     setNodeFunction,
+    multiSelectClicked,
   } = useWorkflowStore();
   const { isEditable, flowYdoc } = useSelector<RootStateType, FlowReducer>(
     (state) => state.apiManagement.apiFlowDesign
@@ -250,9 +251,6 @@ export default function useSelectNodes({
   };
   const handlePasteNodes = (event?: any) => {
     if (copiedData?.length === 0) return;
-
-    console.log(copiedData, "setCopiedDataSetCopiedData");
-
     const position = event
       ? screenToFlowPosition({ x: event.clientX, y: event.clientY })
       : lastCursorPosition;
@@ -266,7 +264,9 @@ export default function useSelectNodes({
 
       addCopiedNodes(nodeMap, position, nodeIdMapping, newGrpNodes);
 
-      addCopiedEdges(nodeIdMapping, edgeMap);
+      if (multiSelectClicked) {
+        addCopiedEdges(nodeIdMapping, edgeMap);
+      }
     }
 
     // resetWorkFlowState("copiedData");

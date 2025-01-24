@@ -439,14 +439,16 @@ const ApiInsights = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(GetOperationById(operIdVal))
-      .unwrap()
-      .then((operRes: any) => {
-        setOperationDetails(operRes);
-      })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+    if (operIdVal) {
+      dispatch(GetOperationById(operIdVal))
+        .unwrap()
+        .then((operRes: any) => {
+          setOperationDetails(operRes);
+        })
+        .catch((error: any) => {
+          console.log("Error: ", error);
+        });
+    }
   }, [operIdVal]);
 
   useEffect(() => {

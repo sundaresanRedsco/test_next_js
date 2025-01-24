@@ -48,7 +48,11 @@ import {
   TotalNewProjectIcon,
   CloseIcon,
 } from "@/app/Assests/icons";
-import { ManageAccounts, PriorityHighRounded } from "@mui/icons-material";
+import {
+  Close,
+  ManageAccounts,
+  PriorityHighRounded,
+} from "@mui/icons-material";
 import {
   BackgroundUrlList,
   GetOperationById,
@@ -149,6 +153,8 @@ export default function WorkflowOperationNode({ data }: any) {
     copyClicked,
     setCopyClicked,
     setCutClicked,
+    setNestedInputData,
+    inputdatas,
     copiedData,
     multiSelectClicked,
     resetWorkFlowState,
@@ -174,7 +180,9 @@ export default function WorkflowOperationNode({ data }: any) {
     nodeData?.operations_query_param ? [...nodeData.operations_query_param] : []
   );
 
-  const [backgroundUrlClicked, setbackgroundUrlClicked] = useState<any>(false);
+  const [backgroundUrlClicked, setbackgroundUrlClicked] =
+    useState<HTMLButtonElement | null>(null);
+  const openManageAccount = Boolean(backgroundUrlClicked);
   const [operationDetails, setOperationDetails] = useState<any>(false);
   const [backgroundUrlData, setBackgroundUrlData] = useState<any>([]);
   const [sizeAccClicked, setSizeAccClicked] = useState(false);
@@ -1146,6 +1154,7 @@ export default function WorkflowOperationNode({ data }: any) {
   const selectedNodeData = getNode(nodeData?.id);
 
   const handleClickNode = (id: any) => {
+    if (multiSelectClicked) return;
     if (isEditable) {
       const nodeMap = flowYdoc?.getMap<any>("nodes");
       if (selectedFlowIds?.includes(id)) {
@@ -1193,14 +1202,14 @@ export default function WorkflowOperationNode({ data }: any) {
 
   useEffect(() => {
     // Add event listener to detect clicks outside the box
-    if (!multiSelectClicked) {
-      document.addEventListener("click", handleClickOutsideSelecto);
-    }
+    // if (!multiSelectClicked) {
+    //   document.addEventListener("click", handleClickOutsideSelecto);
+    // }
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      if (!multiSelectClicked) {
-        document.removeEventListener("click", handleClickOutsideSelecto);
-      }
+      // if (!multiSelectClicked) {
+      //   document.removeEventListener("click", handleClickOutsideSelecto);
+      // }
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isEditable, multiSelectClicked]);
@@ -1211,35 +1220,37 @@ export default function WorkflowOperationNode({ data }: any) {
 
   return (
     <Box sx={{ position: "relative" }}>
-      {isEditable && selectedFlowIds?.includes(nodeData?.id) && (
-        <Stack
-          direction={"row"}
-          sx={{ position: "absolute", top: -22, left: 5 }}
-        >
-          <BiCopy
-            className="exclude-click-outside"
-            style={{
-              marginRight: "10px",
-              cursor: "pointer",
-              color: isCopied ? "green" : "auto",
-            }}
-            onClick={() => {
-              setCopyClicked(nodeData?.id, true);
-              handleCopyNodes();
-            }}
-          />
-          <BiCut
-            className="exclude-click-outside"
-            style={{
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              setCutClicked(true);
-              handleCopyNodes(true);
-            }}
-          />
-        </Stack>
-      )}
+      {isEditable &&
+        selectedFlowIds?.includes(nodeData?.id) &&
+        !multiSelectClicked && (
+          <Stack
+            direction={"row"}
+            sx={{ position: "absolute", top: -22, left: 5 }}
+          >
+            <BiCopy
+              className="exclude-click-outside"
+              style={{
+                marginRight: "10px",
+                cursor: "pointer",
+                color: isCopied ? "green" : "auto",
+              }}
+              onClick={() => {
+                setCopyClicked(nodeData?.id, true);
+                handleCopyNodes();
+              }}
+            />
+            <BiCut
+              className="exclude-click-outside"
+              style={{
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                setCutClicked(true);
+                handleCopyNodes(true);
+              }}
+            />
+          </Stack>
+        )}
       {showErr &&
         nodeErrors[nodeData?.id] &&
         nodeErrors[nodeData?.id]?.length > 0 && (
@@ -1346,66 +1357,63 @@ export default function WorkflowOperationNode({ data }: any) {
               {nodeData?.dragger}
             </div>
           )}
-
-        {backgroundUrlClicked === true && (
-          <div>
-            <Popover
-              open={backgroundUrlClicked}
-              anchorEl={backgroundUrlClicked || null}
-              onClose={() => {
-                setbackgroundUrlClicked(false);
-              }}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
+        <Popover
+          id={"ManageAccounts" + nodeData?.id}
+          open={openManageAccount}
+          anchorEl={backgroundUrlClicked}
+          onClose={() => {
+            setbackgroundUrlClicked(null);
+          }}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          sx={{
+            zIndex: 9999,
+            "& .MuiPaper-root": {
+              backgroundColor: theme.palette.signInUpWhite.main,
+              width: "450px",
+              height: "350px",
+            },
+          }}
+        >
+          <div
+            style={{
+              padding: "20px",
+              position: "relative",
+            }}
+          >
+            <Close
               sx={{
-                zIndex: 9999,
-                "& .MuiPaper-root": {
-                  backgroundColor: theme.palette.signInUpWhite.main,
-                  width: "400px",
-                  height: "350px",
-                  position: "absolute",
-                  marginLeft: "10px",
-                  top: "131px !important",
-                },
+                position: "absolute",
+                top: "18px",
+                right: "18px",
+                cursor: "pointer",
+                zIndex: 1,
+                color: `${theme.palette.primaryBlack.main}`,
+              }}
+              onClick={() => {
+                setbackgroundUrlClicked(null);
+              }}
+            />
+            <HeadingTypography
+              style={{ color: `${theme.palette.DarkBlack.main}` }}
+            >
+              Operation Details
+            </HeadingTypography>
+
+            <div
+              style={{
+                padding: "10px",
               }}
             >
-              <div
-                style={{
-                  padding: "20px",
-                }}
-              >
-                <CloseIcon
-                  style={{
-                    width: "10px",
-                    height: "10px",
-                    position: "absolute",
-                    top: "18px",
-                    right: "18px",
-                    cursor: "pointer",
-                    zIndex: "1",
-                    color: `${theme.palette.primaryBlack.main}`,
-                    marginBottom: "10px",
-                  }}
-                  onClick={() => {
-                    setbackgroundUrlClicked(false);
-                  }}
-                />
-                <HeadingTypography
-                  style={{ color: `${theme.palette.DarkBlack.main}` }}
-                >
-                  Operation Details
-                </HeadingTypography>
-
-                <div
-                  style={{
-                    padding: "10px",
-                  }}
-                >
-                  <pre>
-                    <TextTypography>
-                      {`. Location: ${operationDetails?.location}\n
+              <pre>
+                <TextTypography>
+                  {`. Location: ${operationDetails?.location}\n
      URL Type: ${
        !operationDetails?.private_or_public ||
        operationDetails?.private_or_public === "null"
@@ -1424,51 +1432,51 @@ export default function WorkflowOperationNode({ data }: any) {
         ? operationDetails?.endpoint_status
         : "-"
     }\n`}
-                    </TextTypography>
-                  </pre>
+                </TextTypography>
+              </pre>
 
-                  <TextTypography
+              <TextTypography
+                style={{
+                  color: `${theme.palette.teritiaryColor.main}`,
+                  marginLeft: "10px",
+                }}
+              >
+                Here is the list of background url for the operation{" "}
+              </TextTypography>
+              {backgroundUrlData?.length === 0 ? (
+                <>
+                  <PrimaryTypography
                     style={{
+                      alignItems: "center",
+                      textAlign: "center",
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
                       color: `${theme.palette.teritiaryColor.main}`,
-                      marginLeft: "10px",
+                      fontWeight: 900,
                     }}
                   >
-                    Here is the list of background url for the operation{" "}
-                  </TextTypography>
-                  {backgroundUrlData?.length === 0 ? (
-                    <>
-                      <PrimaryTypography
-                        style={{
-                          alignItems: "center",
-                          textAlign: "center",
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          color: `${theme.palette.teritiaryColor.main}`,
-                          fontWeight: 900,
-                        }}
-                      >
-                        No data found
-                      </PrimaryTypography>
-                    </>
-                  ) : (
-                    <>
-                      <div
-                        style={{
-                          padding: "5px",
-                        }}
-                      ></div>
-                      {backgroundUrlData?.map((val: any, index: number) => (
-                        <div
-                          key={val?.id}
-                          style={{
-                            padding: "5px",
-                          }}
-                        >
-                          <pre>
-                            <TextTypography>
-                              {`${index + 1}. Type: ${val?.type}\n
+                    No data found
+                  </PrimaryTypography>
+                </>
+              ) : (
+                <>
+                  <div
+                    style={{
+                      padding: "5px",
+                    }}
+                  ></div>
+                  {backgroundUrlData?.map((val: any, index: number) => (
+                    <div
+                      key={val?.id}
+                      style={{
+                        padding: "5px",
+                      }}
+                    >
+                      <pre>
+                        <TextTypography>
+                          {`${index + 1}. Type: ${val?.type}\n
     Background URL: ${
       !val?.background_url || val?.background_url === "null"
         ? "-"
@@ -1486,17 +1494,15 @@ export default function WorkflowOperationNode({ data }: any) {
     }\n
     Updated at: ${val?.updated_at ?? "-"}\n
     Created at: ${val?.created_at ?? "-"}`}
-                            </TextTypography>
-                          </pre>
-                        </div>
-                      ))}
-                    </>
-                  )}
-                </div>
-              </div>
-            </Popover>
+                        </TextTypography>
+                      </pre>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
           </div>
-        )}
+        </Popover>
 
         {changeManClicked === true && (
           <ChangeNodeManage
@@ -1562,9 +1568,17 @@ export default function WorkflowOperationNode({ data }: any) {
               {nodeData?.method}
             </SecondaryTypography>
             <SecondaryTypography
+              title={nodeData?.node_name}
               style={{
                 marginLeft: "5px",
-                maxWidth: "150px",
+                maxWidth:
+                  nodeData?.method && isEditable
+                    ? "87px"
+                    : isEditable && !nodeData?.method
+                    ? "90px"
+                    : nodeData?.method && !isEditable
+                    ? "87px"
+                    : "100px",
                 overflow: "hidden",
                 whiteSpace: "nowrap",
                 textOverflow: "ellipsis",
@@ -1574,41 +1588,72 @@ export default function WorkflowOperationNode({ data }: any) {
               {nodeData?.node_name}
             </SecondaryTypography>
           </div>
-          <div
+          <Box
             style={{
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
+              gap: 2,
             }}
           >
-            <div>
-              <Button
-                sx={{
-                  "&.MuiButton-root:hover path": {
-                    fill: "red",
-                  },
-                  backgroundColor: "unset !important",
-                  marginLeft: "auto",
-                  minWidth: "auto",
+            <Button
+              sx={{
+                "&.MuiButton-root:hover path": {
+                  fill: "red",
+                },
+                backgroundColor: "unset !important",
+                marginLeft: "auto",
+                minWidth: "auto",
+              }}
+            >
+              {isEditable && (
+                <DeleteIcon
+                  className="position-absolute"
+                  style={{
+                    width: "15px",
+                    height: "15px",
+                    fill: theme.palette.mainRed.main,
+                    cursor: "pointer",
+                    transition: "fill 0.1s ease",
+                  }}
+                  onClick={onClick}
+                />
+              )}
+            </Button>
+            <IconButton
+              sx={{ padding: 0 }}
+              aria-haspopup="true"
+              aria-owns={
+                openManageAccount ? "ManageAccounts" + nodeData?.id : ""
+              }
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                setbackgroundUrlClicked(event.currentTarget);
+                dispatch(GetOperationById(nodeData?.operation_id))
+                  .unwrap()
+                  .then((operRes: any) => {
+                    setOperationDetails(operRes[0]);
+                  })
+                  .catch((error: any) => {
+                    console.log("Error: ", error);
+                  });
+                dispatch(BackgroundUrlList(nodeData?.operation_id))
+                  .unwrap()
+                  .then((changeRes: any) => {
+                    console.log("ChangeRes: ", changeRes);
+                    setBackgroundUrlData(changeRes);
+                  })
+                  .catch((error: any) => {
+                    console.log("Error: ", error);
+                  });
+              }}
+            >
+              <ManageAccounts
+                style={{
+                  color: `${theme.palette.v2PrimaryColor.main}`,
+                  fontSize: "18px",
                 }}
-              >
-                {isEditable && (
-                  <DeleteIcon
-                    className="position-absolute"
-                    style={{
-                      width: "15px",
-                      height: "15px",
-                      fill: theme.palette.mainRed.main,
-                      right: "5px",
-                      cursor: "pointer",
-                      transition: "fill 0.1s ease",
-                      marginBottom: "5px ",
-                    }}
-                    onClick={onClick}
-                  />
-                )}
-              </Button>
-            </div>
+              />
+            </IconButton>
 
             <ChangeCircleOutlinedIcon
               style={{
@@ -1650,7 +1695,7 @@ export default function WorkflowOperationNode({ data }: any) {
                 RunHandler();
               }}
             />
-          </div>
+          </Box>
         </Box>
 
         <Box
@@ -1983,6 +2028,18 @@ export default function WorkflowOperationNode({ data }: any) {
                                 const updatedHeaders = headers.filter(
                                   (_: any, i: number) => i !== index
                                 );
+                                const inputs = updatedHeaders.map(
+                                  (header: any) => ({
+                                    input: header.test_value,
+                                    isErr: false,
+                                  })
+                                );
+                                setNestedInputData(
+                                  nodeData?.id,
+                                  "header",
+                                  inputs
+                                );
+
                                 updateNodeData(updatedHeaders, "header");
                                 setHeaders(updatedHeaders);
 
@@ -2153,7 +2210,17 @@ export default function WorkflowOperationNode({ data }: any) {
                                   const updatedQuery = querys.filter(
                                     (_: any, i: any) => i !== index
                                   );
-
+                                  const inputs = updatedQuery.map(
+                                    (header: any) => ({
+                                      input: header.test_value,
+                                      isErr: false,
+                                    })
+                                  );
+                                  setNestedInputData(
+                                    nodeData?.id,
+                                    "params",
+                                    inputs
+                                  );
                                   updateNodeData(updatedQuery, "query");
                                   setQuerys(updatedQuery);
                                 }}

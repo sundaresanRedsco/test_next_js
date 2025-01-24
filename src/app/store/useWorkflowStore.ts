@@ -34,6 +34,8 @@ interface Store {
   copyClicked: any;
   setCopyClicked: (key: any, value: boolean) => void;
   setParticularInputData: (key: any, value: any) => void;
+  getParticularInputData: (key: any, nestedKey: any, index: any) => void;
+  setNestedInputData: (mainKey: any, nestedKey: any, value: any) => void;
   cutClicked: boolean;
   setCutClicked: (value: boolean) => void;
   multiSelectClicked: boolean;
@@ -178,6 +180,18 @@ export const useWorkflowStore = create<Store>((set, get) => ({
   setInputDatas: (value) => set((prev) => ({ inputdatas: value })),
   setParticularInputData: (key, value) =>
     set((prev) => ({ inputdatas: { ...prev.inputdatas, [key]: value } })),
+  setNestedInputData: (mainKey, key, value) =>
+    set((prev) => ({
+      inputdatas: {
+        ...prev.inputdatas,
+        [mainKey]: { ...prev.inputdatas[mainKey], [key]: value },
+      },
+    })),
+  getParticularInputData: (key, nestedKey, index) => {
+    const currentData = get().inputdatas[key];
+    const nestedValue = currentData[nestedKey];
+    return nestedValue[index]?.input;
+  },
   setCopyClicked: (key, value) =>
     set((prev) => {
       const prevData = prev.copyClicked;

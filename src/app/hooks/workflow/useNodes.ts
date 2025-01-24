@@ -69,7 +69,7 @@ export default function useNodes({ nodeData }: any) {
       console.log("Yjs Map 'run' is not initialized.");
     }
 
-    removeFlowId(nodeData?.id);
+    removeFlowId(nodeToRemoveId);
   }, [nodeData?.id, deleteElements, getEdges]);
 
   function isValidConnection(connection: Connection) {
@@ -156,7 +156,7 @@ export default function useNodes({ nodeData }: any) {
         }
       }
     }
-  }, [showErr]);
+  }, [isHeaderErr, isParamsErr, isInputErr, isEdgeErr]);
 
   useEffect(() => {
     const keys = ["input", "header", "params", "edge", "keys"];

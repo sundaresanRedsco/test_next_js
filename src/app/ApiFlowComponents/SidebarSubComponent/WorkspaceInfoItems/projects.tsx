@@ -150,9 +150,16 @@ const Projects = () => {
     });
 
     console.log(projectId, "projectId");
-    dispatch(GetProjectById(projectId))
-      .unwrap()
-      .then((res: any) => {});
+    if (projectId && currentWorkspace?.id) {
+      dispatch(
+        GetProjectById({
+          project_id: projectId,
+          workspace_id: currentWorkspace?.id,
+        })
+      )
+        .unwrap()
+        .then((res: any) => {});
+    }
 
     const projecTab = "pro_" + projectId;
     // const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/projects/${projectId}?tabs=${projecTab}`;

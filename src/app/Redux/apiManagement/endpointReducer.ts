@@ -151,7 +151,7 @@ export const GetCollectionById = createAsyncThunk(
     try {
       return await AdminServices(
         "get",
-        `api/Collection_/get_collection_by_id?collection_id=${value}`,
+        `api/Collection_/get_collection_by_id?collection_id=${value.collection_id}&project_id=${value.project_id}`,
         null,
         null
       );
@@ -432,5 +432,9 @@ export const endpointSlice = createSlice({
 });
 
 export type endpointReducer = ReturnType<typeof endpointSlice.reducer>;
-export const { resetCollOperTreeData, updateWorkflowSidebarStart, updateWorkflowSidebarEnd } = endpointSlice.actions;
+export const {
+  resetCollOperTreeData,
+  updateWorkflowSidebarStart,
+  updateWorkflowSidebarEnd,
+} = endpointSlice.actions;
 export default endpointSlice.reducer;

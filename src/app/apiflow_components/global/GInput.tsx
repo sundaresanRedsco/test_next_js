@@ -55,6 +55,7 @@ type Props = {
   name?: string;
   smallInput?: boolean;
   sx?: any;
+  WebkitBoxShadow?: any;
 };
 export default function GInput(props: Props) {
   const {
@@ -64,6 +65,7 @@ export default function GInput(props: Props) {
     padding,
     color,
     background,
+    WebkitBoxShadow,
     secondarybackground,
     fontSize,
     fontWeight,
@@ -180,7 +182,9 @@ export default function GInput(props: Props) {
           },
           "& input:-webkit-autofill": {
             // boxShadow: "none !important",
-            WebkitBoxShadow: background
+            WebkitBoxShadow: WebkitBoxShadow
+              ? WebkitBoxShadow
+              : background
               ? `0 0 0 30px #291e3b  inset !important`
               : secondarybackground
               ? `0 0 0 30px #241D35 inset !important`

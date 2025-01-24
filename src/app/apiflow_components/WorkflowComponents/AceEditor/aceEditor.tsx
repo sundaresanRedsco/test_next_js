@@ -15,6 +15,7 @@ import { Box } from "@mui/material";
 import useTextEditor from "@/app/hooks/useTextEditor";
 import useNodes from "@/app/hooks/workflow/useNodes";
 import useNodeErr from "@/app/hooks/workflow/useNodeErr";
+import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 
 interface ObjectToSuggest {
   firstName: string;
@@ -681,6 +682,17 @@ const AceEditorComponent = (props: any) => {
   useEffect(() => {
     customizedEditor();
   }, []);
+  const { setInputData } = useWorkflowStore();
+  useEffect(() => {
+    setInputData(nodeId, {
+      key: "input",
+      value: {
+        input: input,
+        isErr: jsonError ? true : false,
+      },
+    });
+  }, [jsonError, nodeId]);
+
   return (
     <>
       <div

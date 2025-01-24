@@ -173,13 +173,13 @@ export default function GroupNode({ data }: Props) {
       if (childNodes.length !== 0) {
         const maxRight = Math.max(
           ...childNodes.map(
-            (node: any) => node.nodes.position.x + node.nodes.width
+            (node: any) => node.nodes.position.x + node.nodes.width + 30
           )
         );
         return maxRight;
       }
     }
-    return 700; // Default minimum width
+    return 500; // Default minimum width
   }, [nodeData?.id, flowYdoc, childNodes]);
 
   const minHeight = useMemo(() => {
@@ -198,7 +198,7 @@ export default function GroupNode({ data }: Props) {
         return maxBottom;
       }
     }
-    return 400; // Default minimum height
+    return 300; // Default minimum height
   }, [nodeData?.id, flowYdoc, childNodes]);
 
   const { handleCopyNodes } = useReusableFunctions();
@@ -252,6 +252,7 @@ export default function GroupNode({ data }: Props) {
               <BiCopy
                 style={{
                   marginRight: "10px",
+                  marginTop: "7px",
                   cursor: "pointer",
                   color: isCopied ? "green" : "auto",
                 }}
@@ -263,6 +264,7 @@ export default function GroupNode({ data }: Props) {
               <BiCut
                 style={{
                   cursor: "pointer",
+                  marginTop: "7px",
                 }}
                 onClick={() => {
                   setCutClicked(true);

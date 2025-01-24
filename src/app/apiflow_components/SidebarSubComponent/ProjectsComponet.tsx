@@ -205,11 +205,13 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
         endpoint: "",
       });
     }
-    dispatch(
-      GetProjectById({ project_id: projectId, workspace_id: workspaceId })
-    )
-      .unwrap()
-      .then((res: any) => {});
+    if (projectId && workspaceId) {
+      dispatch(
+        GetProjectById({ project_id: projectId, workspace_id: workspaceId })
+      )
+        .unwrap()
+        .then((res: any) => {});
+    }
 
     // const projecTab = "pro_" + projectId;
     // const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/projects/${projectId}?tabs=${projecTab}`;
@@ -435,8 +437,9 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                     {env.name}
                   </TeritaryTextTypography>
                   {/* {nestedAccordion?.badge === "true" && ( */}
+                  {/* //*Make the value zero */}
                   <GBadge
-                    badgeContent={"0"}
+                    badgeContent={"2"}
                     color="#F68E1E"
                     iconRight={"10px"}
                   />
@@ -666,8 +669,9 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                         Endpoints
                       </TeritaryTextTypography>
                       {/* {nestedAccordion?.badge === "true" && ( */}
+                      {/* //*Make the value zero */}
                       <GBadge
-                        badgeContent={"0"}
+                        badgeContent={"2"}
                         color="#F7BD2B"
                         iconRight="15px"
                       />
