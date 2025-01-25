@@ -69,7 +69,7 @@ export default function useWorkflowPost() {
   const {
     data: posts,
     mutate: getPosts,
-    isLoading: postLoading,
+    isPending: postLoading,
   } = useMutation({
     mutationKey: ["getPosts"], // Include channelId in the queryKey
     mutationFn: async (channelId: any) => {
@@ -80,7 +80,6 @@ export default function useWorkflowPost() {
       );
       return data;
     },
-    enabled: !!openPosts, // Ensure query is only enabled when dependencies are present
   });
 
   const { mutate: createPost, isPending: postCreationLoading } = useMutation({
