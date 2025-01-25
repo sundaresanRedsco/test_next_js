@@ -29,6 +29,7 @@ import { projectApiReducer } from "@/app/Redux/apiManagement/projectApiReducer";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
 import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
+import toast from "react-hot-toast";
 
 const HeadingTypography = styled(Typography)`
   font-family: "FiraSans-Regular" !important;
@@ -149,7 +150,7 @@ export default function CollectionPage() {
               setSwaggerDocs(res);
             });
         } else {
-          //   toast.success("File Imported");
+          toast.success("File Imported");
           let data = {
             project_id: currentEnvironmentDetails?.project_id,
             collection_id: collectionId,

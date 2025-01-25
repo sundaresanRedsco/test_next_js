@@ -55,7 +55,10 @@ import {
 import { environmentReducer } from "@/app/Redux/apiManagement/environmentReducer";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
 import theme from "@/Theme/theme";
-import { GetCollectionOperationTree } from "@/app/Redux/apiManagement/endpointReducer";
+import {
+  GetCollectionImportOperationTree,
+  GetCollectionOperationTree,
+} from "@/app/Redux/apiManagement/endpointReducer";
 import WorkFlowLayout from "@/app/apiflow_components/WorkflowComponents/WorkFlowLayout";
 import dynamic from "next/dynamic";
 import { CommonReducer, updateSessionPopup } from "@/app/Redux/commonReducer";
@@ -399,7 +402,7 @@ const WorkflowDesigner = (props: any) => {
       offsetEnd: 1000,
     };
 
-    dispatch(GetCollectionOperationTree(requestData))
+    dispatch(GetCollectionImportOperationTree(requestData))
       .unwrap()
       .then((res: any) => {
         const filterStatusVal: any = res?.collections?.filter(
@@ -657,6 +660,7 @@ const WorkflowDesigner = (props: any) => {
                 flow_id: apiFlow_Id,
                 version: versionValue,
                 created_by: userProfile.user.user_id,
+                type: "buttonEdge",
               };
             });
             setUpdatedNodesNew(nodeNew);
@@ -679,6 +683,7 @@ const WorkflowDesigner = (props: any) => {
   };
 
   const handleSaveImportData = () => {
+    console.log(updatedNodesNew, "updatedNodesNew");
     updatedNodesNew.forEach((newNode: any) => {
       let updatedNode = {
         action: "ADD_NODE",

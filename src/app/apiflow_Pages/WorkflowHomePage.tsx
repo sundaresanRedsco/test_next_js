@@ -1,6 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Box, Card, Skeleton, Typography } from "@mui/material";
+import {
+  Backdrop,
+  Box,
+  Card,
+  FormControl,
+  Popover,
+  Skeleton,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { styled } from "@mui/system";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -11,10 +20,19 @@ import { environmentReducer } from "../Redux/apiManagement/environmentReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "../Redux/store";
 import {
+  CreateApiDesignFlow,
   FlowReducer,
+  GetDesignflowMinamlInfoFlowoffset,
   GetRecentModification,
 } from "../Redux/apiManagement/flowReducer";
 import GlobalCircularLoader from "../ApiFlowComponents/Global/GlobalCircularLoader";
+import { workspaceReducer } from "../Redux/apiManagement/workspaceReducer";
+import toast from "react-hot-toast";
+import { updateSessionPopup } from "../Redux/commonReducer";
+import { SecondaryTypography } from "../Styles/signInUp";
+import ApiTextField from "../Components/ApiManagement/apiTextField";
+import { TextOutlinedInput } from "../hooks/operations/useOperationHelpers";
+import GButton from "../Components/Global/GlobalButtons";
 
 const HeadingTypography = styled(Typography)`
   font-family: "FiraSans-Regular" !important;
@@ -54,10 +72,15 @@ const InnerStyledCard = styled(Card)(({ theme }) => ({
 
 export default function WorkflowHomePage() {
   const workflowVal = ["Create Workflow", "Workflow Samples", "Tutorial"];
+  const theme = useTheme();
 
   const dispatch = useDispatch<any>();
   const { currentEnvironment } = useSelector<RootStateType, environmentReducer>(
     (state) => state.apiManagement.environment
+  );
+
+  const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
+    (state) => state.apiManagement.workspace
   );
 
   const {
@@ -73,6 +96,127 @@ export default function WorkflowHomePage() {
   const [displayedModifications, setDisplayedModifications] = useState(
     recentModifications?.slice(-2)
   );
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [serviceVal, setServiceVal] = useState("HTTP - JSON");
+  const [btnClicked, setBtnClicked] = useState(false);
+
+  const [errorApiName, setErrorApiName] = useState("");
+  const [createNewApiFlowValues, setCreateNewApiFlowValues] = useState({
+    // workspace_id: currentTeam?.workspace_id,
+    workspace_id: currentWorkspace?.id,
+    name: "",
+    description: "",
+  });
+
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+    setBtnClicked(false);
+
+    setCreateNewApiFlowValues({
+      description: "",
+      name: "",
+      workspace_id: "",
+    });
+    setErrorApiName("");
+  };
+
+  const handleCreateApiFlow = () => {
+    const hasValidationError = createNewApiFlowValues?.name.trim() === "";
+    // ||
+    // createNewApiFlowValues?.description.trim() === "";
+
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>\s]/.test(
+      createNewApiFlowValues?.name
+    );
+
+    const isOverLimit = createNewApiFlowValues?.name.length > 50;
+
+    if (hasValidationError) {
+      setErrorApiName("ApiFlow Name is required");
+      // setErrorDescription("ApiFlow Description is required")
+    } else if (hasSpecialChar) {
+      setErrorApiName("Special Characters and spaces are not allowed");
+    } else if (isOverLimit) {
+      setErrorApiName("ApiFlow Name should not exceed 50 characters");
+    } else {
+      let createData = {
+        // tenant_id: userProfile?.user?.tenant_id,
+        workspace_id: currentWorkspace?.id,
+        projectid: currentEnvironment,
+        name: createNewApiFlowValues?.name,
+        description: createNewApiFlowValues?.description,
+        id: "",
+        // user_id: userProfile?.user.user_id,
+      };
+
+      dispatch(CreateApiDesignFlow(createData))
+        .unwrap()
+        .then((createRes: any) => {
+          let requestData = {
+            project_id: currentEnvironment,
+            start: 1,
+            end: 6,
+            name: "",
+          };
+          // dispatch(GetApiDesignFlowByWorkspaceId(currentTeam?.workspace_id))
+          dispatch(GetDesignflowMinamlInfoFlowoffset(requestData))
+            .unwrap()
+            .then((getApiFlowRes: any) => {
+              toast?.success("New Api Flow Created");
+              // dispatch(updateTourStep(tourStep + 1));
+              setCreateNewApiFlowValues({
+                description: "",
+                name: "",
+                workspace_id: "",
+              });
+              setAnchorEl(null);
+              setBtnClicked(false);
+              // }
+              // else {
+              //   toast?.error("Error")
+              // }
+            })
+            .catch((error: any) => {
+              if (error?.message === "UNAUTHORIZED") {
+                dispatch(updateSessionPopup(true));
+              }
+            });
+        })
+        .catch((error: any) => {
+          if (error?.message === "UNAUTHORIZED") {
+            dispatch(updateSessionPopup(true));
+          }
+        });
+    }
+  };
+
+  const handleCreateApiFlowValidation = () => {
+    const hasValidationError = createNewApiFlowValues?.name.trim() === "";
+
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>\s]/.test(
+      createNewApiFlowValues?.name
+    );
+
+    const isOverLimit = createNewApiFlowValues?.name.length > 50;
+
+    if (hasValidationError) {
+      setErrorApiName("ApiFlow Name is required");
+      // setErrorDescription("ApiFlow Description is required")
+    } else if (hasSpecialChar) {
+      setErrorApiName("Special Characters and spaces are not allowed");
+    } else if (isOverLimit) {
+      setErrorApiName("ApiFlow Name should not exceed 50 characters");
+    } else {
+    }
+  };
+
+  const handleCreateNewApiFlow = (field: any, event: any) => {
+    setCreateNewApiFlowValues((prevValues) => ({
+      ...prevValues,
+      [field]: event,
+    }));
+  };
 
   useEffect(() => {
     if (recentModifications) {
@@ -149,6 +293,9 @@ export default function WorkflowHomePage() {
                   xl: "33%",
                 },
                 gap: "10px",
+              }}
+              onClick={() => {
+                setAnchorEl(true);
               }}
             >
               {/* <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}> */}
@@ -296,6 +443,134 @@ export default function WorkflowHomePage() {
           )}
         </Box>
       </Grid>
+
+      <Backdrop
+        sx={{ zIndex: 9998, backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        open={btnClicked}
+      />
+      <div>
+        {anchorEl && (
+          <Popover
+            open={anchorEl}
+            anchorEl={anchorEl}
+            onClose={handleClosePopover}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            sx={{
+              zIndex: 9999,
+              "& .MuiPaper-root": {
+                backgroundColor: theme.palette.signInUpWhite.main,
+                width: "580px",
+                height: "340px",
+                // position: "absolute",
+              },
+            }}
+          >
+            <div style={{ padding: "20px" }}>
+              <PrimaryTypography
+                style={{
+                  color: `${theme.palette.teritiaryColor.main}`,
+                }}
+              >
+                Create a new ApiFlow
+              </PrimaryTypography>
+              <div style={{ marginTop: "10px" }}>
+                <div className="api_designFlow_name">
+                  <SecondaryTypography
+                    style={{
+                      fontWeight: "600",
+                    }}
+                  >
+                    ApiFlow Name
+                  </SecondaryTypography>
+                  <ApiTextField
+                    // value={element.api_project_name}
+                    value={createNewApiFlowValues?.name}
+                    dataTest={"project-name-input"}
+                    width="500px"
+                    height="42px"
+                    borderColor="#9CA3AF"
+                    borderRadius="4px"
+                    onChange={(e: any) => {
+                      handleCreateNewApiFlow("name", e.target.value);
+                    }}
+                    onKeyUp={(event: any) => {
+                      if (event?.key === "Enter") {
+                        // dispatch(updateTourStep(tourStep + 1));
+                        handleCreateApiFlowValidation();
+                      }
+                    }}
+                    error={errorApiName}
+                    errorHandler={(error: any) => setErrorApiName(error)}
+                  />
+                  <span
+                    style={{
+                      whiteSpace: "pre",
+                    }}
+                  >
+                    {"  "}
+                  </span>
+                </div>
+                <div className="api_designFlow_description">
+                  <SecondaryTypography
+                    style={{
+                      fontWeight: "600",
+                    }}
+                  >
+                    ApiFlow Description
+                  </SecondaryTypography>
+                  <FormControl>
+                    <div style={{ marginTop: "10px" }}>
+                      <TextOutlinedInput
+                        // value={element.description}
+                        value={createNewApiFlowValues?.description}
+                        data-test={"project-description"}
+                        style={{
+                          width: "500px",
+                          height: "50px",
+                          borderColor: "#9CA3AF",
+                          borderRadius: "4px",
+                        }}
+                        onChange={(e: any) => {
+                          handleCreateNewApiFlow("description", e.target.value);
+                        }}
+                        onKeyUp={(event: any) => {}}
+                      />
+                    </div>
+                  </FormControl>
+                </div>
+              </div>
+              <div
+                style={{ margin: "10px" }}
+                className="api_designFlow_buttons"
+              >
+                <div style={{ display: "flex", justifyContent: "end" }}>
+                  <div>
+                    <GButton
+                      buttonType="primary"
+                      label={`Cancel`}
+                      color={`${theme.palette.primaryBlack.main}`}
+                      background="transparent"
+                      onClickHandler={handleClosePopover}
+                    />
+                  </div>
+                  <div style={{ marginLeft: "10px" }}>
+                    <GButton
+                      buttonType="primary"
+                      label={`Create ApiFlow`}
+                      onClickHandler={handleCreateApiFlow}
+                      dataTest="save-project-btn"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Popover>
+        )}
+      </div>
+
       {/* <Grid
         size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
         sx={{ margin: "20px 0px" }}

@@ -100,14 +100,14 @@ export default function useNodeErr() {
           }
         }
       } else if (element && Array.isArray(element) && key == "edge") {
-        element[0].input.forEach((elem: any) => {
+        element[0]?.input?.forEach((elem: any) => {
           if (!nodeErrKeys.includes(elem)) {
             nodeErrKeys.push(elem);
           }
         });
       } else if (key == "input") {
-        handleBraces(element.input) && !nodeErrKeys.includes(key)
-          ? nodeErrKeys.push(key)
+        handleBraces(element?.input) && !nodeErrKeys?.includes(key)
+          ? nodeErrKeys?.push(key)
           : null;
       }
     }

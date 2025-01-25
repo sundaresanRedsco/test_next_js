@@ -70,7 +70,8 @@ export const CreateApiDesignFlow = createAsyncThunk(
     try {
       return await AdminServices(
         "post",
-        "Api/Api_design_flow_service/create_api_design_flow",
+        "Api/Api_design_flow_service/create_api_design_flow?project_id=" +
+          value?.projectid,
         value,
         null
       );

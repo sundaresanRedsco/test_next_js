@@ -111,7 +111,7 @@ export default function useTextEditor(
       );
     }
 
-    for (let i = 0; i < input.length; i++) {
+    for (let i = 0; i < input?.length; i++) {
       const char = input[i];
 
       // Move to next line if newline is encountered
@@ -126,7 +126,7 @@ export default function useTextEditor(
       }
       // Handle closing braces
       else if (char === "}" || char === "]" || char === ")") {
-        const lastBrace = stack.pop();
+        const lastBrace = stack?.pop();
         if (!lastBrace) {
           // No opening brace for the current closing brace
           return {
@@ -136,7 +136,7 @@ export default function useTextEditor(
           };
         }
         // Check for matching braces
-        if (!isMatchingBrace(lastBrace.brace, char)) {
+        if (!isMatchingBrace(lastBrace?.brace, char)) {
           return {
             error: "Unmatched braces found!",
             line: lastBrace.line,
@@ -149,8 +149,8 @@ export default function useTextEditor(
       else if (char === '"' || char === "'") {
         // Check if the quote matches the last opened quote
         if (
-          quoteStack.length > 0 &&
-          quoteStack[quoteStack.length - 1].quote === char
+          quoteStack?.length > 0 &&
+          quoteStack[quoteStack?.length - 1].quote === char
         ) {
           quoteStack.pop(); // Close the current quote
         } else {

@@ -153,11 +153,11 @@ export const useWorkflowStore = create<Store>((set, get) => ({
     }),
   updateInputData: (key, { value, key: nestedKey, index }) =>
     set((prev) => {
-      let prevData = prev.inputdatas[key]
+      let prevData = prev?.inputdatas[key]
         ? JSON.parse(JSON.stringify(prev.inputdatas[key]))
         : prev.inputdatas[key];
 
-      if (Array.isArray(prevData[nestedKey])) {
+      if (prevData?.[nestedKey] && Array.isArray(prevData[nestedKey] ?? [])) {
         let keyData = [...prevData[nestedKey]];
         if (index !== undefined) {
           if (keyData[index] !== undefined) {
@@ -172,23 +172,23 @@ export const useWorkflowStore = create<Store>((set, get) => ({
 
       return {
         inputdatas: {
-          ...prev.inputdatas,
+          ...prev?.inputdatas,
           [key]: prevData,
         },
       };
     }),
   setInputDatas: (value) => set((prev) => ({ inputdatas: value })),
   setParticularInputData: (key, value) =>
-    set((prev) => ({ inputdatas: { ...prev.inputdatas, [key]: value } })),
+    set((prev) => ({ inputdatas: { ...prev?.inputdatas, [key]: value } })),
   setNestedInputData: (mainKey, key, value) =>
     set((prev) => ({
       inputdatas: {
-        ...prev.inputdatas,
-        [mainKey]: { ...prev.inputdatas[mainKey], [key]: value },
+        ...prev?.inputdatas,
+        [mainKey]: { ...prev?.inputdatas[mainKey], [key]: value },
       },
     })),
   getParticularInputData: (key, nestedKey, index) => {
-    const currentData = get().inputdatas[key];
+    const currentData = get()?.inputdatas[key];
     const nestedValue = currentData[nestedKey];
     return nestedValue[index]?.input;
   },

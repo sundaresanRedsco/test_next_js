@@ -16,6 +16,7 @@ function DesignerImportPopup(props: any) {
   } = props;
 
   if (!PopupOpen) return null;
+  console.log(PopupOpen, "PopupOpen");
 
   return (
     <div>

@@ -38,6 +38,23 @@ export const GetCollectionOperationTree = createAsyncThunk(
     }
   }
 );
+
+export const GetCollectionImportOperationTree = createAsyncThunk(
+  "projects/GetCollectionImportOperationTree",
+  async (values: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        `api/Operations/get_collection_operation_tree?project_id=${values?.project_id}&offsetStart=${values?.offsetStart}&offsetEnd=${values?.offsetEnd}`,
+        null,
+        null
+      );
+    } catch (error) {
+      throw new Error(errorHandling(error));
+    }
+  }
+);
+
 export const GetMinimalCollectionOperationTree = createAsyncThunk(
   "projects/GetMinimalCollectionOperationTree",
   async (values: any) => {
