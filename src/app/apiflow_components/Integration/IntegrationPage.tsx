@@ -778,6 +778,7 @@ function IntegrationPage(props: any) {
       .unwrap()
       .then((testRes: any) => {
         console.log(testRes, "testRestestRes");
+        toast.success("Test Successful");
       })
       .catch((error: any) => {
         console.log("Error: ", error);

@@ -176,6 +176,7 @@ const CustomOutlinedInput = styled(TextField)<{ fontSize?: string }>`
     padding: 5px;
     font-family: FiraSans-regular !important;
     font-size: 0.6rem; // Smaller placeholder font size
+    color: white;
   }
 `;
 
@@ -215,10 +216,10 @@ const GlobalTextField: React.FC<GlobalTextFieldProps> = ({
         onChange={onChange}
         error={!!error}
         onKeyUp={onKeyUp}
-        style={{ height }}
+        style={{ height, color: "white" }}
         fontSize={fontSize || "0.4rem"} // Default to smaller font size
         InputLabelProps={{
-          style: { fontSize: "0.6rem" }, // Smaller label font size
+          style: { fontSize: "0.6rem", color: "white" }, // Smaller label font size
         }}
       />
       {error && (

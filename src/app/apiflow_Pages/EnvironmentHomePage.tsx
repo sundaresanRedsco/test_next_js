@@ -16,7 +16,9 @@ import { environmentReducer } from "../Redux/apiManagement/environmentReducer";
 import EnvironmentPageSkeleton from "../apiflow_components/skeletons/EnvironmentPageSkeleton";
 import EnviromentTableSkeleton from "../apiflow_components/skeletons/EnviromentTableSkeleton";
 import LinearSkeleton from "../apiflow_components/skeletons/LinearSkeleton";
-
+import { useRouter } from "next/navigation";
+import { CommonReducer } from "../Redux/commonReducer";
+import { workspaceReducer } from "../Redux/apiManagement/workspaceReducer";
 const ButtonPlusIcon = dynamic(
   () => import("@/app/Assests/icons/ButtonIcon.svg")
 );
@@ -111,8 +113,20 @@ const EnvironmentHomePage = () => {
     environmentReducer
   >((state) => state.apiManagement.environment);
 
+  const { userProfile } = useSelector<RootStateType, CommonReducer>(
+    (state) => state.common
+  );
+
+  const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
+    (state) => state.apiManagement.workspace
+  );
+
+
   console.log(currentEnvironmentDetails, "currentEnvironmentsNwe");
   console.log(currentEnvironment, "sdcurrentEnvironmentsdsdw");
+
+  const router = useRouter();
+  const baseUrl = `/userId/${userProfile.user.user_id}/workspaceId/${currentWorkspace?.id}/project`;
 
   return (
     <div>
@@ -154,6 +168,7 @@ const EnvironmentHomePage = () => {
                   padding="6px 15px"
                   label={"New Environment"}
                   iconPosition="start"
+                  marginRight="5px"
                   fontWeight={500}
                   // type={"submit"}
                   // buttonType="primary"
@@ -162,6 +177,23 @@ const EnvironmentHomePage = () => {
                   color="#FFFFFF"
                   border="solid 1px #FFFFFF40"
                   icon={<ButtonPlusIcon />}
+                />
+
+                <GlobalButton
+                  padding="6px 15px"
+                  label={"Project Integration"}
+                  iconPosition="start"
+                  fontWeight={500}
+                  // type={"submit"}
+                  // buttonType="primary"
+                  // width={"100%"}
+                  background="#7A43FE26"
+                  color="#FFFFFF"
+                  border="solid 1px #FFFFFF40"
+                  marginRight="5px"
+                  onClickHandler={() => {
+                    router?.push(`${baseUrl}/projectIntegration`);
+                  }}
                 />
                 <div style={{ margin: "10px 20px" }}>
                   <ExpandIcon />
