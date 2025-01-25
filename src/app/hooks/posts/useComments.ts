@@ -56,8 +56,11 @@ export default function useComments(postId: any, user_id: any) {
       },
     });
 
-  const { data: replies, mutate: getReplies } = useMutation({
-    useMutation: ["getReplies"],
+  const {
+    data: replies,
+    mutate: getReplies,
+    isLoading: repliesLoading,
+  } = useMutation({
     mutationFn: async (comment_id: any) => {
       const data = await AdminServices(
         "get",
@@ -67,7 +70,7 @@ export default function useComments(postId: any, user_id: any) {
       );
       return data;
     },
-    enabled: !!openComments,
+    enabled: !!openComments, // Only run the mutation when `openComments` is truthy
   });
 
   const { mutate: createReplies, isPending: createRepliesLoading } =
