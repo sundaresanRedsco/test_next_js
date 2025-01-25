@@ -56,37 +56,18 @@ export default function useComments(postId: any, user_id: any) {
       },
     });
 
-  // const {
-  //   data: replies,
-  //   mutate: getReplies,
-  //   isLoading: repliesLoading,
-  // } = useMutation({
-  //   useMutation: ["getReplies"],
-  //   mutationFn: async (comment_id: any) => {
-  //     const data = await AdminServices(
-  //       "get",
-  //       "Api/Post/getpost_commentsreplylist_by_comment_id?comment_id=" +
-  //         comment_id +
-  //         "&start=0&end=10"
-  //     );
-  //     return data;
-  //   },
-  //   enabled: !!openComments,
-  // });
-
-  const {
-    data: replies,
-    mutate: getReplies,
-    isLoading: repliesLoading,
-  } = useMutation({
-    mutationKey: ["getReplies"], // Correct key name
+  const { data: replies, mutate: getReplies } = useMutation({
+    useMutation: ["getReplies"],
     mutationFn: async (comment_id: any) => {
       const data = await AdminServices(
         "get",
-        `Api/Post/getpost_commentsreplylist_by_comment_id?comment_id=${comment_id}&start=0&end=10`
+        "Api/Post/getpost_commentsreplylist_by_comment_id?comment_id=" +
+          comment_id +
+          "&start=0&end=10"
       );
       return data;
     },
+    enabled: !!openComments,
   });
 
   const { mutate: createReplies, isPending: createRepliesLoading } =
