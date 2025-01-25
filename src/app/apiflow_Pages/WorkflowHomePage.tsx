@@ -97,7 +97,7 @@ export default function WorkflowHomePage() {
     recentModifications?.slice(-2)
   );
 
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(false);
   const [serviceVal, setServiceVal] = useState("HTTP - JSON");
   const [btnClicked, setBtnClicked] = useState(false);
 
