@@ -104,7 +104,7 @@ export default function Chats(props: any) {
           },
         }}
       >
-        <WorkflowPosts />
+        {/* <WorkflowPosts /> */}
       </Popover>
     </div>
   );
