@@ -110,7 +110,7 @@ export default function WorkflowHomePage() {
   });
 
   const handleClosePopover = () => {
-    setAnchorEl(null);
+    setAnchorEl(false);
     setBtnClicked(false);
 
     setCreateNewApiFlowValues({
@@ -170,7 +170,7 @@ export default function WorkflowHomePage() {
                 name: "",
                 workspace_id: "",
               });
-              setAnchorEl(null);
+              setAnchorEl(false);
               setBtnClicked(false);
               // }
               // else {
@@ -452,7 +452,7 @@ export default function WorkflowHomePage() {
         {anchorEl && (
           <Popover
             open={anchorEl}
-            anchorEl={anchorEl}
+            // anchorEl={anchorEl}
             onClose={handleClosePopover}
             anchorOrigin={{
               vertical: "bottom",
