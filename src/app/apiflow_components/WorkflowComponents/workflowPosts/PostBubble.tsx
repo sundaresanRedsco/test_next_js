@@ -53,7 +53,7 @@ export default function PostBubble({
     comments,
     createComment,
     commentCreationLoading,
-  } = useComments(id);
+  } = useComments(id, userProfile?.user?.user_id);
   const popOverId = openComments ? "simple-popover" : undefined;
 
   const handlePopoverOpen = (event: any) => {
