@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 
 type Props = {};
 
-export default function useComments(postId: any) {
+export default function useComments(postId: any, user_id: any) {
   const [openCommentAnchorEl, setopenCommentAnchorEl] = useState<any>(null);
   const openComments = Boolean(openCommentAnchorEl);
 
@@ -31,7 +31,7 @@ export default function useComments(postId: any) {
         "get",
         "Api/Post/getpost_commentslist_by_postid?post_id=" +
           postId +
-          "?start=0&end=10"
+          "&start=0&end=10"
       );
       return data;
     },
@@ -56,13 +56,62 @@ export default function useComments(postId: any) {
       },
     });
 
+  const {
+    data: replies,
+    mutate: getReplies,
+    isLoading: repliesLoading,
+  } = useMutation({
+    useMutation: ["getReplies"],
+    mutationFn: async (comment_id: any) => {
+      const data = await AdminServices(
+        "get",
+        "Api/Post/getpost_commentsreplylist_by_comment_id?comment_id=" +
+          comment_id +
+          "&start=0&end=10"
+      );
+      return data;
+    },
+    enabled: !!openComments,
+  });
+
+  const { mutate: createReplies, isPending: createRepliesLoading } =
+    useMutation({
+      mutationKey: ["createReplies"],
+      mutationFn: async (formData: any) => {
+        const data = await AdminServices(
+          "post",
+          "api/Post/blog_comment_replycreate",
+          {
+            ...formData,
+            post_id: postId,
+            mentioned_user_id: user_id,
+          }
+        );
+        return data;
+      },
+      onSuccess: (data: any, formData: any) => {
+        queryClient.invalidateQueries({ queryKey: ["getComments"] });
+        // queryClient.invalidateQueries({ queryKey: ["getReplies"] });
+
+        // // Get the channelId from the variables
+        // const comment_id = formData.comment_id;
+        // getReplies(comment_id); // Refetch posts after creating a new post
+        // console.log("Like created, method called...");
+      },
+    });
+
   return {
     openComments,
     setopenCommentAnchorEl,
     openCommentAnchorEl,
     commentsLoading,
     comments,
+    getReplies,
+    replies,
+    repliesLoading,
     createComment,
     commentCreationLoading,
+    createReplies,
+    createRepliesLoading,
   };
 }

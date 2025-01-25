@@ -110,13 +110,15 @@ export default function useWorkflowPost() {
       });
       return data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data: any, formData: any) => {
+      console.log("Like created, invalidating queries...", formData);
       // After successful creation, invalidate the previous query to fetch updated posts
       queryClient.invalidateQueries({ queryKey: ["getPosts"] });
 
       // Get the channelId from the variables
-
+      const channelId = formData.channel_id;
       getPosts(channelId); // Refetch posts after creating a new post
+      console.log("Like created, method called...");
     },
   });
 

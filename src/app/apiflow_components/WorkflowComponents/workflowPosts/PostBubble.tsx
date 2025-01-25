@@ -24,6 +24,7 @@ type Props = {
   commentsCount?: any;
   likes: any;
   likesCount?: any;
+  channel_id?: any;
 };
 
 export default function PostBubble({
@@ -37,6 +38,7 @@ export default function PostBubble({
   likes,
   likesCount,
   commentsCount,
+  channel_id,
 }: Props) {
   const [isHover, setisHover] = useState(false);
 
@@ -165,13 +167,17 @@ export default function PostBubble({
                 horizontal: "center",
               }}
             >
-              <CommentsContainer postId={id} type={type} />
+              <CommentsContainer
+                postId={id}
+                type={type}
+                // channel_id={channel_id}
+              />
             </Popover>
           </Stack>
         </Box>
       </Stack>
 
-      <CustomEmojiPicker id={id} />
+      <CustomEmojiPicker id={id} channel_id={channel_id} />
     </Stack>
   );
 }

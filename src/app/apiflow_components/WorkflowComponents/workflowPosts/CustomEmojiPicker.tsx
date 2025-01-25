@@ -4,12 +4,12 @@ import { Box, Stack, IconButton, Popover } from "@mui/material";
 import EmojiPicker, { Emoji } from "emoji-picker-react";
 import React, { useState } from "react";
 
-type Props = { size?: "small"; id: any };
+type Props = { size?: "small"; id: any; channel_id: any };
 
-export default function CustomEmojiPicker({ size, id }: Props) {
+export default function CustomEmojiPicker({ size, id, channel_id }: Props) {
   const [anchorEl, setanchorEl] = useState(null);
 
-  const { createLike, likeLoading } = useWorkflowPost();
+  const { createLike, likeLoading, getPosts } = useWorkflowPost();
   const open = Boolean(anchorEl);
   const handleOpenPopUp = (e: any) => {
     setanchorEl(e.currentTarget);
@@ -86,7 +86,9 @@ export default function CustomEmojiPicker({ size, id }: Props) {
                 createLike({
                   post_id: id,
                   emoji: elem.code,
+                  channel_id: channel_id,
                 });
+                // getPosts(channel_id);
               }}
               //   onClick={() => handleLike(elem.code)}
             >

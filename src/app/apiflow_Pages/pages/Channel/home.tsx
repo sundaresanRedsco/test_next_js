@@ -15,6 +15,10 @@ import WorkflowPosts from "@/app/apiflow_components/WorkflowComponents/workflowP
 import { IconButton, Popover } from "@mui/material";
 import { ChatBubble } from "@mui/icons-material";
 import useWorkflowPost from "@/app/hooks/posts/useWorkflowPost";
+// Import the helper functions
+import { MqttClient } from "mqtt";
+import toast from "react-hot-toast";
+import { connectToMqtt, sendMqttMessage } from "@/app/Helpers/mqttHelpers";
 export default function HomeChannel(props: any) {
   const dispatch = useDispatch<any>();
   const router = useRouter();
@@ -31,6 +35,7 @@ export default function HomeChannel(props: any) {
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
   );
+  // Use the custom hook to get the message
 
   const { openPosts, setopenPostAnchorEl, openPostAnchorEl, setChannelId } =
     useWorkflowPost();
@@ -51,6 +56,73 @@ export default function HomeChannel(props: any) {
         // toast.success("channel Created");
       });
   }, []);
+
+  useEffect(() => {
+    if (currentChannel?.id) {
+      setChannelId(currentChannel.id); // Ensure the channelId is set properly
+      console.log(currentChannel?.id, "currentChannel?.id");
+    }
+  }, [currentChannel, setChannelId]);
+
+  const [client, setClient] = useState<MqttClient | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [messages, setMessages] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!userProfile?.user?.user_id) return;
+
+    const topic = `users/${userProfile.user.user_id}/notifications`;
+
+    const mqttClient = connectToMqtt(
+      "ws://139.99.114.132:15675/ws", // Broker URL
+      topic,
+      (receivedTopic: any, message: any) => {
+        // Handle incoming messages
+        console.log(
+          `Received message 1: ${message} on topic: ${receivedTopic}`
+        );
+        console.log(
+          `Received message 2: ${message?.message} on topic: ${receivedTopic}`
+        );
+
+        let mess = JSON.parse(message);
+        console.log(`Received message 3: ${mess}`);
+
+        console.log(`Received message 4: ${mess?.message}`);
+
+        alert(mess?.message);
+        // setMessages((prevMessages) => [...prevMessages, message]);
+      },
+      (error: any) => {
+        // Handle errors
+
+        console.error("MQTT error:", error);
+      },
+      () => {
+        // Handle successful connection
+        setIsConnected(true);
+      }
+    );
+
+    setClient(mqttClient);
+
+    return () => {
+      if (mqttClient) {
+        mqttClient.end();
+      }
+    };
+  }, [userProfile]);
+
+  const handleSendMessage = () => {
+    if (client && userProfile?.user?.user_id) {
+      sendMqttMessage(
+        client,
+        `users/${userProfile.user.user_id}/notifications`,
+        "Hello from React!"
+      );
+    }
+  };
+
   return (
     <div>
       {channels.map((x: any) => (

@@ -162,7 +162,7 @@ const ProjectHomePage = () => {
                 direction={{ xs: "column", sm: "row" }}
                 spacing={{ xs: 1, sm: 2, md: 4 }}
               >
-                <GlobalButton
+                {/* <GlobalButton
                   padding="6px 15px"
                   label={"Project Integration"}
                   iconPosition="start"
@@ -177,7 +177,7 @@ const ProjectHomePage = () => {
                   onClickHandler={() => {
                     router?.push(`${baseUrl}/projectIntegration`);
                   }}
-                />
+                /> */}
                 <GlobalButton
                   padding="6px 15px"
                   label={"New Environment"}

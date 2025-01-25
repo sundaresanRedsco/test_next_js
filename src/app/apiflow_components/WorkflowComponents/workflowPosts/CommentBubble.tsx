@@ -8,9 +8,24 @@ import CustomEmojiPicker from "./CustomEmojiPicker";
 type Props = {
   nestedSize?: number;
   id: any;
+  data?: any;
+  setIsReplay?: any;
+  setComment?: any;
+  setIsReplies?: any;
+  isReplay?: any;
+  repliesCount?: any;
 };
 
-export default function CommentBubble({ nestedSize, id }: Props) {
+export default function CommentBubble({
+  nestedSize,
+  id,
+  data,
+  setIsReplay,
+  setComment,
+  setIsReplies,
+  isReplay,
+  repliesCount,
+}: Props) {
   const width = nestedSize ? `${100 - nestedSize * 10}%` : "100%";
   return (
     <Stack sx={{ width: "100%", alignItems: "flex-end" }}>
@@ -39,10 +54,10 @@ export default function CommentBubble({ nestedSize, id }: Props) {
             <TeritaryTextTypography
               sx={{ fontSize: "13px", fontWeight: "bold" }}
             >
-              John
+              {isReplay ? data?.replied_by : data?.commented_by}
             </TeritaryTextTypography>
             <TeritaryTextTypography sx={{ fontSize: "10px" }}>
-              John
+              {isReplay ? data?.reply_text : data?.comment_text}
             </TeritaryTextTypography>
           </Stack>
           <Box
@@ -53,37 +68,58 @@ export default function CommentBubble({ nestedSize, id }: Props) {
               width: "100%",
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              {[
-                { name: "React", onClick: "" },
-                { name: "Reply", onClick: "" },
-              ].map((btn: any, index: number) => {
-                if (btn.name == "React") {
-                  return <CustomEmojiPicker id={id} size="small" />;
-                } else {
-                  return (
-                    <Button
-                      key={index}
-                      variant="text"
-                      size="small"
-                      sx={{
-                        color: "gray",
-                        textTransform: "Capitalize",
-                        height: "15px",
-                      }}
-                    >
-                      {btn.name}
-                    </Button>
-                  );
-                }
-              })}
-            </Box>
+            {!isReplay && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                {[
+                  { name: "React", onClick: "" },
+                  {
+                    name: "Replies",
+                    onClick: "",
+                    element: (
+                      <TeritaryTextTypography
+                        sx={{ fontSize: "11px", color: "slategray" }}
+                      >
+                        {repliesCount}
+                      </TeritaryTextTypography>
+                    ),
+                  },
+                  { name: "Reply", onClick: "" },
+                ].map((btn: any, index: number) => {
+                  if (btn.name == "React") {
+                    // return <CustomEmojiPicker id={id} size="small" />;
+                  } else {
+                    return (
+                      <>
+                        <Button
+                          key={index}
+                          variant="text"
+                          size="small"
+                          sx={{
+                            color: "gray",
+                            textTransform: "Capitalize",
+                            height: "15px",
+                          }}
+                          onClick={() => {
+                            setIsReplay(true);
+                            setComment(data.id);
+                            setIsReplies(true);
+                          }}
+                        >
+                          {btn.name}
+                        </Button>
+                        {btn.element}
+                      </>
+                    );
+                  }
+                })}
+              </Box>
+            )}
             <Stack
               direction={"row"}
               sx={{
@@ -92,11 +128,6 @@ export default function CommentBubble({ nestedSize, id }: Props) {
                 gap: 1,
               }}
             >
-              <TeritaryTextTypography
-                sx={{ fontSize: "11px", color: "slategray" }}
-              >
-                3
-              </TeritaryTextTypography>
               <Stack direction={"row"}>
                 {[
                   { code: "1f603" },

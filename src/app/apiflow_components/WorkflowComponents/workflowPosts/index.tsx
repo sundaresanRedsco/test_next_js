@@ -123,23 +123,27 @@ export default function WorkflowPosts({ channel_id }: Props) {
         sx={{ height: "70vh", overflowY: "auto", paddingBottom: 3 }}
       >
         {posts ? (
-          posts?.map((elem: any, index: number) => (
-            <PostBubble
-              imageUrl={elem?.media_url}
-              name={elem?.posted_by}
-              isLiked={isLiked[index]}
-              handleLike={(code) => handleReaction(code)}
-              key={index}
-              type={
-                elem?.posted_by == userProfile?.user?.email ? "me" : "other"
-              }
-              text={elem?.content}
-              id={elem?.id}
-              likes={elem?.likes}
-              likesCount={elem?.likesCount}
-              commentsCount={elem?.commentsCount}
-            />
-          ))
+          posts
+            ?.slice()
+            .reverse()
+            .map((elem: any, index: number) => (
+              <PostBubble
+                imageUrl={elem?.media_url}
+                name={elem?.posted_by}
+                isLiked={isLiked[index]}
+                handleLike={(code) => handleReaction(code)}
+                key={index}
+                type={
+                  elem?.posted_by == userProfile?.user?.email ? "me" : "other"
+                }
+                text={elem?.content}
+                id={elem?.id}
+                likes={elem?.likes}
+                likesCount={elem?.likesCount}
+                commentsCount={elem?.commentsCount}
+                channel_id={channel_id}
+              />
+            ))
         ) : (
           <Box
             sx={{

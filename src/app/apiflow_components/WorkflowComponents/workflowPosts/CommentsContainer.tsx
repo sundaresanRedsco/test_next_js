@@ -1,6 +1,6 @@
 import { AddReaction, ArrowDropDown, Send } from "@mui/icons-material";
 import { Box, IconButton, Popover } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GInput from "../../global/GInput";
 import CommentBubble from "./CommentBubble";
 import { useSelector } from "react-redux";
@@ -13,12 +13,17 @@ type Props = { type: any; postId: any };
 
 export default function CommentsContainer({ type, postId }: Props) {
   const [emojiAnchorEl, setEmojiAnchorEl] = useState<any>(null);
+  const [comment_id, setComment_id] = useState("");
+  const [isReply, setIsReplay] = useState(false);
+  const [isReplies, setIsReplies] = useState(false);
+
   const openEmoji = Boolean(emojiAnchorEl);
   const [comment, setComment] = useState("");
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
   );
-  const {} = useComments(postId);
+  const { createComment, comments, replies, createReplies, getReplies } =
+    useComments(postId, userProfile?.user?.user_id);
   const emojiPopOverId = openEmoji ? "CommentEmoji-popover" : undefined;
   const handleOpenEmojiPopUp = (event: any) => {
     setEmojiAnchorEl(event.currentTarget);
@@ -26,6 +31,10 @@ export default function CommentsContainer({ type, postId }: Props) {
   const handleCloseEmojiPopUp = (event: any) => {
     setEmojiAnchorEl(null);
   };
+
+  useEffect(() => {
+    getReplies(comment_id);
+  }, [comment_id]);
   return (
     <>
       <Box
@@ -45,9 +54,46 @@ export default function CommentsContainer({ type, postId }: Props) {
           gap: 1,
         }}
       >
-        <CommentBubble id={1} />
-        <CommentBubble id={2} nestedSize={1} />
-        <CommentBubble id={3} nestedSize={2} />
+        {comments?.map((x: any) => (
+          <div>
+            <CommentBubble
+              key={x.id}
+              id={1}
+              data={x}
+              setIsReplay={setIsReplay}
+              setComment={setComment_id}
+              setIsReplies={setIsReplies}
+              repliesCount={x?.repliesCount}
+            />
+            {comment_id === x.id && (
+              <>
+                {x?.reply_comments?.map((comment: any) => (
+                  <CommentBubble
+                    key={comment.id}
+                    id={2}
+                    data={comment}
+                    isReplay
+                    nestedSize={2}
+                  />
+                ))}
+              </>
+            )}
+          </div>
+        ))}
+
+        {/* <CommentBubble id={2} nestedSize={1} />
+        <CommentBubble id={3} nestedSize={2} /> */}
+        {isReply && (
+          <button
+            onClick={() => {
+              setIsReplay(false);
+              setIsReplies(false);
+              setComment_id("");
+            }}
+          >
+            comment
+          </button>
+        )}
         <GInput
           WebkitBoxShadow={"0 0 0 30px #9891a7 inset !important"}
           background={"#31244F80"}
@@ -87,7 +133,19 @@ export default function CommentsContainer({ type, postId }: Props) {
             <Send
               fontSize="small"
               sx={{ cursor: "pointer", color: "white" }}
-              // onClick={handleButtonClick}
+              onClick={() => {
+                if (isReply) {
+                  createReplies({
+                    comment_id: comment_id,
+                    reply_text: comment,
+                  });
+                } else {
+                  createComment({
+                    post_id: postId,
+                    comment_text: comment,
+                  });
+                }
+              }}
             />
           }
         />
