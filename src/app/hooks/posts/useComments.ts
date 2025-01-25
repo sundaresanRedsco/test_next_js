@@ -71,7 +71,7 @@ export default function useComments(postId: any, user_id: any) {
       );
       return data;
     },
-    enabled: !!openComments, // Only run the mutation when `openComments` is truthy
+    // Only run the mutation when `openComments` is truthy
   });
 
   const { mutate: createReplies, isPending: createRepliesLoading } =
