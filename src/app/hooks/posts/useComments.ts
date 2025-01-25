@@ -59,8 +59,9 @@ export default function useComments(postId: any, user_id: any) {
   const {
     data: replies,
     mutate: getReplies,
-    isLoading: repliesLoading,
+    isPending: repliesLoading,
   } = useMutation({
+    mutationKey: ["getReplies"],
     mutationFn: async (comment_id: any) => {
       const data = await AdminServices(
         "get",
