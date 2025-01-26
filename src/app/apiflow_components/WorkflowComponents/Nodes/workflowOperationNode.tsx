@@ -1420,8 +1420,7 @@ export default function WorkflowOperationNode({ data }: any) {
        operationDetails?.private_or_public === "null"
          ? "PUBLIC"
          : operationDetails?.private_or_public
-     }
-     \n
+     }\n
     Orphan: ${
       operationDetails?.orphan_status &&
       operationDetails?.orphan_status !== "null"
@@ -1503,7 +1502,7 @@ export default function WorkflowOperationNode({ data }: any) {
     Function name: ${
       val?.function_name &&
       val?.function_name !== "null" &&
-      val?.function_name === "NULL"
+      val?.function_name !== "NULL"
         ? val?.function_name
         : "-"
     }\n
@@ -1511,7 +1510,7 @@ export default function WorkflowOperationNode({ data }: any) {
         Connection Type: ${
           val?.connection_type &&
           val?.connection_type !== "null" &&
-          val?.connection_type === "NULL"
+          val?.connection_type !== "NULL"
             ? val?.connection_type
             : "-"
         }\n
