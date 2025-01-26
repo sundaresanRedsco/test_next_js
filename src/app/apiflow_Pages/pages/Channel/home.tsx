@@ -68,59 +68,59 @@ export default function HomeChannel(props: any) {
   const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (!userProfile?.user?.user_id) return;
+  // useEffect(() => {
+  //   if (!userProfile?.user?.user_id) return;
 
-    const topic = `users/${userProfile.user.user_id}/notifications`;
+  //   const topic = `users/${userProfile.user.user_id}/notifications`;
 
-    const mqttClient = connectToMqtt(
-      "ws://139.99.114.132:15675/ws", // Broker URL
-      topic,
-      (receivedTopic: any, message: any) => {
-        // Handle incoming messages
-        console.log(
-          `Received message 1: ${message} on topic: ${receivedTopic}`
-        );
-        console.log(
-          `Received message 2: ${message?.message} on topic: ${receivedTopic}`
-        );
+  //   const mqttClient = connectToMqtt(
+  //     "ws://139.99.114.132:15675/ws", // Broker URL
+  //     topic,
+  //     (receivedTopic: any, message: any) => {
+  //       // Handle incoming messages
+  //       console.log(
+  //         `Received message 1: ${message} on topic: ${receivedTopic}`
+  //       );
+  //       console.log(
+  //         `Received message 2: ${message?.message} on topic: ${receivedTopic}`
+  //       );
 
-        let mess = JSON.parse(message);
-        console.log(`Received message 3: ${mess}`);
+  //       let mess = JSON.parse(message);
+  //       console.log(`Received message 3: ${mess}`);
 
-        console.log(`Received message 4: ${mess?.message}`);
+  //       console.log(`Received message 4: ${mess?.message}`);
 
-        alert(mess?.message);
-        // setMessages((prevMessages) => [...prevMessages, message]);
-      },
-      (error: any) => {
-        // Handle errors
+  //       alert(mess?.message);
+  //       // setMessages((prevMessages) => [...prevMessages, message]);
+  //     },
+  //     (error: any) => {
+  //       // Handle errors
 
-        console.error("MQTT error:", error);
-      },
-      () => {
-        // Handle successful connection
-        setIsConnected(true);
-      }
-    );
+  //       console.error("MQTT error:", error);
+  //     },
+  //     () => {
+  //       // Handle successful connection
+  //       setIsConnected(true);
+  //     }
+  //   );
 
-    setClient(mqttClient);
+  //   setClient(mqttClient);
 
-    return () => {
-      if (mqttClient) {
-        mqttClient.end();
-      }
-    };
-  }, [userProfile]);
+  //   return () => {
+  //     if (mqttClient) {
+  //       mqttClient.end();
+  //     }
+  //   };
+  // }, [userProfile]);
 
-  const handleSendMessage = () => {
-    if (client && userProfile?.user?.user_id) {
-      sendMqttMessage(
-        client,
-        `users/${userProfile.user.user_id}/notifications`,
-        "Hello from React!"
-      );
-    }
+  // const handleSendMessage = () => {
+  //   if (client && userProfile?.user?.user_id) {
+  //     sendMqttMessage(
+  //       client,
+  //       `users/${userProfile.user.user_id}/notifications`,
+  //       "Hello from React!"
+  //     );
+  //   }
   };
 
   return (
