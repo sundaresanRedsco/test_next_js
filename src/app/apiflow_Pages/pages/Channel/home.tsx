@@ -125,17 +125,18 @@ export default function HomeChannel(props: any) {
 
   return (
     <div>
-      {channels.map((x: any) => (
-        <p
-          style={{ color: "white" }}
-          onClick={() => {
-            setCurrentChannel(x);
-            setChannelId(x.id);
-          }}
-        >
-          {x.channel_name}
-        </p>
-      ))}
+      {Array.isArray(channels) &&
+        channels.map((x: any) => (
+          <p
+            style={{ color: "white" }}
+            onClick={() => {
+              setCurrentChannel(x);
+              setChannelId(x.id);
+            }}
+          >
+            {x?.channel_name}
+          </p>
+        ))}
 
       <IconButton
         aria-owns={currentChannel?.id}
