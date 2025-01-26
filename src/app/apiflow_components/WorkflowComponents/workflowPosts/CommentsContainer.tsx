@@ -52,6 +52,7 @@ export default function CommentsContainer({ type, postId }: Props) {
           justifyContent: "center",
           flexDirection: "column",
           gap: 1,
+          zIndex: "99999",
         }}
       >
         {comments?.map((x: any) => (

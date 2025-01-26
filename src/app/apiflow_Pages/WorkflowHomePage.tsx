@@ -452,7 +452,6 @@ export default function WorkflowHomePage() {
         {anchorEl && (
           <Popover
             open={anchorEl}
-            // anchorEl={anchorEl}
             onClose={handleClosePopover}
             anchorOrigin={{
               vertical: "bottom",

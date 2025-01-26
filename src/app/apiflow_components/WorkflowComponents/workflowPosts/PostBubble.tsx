@@ -72,6 +72,7 @@ export default function PostBubble({
         width: "100%",
         alignItems: "center",
         justifyContent: type == "me" ? "end" : "start",
+        zIndex: "9998",
       }}
       direction={type == "me" ? "row-reverse" : "row"}
       onMouseEnter={() => setisHover(true)}
