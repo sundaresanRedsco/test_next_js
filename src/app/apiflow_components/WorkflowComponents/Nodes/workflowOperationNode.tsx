@@ -1495,7 +1495,7 @@ export default function WorkflowOperationNode({ data }: any) {
         : "-"
     }\n
     Api Type: ${
-      val?.api_type && val?.api_type !== "null" && val?.api_type === "NULL"
+      val?.api_type && val?.api_type !== "null" && val?.api_type !== "NULL"
         ? val?.api_type
         : "-"
     }\n
