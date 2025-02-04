@@ -190,7 +190,7 @@ export default function useSignUp() {
 
   const currentHost = typeof window !== "undefined" ? window.location.host : "";
   let CLIENT_ID = "";
-  if (currentHost.includes("stage.apiflow.pro")) {
+  if (currentHost.includes("test-next-js-syuo.vercel")) {
     // Use production URL if host includes stage.apiflow.url
     CLIENT_ID = stage;
   } else {

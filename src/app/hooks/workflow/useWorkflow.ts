@@ -732,13 +732,22 @@ export default function useWorkflow({
           }
         } else if (tempData?.type == "groupNode" && isEditable) {
           let id = uuidv4();
-          const names = nodes
-            .filter((node: any) => node.type == "groupNode")
-            .map((node: any) => node?.name);
-          const node_name =
-            names.length > 0
-              ? tempData?.name + " " + names.length
-              : tempData?.name;
+
+          const baseName = tempData?.name;
+          let currentName = baseName;
+          let suffixCount = 0;
+
+          while (
+            nodes.some(
+              (node: any) =>
+                node?.type === "groupNode" && node.name === currentName
+            )
+          ) {
+            suffixCount++;
+            currentName = `${baseName}_${suffixCount}`;
+          }
+
+          const node_name = currentName;
           const newNode = {
             id: id,
             type: "groupNode",

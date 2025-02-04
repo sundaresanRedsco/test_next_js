@@ -35,10 +35,12 @@ const GlobalContextMenu = ({
       }
     };
 
-    document.addEventListener("mousedown", clickListener);
+    // document.addEventListener("mousedown", clickListener);
+    document.addEventListener("click", clickListener);
 
     return () => {
-      document.removeEventListener("mousedown", clickListener);
+      // document.removeEventListener("mousedown", clickListener);
+      document.removeEventListener("click", clickListener);
     };
   }, [onCloseContextMenu, parentRef]);
 

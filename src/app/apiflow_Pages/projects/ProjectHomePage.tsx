@@ -17,7 +17,6 @@ import EnvironmentPageSkeleton from "@/app/apiflow_components/skeletons/Environm
 import EnviromentTableSkeleton from "@/app/apiflow_components/skeletons/EnviromentTableSkeleton";
 import LinearSkeleton from "@/app/apiflow_components/skeletons/LinearSkeleton";
 import { CommonReducer } from "@/app/Redux/commonReducer";
-import { useRouter } from "next/navigation";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
 
 const ButtonPlusIcon = dynamic(
@@ -123,9 +122,6 @@ const ProjectHomePage = () => {
   const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
     (state) => state.apiManagement.workspace
   );
-
-  const router = useRouter();
-  const baseUrl = `/userId/${userProfile.user.user_id}/workspaceId/${currentWorkspace?.id}/project`;
 
   return (
     <div>

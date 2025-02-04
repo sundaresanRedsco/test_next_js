@@ -157,68 +157,163 @@ const TextEditor: React.FC<TextEditorProps> = ({
     setCursorPosition(cursor);
     onChange(value);
 
-    const lastOpenBrace = value.lastIndexOf("{", cursor);
+    // const lastOpenBrace = value.lastIndexOf("{", cursor);
     const lastOpenAnd = value.lastIndexOf("&", cursor);
     const lastQuote = value.lastIndexOf('"', cursor);
 
-    let precedingText: string = "";
+    // let precedingText: string = "";
 
-    if (
-      (lastOpenAnd > -1 && lastOpenBrace === -1) ||
-      lastOpenAnd > lastOpenBrace
-    ) {
-      precedingText = value.substring(lastOpenAnd + 1, cursorPosition).trim();
-      console.log("Preceding Text for Functions:", precedingText);
+    // if (
+    //   (lastOpenAnd > -1 && lastOpenBrace === -1) ||
+    //   lastOpenAnd > lastOpenBrace
+    // ) {
+    //   precedingText = value.substring(lastOpenAnd + 1, cursorPosition).trim();
+    //   console.log("Preceding Text for Functions:", precedingText);
 
-      const match = precedingText.match(/([&\w]+)$/);
-      if (match) {
-        const searchTerm = match[0];
-        console.log("Search Term for Functions:", searchTerm);
+    //   const match = value.match(/([&\w]+)$/);
+    //   if (match) {
+    //     const searchTerm = match[0];
+    //     console.log("Search Term for Functions:", searchTerm);
 
-        if (searchTerm == "&") {
-          // When the search term is empty, show all suggestions
-          console.log("No search term provided. Showing all suggestions.");
-          setSuggestedKeys(FQL_FUNCTIONS.map((func) => func.name));
-          // updatePopoverPosition(lastOpenAnd + searchTerm.length); // Assuming FQL_FUNCTIONS holds all your function suggestions
-          return; // Exit the function after setting all suggestions
-        }
+    //     if (searchTerm == "&") {
+    //       // When the search term is empty, show all suggestions
+    //       console.log("No search term provided. Showing all suggestions.");
+    //       setSuggestedKeys(FQL_FUNCTIONS.map((func) => func.name));
+    //       // updatePopoverPosition(lastOpenAnd + searchTerm.length); // Assuming FQL_FUNCTIONS holds all your function suggestions
+    //       return; // Exit the function after setting all suggestions
+    //     }
+    //     const validFunctions = [
+    //       "appendArray",
+    //       "upperCase",
+    //       "lowerCase",
+    //       "parseJson",
+    //       "checkCondition",
+    //     ];
+    //     const text = value.trim();
+    //     const andIndex = text.indexOf("&");
+    //     const nextToAnd = text.substring(andIndex).replace("&", "")[0];
+    //     const isExist = !!(
+    //       text.substring(andIndex, text.indexOf("(")).indexOf("&") == 0
+    //     );
+    //     const isNotFunction = (nextToAnd && nextToAnd == "(") || isExist;
 
-        const filteredFqlFunctions: string[] = FQL_FUNCTIONS.filter((func) =>
-          func.name.startsWith(searchTerm)
-        ).map((func) => func.name);
+    //     const prefix = match[0].replace("&", "");
+    //     const suggestionArr =
+    //       prefix && isNotFunction
+    //         ? validFunctions
+    //         : FQL_FUNCTIONS.map((elem) => elem.name);
+    //     console.log(suggestionArr, "showErr1");
 
-        console.log(
-          "Filtered Suggestions for Functions:",
-          filteredFqlFunctions
-        );
-        setSuggestedKeys(
-          filteredFqlFunctions.filter((item) => item.trim() !== "")
-        );
-        // updatePopoverPosition(lastOpenAnd + searchTerm.length);
-      } else {
-        console.log("No match found for preceding text in function context.");
-        setSuggestedKeys([]);
-        // setPopoverPosition(null);
+    //     const filteredFqlFunctions: string[] = FQL_FUNCTIONS.filter((func) =>
+    //       func.name.startsWith(searchTerm)
+    //     ).map((func) => func.name);
+
+    //     console.log(
+    //       "Filtered Suggestions for Functions:",
+    //       filteredFqlFunctions
+    //     );
+    //     setSuggestedKeys(
+    //       filteredFqlFunctions.filter((item) => item.trim() !== "")
+    //     );
+    //     // updatePopoverPosition(lastOpenAnd + searchTerm.length);
+    //   } else {
+    //     console.log("No match found for preceding text in function context.");
+    //     setSuggestedKeys([]);
+    //     // setPopoverPosition(null);
+    //   }
+    // }
+
+    // if (lastOpenBrace > lastQuote) {
+    //   const precedingText = value.substring(lastOpenBrace + 1, cursor);
+    //   const match = precedingText.match(/(\w+(\[\d+\])?)(\.\w+(\[\d+\])?)*/);
+
+    //   if (match) {
+    //     const prefix = match[0];
+
+    //     const filteredSuggestions = suggestions
+    //       .filter((key) => key.startsWith(prefix))
+    //       .map((key) => key.substring(prefix.length));
+
+    //     setSuggestedKeys(
+    //       filteredSuggestions.filter((item) => item.trim() !== "")
+    //     );
+    //   } else {
+    //     setSuggestedKeys([]);
+    //   }
+    // } else {
+    //   setSuggestedKeys([]);
+    // }
+    const validFunctions = [
+      "appendArray",
+      "upperCase",
+      "lowerCase",
+      "parseJson",
+      "checkCondition",
+    ];
+    const lineText = value;
+    let lastOpenBrace = -1;
+    for (let i = cursor - 1; i >= 0; i--) {
+      if (lineText[i] === "{") {
+        lastOpenBrace = i;
+        break;
       }
     }
+    let lastAnd = -1;
+    for (let i = cursor - 1; i >= 0; i--) {
+      if (lineText[i] === "&") {
+        lastAnd = i;
+        break;
+      }
+    }
+    const startAndText = lineText.substring(lastAnd, cursor);
+    const startText = lineText
+      .substring(lastOpenBrace, cursor)
+      .replace("{", "");
+    const andMatch = startAndText.match(/([&\w]+)$/);
+    const match = startText.match(/(\w+(\[\d+\])?)(\.\w+(\[\d+\])?)*/);
 
-    if (lastOpenBrace > lastQuote) {
-      const precedingText = value.substring(lastOpenBrace + 1, cursor);
-      const match = precedingText.match(/(\w+(\[\d+\])?)(\.\w+(\[\d+\])?)*/);
+    if (match) {
+      const prefix = match[0];
 
-      if (match) {
-        const prefix = match[0];
+      const filteredSuggestions = suggestions
+        .filter((key) =>
+          key.toLowerCase().trim().startsWith(prefix.toLowerCase().trim())
+        )
+        .map((key) => key.substring(prefix.length));
 
-        const filteredSuggestions = suggestions
-          .filter((key) => key.startsWith(prefix))
-          .map((key) => key.substring(prefix.length));
+      if (andMatch && andMatch[0].includes("&")) {
+        const text = lineText.trim();
+        const andIndex = text.indexOf(startAndText);
+        const nextToAnd = text.substring(andIndex).replace(startAndText, "")[0];
+        const isExist = !!(
+          text.substring(andIndex, text.indexOf("(")).indexOf(startAndText) == 0
+        );
+        const isNotFunction = (nextToAnd && nextToAnd == "(") || isExist;
 
+        const prefix = andMatch[0].replace("&", "");
+
+        const suggestionArr =
+          prefix && isNotFunction
+            ? validFunctions
+            : FQL_FUNCTIONS.map((elem) => elem.name);
         setSuggestedKeys(
-          filteredSuggestions.filter((item) => item.trim() !== "")
+          suggestionArr
+            .filter((key) =>
+              key.toLowerCase().trim().startsWith(prefix.toLowerCase().trim())
+            )
+            .map((key) => key.substring(prefix.length))
         );
       } else {
-        setSuggestedKeys([]);
+        if (filteredSuggestions.length > 0) {
+          setSuggestedKeys(
+            filteredSuggestions.filter((item) => item.trim() !== "")
+          );
+        } else {
+          setSuggestedKeys([]);
+        }
       }
+    } else if (value.includes("&")) {
+      setSuggestedKeys(FQL_FUNCTIONS.map((key) => key.name));
     } else {
       setSuggestedKeys([]);
     }
@@ -276,9 +371,10 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
   const renderRow = ({ index, style }: ListChildComponentProps) => {
     const option = suggestedKeys[index];
+
     return (
       <li
-        style={style}
+        style={{ cursor: "pointer", ...style }}
         key={option}
         onClick={() => handleSuggestionClick(option)}
       >

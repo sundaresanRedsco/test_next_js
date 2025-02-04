@@ -45,8 +45,8 @@ export default function useWorkspace(userData?: any) {
   const [formData, setFormData] = useState({
     workspace_name: "",
     description: "",
-    visibility: "TEAM",
     post_content: "null",
+    is_channel: true,
   });
   const [methodErr, setmethodErr] = useState("");
   const [alertInfo, setAlertInfo] = useState<{
@@ -129,19 +129,22 @@ export default function useWorkspace(userData?: any) {
         const prevData = apiDataStore?.workspace;
         if (
           formData.description == prevData?.summary &&
-          formData.workspace_name == prevData?.name
+          formData.workspace_name == prevData?.name &&
+          formData.is_channel == prevData?.is_channel
         ) {
           handleStep();
           setIsLoading(false);
         } else {
           try {
             const { data }: any = await axios.post(
-              "https://api.apiflow.pro/Api/Workspace_/update_workspace",
+              "https://api.apiflow.pro/Api/Workspace_/update_workspace?workspace_id=" +
+                apiDataStore?.workspace?.id,
               {
                 workspace_id: apiDataStore?.workspace?.id,
                 name: formData.workspace_name,
                 descriptions: formData.description,
                 profile_picture: "",
+                is_channel: formData.is_channel,
               },
               { headers: { Authorization: "Bearer " + access_token } }
             );
@@ -178,10 +181,10 @@ export default function useWorkspace(userData?: any) {
             {
               name: formData.workspace_name,
               summary: formData.description,
-              permission: formData?.visibility,
+              permission: "",
               post_content: "null",
               profile_picture: "",
-              is_channel: true,
+              is_channel: formData.is_channel,
             },
             { headers: { Authorization: "Bearer " + access_token } }
           );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FQL_FUNCTIONS } from "../Constants/JsonDatas";
 import { useWorkflowStore } from "../store/useWorkflowStore";
+import { validateFQLFunctionSyntax } from "../Helpers/helpersFunctions";
 
 type Props = {};
 
@@ -247,6 +248,17 @@ export default function useTextEditor(
         } catch (e: any) {
           setInputDataErr(id, type, true, index);
         }
+        const isFunctionErr = validateFQLFunctionSyntax({
+          input,
+          textEditor: true,
+          seterrMsg,
+        });
+        if (!isFunctionErr) {
+          seterrMsg("");
+          setInputDataErr(id, type, false, index);
+        } else {
+          setInputDataErr(id, type, true, index);
+        }
       } else {
         try {
           const sanitizedInput = input.replace(/\{[a-zA-Z0-9_.\[\]]+\}/g, '""'); // Replace placeholders with dummy quotes
@@ -317,6 +329,18 @@ export default function useTextEditor(
             seterrMsg("Unclosed round brace");
             if (mainId && mainKey) {
               setInputDataErr(mainId, mainKey, true, mainIndex);
+            }
+          }
+          const isFunctionErr = validateFQLFunctionSyntax({
+            input,
+            textEditor: true,
+            seterrMsg,
+          });
+
+          if (!isFunctionErr) {
+            if (mainId && mainKey) {
+              seterrMsg("");
+              setInputDataErr(mainId, mainKey, false, mainIndex);
             }
           }
         } else {

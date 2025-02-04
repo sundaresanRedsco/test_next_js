@@ -2,6 +2,7 @@ import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 import React from "react";
 import useTextEditor from "../useTextEditor";
 import { useReactFlow } from "reactflow";
+import { validateFQLFunctionSyntax } from "@/app/Helpers/helpersFunctions";
 
 function parseData(data: any) {
   // Check if data is an object
@@ -31,11 +32,12 @@ export default function useNodeErr() {
   } = useWorkflowStore();
 
   const handleAddInitialErrors = (arr: any) => {
+    let annotations: any = [];
     arr.forEach((node: any) => {
       setParticularInputData(node.id, {
         input: { input: "", isErr: false },
-        header: [{ input: "", isErr: false }],
-        params: [{ input: "", isErr: false }],
+        header: [],
+        params: [],
         edge: [{ input: [], isErr: false }],
       });
     });
@@ -50,12 +52,22 @@ export default function useNodeErr() {
           data && data?.raw_payload
             ? parseData(data?.raw_payload) || data?.raw_payload
             : "";
+        if (data?.raw_payload) {
+          validateFQLFunctionSyntax({
+            isAnnotations: true,
+            annotations,
+            input: data?.raw_payload,
+          });
+        }
         if (inputdata) {
           setInputData(node.id, {
             key: "input",
             value: {
               input: inputdata,
-              isErr: handleBraces(inputdata) ? true : false,
+              isErr:
+                handleBraces(inputdata) || annotations.length > 0
+                  ? true
+                  : false,
             },
           });
         }
@@ -67,6 +79,11 @@ export default function useNodeErr() {
               value: { input: input.test_value, isErr: false },
             });
           });
+        } else {
+          setInputData(node.id, {
+            key: "header",
+            value: { input: "", isErr: false },
+          });
         }
         if (data?.operations_query_param) {
           data?.operations_query_param.forEach((input: any) => {
@@ -74,6 +91,11 @@ export default function useNodeErr() {
               key: "params",
               value: { input: input.test_value, isErr: false },
             });
+          });
+        } else {
+          setInputData(node.id, {
+            key: "params",
+            value: { input: "", isErr: false },
           });
         }
         setInputData(node.id, {
@@ -86,6 +108,7 @@ export default function useNodeErr() {
   const handleErrors = (id: any) => {
     const keys = ["input", "header", "params", "edge", "keys"];
     let nodeErrKeys: any = [];
+    let annotations: any = [];
     const inputs = inputdatas[id];
     for (let index = 0; index < 4; index++) {
       const key = keys[index];
@@ -106,11 +129,18 @@ export default function useNodeErr() {
           }
         });
       } else if (key == "input") {
-        handleBraces(element?.input) && !nodeErrKeys?.includes(key)
+        validateFQLFunctionSyntax({
+          isAnnotations: true,
+          annotations,
+          input: JSON.stringify(element?.input),
+        });
+        (handleBraces(element?.input) || annotations.length > 0) &&
+        !nodeErrKeys?.includes(key)
           ? nodeErrKeys?.push(key)
           : null;
       }
     }
+
     const errMessage: any = {
       input: "Error at input",
       header: "Error at header",

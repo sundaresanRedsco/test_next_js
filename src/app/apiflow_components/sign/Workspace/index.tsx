@@ -92,14 +92,8 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
   } = useWorkspace(clientSession?.data);
   // console.log(axios?.defaults, "test-axios");
 
-  const [visibility, setvisibility] = useState(formData.visibility == "TEAM");
   const handleVisibilityChange = (e: any) => {
-    if (e.target.checked) {
-      handleWorkspaceFormDatas("visibility", "TEAM");
-    } else {
-      handleWorkspaceFormDatas("visibility", "");
-    }
-    setvisibility(e.target.checked);
+    handleWorkspaceFormDatas("is_channel", e.target.checked);
   };
   useEffect(() => {
     if (formDataStore?.workspace) {
@@ -107,7 +101,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
       setFormData({
         workspace_name: data.workspace_name,
         description: data.description,
-        visibility: data.visibility,
+        is_channel: data.is_channel,
         post_content: "null",
       });
     }
@@ -148,8 +142,8 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
         to: "",
       },
       onChange: handleVisibilityChange,
-      name: "visibility",
-      value: visibility,
+      name: "is_channel",
+      value: formData.is_channel,
     },
   ];
   const InputArray = [

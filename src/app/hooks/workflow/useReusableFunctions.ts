@@ -17,9 +17,12 @@ export default function useReusableFunctions() {
     useWorkflowStore();
   const handleCopyNodes = (isNodeCut?: boolean) => {
     if (selectedFlowIds?.length > 0) {
-      const copiedNodesValue = selectedFlowIds?.flatMap((val: any) =>
+      let copiedNodesValue: any = [];
+      copiedNodesValue = selectedFlowIds?.flatMap((val: any) =>
         nodes?.filter((item: any) => item?.id === val)
       );
+
+      console.log(copiedNodesValue, "copiedNodesValue");
 
       const copiedEdgesValue = edges?.filter(
         (edge: any) =>

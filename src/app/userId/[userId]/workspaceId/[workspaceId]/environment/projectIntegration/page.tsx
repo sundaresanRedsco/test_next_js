@@ -146,7 +146,7 @@ function ProjectIntegrations() {
             size={{ xl: 9, xs: 12, sm: 7, md: 7 }}
             className="pt-0"
             sx={{
-              backgroundColor: "rgba(18, 18, 18, 0.5)",
+              //   backgroundColor: "rgba(18, 18, 18, 0.5)",
               height: "100vh",
               padding: "20px",
               overflowY: "auto",

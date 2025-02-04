@@ -17,12 +17,8 @@ export async function runHandler(
   // const edgesMap = doc.getMap("edges");
   const runData = runMap?.toJSON()?.run;
 
-  // console.log(edgesMap.toJSON());
-
   const globalkeys = doc.getArray("globalkeys");
   const globalKeysArray = globalkeys.toArray();
-
-  // console.log(globalkeys,"globalKeysArraydsd");
 
   if (runData?.status !== "COMPLETED") {
     try {
@@ -32,8 +28,6 @@ export async function runHandler(
       // // Update nodes and edges
       // updateNodesAndEdges(nodeMap, updatedNodes);
       // updateNodesAndEdges(edgesMap, updatedEdges, "edges");
-
-      console.log("updatedEdges", updatedEdges);
 
       let queue = [];
       let currentEdge = getStartEdge(updatedEdges);
@@ -183,7 +177,6 @@ export async function processNode(
   project_id: string,
   workspace_id: string
 ) {
-  // console.log(previousEdgeResponse, "previousEdgeResponse");
   let currentNode = updatedNodes.find((x: any) => x.id === currentEdge?.target);
 
   if (!currentNode || processedNodes?.has(currentNode.id))
@@ -218,12 +211,6 @@ export async function processNode(
     );
     newPreviousEdgeResponse = operationSuccess;
 
-    console.log(
-      "operationSuccess: ",
-      operationSuccess,
-      newPreviousEdgeResponse
-    );
-
     let changeManData = {
       flow_id: apiFlow_Id,
       node_id: operationSuccess?.node_id,
@@ -240,22 +227,17 @@ export async function processNode(
 
     // query need pas id
     let changeManResponse = await changeManagement(changeManData);
-    console.log("changeManResponse: ", changeManResponse);
-
-    console.log(globalResponse, "globalResponse");
 
     if (operationSuccess?.status === "SUCCESS") {
       for (let key of globalKeysArray) {
-        console.log(currentNode, "test1");
         if (key.node_id === currentNode.id) {
-          console.log(currentNode, "test2");
           const response = newPreviousEdgeResponse?.response?.apiResponse;
           let value = replacePlaceholders(
             key.request_template,
             { response },
             null
           );
-          console.log(value, "value");
+
           updateKeys(doc, value, key.id, globalKeysArray);
         }
       }
@@ -883,6 +865,7 @@ export function replacePlaceholders(
   data: any,
   globalArrayKeys: any
 ) {
+  console.log(template, "rphTEMPLATE");
   if (
     typeof template === "string" &&
     (template.includes("{") || template.includes("&"))
@@ -895,12 +878,15 @@ export function replacePlaceholders(
       return template;
     }
     const placeholders = template.match(/{(.*?)}/g); // Find all placeholders
+    console.log(placeholders, "rphPLACEHOLDERS");
+
     if (placeholders) {
       placeholders.forEach((place) => {
         let keys;
         let replacementValue;
         // Check if the placeholder starts with 'global.'
         console.log("place", place, typeof place);
+        console.log(place, typeof place, "rphPLACE");
         if (globalArrayKeys?.length > 0 && place.includes("{global.")) {
           const startIndex = place.indexOf("{global.") + 8; // 8 is the length of '{global.'
           const endIndex = place.indexOf("}", startIndex); // Find the closing '}'
@@ -925,23 +911,33 @@ export function replacePlaceholders(
             .filter(Boolean); // Split by . or [ or ]
           replacementValue = data;
         }
+        console.log(keys, "rphPLACEKEYS");
+        console.log(replacementValue, "rphREPLACEMENTVALUE");
         // Navigate through the structure if not a global key
         if (keys) {
           for (const k of keys) {
             if (Array.isArray(replacementValue)) {
               replacementValue = replacementValue[parseInt(k)] || undefined;
+              console.log(k, typeof k, replacementValue, "rphARRAY");
             } else {
               replacementValue = replacementValue
                 ? replacementValue[k]
                 : undefined;
+              console.log(k, typeof k, replacementValue, "rphOBJECT");
             }
           }
         }
 
+        console.log(
+          place,
+          replacementValue,
+          JSON.stringify(replacementValue),
+          "rphREPLACEMENTFINAL"
+        );
         template = template.replace(
           place,
-          JSON.stringify(replacementValue) || place
-          // replacementValue ? replacementValue : place
+          // JSON.stringify(replacementValue) || place
+          replacementValue ? replacementValue : place
         );
       });
     }
@@ -949,16 +945,21 @@ export function replacePlaceholders(
     //----------------------multiple condition-----------------------------------------
 
     const multipleCondition = splitAndExtractPatterns(template);
+    console.log(multipleCondition, "rphMULTIPLECONDITION");
 
     let multipleConditionResult = multipleFqlConditions(multipleCondition);
+
     return multipleConditionResult;
 
     //----------------------multiple condition-----------------------------------------
   } else if (typeof template === "object" && template !== null) {
     const result: any = Array.isArray(template) ? [] : {};
     for (const key in template) {
+      console.log(key, "rphKEY");
+      console.log(template[key], "rphVALUE");
       result[key] = replacePlaceholders(template[key], data, globalArrayKeys);
     }
+    console.log(result, "rphRESULT");
     return result;
   } else {
     return template; // Return the value if it's not a placeholder
@@ -971,11 +972,6 @@ export function multipleFqlConditions(multipleCondition: any) {
 
   multipleCondition?.forEach((pattern: any) => {
     const templateSplit = extractCurlyBraceContent(pattern);
-    console.log(templateSplit, "CheckValueCheckValue5");
-
-    console.log(multipleCondition, "fql4");
-    console.log(pattern, "fql5");
-    console.log(templateSplit, templateSplit.curlyContent?.length, "fql6");
 
     if (templateSplit?.beforeCurly === "upperCase") {
       const upperCaseResult = upperCaseFunc(templateSplit?.curlyContent);
@@ -1191,13 +1187,11 @@ export function extractCommaSeperatedValues(input: any): any[] {
 
   let multipleFqlArr: any[] = [];
   result?.forEach((val: any) => {
-    console.log(val, "fql993");
     if (val?.startsWith("&")) {
       let multipleConditionResult = multipleFqlConditions([val]);
-      console.log(multipleConditionResult, "fql994");
+
       multipleFqlArr.push(multipleConditionResult);
     } else {
-      console.log(val, "fql995");
       multipleFqlArr.push(val);
     }
   });
@@ -1279,11 +1273,9 @@ export function parseTernaryExpressionFunc(expression: string): string {
   const [_, condition, truePart, falsePart] = match.map((part) => part.trim());
 
   const isConditionTrue = evaluateCondition(extractConditionParts(condition));
-
   const parsePart = (part: string) => {
     const evaluatedPart = parseTernaryExpressionFunc(part);
-    console.log(evaluatedPart, "**6");
-    console.log(part, "**7");
+
     return evaluatedPart.startsWith("&")
       ? multipleFqlConditions([evaluatedPart])
       : evaluatedPart;
@@ -1295,22 +1287,12 @@ export function parseTernaryExpressionFunc(expression: string): string {
   //   const truePart = match[2]?.trim();
   //   const falsePart = match[3]?.trim();
 
-  //   console.log(condition, "**3");
-  //   console.log(truePart, "**4");
-  //   console.log(falsePart, "**5");
-
   //   const conditionParts = extractConditionParts(condition);
-
-  //   console.log(conditionParts, "**6");
 
   //   const isConditionTrue = evaluateCondition(conditionParts);
 
   //   const evaluatedTruePart = parseTernaryExpressionFunc(truePart);
   //   const evaluatedFalsePart = parseTernaryExpressionFunc(falsePart);
-
-  //   console.log(isConditionTrue, "**7");
-  //   console.log(evaluatedTruePart, "**8");
-  //   console.log(evaluatedFalsePart, "**9");
 
   //   const fqlTruePart = evaluatedTruePart?.startsWith("&")
   //     ? multipleFqlConditions([evaluatedTruePart])
@@ -1320,14 +1302,11 @@ export function parseTernaryExpressionFunc(expression: string): string {
   //     ? multipleFqlConditions([evaluatedFalsePart])
   //     : evaluatedFalsePart;
 
-  //   console.log(fqlTruePart, "**10");
-  //   console.log(fqlFalsePart, "**11");
-
   //   // return isConditionTrue ? evaluatedTruePart : evaluatedFalsePart;
   //   return isConditionTrue ? fqlTruePart : fqlFalsePart;
   // }
 
-  // return expression;
+  return expression;
 }
 
 export const updateArray = (
@@ -1343,13 +1322,12 @@ export const updateArray = (
       let value = previousEdgeResponse
         ? replacePlaceholders(item.test_value, { response }, globalKeysArray)
         : item.test_value;
-      console.log(value, "operations_query_param");
+
       value =
         typeof value === "object" || Array.isArray(value)
           ? JSON.stringify(value)
           : value?.toString();
 
-      console.log(value, "operations_query_param");
       return { key, value };
     });
   }

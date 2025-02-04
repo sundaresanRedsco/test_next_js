@@ -128,11 +128,11 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
       console.log("Yjs Maps 'nodes' or 'edges' are not available.");
       return;
     }
-    const filteredNodeIds = currentNodes.filter(
+    const filteredNodeIds = currentNodes?.filter(
       (elem: any) => !prevIds.includes(elem.id)
     );
     // Handle redo logic
-    filteredNodeIds.forEach((node: any) => {
+    filteredNodeIds?.forEach((node: any) => {
       // const prevEdges = getEdge(id);
       const updatedNode = {
         action: "ADD_NODE",
@@ -217,7 +217,7 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
       }
     }
   };
-  const handleUndo = () => {
+  const handleUndo: any = () => {
     if (count > 0) {
       setcount((prev) => prev - 1);
       handleYjsMap(count, "undo");

@@ -1,4 +1,5 @@
 import {
+  changeValueToString,
   convertToMilliSeconds,
   getCookies,
   // replacePlaceholders,
@@ -288,14 +289,18 @@ export default function WorkflowOperationNode({ data }: any) {
     [inputsPayload, flowYdoc, nodeData?.id]
   );
   const handleClick = (event: any) => {
+    event.stopPropagation();
+
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleClose = (event: any) => {
+    event.stopPropagation();
     setAnchorEl(null);
   };
 
   const handleClickInput = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     setAnchorElInput(event.currentTarget);
     setInputClicked(true);
     setHeaderClicked(false);
@@ -304,6 +309,7 @@ export default function WorkflowOperationNode({ data }: any) {
   };
 
   const handleClickHeader = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     setAnchorElInput(event.currentTarget);
     setHeaderClicked(true);
     setInputClicked(false);
@@ -312,6 +318,7 @@ export default function WorkflowOperationNode({ data }: any) {
   };
 
   const handleClickQuery = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     setAnchorElInput(event.currentTarget);
     setQueryClicked(true);
     setHeaderClicked(false);
@@ -322,6 +329,7 @@ export default function WorkflowOperationNode({ data }: any) {
   };
 
   const handleClickResponse = (event: any) => {
+    event.stopPropagation();
     setAnchorElResponse(event.currentTarget);
     setResponseClicked(true);
     setInputClicked(false);
@@ -332,6 +340,7 @@ export default function WorkflowOperationNode({ data }: any) {
   };
 
   const handleGlobalKeys = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     setAnchorElInput(event.currentTarget);
     setResponseClicked(false);
     setInputClicked(false);
@@ -760,12 +769,14 @@ export default function WorkflowOperationNode({ data }: any) {
     }
   };
 
-  const handleCloseInput = () => {
+  const handleCloseInput = (event: any) => {
+    event.stopPropagation();
     setAnchorElInput(null);
     // setWarning([]);
   };
 
-  const handleCloseResponse = () => {
+  const handleCloseResponse = (event: any) => {
+    event.stopPropagation();
     setAnchorElResponse(null);
   };
 
@@ -824,42 +835,33 @@ export default function WorkflowOperationNode({ data }: any) {
     );
   }
 
-  function safeJSONParse(rawPayload: string) {
-    if (!rawPayload) return {};
+  const safeJSONParse = (input: string) => {
+    if (!input) return {};
 
-    // Preprocess the raw payload to ensure valid JSON
-    const preprocessedPayload = rawPayload
-      //   .replace(
-      //   /:\s*(&[a-zA-Z]+\(\{[^}]*\}\))/g, // Match unquoted functions like &upperCase({...})
-      //   (match: any, group: any) => `: "${group}"` // Wrap the match in quotes
-      // );
-      .replace(
-        /:\s*({[^}]*})/g, // Match unquoted object-like values (e.g., `{...}`)
-        (match, group) => `: "${group}"`
-      )
-      .replace(
-        /:\s*(&[a-zA-Z]+\(\{[^}]*\}\))/g, // Match unquoted functions like &upperCase({...})
-        (match, group) => `: "${group}"`
-      )
-      .replace(
-        /:\s*([^",\s}\]]+)/g, // Match unquoted standalone values (e.g., response.getAllProducts...)
-        (match, group) => `: "${group}"`
-      );
-
-    // Parse the preprocessed JSON string
     try {
-      return JSON.parse(preprocessedPayload);
-    } catch (e) {
-      console.error("Invalid JSON format:", e);
+      return JSON.parse(input, (key, value) => {
+        // If value is already a string, return it as is
+        if (typeof value === "string") {
+          // Check if it's a function call (starts with &functionName(...))
+          if (value.startsWith("&")) {
+            return value; // Keep function calls as is
+          }
+          return `"${value}"`; // Wrap normal values in quotes
+        }
+        return value;
+      });
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
       return {};
     }
-  }
+  };
 
   const RunHandler = () => {
     let payload;
+    console.log(nodeData?.raw_payload, "nodeData?.raw_payload");
     try {
-      // payload = JSON.parse(nodeData?.raw_payload || "{}");
-      payload = safeJSONParse(nodeData.raw_payload);
+      payload = JSON.parse(nodeData?.raw_payload || "{}");
+      // payload = safeJSONParse(nodeData.raw_payload);
       // payload = nodeData?.raw_payload;
     } catch (error: any) {
       toast.error(
@@ -871,6 +873,8 @@ export default function WorkflowOperationNode({ data }: any) {
     // const payload = JSON.parse(nodeData?.raw_payload || "{}");
 
     // let response = previousOpRaw || null;
+
+    console.log(payload, "payload");
 
     let response = globalResponse || null;
 
@@ -1153,25 +1157,23 @@ export default function WorkflowOperationNode({ data }: any) {
   const nodeSelected = isEditable && selectedFlowIds?.includes(nodeData?.id);
   const selectedNodeData = getNode(nodeData?.id);
 
-  const handleClickNode = (id: any) => {
+  const handleClickNode = (id: any, event: React.MouseEvent) => {
     if (multiSelectClicked) return;
+
     if (isEditable) {
-      const nodeMap = flowYdoc?.getMap<any>("nodes");
-      if (selectedFlowIds?.includes(id)) {
-        removeFlowId(id);
+      if (event.ctrlKey || event.metaKey) {
+        if (selectedFlowIds?.includes(id)) {
+          removeFlowId(id);
+        } else {
+          addFlowId(id);
+        }
       } else {
-        addFlowId(id);
-        // if (nodeMap) {
-        //   nodeMap?.set(nodeData?.id, {
-        //     ...nodeData,
-        //     dragger: userProfile?.user?.email,
-        //   });
-        // }
-        if (nodeMap) {
-          nodeMap?.set(id, {
-            ...nodeMap.get(id),
-            dragger: userProfile?.user?.email,
-          });
+        if (selectedFlowIds?.includes(id)) {
+          removeFlowId(id);
+        } else {
+          resetWorkFlowState("selectedFlowIds");
+          addFlowId(id);
+          console.log(selectedFlowIds, "selectedFlowIds");
         }
       }
     }
@@ -1188,8 +1190,8 @@ export default function WorkflowOperationNode({ data }: any) {
       !multiSelectClicked &&
       !event?.target?.closest(".exclude-click-outside")
     ) {
-      // removeFlowId(nodeData?.id);
-      resetWorkFlowState("selectedFlowIds");
+      removeFlowId(nodeData?.id);
+      // resetWorkFlowState("selectedFlowIds");
     }
   };
 
@@ -1202,12 +1204,12 @@ export default function WorkflowOperationNode({ data }: any) {
 
   useEffect(() => {
     // Add event listener to detect clicks outside the box
-    // if (!multiSelectClicked) {
+    // if (!multiSelectClicked && selectedFlowIds?.length !== 0) {
     //   document.addEventListener("click", handleClickOutsideSelecto);
     // }
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      // if (!multiSelectClicked) {
+      // if (!multiSelectClicked && selectedFlowIds?.length !== 0) {
       //   document.removeEventListener("click", handleClickOutsideSelecto);
       // }
       document.removeEventListener("keydown", handleKeyDown);
@@ -1221,6 +1223,7 @@ export default function WorkflowOperationNode({ data }: any) {
   return (
     <Box sx={{ position: "relative" }}>
       {isEditable &&
+        selectedFlowIds?.length === 1 &&
         selectedFlowIds?.includes(nodeData?.id) &&
         !multiSelectClicked && (
           <Stack
@@ -1236,7 +1239,7 @@ export default function WorkflowOperationNode({ data }: any) {
               }}
               onClick={() => {
                 setCopyClicked(nodeData?.id, true);
-                handleCopyNodes();
+                handleCopyNodes(false);
               }}
             />
             <BiCut
@@ -1245,7 +1248,7 @@ export default function WorkflowOperationNode({ data }: any) {
                 cursor: "pointer",
               }}
               onClick={() => {
-                setCutClicked(true);
+                setCutClicked(nodeData?.id, true);
                 handleCopyNodes(true);
               }}
             />
@@ -1317,25 +1320,26 @@ export default function WorkflowOperationNode({ data }: any) {
           animation:
             nextNode?.includes(nodeData?.id) ||
             currentNodeRun ||
-            nodeSelected ||
-            selectedNodeData?.selected
-              ? "blinkShadow 3s infinite"
+            selectedFlowIds.includes(nodeData?.id)
+              ? // nodeSelected ||
+                // selectedNodeData?.selected
+                "blinkShadow 3s infinite"
               : "",
           border:
             currentResultRun?.status == "SUCCESS"
               ? "2px solid #48C9B0"
               : currentResultRun?.status == "FAILED"
               ? "2px solid #FF5252"
-              : nodeSelected ||
-                selectedNodeData?.selected ||
-                selectedFlowIds.includes(nodeData?.id)
+              : // nodeSelected ||
+              // selectedNodeData?.selected ||
+              selectedFlowIds.includes(nodeData?.id)
               ? // ? "2px solid rgba(122, 67, 254, 0.35)"
                 "2px solid white"
               : "2px solid transparent",
           transition: "border-color 0.3s ease-in-out",
         }}
-        onClick={() => {
-          handleClickNode(nodeData?.id);
+        onClick={(event: any) => {
+          handleClickNode(nodeData?.id, event);
         }}
         // className="rounded"
       >
@@ -1649,6 +1653,7 @@ export default function WorkflowOperationNode({ data }: any) {
                 openManageAccount ? "ManageAccounts" + nodeData?.id : ""
               }
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                event.stopPropagation();
                 setbackgroundUrlClicked(event.currentTarget);
                 dispatch(
                   GetOperationById({
@@ -1687,7 +1692,8 @@ export default function WorkflowOperationNode({ data }: any) {
                 color: `${theme.palette.v2PrimaryColor.main}`,
                 fontSize: "18px",
               }}
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 let data = {
                   flow_id: initialFlowId,
                   node_id: nodeData?.id,
@@ -1718,7 +1724,8 @@ export default function WorkflowOperationNode({ data }: any) {
                 backgroundColor: "#7E59DC",
                 borderRadius: "4px",
               }}
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 RunHandler();
               }}
             />

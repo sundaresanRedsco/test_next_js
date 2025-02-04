@@ -42,10 +42,12 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import {
+  changeValueToString,
   extractPlaceholdersFromPath,
   generateUniqueNodeName,
   getRandomColor,
   setCookies,
+  validateFQLFunctionSyntax,
   validatePlaceholders,
 } from "@/app/Helpers/helpersFunctions";
 import {
@@ -159,7 +161,7 @@ const WorkflowDesigner = (props: any) => {
   const pathname = usePathname();
   const reactFlowWrapper = useRef(null);
   const mouseRef = useRef<any>(null);
-  const { screenToFlowPosition, getViewport, getIntersectingNodes } =
+  const { screenToFlowPosition, getViewport, getIntersectingNodes, getNode } =
     useReactFlow();
 
   const [apiFlow_Id, setWorkflowId] = useState<any>(null);
@@ -737,6 +739,15 @@ const WorkflowDesigner = (props: any) => {
         .catch((error: any) => {});
     }
   }, [dropItem?.id, currentFlowDetails?.project_id]);
+  const validationFunctionErr = (
+    input: string,
+    nodeData: any,
+    type?: string
+  ) => {
+    let err: any = [];
+    validateFQLFunctionSyntax({ input, nodeData, err, isErr: true, type });
+    return err;
+  };
 
   const validateNodes = (
     nodesArray: any,
@@ -767,6 +778,16 @@ const WorkflowDesigner = (props: any) => {
               `In ${nodeData.node_name} Invalid placeholder in header: ${header.test_value}`
             );
           }
+          const isError = validationFunctionErr(
+            header.test_value,
+            nodeData,
+            "Header"
+          );
+          if (isError && isError.length > 0) {
+            isError.forEach((err: any) => {
+              errors.push(err);
+            });
+          }
         }
 
         // Validate query parameters
@@ -786,6 +807,16 @@ const WorkflowDesigner = (props: any) => {
               `In ${nodeData.node_name} Invalid placeholder in query parameter: ${input.test_value}`
             );
           }
+          const isError = validationFunctionErr(
+            input.test_value,
+            nodeData,
+            "Query parameter"
+          );
+          if (isError && isError.length > 0) {
+            isError.forEach((err: any) => {
+              errors.push(err);
+            });
+          }
         }
 
         // Validate raw_payload
@@ -795,7 +826,19 @@ const WorkflowDesigner = (props: any) => {
               nodeData?.raw_payload &&
               typeof nodeData.raw_payload === "string"
             ) {
-              JSON.parse(nodeData.raw_payload);
+              const isError = validationFunctionErr(
+                nodeData.raw_payload,
+                nodeData,
+                "Input"
+              );
+              if (isError && isError.length > 0) {
+                isError.forEach((err: any) => {
+                  errors.push(err);
+                });
+              }
+              const input = changeValueToString(nodeData.raw_payload);
+
+              JSON.parse(input);
             }
           } catch (error: any) {
             errors.push(
@@ -1133,7 +1176,8 @@ const WorkflowDesigner = (props: any) => {
     if (workflowIndex !== -1 && workflowIndex + 1 < pathParts.length) {
       setWorkflowId(pathParts[workflowIndex + 1]); // The next part will be the workflowId
       resetWorkFlowState("copiedData");
-      // resetWorkFlowState("selectedFlowIds");
+      resetWorkFlowState("selectedFlowIds");
+      setMultiSelectClicked(false);
     }
   }, [pathname]);
 
@@ -1368,8 +1412,32 @@ const WorkflowDesigner = (props: any) => {
   const closeContextMenuHandler = () => {
     setContextMenu({ show: false, x: 0, y: 0 });
   };
+
+  const handleClickOutside = (event: any) => {
+    setContextMenu({ show: false, x: 0, y: 0 });
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event?.key === "Escape" && contextMenu.show) {
+      closeContextMenuHandler();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [contextMenu?.show]);
+
   const { openPosts, setopenPostAnchorEl, openPostAnchorEl } =
     useWorkflowPost();
+  const [currentNodePosition, setcurrentNodePosition] = useState<any>(null);
+  const selectorRef = useRef<Selecto>(null);
 
   return (
     <Grid
@@ -1417,6 +1485,7 @@ const WorkflowDesigner = (props: any) => {
             />
           </Grid>
           <Grid
+            id="react-flow-wrapper"
             ref={reactFlowWrapperMenu}
             onContextMenu={openContextMenuHandler}
             sx={{
@@ -1464,7 +1533,9 @@ const WorkflowDesigner = (props: any) => {
                       isBackdrop={true}
                     />
                   )} */}
+
                   <div
+                    className="elements"
                     style={{
                       width: "100%",
                       height: "100%",
@@ -1478,15 +1549,30 @@ const WorkflowDesigner = (props: any) => {
                   >
                     {isEditable && multiSelectClicked && (
                       <Selecto
+                        // ref={selectorRef}
                         container={(document as any).getElementById(
                           "react-flow-container"
                         )}
+                        // dragContainer={".react-flow__node"}
+                        // container={document.body}
+                        // dragContainer={window}
                         selectableTargets={[".react-flow__node"]}
+                        // selectableTargets={["#react-flow-container"]}
                         selectByClick={false}
                         selectFromInside={false}
+                        // onDragStart={(e) => {
+                        //   if (e?.inputEvent.button !== 0) {
+                        //     return false;
+                        //   }
+                        //   if (e.inputEvent.target.nodeName === "BUTTON") {
+                        //     return false;
+                        //   }
+                        //   return true;
+                        // }}
                         continueSelect={false}
-                        toggleContinueSelect={"shift"}
+                        toggleContinueSelect={["shift"]}
                         hitRate={0}
+                        ratio={0}
                         onSelect={(e) => {
                           const selectedIds = e.selected.map((el) =>
                             el.getAttribute("data-id")
@@ -1552,13 +1638,20 @@ const WorkflowDesigner = (props: any) => {
                       maxZoom={3.5}
                       minZoom={0.2}
                       onNodeDrag={(event, dragNode) => {
+                        setcurrentNodePosition(dragNode.position);
                         onDragStart(event, dragNode);
                       }}
                       onNodeDragStop={(event, dragNode) => {
-                        if (isEditable && !nodeFunctions.id) {
+                        if (
+                          isEditable &&
+                          !nodeFunctions.id &&
+                          currentNodePosition
+                        ) {
                           handleStoredNodeUpdate();
+                          setcurrentNodePosition(null);
                         }
                         onDragEnd(event, dragNode);
+                        // currentNodePosition = null;
                       }}
                     >
                       {Array.from(cursors?.entries()).map(

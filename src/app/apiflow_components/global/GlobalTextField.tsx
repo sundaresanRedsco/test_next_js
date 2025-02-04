@@ -117,7 +117,12 @@
 
 import React from "react";
 import { styled } from "@mui/system";
-import { FormControl, FormHelperText, TextField } from "@mui/material";
+import {
+  FormControl,
+  FormHelperText,
+  OutlinedInput,
+  TextField,
+} from "@mui/material";
 
 interface GlobalTextFieldProps {
   name: string;
@@ -138,6 +143,7 @@ interface GlobalTextFieldProps {
   onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   errorHandler?: (message: string) => void;
   fontSize?: string; // Add fontSize prop
+  color?: string;
 }
 
 const StyledFormControl = styled(FormControl)`
@@ -146,10 +152,14 @@ const StyledFormControl = styled(FormControl)`
 `;
 
 // background-color: #ffffff;
-const CustomOutlinedInput = styled(TextField)<{ fontSize?: string }>`
+// const CustomOutlinedInput = styled(TextField)<{
+const CustomOutlinedInput = styled(OutlinedInput)<{
+  fontSize?: string;
+  color?: string;
+}>`
   padding: 6px 8px; /* Reduced padding */
   font-size: ${({ fontSize }) => fontSize || "0.4rem"}; // Smaller font size
-  color: #eeeeee;
+  color: ${({ color }) => `#${color}` || "#eeeeee"}; // Default color
   border-radius: 5px;
   height: 2.5rem;
   border: 0.5px solid #eeeeee;
@@ -168,7 +178,7 @@ const CustomOutlinedInput = styled(TextField)<{ fontSize?: string }>`
   }
 
   &::placeholder {
-    color: black;
+    color: #eeeeee;
     opacity: 1;
   }
 
@@ -198,6 +208,7 @@ const GlobalTextField: React.FC<GlobalTextFieldProps> = ({
   onKeyUp,
   errorHandler,
   fontSize,
+  color,
 }) => {
   return (
     <StyledFormControl style={{ marginTop: "10px", width }}>
@@ -218,9 +229,10 @@ const GlobalTextField: React.FC<GlobalTextFieldProps> = ({
         onKeyUp={onKeyUp}
         style={{ height, color: "white" }}
         fontSize={fontSize || "0.4rem"} // Default to smaller font size
-        InputLabelProps={{
-          style: { fontSize: "0.6rem", color: "white" }, // Smaller label font size
-        }}
+        // InputLabelProps={{
+        //   style: { fontSize: "0.6rem" }, // Smaller label font size
+        // }}
+        // color={color || "EEEEEE"}
       />
       {error && (
         <FormHelperText style={{ fontSize: "0.4rem" }} error>

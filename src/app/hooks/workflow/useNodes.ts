@@ -17,60 +17,64 @@ export default function useNodes({ nodeData }: any) {
     RootStateType,
     FlowReducer
   >((state) => state.apiManagement.apiFlowDesign);
-  const onClick = useCallback(() => {
-    const nodeToRemoveId = nodeData?.id;
-    // Find edges connected to the node being removed
-    const edgesToRemove = getEdges().filter(
-      (edge) => edge.source === nodeToRemoveId || edge.target === nodeToRemoveId
-    );
+  const onClick = useCallback(
+    (e: any) => {
+      e.stopPropagation();
+      const nodeToRemoveId = nodeData?.id;
+      // Find edges connected to the node being removed
+      const edgesToRemove = getEdges().filter(
+        (edge) =>
+          edge.source === nodeToRemoveId || edge.target === nodeToRemoveId
+      );
 
-    const payload = {
-      nodes: [{ id: nodeToRemoveId }], // Node to be removed
-      edges: edgesToRemove.map((edge) => ({ id: edge.id })), // Edges connected to the node
-    };
+      const payload = {
+        nodes: [{ id: nodeToRemoveId }], // Node to be removed
+        edges: edgesToRemove.map((edge) => ({ id: edge.id })), // Edges connected to the node
+      };
 
-    // Delete the node and its associated edges
-    // deleteElements(payload);
+      // Delete the node and its associated edges
+      // deleteElements(payload);
 
-    let updatedNode: any = {
-      action: "DELETE_NODES",
-      status: "null",
-      id: nodeToRemoveId,
-      // flow_id: apiFlowId,
-      nodes: {
+      let updatedNode: any = {
+        action: "DELETE_NODES",
+        status: "null",
         id: nodeToRemoveId,
-      },
-    };
+        // flow_id: apiFlowId,
+        nodes: {
+          id: nodeToRemoveId,
+        },
+      };
 
-    const edgeMap = flowYdoc?.getMap<any>("edges");
-    if (edgeMap) {
-      edgesToRemove.forEach((edge) => {
-        let updatedEdge: any = {
-          action: "DELETE_EDGES",
-          status: "null",
-          // flow_id: apiFlowId,
-          edges: { id: edge.id }, // Assuming edge.id is the id of the current edge
-        };
-        edgeMap.set(edge.id, updatedEdge); // Assuming edge.id is the key
-      });
-    } else {
-      console.log("Yjs Map 'edges' is not initialized.");
-    }
+      const edgeMap = flowYdoc?.getMap<any>("edges");
+      if (edgeMap) {
+        edgesToRemove.forEach((edge) => {
+          let updatedEdge: any = {
+            action: "DELETE_EDGES",
+            status: "null",
+            // flow_id: apiFlowId,
+            edges: { id: edge.id }, // Assuming edge.id is the id of the current edge
+          };
+          edgeMap.set(edge.id, updatedEdge); // Assuming edge.id is the key
+        });
+      } else {
+        console.log("Yjs Map 'edges' is not initialized.");
+      }
 
-    const nodesMap = flowYdoc?.getMap<any>("nodes");
-    if (nodesMap) {
-      nodesMap?.set(nodeToRemoveId, updatedNode);
-      setNodeFunction({
-        id: nodeToRemoveId,
-        method: "DELETE_NODES",
-        obj: null,
-      });
-    } else {
-      console.log("Yjs Map 'run' is not initialized.");
-    }
-
-    removeFlowId(nodeToRemoveId);
-  }, [nodeData?.id, deleteElements, getEdges]);
+      const nodesMap = flowYdoc?.getMap<any>("nodes");
+      if (nodesMap) {
+        removeFlowId(nodeToRemoveId);
+        nodesMap?.set(nodeToRemoveId, updatedNode);
+        setNodeFunction({
+          id: nodeToRemoveId,
+          method: "DELETE_NODES",
+          obj: null,
+        });
+      } else {
+        console.log("Yjs Map 'run' is not initialized.");
+      }
+    },
+    [nodeData?.id, deleteElements, getEdges]
+  );
 
   function isValidConnection(connection: Connection) {
     const { source, target } = connection;
@@ -121,6 +125,7 @@ export default function useNodes({ nodeData }: any) {
     inputErr && inputErr["edge"]
       ? inputErr["edge"]?.some((err: any) => err.isErr == true)
       : false;
+
   // const showErr = isHeaderErr || isParamsErr || isInputErr;
   // console.log(isHeaderErr, isParamsErr, isInputErr, nodeData?.id, "showErr");
   const [showErr, setshowErr] = useState(false);

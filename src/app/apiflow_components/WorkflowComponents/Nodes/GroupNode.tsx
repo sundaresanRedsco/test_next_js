@@ -267,7 +267,7 @@ export default function GroupNode({ data }: Props) {
                   marginTop: "7px",
                 }}
                 onClick={() => {
-                  setCutClicked(true);
+                  setCutClicked(nodeData?.id, true);
                   handleCopyNodes(true);
                 }}
               />

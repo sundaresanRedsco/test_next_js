@@ -16,6 +16,10 @@ import useTextEditor from "@/app/hooks/useTextEditor";
 import useNodes from "@/app/hooks/workflow/useNodes";
 import useNodeErr from "@/app/hooks/workflow/useNodeErr";
 import { useWorkflowStore } from "@/app/store/useWorkflowStore";
+import {
+  validateFQLFunctionSyntax,
+  validateTernarySyntax,
+} from "@/app/Helpers/helpersFunctions";
 
 interface ObjectToSuggest {
   firstName: string;
@@ -71,7 +75,9 @@ const FQL_FUNCTIONS = [
   },
   // Add more functions as needed
 ];
-
+const validFunctions = FQL_FUNCTIONS.map(
+  (elem: any) => elem.name.split("(")[0]
+);
 const getNestedKeys = (obj: any, prefix = ""): string[] => {
   if (obj == null) {
     return [];
@@ -440,6 +446,7 @@ const AceEditorComponent = (props: any) => {
   const handleInputTypeChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
+    event.stopPropagation();
     const newInputType = event.target.value as "json" | "text" | "array";
     setInputType(newInputType);
 
@@ -457,6 +464,7 @@ const AceEditorComponent = (props: any) => {
   };
 
   const { handleBraces } = useTextEditor();
+  const [tempAnnotations, settempAnnotations] = useState<any>([]);
   useEffect(() => {
     const setErrorAnnotations = (editor: any) => {
       const annotations = [];
@@ -527,7 +535,6 @@ const AceEditorComponent = (props: any) => {
           const sanitizedInput = cleanedInput
             .replace(/&[a-zA-Z_][a-zA-Z0-9_]*\([^\)]*\)/g, '""')
             .replace(/\{([a-zA-Z0-9_.\[\]]+)\}/g, '""');
-
           JSON.parse(sanitizedInput);
           setJsonError("");
         } catch (e: any) {
@@ -568,9 +575,10 @@ const AceEditorComponent = (props: any) => {
           }
         }
       }
-
+      validateFQLFunctionSyntax({ isAnnotations: true, annotations, input });
       // Step 3: Set annotations in Ace Editor
       editor.getSession().setAnnotations(annotations);
+      settempAnnotations(annotations);
     };
 
     if (editorRef.current) {
@@ -592,7 +600,7 @@ const AceEditorComponent = (props: any) => {
   }, [popoverPosition]);
 
   const { arr, setArr } = useGlobalStore();
-  const customCompleter = () => {
+  const customCompleter: any = () => {
     return {
       getCompletions: (
         editor: any,
@@ -626,26 +634,33 @@ const AceEditorComponent = (props: any) => {
     });
 
     editor.commands.on("afterExec", function (e: any) {
-      const cursorPosition = editor.getCursorPosition();
-      const row = cursorPosition.row;
+      const cursorposition = editor.getCursorPosition();
+      if (e.command.name == "backspace") {
+        const editor = editorRef.current.editor;
+        const cursorPosition = editor.session.selection.getCursor();
+        const cursor = editor.session.doc.positionToIndex(cursorPosition);
+        setCursorPosition(cursor - 1);
+      }
+
+      const row = cursorposition.row;
       const lineText = editor.session.getLine(row);
       let lastOpenBrace = -1;
-      for (let i = cursorPosition.column - 1; i >= 0; i--) {
+      for (let i = cursorposition.column - 1; i >= 0; i--) {
         if (lineText[i] === "{") {
           lastOpenBrace = i;
           break;
         }
       }
       let lastAnd = -1;
-      for (let i = cursorPosition.column - 1; i >= 0; i--) {
+      for (let i = cursorposition.column - 1; i >= 0; i--) {
         if (lineText[i] === "&") {
           lastAnd = i;
           break;
         }
       }
-      const startAndText = lineText.substring(lastAnd, cursorPosition.column);
+      const startAndText = lineText.substring(lastAnd, cursorposition.column);
       const startText = lineText
-        .substring(lastOpenBrace, cursorPosition.column)
+        .substring(lastOpenBrace, cursorposition.column)
         .replace("{", "");
       const andMatch = startAndText.match(/([&\w]+)$/);
       const match = startText.match(/(\w+(\[\d+\])?)(\.\w+(\[\d+\])?)*/);
@@ -659,10 +674,25 @@ const AceEditorComponent = (props: any) => {
           .map((key) => key.substring(prefix.length));
 
         if (andMatch && andMatch[0].includes("&")) {
+          const text = lineText.trim();
+          const andIndex = text.indexOf(startAndText);
+          const nextToAnd = text
+            .substring(andIndex)
+            .replace(startAndText, "")[0];
+          const isExist = !!(
+            text.substring(andIndex, text.indexOf("(")).indexOf(startAndText) ==
+            0
+          );
+          const isNotFunction = (nextToAnd && nextToAnd == "(") || isExist;
+
           const prefix = andMatch[0].replace("&", "");
+          const suggestionArr =
+            prefix && isNotFunction
+              ? validFunctions
+              : FQL_FUNCTIONS.map((elem) => elem.name);
 
           setSuggestedKeys(
-            FQL_FUNCTIONS.map((elem) => elem.name)
+            suggestionArr
               .filter((key) =>
                 key.toLowerCase().trim().startsWith(prefix.toLowerCase().trim())
               )
@@ -688,10 +718,10 @@ const AceEditorComponent = (props: any) => {
       key: "input",
       value: {
         input: input,
-        isErr: jsonError ? true : false,
+        isErr: jsonError || tempAnnotations.length > 0 ? true : false,
       },
     });
-  }, [jsonError, nodeId]);
+  }, [jsonError, nodeId, tempAnnotations.length]);
 
   return (
     <>
@@ -753,6 +783,7 @@ const AceEditorComponent = (props: any) => {
               maxHeight: "180px",
               width: "380px",
             }}
+
             // markers={markers}
             // annotations={annotations} // Pass the annotations to the editor
           />

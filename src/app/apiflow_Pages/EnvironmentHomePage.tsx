@@ -19,6 +19,7 @@ import LinearSkeleton from "../apiflow_components/skeletons/LinearSkeleton";
 import { useRouter } from "next/navigation";
 import { CommonReducer } from "../Redux/commonReducer";
 import { workspaceReducer } from "../Redux/apiManagement/workspaceReducer";
+
 const ButtonPlusIcon = dynamic(
   () => import("@/app/Assests/icons/ButtonIcon.svg")
 );
@@ -121,7 +122,6 @@ const EnvironmentHomePage = () => {
     (state) => state.apiManagement.workspace
   );
 
-
   console.log(currentEnvironmentDetails, "currentEnvironmentsNwe");
   console.log(currentEnvironment, "sdcurrentEnvironmentsdsdw");
 
@@ -164,6 +164,23 @@ const EnvironmentHomePage = () => {
                 direction={{ xs: "column", sm: "row" }}
                 spacing={{ xs: 1, sm: 2, md: 4 }}
               >
+                <GlobalButton
+                  padding="6px 15px"
+                  label={"ProjectIntegration"}
+                  iconPosition="start"
+                  fontWeight={500}
+                  // type={"submit"}
+                  // buttonType="primary"
+                  // width={"100%"}
+                  background="#7A43FE26"
+                  color="#FFFFFF"
+                  marginRight="5px"
+                  border="solid 1px #FFFFFF40"
+                  icon={<ButtonPlusIcon />}
+                  onClickHandler={() => {
+                    router?.push(`${baseUrl}/projectIntegration`);
+                  }}
+                />
                 <GlobalButton
                   padding="6px 15px"
                   label={"New Environment"}

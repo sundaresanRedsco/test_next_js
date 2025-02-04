@@ -35,6 +35,7 @@ import { setRemoveTabs } from "@/app/Redux/tabReducer";
 import GlobalCircularLoader from "@/app/apiflow_components/global/GCircularLoader";
 import { environmentReducer } from "@/app/Redux/apiManagement/environmentReducer";
 import Image from "next/image";
+import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
 
 function IntegrationPage(props: any) {
   const { id, onCloseHandler } = props;
@@ -54,6 +55,10 @@ function IntegrationPage(props: any) {
 
   const { currentEnvironment } = useSelector<RootStateType, environmentReducer>(
     (state) => state.apiManagement.environment
+  );
+
+  const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
+    (state) => state.apiManagement.workspace
   );
 
   const type =
@@ -645,6 +650,7 @@ function IntegrationPage(props: any) {
         isFieldCreation: false,
         incident_tblname: "",
         project_id: currentEnvironment,
+        workspace_id: currentWorkspace?.id,
       };
 
       let jiraDataUpdata = {
@@ -694,16 +700,17 @@ function IntegrationPage(props: any) {
       let pagerDataCreate = {
         // user_id: userProfile?.user?.user_id,
         // tenant_id: userProfile?.user?.tenant_id,
+        url: "",
+        api_key: pagerValues?.api_key,
         type: "PAGER_DUTY",
         email: pagerValues?.email,
-        api_key: pagerValues?.api_key,
         escalation_id: pagerValues?.escalation_id,
         json_configuration: "",
-        url: "",
         servicenow_tblname: "",
-        isFieldCreation: false,
         incident_tblname: "",
+        isFieldCreation: false,
         project_id: currentEnvironment,
+        workspace_id: currentWorkspace?.id,
       };
 
       let pagerDataUpdata = {
@@ -733,6 +740,7 @@ function IntegrationPage(props: any) {
           });
       } else {
         //create api
+        console.log(pagerDataCreate, currentEnvironment, "pagerDataCreate");
         dispatch(CreateIntegration(pagerDataCreate))
           .unwrap()
           .then((createRes: any) => {
@@ -787,7 +795,8 @@ function IntegrationPage(props: any) {
 
   useEffect(() => {
     const data = {
-      tenant_id: userProfile?.user?.tenant_id,
+      // tenant_id: userProfile?.user?.tenant_id,
+      project_id: currentEnvironment,
       type: type,
       start: 1,
       end: 5,

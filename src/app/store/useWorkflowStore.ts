@@ -14,7 +14,7 @@ interface Store {
   // setDimensions: (value: any) => void;
   setDimension: (key: string, value: any) => void;
   selectedFlowIds: any;
-  addFlowId: any;
+  addFlowId: (newItem: any, type?: string) => void;
   removeFlowId: any;
   copiedData: any;
   setCopiedData: (state: any) => void;
@@ -36,8 +36,8 @@ interface Store {
   setParticularInputData: (key: any, value: any) => void;
   getParticularInputData: (key: any, nestedKey: any, index: any) => void;
   setNestedInputData: (mainKey: any, nestedKey: any, value: any) => void;
-  cutClicked: boolean;
-  setCutClicked: (value: boolean) => void;
+  cutClicked: any;
+  setCutClicked: (key: any, value: boolean) => void;
   multiSelectClicked: boolean;
   setMultiSelectClicked: (value: boolean) => void;
   resetWorkFlowState: (value: any) => void;
@@ -52,7 +52,7 @@ const initialStates: any = {
   nodeErrors: {},
   inputdatas: {},
   copyClicked: {},
-  cutClicked: false,
+  cutClicked: {},
   multiSelectClicked: false,
 };
 export const useWorkflowStore = create<Store>((set, get) => ({
@@ -62,19 +62,27 @@ export const useWorkflowStore = create<Store>((set, get) => ({
   setNodeWithinFrame: (value) => set({ nodeWithinFrame: value }),
   setDimension: (key, value) =>
     set((prev) => ({ dimensions: { ...prev.dimensions, [key]: value } })),
-  addFlowId: (newItem: any, type?: string) => {
+  addFlowId: (newItem, type) => {
     set((prev) => {
-      const updatedFlowIds =
-        type == "groupNode"
-          ? [newItem, ...prev.selectedFlowIds]
-          : [...prev.selectedFlowIds, newItem];
+      const prevIds =
+        prev.selectedFlowIds.length > 0 ? [...prev.selectedFlowIds] : false;
+      const updatedFlowIds = prevIds ? [...prevIds, newItem] : [newItem];
+
       return { selectedFlowIds: updatedFlowIds };
     });
+    // set((prev) => {
+    //   const prevIds =
+    //     prev.selectedFlowIds.length > 0 ? [...prev.selectedFlowIds] : [];
+    //   const updatedFlowIds = prevIds.includes(newItem)
+    //     ? prevIds
+    //     : [...prevIds, newItem];
+    //   return { selectedFlowIds: updatedFlowIds };
+    // });
   },
   removeFlowId: (newItem: any) =>
     set((prev) => ({
       selectedFlowIds: prev.selectedFlowIds.filter(
-        (item: any) => item !== newItem
+        (item: any) => item != newItem
       ),
     })),
   setCopiedData: (newItem: any) => set((prev) => ({ copiedData: newItem })),
@@ -202,7 +210,13 @@ export const useWorkflowStore = create<Store>((set, get) => ({
           : { [key]: value },
       };
     }),
-  setCutClicked: (value: boolean) => set({ cutClicked: value }),
+  setCutClicked: (key, value) =>
+    set((prev) => {
+      const prevData = prev.cutClicked;
+      return {
+        cutClicked: prevData ? { ...prevData, [key]: value } : { [key]: value },
+      };
+    }),
   setMultiSelectClicked: (value: boolean) => set({ multiSelectClicked: value }),
   resetWorkFlowState: (name) => set({ [name]: initialStates[name] }),
 }));

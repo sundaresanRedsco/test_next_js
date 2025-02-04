@@ -867,3 +867,309 @@ export function parseTernaryExpressionFunc(expression: string): string {
 export function formatWorkspaceDate(val: string | any) {
   return moment(val).format("DD/MM/YYYY, hh:mm:ss A");
 }
+export const changeValueToString = (input: any) => {
+  let lines = input.split("\n");
+  let keys: any = [];
+  lines.forEach((line: any, index: number) => {
+    if (line.includes('":')) {
+      const key = line.split('":')[0];
+      keys.push(key);
+    }
+  });
+  lines.forEach((line: any, index: number) => {
+    if (line.includes('":')) {
+      const value = line.split('":')[1];
+      const key = line.split('":')[0];
+      if (value.split("").filter((char: any) => char == '"').length == 0) {
+        const customVal = index == keys.length ? `"${value}"` : `"${value}",`;
+        lines[index] = key + '":' + customVal;
+      }
+    }
+  });
+  return lines.join("\n");
+};
+export function validateTernarySyntax(input: any) {
+  const text = input.replace(/\s+/g, "");
+  let stack = [];
+  let hasTernary = false; // Flag to check if at least one ternary is found
+  let lastChar = ""; // To keep track of the last character seen to ensure expressions after ? and :
+
+  // Iterate over each character in the string
+  for (let i = 0; i < text.length; i++) {
+    let char = text[i];
+
+    if (char === "?") {
+      lastChar = text[i + 1];
+      stack.push("?"); // Push ? onto the stack
+      hasTernary = true; // We found a ternary operator
+
+      // Check if there is a valid expression before the ?
+      if (!lastChar || lastChar == ":" || lastChar == "?") {
+        return false; // Invalid if : is the first or after another :
+      }
+    } else if (char === ":") {
+      lastChar = text[i + 1];
+
+      // Check if there's a matching ? for this :
+      if (stack.length === 0 || stack[stack.length - 1] !== "?") {
+        return false; // No ? before this :, invalid ternary syntax
+      }
+      stack.pop(); // Pop the matching ? from the stack
+
+      // Check if there's a valid expression before the :
+      if (!lastChar || lastChar == ":" || lastChar == "?") {
+        return false; // Invalid if : is the first or after another :
+      }
+
+      // After the colon, there must be a valid expression (not just an empty or invalid character)
+      if (i + 1 < text.length && (text[i + 1] === " " || text[i + 1] === ":")) {
+        return false; // Invalid if there is nothing after the colon
+      }
+    }
+
+    // Skip spaces or other irrelevant characters
+    // if (char !== " ") {
+    //   lastChar = char; // Update the last character seen
+    // }
+  }
+
+  // If there are any unmatched ? left, it's invalid
+  if (stack.length > 0) {
+    return false;
+  }
+
+  // Ensure at least one ternary operator was found
+  if (!hasTernary) {
+    return false;
+  }
+
+  return true;
+}
+
+export function validateFQLFunctionSyntax({
+  isAnnotations,
+  annotations,
+  input,
+  isErr,
+  err,
+  nodeData,
+  textEditor,
+  seterrMsg,
+  type,
+}: any) {
+  const validFunctions = [
+    "appendArray",
+    "upperCase",
+    "lowerCase",
+    "parseJson",
+    "checkCondition",
+  ];
+  if (input && input.includes("&")) {
+    const lines = input.split("\n");
+
+    const isFunctionErr = lines.map((line: any, lineIndex: number) => {
+      let match;
+      const regex = /&([a-zA-Z]+)\((.*?)\)/g; // Regex to match &functionName(...)
+      // Check for all function calls in the line
+      while ((match = regex.exec(line)) !== null) {
+        const functionName = match[1];
+        const argumentsContent = match[2];
+        const position = match.index;
+        if (
+          functionName == "checkCondition" &&
+          match[0] &&
+          !validateTernarySyntax(argumentsContent)
+        ) {
+          if (isAnnotations) {
+            annotations.push({
+              row: lineIndex,
+              column: position,
+              text: `Function "${functionName}" contains invalid ternary operator at line ${
+                lineIndex + 1
+              }, position ${position + 1}`,
+              type: "error",
+            });
+          } else if (isErr) {
+            if (type == "input") {
+              err.push(
+                `In ${
+                  nodeData.node_name
+                } at ${type}, Function "${functionName}" has invalid ternary operator at line ${
+                  lineIndex + 1
+                }, position ${position + 1}.`
+              );
+            } else {
+              err.push(
+                `In ${nodeData.node_name} ${type}, Function "${functionName}" has invalid ternary operator.`
+              );
+            }
+          } else if (textEditor) {
+            seterrMsg("Invalid ternary operator");
+            return true;
+          }
+        }
+        // Check if the function name is valid
+        if (!validFunctions.includes(functionName)) {
+          if (isAnnotations) {
+            annotations.push({
+              row: lineIndex,
+              column: position,
+              text: `Invalid function "${functionName}" at line ${
+                lineIndex + 1
+              }, position ${position + 1}`,
+              type: "error",
+            });
+          } else if (isErr) {
+            if (type == "input") {
+              err.push(
+                `In ${
+                  nodeData.node_name
+                } ${type}, invalid function "${functionName}" at line ${
+                  lineIndex + 1
+                }, position ${position + 1}.`
+              );
+            } else {
+              err.push(
+                `In ${nodeData.node_name} ${type}, Function "${functionName}" is invalid .`
+              );
+            }
+          } else if (textEditor) {
+            seterrMsg("Invalid function");
+            return true;
+          }
+        }
+
+        // Check if the parentheses are empty
+        if (argumentsContent.trim() === "") {
+          if (isAnnotations) {
+            annotations.push({
+              row: lineIndex,
+              column: position,
+              text: `"${functionName}" at line ${lineIndex + 1}, position ${
+                position + 1
+              } has empty parentheses.`,
+              type: "error",
+            });
+          } else if (isErr) {
+            if (type == "input") {
+              err.push(
+                `In ${
+                  nodeData.node_name
+                } ${type}, Function "${functionName}" at line ${
+                  lineIndex + 1
+                }, position ${position + 1} has empty parentheses.`
+              );
+            } else {
+              err.push(
+                `In ${nodeData.node_name} ${type}, Function "${functionName}" has empty parentheses.`
+              );
+            }
+          } else if (textEditor) {
+            seterrMsg("Has empty parentheses");
+            return true;
+          }
+        } else if (
+          functionName == "appendArray" &&
+          (argumentsContent[0] != "[" ||
+            argumentsContent[argumentsContent.length - 1] != "]")
+        ) {
+          if (isAnnotations) {
+            annotations.push({
+              row: lineIndex,
+              column: position,
+              text: `The value passed in "${functionName}" must be a valid array at line ${
+                lineIndex + 1
+              }, position ${position + 1}`,
+              type: "error",
+            });
+          } else if (isErr) {
+            if (type == "input") {
+              err.push(
+                `In ${
+                  nodeData.node_name
+                } ${type}, Function "${functionName}" at line ${
+                  lineIndex + 1
+                }, position ${
+                  position + 1
+                } the value passed inside parentheses must be a valid array.`
+              );
+            } else {
+              err.push(
+                `In ${nodeData.node_name} ${type}, Function "${functionName}" must have valid array inside parentheses.`
+              );
+            }
+          } else if (textEditor) {
+            seterrMsg("Value inside parentheses must be a valid array");
+            return true;
+          }
+        } else if (
+          functionName == "appendArray" &&
+          argumentsContent.includes("[") &&
+          argumentsContent.includes("]") &&
+          !argumentsContent.substring(1, argumentsContent.length - 1)
+        ) {
+          if (isAnnotations) {
+            annotations.push({
+              row: lineIndex,
+              column: position,
+              text: `The Function "${functionName}" must have least one element at line ${
+                lineIndex + 1
+              }, position ${position + 1}`,
+              type: "error",
+            });
+          } else if (isErr) {
+            if (type == "input") {
+              err.push(
+                `In ${
+                  nodeData.node_name
+                } ${type}, Function "${functionName}" at line ${
+                  lineIndex + 1
+                }, position ${position + 1} must have least one element.`
+              );
+            } else {
+              err.push(
+                `In ${nodeData.node_name} ${type}, Function "${functionName}" must have least one element.`
+              );
+            }
+          } else if (textEditor) {
+            seterrMsg("Must have atleast one element in the array");
+            return true;
+          }
+        }
+      }
+
+      // Check for any invalid use of "&" that's not followed by a valid function call
+      // This checks for cases like "& someText", "& wrongFunction", or just "&"
+      const invalidAmpersandRegex = /&(?![a-zA-Z]+\(.*\))/g;
+      while ((match = invalidAmpersandRegex.exec(line)) !== null) {
+        const position = match.index;
+        if (isAnnotations) {
+          annotations.push({
+            row: lineIndex,
+            column: position,
+            text: `Invalid "&" usage at line ${lineIndex + 1}, position ${
+              position + 1
+            }`,
+            type: "error",
+          });
+        } else if (isErr) {
+          if (type == "input") {
+            err.push(
+              `In ${nodeData.node_name} ${type}, Invalid "&" usage at line ${
+                lineIndex + 1
+              }, position ${position + 1}.`
+            );
+          } else {
+            err.push(`In ${nodeData.node_name} ${type}, Invalid "&" usage.`);
+          }
+        } else if (textEditor) {
+          seterrMsg(`Invalid "&" usage`);
+          return true;
+        }
+      }
+    });
+    if (textEditor) {
+      return isFunctionErr[0];
+    }
+  }
+}

@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { CommonReducer } from "@/app/Redux/commonReducer";
 import WorkflowPosts from "@/app/apiflow_components/WorkflowComponents/workflowPosts";
-import { IconButton, Popover } from "@mui/material";
+import { Box, IconButton, Popover } from "@mui/material";
 import { ChatBubble } from "@mui/icons-material";
 import useWorkflowPost from "@/app/hooks/posts/useWorkflowPost";
 // Import the helper functions
@@ -127,36 +127,43 @@ export default function HomeChannel(props: any) {
   return (
     <div>
       {Array.isArray(channels) &&
-        channels.map((x: any) => (
-          <p
-            style={{ color: "white" }}
+        channels.map((x: any, index: any) => (
+          <Box
+            sx={{
+              color: "white",
+              cursor: "pointer",
+              paddingY: 2,
+              borderBottom: "1.5px dashed gray",
+            }}
             onClick={() => {
               setCurrentChannel(x);
               setChannelId(x.id);
             }}
           >
-            {x?.channel_name}
-          </p>
+            {index + 1 + " . " + x?.channel_name}
+          </Box>
         ))}
 
-      <IconButton
-        aria-owns={currentChannel?.id}
-        aria-haspopup={true}
-        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-          setopenPostAnchorEl(event.currentTarget);
-        }}
-        sx={{
-          position: "absolute",
-          right: 20,
-          bottom: 20,
-          zIndex: 1,
-          background:
-            "linear-gradient(90deg, rgb(155, 83, 176) 0%, rgb(122, 67, 254) 100%)",
-          color: "white",
-        }}
-      >
-        <ChatBubble />
-      </IconButton>
+      {currentChannel && (
+        <IconButton
+          aria-owns={currentChannel?.id}
+          aria-haspopup={true}
+          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+            setopenPostAnchorEl(event.currentTarget);
+          }}
+          sx={{
+            position: "absolute",
+            right: 20,
+            bottom: 20,
+            zIndex: 1,
+            background:
+              "linear-gradient(90deg, rgb(155, 83, 176) 0%, rgb(122, 67, 254) 100%)",
+            color: "white",
+          }}
+        >
+          <ChatBubble />
+        </IconButton>
+      )}
       <Popover
         id={currentChannel?.id}
         open={openPosts}

@@ -59,12 +59,40 @@ export default function useSelectNodes({
     nodeIdMapping: any,
     newGrpNodes: any
   ) => {
-    copiedData?.nodes?.forEach((tempData: any, index: number) => {
+    console.log(
+      copiedData?.nodes,
+      selectedFlowIds,
+      "copiedNodesValue123CopiedData"
+    );
+
+    const filteredNodes = copiedData?.nodes?.filter(
+      (node: any) => node?.type !== "startButtonNode"
+    );
+
+    filteredNodes?.forEach((tempData: any, index: number) => {
       const isGroupNode = tempData?.type == "groupNode";
       const hasParentId = tempData?.parentId != undefined;
+      let customPosition = position;
+      if (index != 0) {
+        const prevX = copiedData?.nodes[index - 1].position.x;
+        const diffOfX = tempData.position.x - prevX;
+        customPosition.x = diffOfX + position.x;
+        console.log(
+          {
+            prevX: prevX,
+            index: index,
+            tempDataPos: tempData?.position.x,
+            diffOfX: diffOfX,
+            cusPos: customPosition.x,
+            position: position,
+            copiedData: copiedData?.nodes,
+          },
+          "POSITIONISSUE"
+        );
+      }
 
       const node_name = isGroupNode
-        ? generateGroupNodeName()
+        ? generateGroupNodeName(tempData)
         : getUniqueNodeName(tempData, nodes);
 
       if (
@@ -78,12 +106,14 @@ export default function useSelectNodes({
           tempData,
           id,
           node_name,
-          position,
+          customPosition,
           hasParentId,
           index,
           newGrpNodes,
           isGroupNode
         );
+
+        console.log(newNode, "copiedNodesValue123NewNode");
 
         const parsedData = JSON?.parse(newNode?.data);
 
@@ -101,11 +131,39 @@ export default function useSelectNodes({
     });
   };
 
-  const generateGroupNodeName = () => {
-    const groupNodeNames = nodes
-      .filter((node: any) => node.type === "groupNode")
-      .map((node: any) => node?.name);
-    return `Frame ${groupNodeNames.length}`;
+  const generateGroupNodeName = (tempData: any): string => {
+    // const groupNodeNames = nodes
+    //   .filter((node: any) => node.type === "groupNode")
+    //   .map((node: any) => node?.name);
+    // return `Frame ${groupNodeNames.length}`;
+    // const baseName = "Frame";
+    // let suffixCount = 0;
+
+    // while (
+    //   nodes?.some(
+    //     (node: any) =>
+    //       node?.type === "groupNode" &&
+    //       node?.name === `${baseName} ${suffixCount}`
+    //   )
+    // ) {
+    //   suffixCount++;
+    // }
+    // return suffixCount === 0 ? baseName : `${baseName} ${suffixCount}`;
+
+    const baseName = tempData?.name;
+    let currentName = baseName;
+    let suffixCount = 0;
+
+    while (
+      nodes.some(
+        (node: any) => node?.type === "groupNode" && node.name === currentName
+      )
+    ) {
+      suffixCount++;
+      currentName = `${baseName}_${suffixCount}`;
+    }
+
+    return currentName;
   };
 
   const getUniqueNodeName = (tempData: any, nodes: any[]): string => {
@@ -138,14 +196,14 @@ export default function useSelectNodes({
       position: hasParentId
         ? tempData.position
         : {
-            x: position?.x + index * 20,
-            y: position?.y + index * 20,
+            x: position?.x,
+            y: position?.y,
           },
       positionAbsolute: hasParentId
         ? tempData.positionAbsolute
         : {
-            x: position?.x + index * 20,
-            y: position?.y + index * 20,
+            x: position?.x,
+            y: position?.y,
           },
       status: "null",
       flow_id: apiFlow_Id,
@@ -197,8 +255,6 @@ export default function useSelectNodes({
       id: id,
       nodes: newNode,
     };
-
-    console.log(newNode, "AWARENSSDATA");
 
     nodeMap?.set(updatedNode?.id, updatedNode);
 
