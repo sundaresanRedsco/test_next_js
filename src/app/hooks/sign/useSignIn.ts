@@ -106,8 +106,8 @@ export default function useSignIn() {
   }, []);
 
   const handleSuccess = (response: any) => {
-    let token = response.access_token;
-    console.log(response.credential, "response.login");
+    let token = response.token_id;
+    console.log(response.access_token, "response.login");
     let email = "null";
     let password = "null";
     let token_type = "GOOGLE";

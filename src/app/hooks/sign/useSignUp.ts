@@ -233,7 +233,7 @@ export default function useSignUp() {
   }, []);
 
   const handleSuccess = (response: any) => {
-    let token = response.credential;
+    let token = response.token_id;
     console.log(response.credential, "response.login");
     let email = "null";
     let password = "null";
