@@ -162,9 +162,11 @@ export default function useGroupNodes({
         const currentGroupNode = prevNodes.find(
           (prevNode: any) => prevNode.id === dragNode?.parentId
         );
+
         const position = {
           x:
             (currentGroupNode?.position?.x || 0) + (dragNode?.position?.x || 0),
+
           y:
             (currentGroupNode?.position?.y || 0) + (dragNode?.position?.y || 0),
         };

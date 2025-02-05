@@ -835,33 +835,11 @@ export default function WorkflowOperationNode({ data }: any) {
     );
   }
 
-  const safeJSONParse = (input: string) => {
-    if (!input) return {};
-
-    try {
-      return JSON.parse(input, (key, value) => {
-        // If value is already a string, return it as is
-        if (typeof value === "string") {
-          // Check if it's a function call (starts with &functionName(...))
-          if (value.startsWith("&")) {
-            return value; // Keep function calls as is
-          }
-          return `"${value}"`; // Wrap normal values in quotes
-        }
-        return value;
-      });
-    } catch (error) {
-      console.error("Error parsing JSON:", error);
-      return {};
-    }
-  };
-
   const RunHandler = () => {
     let payload;
     console.log(nodeData?.raw_payload, "nodeData?.raw_payload");
     try {
-      payload = JSON.parse(nodeData?.raw_payload || "{}");
-      // payload = safeJSONParse(nodeData.raw_payload);
+      payload = JSON.parse(changeValueToString(nodeData?.raw_payload) || "{}");
       // payload = nodeData?.raw_payload;
     } catch (error: any) {
       toast.error(
@@ -1686,12 +1664,12 @@ export default function WorkflowOperationNode({ data }: any) {
                 }}
               />
             </IconButton>
-
-            <ChangeCircleOutlinedIcon
-              style={{
-                color: `${theme.palette.v2PrimaryColor.main}`,
-                fontSize: "18px",
+            <IconButton
+              sx={{
+                height: "18px",
+                width: "18px",
               }}
+              size="small"
               onClick={(event) => {
                 event.stopPropagation();
                 let data = {
@@ -1716,19 +1694,38 @@ export default function WorkflowOperationNode({ data }: any) {
                     toast.error("no data found");
                   });
               }}
-            />
-            <PlayArrowIcon
-              style={{
-                color: `#FFFFFF`,
-                fontSize: "18px",
-                backgroundColor: "#7E59DC",
-                borderRadius: "4px",
-              }}
+            >
+              <ChangeCircleOutlinedIcon
+                style={{
+                  color: `${theme.palette.v2PrimaryColor.main}`,
+                  fontSize: "18px",
+                }}
+              />
+            </IconButton>
+
+            <IconButton
               onClick={(event) => {
                 event.stopPropagation();
                 RunHandler();
               }}
-            />
+              sx={{
+                color: `#FFFFFF`,
+                backgroundColor: "#7E59DC",
+                borderRadius: "4px",
+                "&:hover": {
+                  backgroundColor: "#6c49c2",
+                },
+                height: "18px",
+                width: "18px",
+              }}
+              size="small"
+            >
+              <PlayArrowIcon
+                style={{
+                  fontSize: "18px",
+                }}
+              />
+            </IconButton>
           </Box>
         </Box>
 

@@ -881,11 +881,18 @@ export const changeValueToString = (input: any) => {
       const value = line.split('":')[1];
       const key = line.split('":')[0];
       if (value.split("").filter((char: any) => char == '"').length == 0) {
-        const customVal = index == keys.length ? `"${value}"` : `"${value}",`;
+        let customVal = value;
+        if (value[value.length - 1] == ",") {
+          customVal = `"${value.substring(0, value.length - 1)}",`;
+        } else {
+          customVal = `"${value}"`;
+        }
+
         lines[index] = key + '":' + customVal;
       }
     }
   });
+  console.log("showErr-json", lines.join("\n"));
   return lines.join("\n");
 };
 export function validateTernarySyntax(input: any) {

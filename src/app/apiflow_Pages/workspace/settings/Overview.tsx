@@ -133,8 +133,6 @@ function OverView() {
     currentWorkspace?.profile_picture
   );
   const [isChannel, setIschannel] = useState(true);
-  console.log(isChannel,"isToggledsds");
-  
 
   const [data, setData] = useState({
     name: currentWorkspace?.name,
@@ -226,7 +224,7 @@ function OverView() {
         name: data?.name,
         descriptions: data?.description,
         profile_picture: avatarImage,
-        is_channel:isChannel
+        is_channel: isChannel,
       },
     };
 
@@ -330,7 +328,9 @@ function OverView() {
   useEffect(() => {
     dispatch(GetWorkspacesById(currentWorkspace?.id as string))
       .unwrap()
-      .then((getRes: any) => {})
+      .then((getRes: any) => {
+        console.log(getRes, "getRes");
+      })
       .catch((error: any) => {
         console.log("Error: ", error);
       });

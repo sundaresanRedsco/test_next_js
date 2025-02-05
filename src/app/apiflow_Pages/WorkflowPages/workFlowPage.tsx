@@ -725,7 +725,11 @@ const WorkflowDesigner = (props: any) => {
   const { selectedFlowIds, addFlowId } = useWorkflowStore();
 
   useEffect(() => {
-    if (dropItem?.id && currentFlowDetails?.project_id) {
+    if (
+      dropItem?.id &&
+      currentFlowDetails?.project_id &&
+      dropItem?.id !== 123
+    ) {
       dispatch(
         GetOperationById({
           operation_id: dropItem?.id,

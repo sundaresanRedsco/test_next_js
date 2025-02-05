@@ -11,6 +11,8 @@ import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import { BiCopy } from "react-icons/bi";
 import { BiCut } from "react-icons/bi";
 import useReusableFunctions from "@/app/hooks/workflow/useReusableFunctions";
+import { BiLock } from "react-icons/bi";
+import { HiOutlineLockOpen } from "react-icons/hi2";
 
 export const TextTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
@@ -57,6 +59,8 @@ export default function GroupNode({ data }: Props) {
     setCopyClicked,
     setCutClicked,
     copyClicked,
+    frameLockClicked,
+    setFrameLockClicked,
   } = useWorkflowStore();
 
   const childNodes = getNodes().filter((node) => node.parentId == nodeData?.id);
@@ -209,6 +213,8 @@ export default function GroupNode({ data }: Props) {
     setIsCopied(copyClicked[nodeData?.id]);
   }, [copyClicked]);
 
+  console.log(frameLockClicked, "frameLockClicked");
+
   return (
     <>
       <NodeResizer
@@ -271,6 +277,31 @@ export default function GroupNode({ data }: Props) {
                   handleCopyNodes(true);
                 }}
               />
+            </>
+          )}
+          {isEditable && (
+            <>
+              {frameLockClicked[nodeData?.id] ? (
+                <BiLock
+                  style={{
+                    cursor: "pointer",
+                    marginTop: "7px",
+                  }}
+                  onClick={() => {
+                    setFrameLockClicked(nodeData?.id, false);
+                  }}
+                />
+              ) : (
+                <HiOutlineLockOpen
+                  style={{
+                    cursor: "pointer",
+                    marginTop: "7px",
+                  }}
+                  onClick={() => {
+                    setFrameLockClicked(nodeData?.id, true);
+                  }}
+                />
+              )}
             </>
           )}
         </Box>

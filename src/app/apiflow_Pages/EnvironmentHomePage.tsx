@@ -126,7 +126,7 @@ const EnvironmentHomePage = () => {
   console.log(currentEnvironment, "sdcurrentEnvironmentsdsdw");
 
   const router = useRouter();
-  const baseUrl = `/userId/${userProfile.user.user_id}/workspaceId/${currentWorkspace?.id}/project`;
+  const baseUrl = `/userId/${userProfile.user.user_id}/workspaceId/${currentWorkspace?.id}/environment`;
 
   return (
     <div>
@@ -164,7 +164,7 @@ const EnvironmentHomePage = () => {
                 direction={{ xs: "column", sm: "row" }}
                 spacing={{ xs: 1, sm: 2, md: 4 }}
               >
-                <GlobalButton
+                {/* <GlobalButton
                   padding="6px 15px"
                   label={"ProjectIntegration"}
                   iconPosition="start"
@@ -180,7 +180,7 @@ const EnvironmentHomePage = () => {
                   onClickHandler={() => {
                     router?.push(`${baseUrl}/projectIntegration`);
                   }}
-                />
+                /> */}
                 <GlobalButton
                   padding="6px 15px"
                   label={"New Environment"}
