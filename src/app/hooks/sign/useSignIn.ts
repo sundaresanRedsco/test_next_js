@@ -122,7 +122,6 @@ export default function useSignIn() {
       },
       body: new URLSearchParams({
         code: response.code,
-
         redirect_uri: "postmessage",
         grant_type: "authorization_code",
       }),
