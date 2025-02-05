@@ -122,7 +122,7 @@ export default function useSignIn() {
       },
       body: new URLSearchParams({
         code: response.code,
-        redirect_uri: "postmessage",
+        redirect_uri: Process.env.APP_BASE_URL,
         client_id: process.env.GOOGLE_CLIENT_ID as any,
         client_secret: process.env.GOOGLE_CLIENT_SECRET as any,
         grant_type: "authorization_code",
