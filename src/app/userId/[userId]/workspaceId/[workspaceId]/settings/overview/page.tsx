@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import OverviewPageSkeleton from "@/app/apiflow_components/skeletons/WorkspaceSettings/OverviewPageSkeleton";
 import OverviewSettings from "@/app/apiflow_Pages/pages/workspace/overwiewSettings";
@@ -14,9 +14,7 @@ const OverviewPage = dynamic(
   }
 );
 
-export default async function Home(context: {
-  searchParams: { tabs?: string };
-}) {
+export default function Home(context: { searchParams: { tabs?: string } }) {
   let allowedTabs: any[] = [];
   let userPermissions: any[] = [];
 

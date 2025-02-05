@@ -312,7 +312,6 @@ export default function useWorkflow({
       const data = {
         flow_id: apiFlow_Id,
         version_id: versionValue,
-        tenant_id: userProfile?.user?.tenant_id,
         project_id: currentFlowDetails?.project_id,
       };
 

@@ -3,7 +3,11 @@ import WorkflowOperationNode from "@/app/apiflow_components/WorkflowComponents/N
 import WorkflowStartNode from "@/app/apiflow_components/WorkflowComponents/Nodes/workflowStartNode";
 import ChangeEdge from "@/app/ApiFlowComponents/ApiDesigner/Edges/changeEdge";
 import CustomEdge from "@/app/ApiFlowComponents/ApiDesigner/Edges/customEdge";
-import { replacePlaceholders } from "@/app/Helpers/helpersFunctions";
+import {
+  changeValueToString,
+  // replacePlaceholders,
+} from "@/app/Helpers/helpersFunctions";
+import { replacePlaceholders } from "@/app/DesignHelpers/flowHelpers";
 import { AdminServices } from "@/app/Services/services";
 import * as Y from "yjs";
 import { v4 as uuidv4 } from "uuid";
@@ -32,6 +36,7 @@ export async function runHandler(
   project_id: string,
   workspace_id: string
 ) {
+  console.log(nodes, "RHNodes");
   const runMap = doc.getMap("run");
   const runData = runMap?.toJSON()?.run;
 
@@ -203,6 +208,9 @@ export async function processNode(
       globalKeysArray,
       globalResponse
     );
+    console.log(globalKeysArray, "PNglobalKeysArray");
+    console.log(globalResponse, "PNglobalResponse");
+    console.log(requestBody, "PNrequestBody");
     const operationSuccess = await performOperation(
       doc,
       currentEdge.target,
@@ -323,7 +331,7 @@ export function createRequestBody(
   let payload = {};
 
   try {
-    payload = JSON.parse(payloadStr);
+    payload = JSON.parse(changeValueToString(payloadStr));
   } catch (error) {
     console.error("Error parsing JSON payload:", payloadStr, error);
     // Set payload to empty object if parsing fails
@@ -375,10 +383,10 @@ export function createRequestBody(
           // previousEdgeResponse?.status == "SUCCESS"
           replacePlaceholders(item.test_value, { response }, globalKeysArray);
         // : item.test_value;
-        value =
-          typeof value === "object" || Array.isArray(value)
-            ? JSON.stringify(value)
-            : value?.toString();
+        // value =
+        //   typeof value === "object" || Array.isArray(value)
+        //     ? JSON.stringify(value)
+        //     : value?.toString();
         return { key, value };
       });
     }
@@ -392,6 +400,7 @@ export function createRequestBody(
       currentNode?.data?.operations_query_param
     ),
     payload: new_payload ? JSON.stringify(new_payload) : "",
+    // payload: new_payload ? new_payload : "",
   };
 }
 

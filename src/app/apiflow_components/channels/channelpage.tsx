@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
+import GMentionDropdown from "../global/GMentionDropdown";
 
 const HeadingTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
@@ -82,6 +83,8 @@ function Channel() {
   });
 
   console.log(channelData?.description, "ssdchannel_name");
+
+  const members = ["John", "Jane", "Jack", "Jill", "Michael", "Emily"];
 
   const handleAddParticipants = (val: any) => {
     setParticipants((prev) => [...prev, val]);
@@ -353,6 +356,10 @@ function Channel() {
               </Box>
             </Grid>
           </Grid>
+        </Box>
+        <Box>
+          <PrimaryTypography>@Searchable</PrimaryTypography>
+          <GMentionDropdown options={members} placeholder="Search..." />
         </Box>
         {/* <Grid
           size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}

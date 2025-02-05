@@ -72,6 +72,8 @@ export default function SignIn({ clientSession }: any) {
   const googleLogin = useGoogleLogin({
     onError: () => {},
     onSuccess: handleSuccess,
+    flow: "auth-code",
+    scope: "openid email profile",
   });
   return (
     <form

@@ -41,6 +41,8 @@ interface Store {
   multiSelectClicked: boolean;
   setMultiSelectClicked: (value: boolean) => void;
   resetWorkFlowState: (value: any) => void;
+  frameLockClicked: any;
+  setFrameLockClicked: (key: any, value: boolean) => void;
 }
 const initialStates: any = {
   storedNodes: [],
@@ -54,6 +56,7 @@ const initialStates: any = {
   copyClicked: {},
   cutClicked: {},
   multiSelectClicked: false,
+  frameLockClicked: {},
 };
 export const useWorkflowStore = create<Store>((set, get) => ({
   ...initialStates,
@@ -219,4 +222,13 @@ export const useWorkflowStore = create<Store>((set, get) => ({
     }),
   setMultiSelectClicked: (value: boolean) => set({ multiSelectClicked: value }),
   resetWorkFlowState: (name) => set({ [name]: initialStates[name] }),
+  setFrameLockClicked: (key, value) =>
+    set((prev) => {
+      const prevData = prev.frameLockClicked;
+      return {
+        frameLockClicked: prevData
+          ? { ...prevData, [key]: value }
+          : { [key]: value },
+      };
+    }),
 }));

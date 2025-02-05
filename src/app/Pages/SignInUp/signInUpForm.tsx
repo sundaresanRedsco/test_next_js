@@ -139,7 +139,7 @@ export function LoginForm() {
 
   const currentHost = typeof window !== "undefined" ? window.location.host : "";
   let CLIENT_ID = "";
-  if (currentHost.includes("test-next-js-syuo.vercel")) {
+  if (currentHost.includes("stage.apiflow.pro")) {
     // Use production URL if host includes stage.apiflow.url
     CLIENT_ID = stage;
   } else {
@@ -184,7 +184,7 @@ export function LoginForm() {
   const handleSuccess = (response: any) => {
     console.log("Google ID Token:", response.credential);
 
-    let token = response.token_id;
+    let token = response.credential;
     let email = "null";
     let password = "null";
     let token_type = "GOOGLE";
@@ -962,7 +962,7 @@ export function RegisterForm() {
 
   const currentHost = typeof window !== "undefined" ? window.location.host : "";
   let CLIENT_ID = "";
-  if (currentHost.includes("test-next-js-syuo.vercel")) {
+  if (currentHost.includes("stage.apiflow.pro")) {
     // Use production URL if host includes stage.apiflow.url
     CLIENT_ID = stage;
   } else {
@@ -1006,7 +1006,8 @@ export function RegisterForm() {
 
   const handleSuccess = (response: any) => {
     console.log("Google ID Token:", response.credential);
-    let token = response.token_id;
+
+    let token = response.credential;
     let email = "null";
     let password = "null";
     let token_type = "GOOGLE";

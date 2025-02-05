@@ -57,6 +57,7 @@ import {
 import GlobalCircularLoader from "@/app/apiflow_components/global/GCircularLoader";
 import Image from "next/image";
 import { getCookies } from "@/app/Helpers/helpersFunctions";
+import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
 
 interface Project {
   project_id: any;
@@ -75,6 +76,10 @@ function LogSlash() {
 
   const { currentTeam } = useSelector<RootStateType, createTeamreducer>(
     (state) => state.apiTeam.createTeam
+  );
+
+  const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
+    (state) => state.apiManagement.workspace
   );
 
   // const wsidVal = Cookies?.get("WSID");
@@ -235,7 +240,8 @@ function LogSlash() {
     // showText === false
     if (showText === false) {
       const addGatewayDetails = {
-        workspace_id: currentTeam?.workspace_id,
+        // workspace_id: currentTeam?.workspace_id,
+        workspace_id: currentWorkspace?.id,
         user_id: userProfile?.user?.user_id,
         tenant_id: userProfile?.user?.tenant_id,
         enable: true,
@@ -247,11 +253,13 @@ function LogSlash() {
           toast.success("Logstash Enabled");
           setShowText(true);
           setStatus("Active");
-          dispatch(GetLogstashData(currentTeam?.workspace_id));
+          // dispatch(GetLogstashData(currentTeam?.workspace_id));
+          dispatch(GetLogstashData(currentWorkspace?.id));
         });
     } else {
       const addGatewayDetails = {
-        workspace_id: currentTeam?.workspace_id,
+        // workspace_id: currentTeam?.workspace_id,
+        workspace_id: currentWorkspace?.id,
         user_id: userProfile?.user?.user_id,
         tenant_id: userProfile?.user?.tenant_id,
         enable: false,
@@ -263,7 +271,8 @@ function LogSlash() {
           toast.success("Logstash Disabled");
           setShowText(true);
           // setStatus("In Active");
-          dispatch(GetLogstashData(currentTeam?.workspace_id));
+          // dispatch(GetLogstashData(currentTeam?.workspace_id));
+          dispatch(GetLogstashData(currentWorkspace?.id));
         });
     }
   };
@@ -273,7 +282,8 @@ function LogSlash() {
       .unwrap()
       .then((res: any) => {
         toast.success("AuthKey Regenerated");
-        dispatch(GetLogstashData(currentTeam?.workspace_id))
+        // dispatch(GetLogstashData(currentTeam?.workspace_id))
+        dispatch(GetLogstashData(currentWorkspace?.id))
           .unwrap()
           .then()
           .catch((errr: any) => {
@@ -363,7 +373,8 @@ function LogSlash() {
   }, [instanceId]);
 
   useEffect(() => {
-    dispatch(GetLogstashData(currentTeam?.workspace_id))
+    // dispatch(GetLogstashData(currentTeam?.workspace_id))
+    dispatch(GetLogstashData(currentWorkspace?.id))
       .unwrap()
       .then()
       .catch((errr: any) => {
@@ -371,7 +382,8 @@ function LogSlash() {
           dispatch(updateSessionPopup(true));
         }
       });
-  }, [instanceId?.authendication_key, currentTeam?.workspace_id]);
+    // }, [instanceId?.authendication_key, currentTeam?.workspace_id]);
+  }, [instanceId?.authendication_key, currentWorkspace?.id]);
 
   useEffect(() => {
     dispatch(GetIpDomainNames(instanceId?.instance_id))

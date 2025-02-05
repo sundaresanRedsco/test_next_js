@@ -57,12 +57,13 @@ export default function useSignIn() {
 
   let dev =
     "790333692787-pr3muri10h4quj2iqf9hlqi9olgerfck.apps.googleusercontent.com";
+  // "268390974719-rmi6c0pursdrl5qrndf3ejmejir17iip.apps.googleusercontent.com";
   let stage =
     "292411272101-9bpkf47ohttlift4u1n25tfk4e3u1fgp.apps.googleusercontent.com";
 
   const currentHost = typeof window !== "undefined" ? window.location.host : "";
   let CLIENT_ID = "";
-  if (currentHost.includes("test-next-js-syuo.vercel")) {
+  if (currentHost.includes("stage.apiflow.pro")) {
     // Use production URL if host includes stage.apiflow.url
     CLIENT_ID = stage;
   } else {
@@ -105,13 +106,32 @@ export default function useSignIn() {
     };
   }, []);
 
-  const handleSuccess = (response: any) => {
-    let token = response.credential;
-    console.log(response.access_token, "response.login");
+  const handleSuccess = async (response: any) => {
+    console.log(response, "HandleSuccess");
+    // let token = response.access_token;
+    // let token = response.credentials;
     let email = "null";
     let password = "null";
     let token_type = "GOOGLE";
     let invitations_token = "null";
+
+    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        code: response.code,
+        client_id: process.env.GOOGLE_CLIENT_ID as any,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET as any,
+        redirect_uri: "postmessage",
+        grant_type: "authorization_code",
+      }),
+    });
+
+    const tokenData = await tokenResponse.json();
+    console.log("HandleSuccessID Token:", tokenData, tokenData.id_token);
+    let token = tokenData?.id_token;
 
     dispatch(login({ email, password, token, token_type, invitations_token }))
       .unwrap()
