@@ -122,7 +122,7 @@ export default function useSignIn() {
         code: response.code,
         client_id: process.env.GOOGLE_CLIENT_ID as any,
         client_secret: process.env.GOOGLE_CLIENT_SECRET as any,
-        redirect_uri: process.env.APP_BASE_URL as any,
+        redirect_uri: "https://test-next-js-syuo.vercel.app/sign",
         grant_type: "authorization_code",
       }).toString(),
     });
