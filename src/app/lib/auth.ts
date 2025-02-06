@@ -112,7 +112,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     GoogleProvider({
-      clientId: process.env.NEXT_PUBLIC_.GOOGLE_CLIENT_ID || "",
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET || "",
     }),
     AzureADProvider({
