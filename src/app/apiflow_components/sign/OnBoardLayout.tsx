@@ -77,7 +77,7 @@ export default function OnBoardLayout({
             "@media (min-width: 1600px)": {
               maxWidth: isWorkflowModal ? "100%" : "88%",
             },
-            transition: ".3s",
+            transition: ".5s",
           }}
           maxWidth="xl"
           // maxWidth={issm || isxs || isWorkflowModal ? "xl" : "lg"}
@@ -127,6 +127,7 @@ export default function OnBoardLayout({
                 background: { xs: "none", sm: "#121212BF" },
                 borderRadius: "20px 0 0 20px",
                 flexDirection: "column",
+                transition: ".5s ease",
               }}
             >
               <Box

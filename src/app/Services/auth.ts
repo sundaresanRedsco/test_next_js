@@ -12,7 +12,7 @@ console.log(environment, "environment");
 export let adminUrl: any;
 export let googleClientId: any;
 adminUrl = process.env.NEXT_PUBLIC_BASE_URL;
-googleClientId = process.env.GOOGLE_CLIENT_ID;
+googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
 console.log(adminUrl, "adminUrl");
 

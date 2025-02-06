@@ -153,7 +153,7 @@ export default function SignIn({ clientSession }: any) {
       <Grid
         container
         sx={{ width: "100%", height: { xs: "100%", sm: "100%", md: "90%" } }}
-        columnSpacing={isxs ? 1 : issm ? 1 : 4}
+        columnSpacing={isxs || issm ? 1 : 4}
       >
         <Grid
           size={{ md: 12, sm: 12, xs: 12 }}
@@ -177,7 +177,6 @@ export default function SignIn({ clientSession }: any) {
                 width: "100%",
                 alignItems: "center",
                 justifyContent: "center",
-                marginBottom: "30px",
               }}
             >
               <PrimarySignInUPTypography
@@ -229,7 +228,7 @@ export default function SignIn({ clientSession }: any) {
                 },
               }}
             >
-              <Stack sx={{ width: "100%", gap: 2 }}>
+              <Stack sx={{ width: "100%", gap: { xl: 2, lg: 1 } }}>
                 {InputArray.map((elem, index) => {
                   if (elem.visible) {
                     if (elem.type == "otp" || elem.type == "code") {

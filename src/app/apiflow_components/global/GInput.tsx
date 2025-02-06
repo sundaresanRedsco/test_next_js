@@ -212,6 +212,7 @@ export default function GInput(props: Props) {
           "& .MuiInputBase-input::placeholder": {
             fontFamily: "Firasans-light",
           },
+          transition: ".5s",
           margin: margin,
           width: width,
           height: height,

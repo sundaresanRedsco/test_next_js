@@ -94,6 +94,7 @@ export default function GlobalButton(props: GlobalButtonProps) {
     <StyledButton
       sx={{
         "&.MuiButton-root": {
+          transition: ".5s",
           color: Color,
           cursor: cursor,
           background: backgroundColor,

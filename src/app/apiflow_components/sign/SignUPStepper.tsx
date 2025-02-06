@@ -124,6 +124,7 @@ export default function SignUPStepper({ steps, variant }: Props) {
               padding: "5px",
               height: "20px",
               width: "20px",
+              transition: ".5s",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
