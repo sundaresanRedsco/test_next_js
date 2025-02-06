@@ -330,10 +330,10 @@ export default function useSignIn() {
         )
           .unwrap()
           .then((res: any) => {
-            // router.push(`/userId/${res?.user?.user_id}`);
-            setactiveStep(4);
+            router.push(`/userId/${res?.user?.user_id}`);
+            // setactiveStep(4);
             setIsLoading(false);
-            setItem(`userId/${res?.user?.user_id}`, "onboarding");
+            // setItem(`userId/${res?.user?.user_id}`, "onboarding");
             // const encryptedWsidId = EncrouptionLogic(res?.user?.workspace_id);
             // Cookies.set(
             //   process.env.NEXT_PUBLIC_COOKIE_WSID || "",
