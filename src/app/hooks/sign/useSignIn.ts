@@ -7,26 +7,10 @@ import { useRouter, usePathname } from "next/navigation";
 import { useMsal } from "@azure/msal-react";
 import { RootStateType } from "@/app/Redux/store";
 import { login, LoginReducer } from "@/app/Redux/loginReducer";
-import {
-  FORGET_PASSWORD_OTP_VERIFICATION_PATH,
-  FORGET_PASSWORD_PATH,
-  GATEWAY_FIRST_IMPORT_PATH,
-  INDEX_PATH,
-  PRICING_PATH,
-  SIGNINUP_COMPANY_PATH,
-  SIGNINUP_OTP_VERIFICATION_PATH,
-  SIGNINUP_PATH,
-  SIGNINUP_VERIFY_PATH,
-  SIGNUP_PATH,
-  TWO_FACTOR_ENABLE_OTP_VERIFICATION_PATH,
-} from "@/app/Utilities/pathConstants";
 import { EncrouptionLogic } from "@/app/Helpers/helpersFunctions";
 import { loginRequest } from "@/app/Services/azureServices";
 import { useSignUpStore } from "./signZustand";
-import { setCurrentStage } from "@/app/Redux/apiManagement/projectReducer";
 import { removeItem, setItem } from "@/app/Services/localstorage";
-import { set } from "lodash";
-import { useQuery } from "@tanstack/react-query";
 
 interface loginInfoType {
   email: string;
@@ -71,7 +55,7 @@ export default function useSignIn() {
   let dev =
     "292411272101-9bpkf47ohttlift4u1n25tfk4e3u1fgp.apps.googleusercontent.com";
   // "790333692787-pr3muri10h4quj2iqf9hlqi9olgerfck.apps.googleusercontent.com";
-
+  // "268390974719-rmi6c0pursdrl5qrndf3ejmejir17iip.apps.googleusercontent.com";
   let stage =
     "292411272101-9bpkf47ohttlift4u1n25tfk4e3u1fgp.apps.googleusercontent.com";
 
@@ -128,7 +112,7 @@ export default function useSignIn() {
     let password = "null";
     let token_type = "GOOGLE";
     let invitations_token = "null";
-
+    setIsLoading(true);
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: {
@@ -185,8 +169,10 @@ export default function useSignIn() {
             }
           );
         }
+        setIsLoading(false);
       })
       .catch((err: any) => {
+        setIsLoading(false);
         setErrorMail(err?.message);
         setErrorPassword(err?.message);
       });
@@ -313,8 +299,8 @@ export default function useSignIn() {
           if (!formDataStore?.invite_token) {
             handleStep();
           } else {
-            router.push(`/sign`);
             setactiveStep(5);
+            router.push(`/sign`);
           }
         })
         .catch((err: any) => {
@@ -344,10 +330,10 @@ export default function useSignIn() {
         )
           .unwrap()
           .then((res: any) => {
-            router.push(`/userId/${res?.user?.user_id}`);
-            // setactiveStep(4);
+            // router.push(`/userId/${res?.user?.user_id}`);
+            setactiveStep(4);
             setIsLoading(false);
-            // setItem(`userId/${res?.user?.user_id}`, "onboarding");
+            setItem(`userId/${res?.user?.user_id}`, "onboarding");
             // const encryptedWsidId = EncrouptionLogic(res?.user?.workspace_id);
             // Cookies.set(
             //   process.env.NEXT_PUBLIC_COOKIE_WSID || "",

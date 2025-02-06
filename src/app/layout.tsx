@@ -92,7 +92,9 @@ export default function RootLayout({
             <ConsoleLogProvider>
               <ClientProvider>
                 <SessionWrapper>
-                  <DashboardLayout>{children}</DashboardLayout>
+                  <Suspense>
+                    <DashboardLayout>{children}</DashboardLayout>
+                  </Suspense>
                 </SessionWrapper>
               </ClientProvider>
             </ConsoleLogProvider>

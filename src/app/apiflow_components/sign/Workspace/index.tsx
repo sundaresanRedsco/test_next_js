@@ -264,6 +264,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                             sm: "column",
                             md: "row",
                           },
+                          flexWrap: "wrap",
                         }}
                       >
                         <SecondarySignInUPTypography
@@ -307,7 +308,12 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                   <Grid
                     size={{ md: 4, sm: 4, xs: 12 }}
                     key={inputIndex}
-                    sx={{ marginBottom: 2 }}
+                    sx={{
+                      marginBottom: 2,
+                      "@media (max-width: 850px)": {
+                        width: "100%",
+                      },
+                    }}
                   >
                     <GatewayCard
                       isActive={input?.clickable == formDataStore?.gateway}
@@ -321,7 +327,15 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                 );
               } else {
                 return (
-                  <Grid size={{ md: 6, sm: 6, xs: 12 }} key={inputIndex}>
+                  <Grid
+                    size={{ md: 6, sm: 6, xs: 12 }}
+                    key={inputIndex}
+                    sx={{
+                      "@media (max-width: 850px)": {
+                        width: "100%",
+                      },
+                    }}
+                  >
                     <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                       <Box
                         sx={{

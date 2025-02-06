@@ -72,10 +72,10 @@ export default function OnBoardLayout({
             height: isWorkflowModal || isxs ? "100%" : "80vh",
 
             "@media (min-width: 1400px)": {
-              maxWidth: "93%",
+              maxWidth: isWorkflowModal ? "100%" : "93%",
             },
             "@media (min-width: 1600px)": {
-              maxWidth: "88%",
+              maxWidth: isWorkflowModal ? "100%" : "88%",
             },
             transition: ".3s",
           }}
@@ -182,6 +182,8 @@ export default function OnBoardLayout({
                     disabled={
                       isWorkflowModal
                         ? activeStep == 2
+                        : activeStep == 5
+                        ? activeStep == 5 && formDataStore?.invite_token
                         : activeStep == 3 || activeStep == 1
                     }
                     padding="5px 15px"

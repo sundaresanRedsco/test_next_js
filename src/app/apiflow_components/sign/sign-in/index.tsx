@@ -142,11 +142,11 @@ export default function SignIn({ clientSession }: any) {
       }}
       style={{
         width: "100%",
-        height: isxs ? "100%" : "80vh",
         padding: isxs ? "10px" : issm ? "10px" : ismd ? "30px" : "0 100px",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        height: isxs ? "auto" : "80vh",
         overflowY: isxs ? "hidden" : "auto",
       }}
     >

@@ -90,7 +90,7 @@ export default function ScrollableLayout({
       <div
         ref={scrollToEnd}
         style={{
-          height: isxs ? "auto" : isWorkflowModal ? "520px" : "70vh",
+          height: isxs ? "auto" : "70vh",
           // height: isxs ? "auto" : isWorkflowModal ? "520px" : "400px",
           overflowY: isxs ? "hidden" : "auto",
           background: "#12121280",

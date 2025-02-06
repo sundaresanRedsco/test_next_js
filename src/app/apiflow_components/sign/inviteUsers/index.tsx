@@ -159,7 +159,15 @@ export default function InvitedUsers({
                   {elem?.inputs.map((input: any, inputIndex: number) => {
                     if (input?.type == "select") {
                       return (
-                        <Grid size={{ md: 5, sm: 6, xs: 12 }} key={inputIndex}>
+                        <Grid
+                          size={{ md: 5, sm: 6, xs: 12 }}
+                          key={inputIndex}
+                          sx={{
+                            "@media (max-width: 850px)": {
+                              width: "100%",
+                            },
+                          }}
+                        >
                           <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                             <Box
                               sx={{
@@ -198,7 +206,15 @@ export default function InvitedUsers({
                       );
                     } else {
                       return (
-                        <Grid size={{ md: 5, sm: 6, xs: 12 }} key={inputIndex}>
+                        <Grid
+                          size={{ md: 5, sm: 6, xs: 12 }}
+                          key={inputIndex}
+                          sx={{
+                            "@media (max-width: 850px)": {
+                              width: "100%",
+                            },
+                          }}
+                        >
                           <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                             <Box
                               sx={{
@@ -241,7 +257,13 @@ export default function InvitedUsers({
                   {elem.title == "Invite Users" && (
                     <Grid
                       size={{ md: 2, sm: 6, xs: 12 }}
-                      sx={{ display: "flex", alignItems: "center" }}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        "@media (max-width: 850px)": {
+                          width: "100%",
+                        },
+                      }}
                       key={index}
                     >
                       <GButton

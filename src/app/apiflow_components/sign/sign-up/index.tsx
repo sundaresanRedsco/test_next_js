@@ -206,11 +206,12 @@ export default function SignUp() {
       }}
       style={{
         width: "100%",
-        height: "100%",
         padding: isxs ? "10px" : issm ? "10px" : ismd ? "30px" : "0 60px",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        height: isxs ? "auto" : "80vh",
+        overflowY: isxs ? "hidden" : "auto",
       }}
     >
       <Grid
@@ -264,7 +265,15 @@ export default function SignUp() {
         </Grid>
         {InputArray.map((elem, index) => {
           return (
-            <Grid size={{ md: 6, sm: 6, xs: 12 }} key={index}>
+            <Grid
+              size={{ md: 6, sm: 6, xs: 12 }}
+              key={index}
+              sx={{
+                "@media (max-width: 850px)": {
+                  width: "100%",
+                },
+              }}
+            >
               <Stack sx={{ gap: 1.5, marginBottom: "15px" }}>
                 <Box
                   sx={{
