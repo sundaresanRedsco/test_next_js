@@ -12,7 +12,7 @@ import theme from "@/Theme/theme";
 type Props = {
   fullWidth?: boolean;
   width?: string;
-  height?: string;
+  height?: any;
   padding?: string;
   color?: string;
   background?: string;
@@ -20,7 +20,7 @@ type Props = {
   fontSize?: string;
   fontWeight?: string;
   margin?: string;
-  radius?: string;
+  radius?: any;
   type?: string;
   id?: any;
   label?: string;
@@ -199,6 +199,9 @@ export default function GInput(props: Props) {
             padding: padding,
             height: height,
             boxShadow: border ? border : "0 0 0 1.3px #F3F3F340",
+            "@media (min-width: 1600px)": {
+              height: "80px",
+            },
           },
           "& .MuiOutlinedInput-notchedOutline": {
             border: "none",
@@ -214,6 +217,9 @@ export default function GInput(props: Props) {
           height: height,
           borderColor: borderColor ? borderColor : "#F3F3F340",
           borderRadius: "7px",
+          "@media (min-width: 1600px)": {
+            height: "80px",
+          },
           "&.MuiFormHelperText-root": {
             fontSize: "10px",
           },
@@ -262,7 +268,7 @@ export default function GInput(props: Props) {
             }
           ))}
         InputProps={{
-          style: {
+          sx: {
             background: background,
             color: color ? color : "white",
             // color: color ? color : theme.palette.primaryBlack.main,
@@ -270,6 +276,9 @@ export default function GInput(props: Props) {
             fontSize: fontSize || "0.7rem",
             fontWeight: fontWeight ? fontWeight : 500,
             borderRadius: radius || "7px", // Set border radius to 0
+            "@media (min-width: 1600px)": {
+              borderRadius: "13px",
+            },
           },
           disableunderline: disableUnderline,
 

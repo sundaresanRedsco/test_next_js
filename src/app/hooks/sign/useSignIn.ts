@@ -25,6 +25,8 @@ import { loginRequest } from "@/app/Services/azureServices";
 import { useSignUpStore } from "./signZustand";
 import { setCurrentStage } from "@/app/Redux/apiManagement/projectReducer";
 import { removeItem, setItem } from "@/app/Services/localstorage";
+import { set } from "lodash";
+import { useQuery } from "@tanstack/react-query";
 
 interface loginInfoType {
   email: string;
@@ -35,8 +37,14 @@ export default function useSignIn() {
   const dispatch = useDispatch<any>();
   const router = useRouter();
   const pathName = usePathname();
-  const { handleStep, setIsLoading, setactiveStep, setFormDataStore } =
-    useSignUpStore();
+  const {
+    handleStep,
+    setIsLoading,
+    setactiveStep,
+    setFormDataStore,
+    setIsTotpEnabled,
+    formDataStore,
+  } = useSignUpStore();
 
   const { instance, accounts } = useMsal();
   const { loading } = useSelector<RootStateType, LoginReducer>(
@@ -47,17 +55,23 @@ export default function useSignIn() {
     password: "",
     invitations_token: "null",
   });
-
   const [user, setUser] = useState<any>(null);
-  const [errorEmail, setErrorMail] = useState<string>("");
   const [errorPassword, setErrorPassword] = useState<string>("");
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [userData, setuserData] = useState(null);
   const [checkBoxVal, setCheckBoxVal] = useState(false);
 
+  const [otp, setOtp] = useState("");
+  const [recoveryCode, setRecoveryCode] = useState("");
+  const [errorEmail, setErrorMail] = useState<string>("");
+  const [errorOtp, setErrorOtp] = useState<string>("");
+  const [errorRecoveryCode, setErrorRecoveryCode] = useState<string>("");
+  const [enableRecovery, setenableRecovery] = useState(false);
+
   let dev =
-    "790333692787-pr3muri10h4quj2iqf9hlqi9olgerfck.apps.googleusercontent.com";
-  // "268390974719-rmi6c0pursdrl5qrndf3ejmejir17iip.apps.googleusercontent.com";
+    "292411272101-9bpkf47ohttlift4u1n25tfk4e3u1fgp.apps.googleusercontent.com";
+  // "790333692787-pr3muri10h4quj2iqf9hlqi9olgerfck.apps.googleusercontent.com";
+
   let stage =
     "292411272101-9bpkf47ohttlift4u1n25tfk4e3u1fgp.apps.googleusercontent.com";
 
@@ -122,11 +136,11 @@ export default function useSignIn() {
       },
       body: new URLSearchParams({
         code: response.code,
-        redirect_uri: process.env.APP_BASE_URL as string,
         client_id: process.env.GOOGLE_CLIENT_ID as any,
         client_secret: process.env.GOOGLE_CLIENT_SECRET as any,
+        redirect_uri: process.env.APP_BASE_URL as any,
         grant_type: "authorization_code",
-      }),
+      }).toString(),
     });
 
     const tokenData = await tokenResponse.json();
@@ -294,9 +308,14 @@ export default function useSignIn() {
         .unwrap()
         .then((res: any) => {
           setuserData(res);
-          handleStep();
           setItem(`userId/${res?.user?.user_id}`, "onboarding");
           setIsLoading(false);
+          if (!formDataStore?.invite_token) {
+            handleStep();
+          } else {
+            router.push(`/sign`);
+            setactiveStep(5);
+          }
         })
         .catch((err: any) => {
           setIsLoading(false);
@@ -325,26 +344,10 @@ export default function useSignIn() {
         )
           .unwrap()
           .then((res: any) => {
-            if (res) {
-              // router.push(
-              //   `/userId/${res?.user?.user_id}/workspaceId/${res?.user?.workspace_id}`
-              // );
-              // removeItem(`userId/${res?.user?.user_id}`);
-
-              router.push(`/userId/${res?.user?.user_id}`);
-              // setactiveStep(2);
-              setIsLoading(false);
-              // setItem(`userId/${res?.user?.user_id}`, "onboarding");
-              // setFormDataStore("currentPage", "Sign Up");
-            }
-
             router.push(`/userId/${res?.user?.user_id}`);
-            // setactiveStep(2);
+            // setactiveStep(4);
             setIsLoading(false);
-            // setFormDataStore("currentPage", "Sign Up");
-
-            // }
-
+            // setItem(`userId/${res?.user?.user_id}`, "onboarding");
             // const encryptedWsidId = EncrouptionLogic(res?.user?.workspace_id);
             // Cookies.set(
             //   process.env.NEXT_PUBLIC_COOKIE_WSID || "",
@@ -363,7 +366,7 @@ export default function useSignIn() {
                 sameSite: "Strict",
                 secure: true,
               });
-              router.push("/sign" + TWO_FACTOR_ENABLE_OTP_VERIFICATION_PATH);
+              setIsTotpEnabled(true);
             }
 
             setErrorMail(err?.message);
@@ -398,7 +401,49 @@ export default function useSignIn() {
       Cookies.remove("LoginPassword");
     }
   };
+  // const {} = useQuery({
+  //   queryKey: ["submitOtp"],
+  //   queryFn: () => loginHandler(),
+  // });
+  const handleSubmitOtp = () => {
+    if (enableRecovery) {
+      if (recoveryCode === "") {
+        setErrorRecoveryCode("Recovery Code is required");
+      } else {
+        console.log(
+          {
+            email: formData?.email,
+            totp: "",
+            recoveryKey: recoveryCode,
+          },
+          "showErr-otp"
+        );
+        setErrorRecoveryCode("");
+      }
+    } else {
+      if (otp === "") {
+        setErrorOtp("OTP is required");
+      } else {
+        console.log(
+          {
+            email: formData?.email,
+            totp: otp,
+            recoveryKey: "",
+          },
+          "showErr-otp"
+        );
+        setErrorOtp("");
+      }
+    }
+  };
 
+  const handleEnableRecoveyCode = () => {
+    setenableRecovery(!enableRecovery);
+    setOtp("");
+    setRecoveryCode("");
+    setErrorOtp("");
+    setErrorRecoveryCode("");
+  };
   useEffect(() => {
     let loginEmail = Cookies.get("LoginEmail");
     let loginPassword = Cookies.get("LoginPassword");
@@ -430,5 +475,15 @@ export default function useSignIn() {
     formData,
     userData,
     CLIENT_ID,
+    handleSubmitOtp,
+    otp,
+    setOtp,
+    recoveryCode,
+    setRecoveryCode,
+    errorRecoveryCode,
+    errorOtp,
+    enableRecovery,
+    setenableRecovery,
+    handleEnableRecoveyCode,
   };
 }

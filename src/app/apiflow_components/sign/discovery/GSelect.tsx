@@ -44,6 +44,7 @@ type Props = {
   fetchData?: any;
   isMenuItemsLoading?: any;
   setisMenuItemsLoading?: any;
+  sx?: any;
 };
 export default function GSelect(props: Props) {
   const {
@@ -78,6 +79,7 @@ export default function GSelect(props: Props) {
     totalCount,
     isMenuItemsLoading,
     setisMenuItemsLoading,
+    sx,
   } = props;
   const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const selectedValue = event.target.value;
@@ -133,6 +135,7 @@ export default function GSelect(props: Props) {
     <Box
       sx={{
         width: width,
+        ...sx,
       }}
     >
       <TextField
@@ -149,6 +152,7 @@ export default function GSelect(props: Props) {
           IconComponent: () => null, // Remove the default dropdown icon
         }}
         sx={{
+          ...sx,
           width: width,
           background: background || "transparent",
           "& .MuiInputBase-root": {
@@ -158,6 +162,9 @@ export default function GSelect(props: Props) {
             alignItems: "center",
             paddingLeft: "10px",
             boxShadow: border ? border : "0 0 0 1.3px #F3F3F340",
+            "@media (min-width: 1600px)": {
+              height: "80px",
+            },
           },
           "& .MuiOutlinedInput-notchedOutline": {
             border: "none",
@@ -177,6 +184,9 @@ export default function GSelect(props: Props) {
             alignItems: "center",
             paddingLeft: "10px",
             padding: padding || "",
+            "@media (min-width: 1600px)": {
+              height: "80px",
+            },
           },
           "& .MuiInputLabel-root": {
             fontFamily: "FiraSans-regular",
@@ -206,13 +216,16 @@ export default function GSelect(props: Props) {
               {/* </GBadge> */}
             </InputAdornment>
           ),
-          style: {
+          sx: {
             fontFamily: "FiraSans-regular",
             color: color,
             fontSize: fontSize || "0.8rem",
             fontWeight: fontWeight,
             borderRadius: radius || "5px",
             cursor: "pointer",
+            "@media (min-width: 1600px)": {
+              borderRadius: "13px",
+            },
           },
           startAdornment: iconPosition === "start" && (
             <InputAdornment position="start">{icon}</InputAdornment>

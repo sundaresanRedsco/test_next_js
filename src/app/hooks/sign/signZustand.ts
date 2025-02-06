@@ -21,9 +21,14 @@ interface Store {
   openSignUp: boolean;
   setOpenSignUp: (state: boolean) => void;
   handleOpenSignUp: () => void;
+  isTotpEnabled: boolean;
+  setIsTotpEnabled: (state: boolean) => void;
 }
-
+const intialState: any = {
+  isTotpEnabled: false,
+};
 export const useSignUpStore = create<Store>((set, get) => ({
+  ...intialState,
   //**Global UserData */
   userData: null,
   setUserData: (res) => set({ userData: res }),
@@ -44,13 +49,19 @@ export const useSignUpStore = create<Store>((set, get) => ({
   handleOpenSignUp: () => set({ openSignUp: true }),
 
   //**Form Data Store */
-  formDataStore: { doc_type: "URL", currentPage: "Login" },
+  formDataStore: { doc_type: "URL", currentPage: "Login", invite_token: "" },
   setFormDataStore: (key, value) =>
     set((state) => ({
       formDataStore: { ...state.formDataStore, [key]: value },
     })),
   resetForm: () =>
-    set({ formDataStore: { doc_type: "URL", currentPage: "Login" } }),
+    set({
+      formDataStore: {
+        doc_type: "URL",
+        currentPage: "Login",
+        invite_token: "",
+      },
+    }),
 
   //**Api Data Store */
   apiDataStore: null,
@@ -69,4 +80,7 @@ export const useSignUpStore = create<Store>((set, get) => ({
       activeStep:
         get().activeStep > 0 ? get().activeStep - 1 : get().activeStep,
     }),
+
+  //*Totp */
+  setIsTotpEnabled: (state) => set({ isTotpEnabled: state }),
 }));

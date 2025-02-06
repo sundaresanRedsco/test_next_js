@@ -9,7 +9,7 @@ const StyledButton = styled(Button)`
 
 export interface GButtonProps {
   buttonType?: string;
-  fontSize?: string;
+  fontSize?: any;
   dataTest?: string | undefined;
   type?: any;
   label?: string | any;
@@ -24,7 +24,7 @@ export interface GButtonProps {
   marginRight?: string;
   borderRadius?: string;
   marginLeft?: string;
-  padding?: string;
+  padding?: any;
   fontWeight?: number | string;
   icon?: React.ReactNode; // Icon component to be included
   iconPosition?: "start" | "end";
@@ -32,6 +32,7 @@ export interface GButtonProps {
   onClickHandler?: any;
   disabled?: boolean;
   customStyle?: object;
+  className?: string;
 }
 
 export default function GButton(props: GButtonProps) {
@@ -60,6 +61,7 @@ export default function GButton(props: GButtonProps) {
     disabled,
     onClickHandler = () => {},
     customStyle,
+    className,
     // onClickHandler,
   } = props;
 
@@ -85,6 +87,7 @@ export default function GButton(props: GButtonProps) {
 
   return (
     <StyledButton
+      className={className}
       sx={{
         ...customStyle,
         "&.MuiButton-root": {
@@ -112,6 +115,12 @@ export default function GButton(props: GButtonProps) {
               : outline,
           textTransform: "inherit",
           fontFamily: "FiraSans-regular",
+          "@media (min-width: 1600px)": {
+            padding:
+              className == "bigButton" ? "20px 60px !important" : "15px 60px ",
+            fontSize: "25px",
+            borderRadius: className == "bigButton" ? "15px" : "12px",
+          },
         },
       }}
       data-test={dataTest}

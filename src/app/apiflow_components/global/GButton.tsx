@@ -26,7 +26,7 @@ export interface GlobalButtonProps {
   marginRight?: string;
   borderRadius?: string;
   marginLeft?: string;
-  padding?: string;
+  padding?: any;
   fontWeight?: number | string;
   icon?: React.ReactNode; // Icon component to be included
   iconPosition?: "start" | "end";
@@ -35,6 +35,7 @@ export interface GlobalButtonProps {
   onClickHandler?: any;
   disabled?: boolean;
   sx?: SxProps<Theme>;
+  className?: string;
 }
 
 export default function GlobalButton(props: GlobalButtonProps) {
@@ -63,6 +64,7 @@ export default function GlobalButton(props: GlobalButtonProps) {
     disabled,
     fontFamily,
     onClickHandler = () => {},
+    className,
     // onClickHandler,
     sx,
   } = props;
@@ -116,6 +118,12 @@ export default function GlobalButton(props: GlobalButtonProps) {
               : outline,
           textTransform: "inherit",
           fontFamily: fontFamily ? fontFamily : "FiraSans-regular",
+          "@media (min-width: 1600px)": {
+            padding:
+              className == "bigButton" ? "20px 60px !important" : "15px 60px ",
+            fontSize: className == "authBtn" ? "20px" : "25px",
+            borderRadius: className == "bigButton" ? "15px" : "12px",
+          },
         },
         "&.MuiButton-root.Mui-disabled": {
           color: "gray",

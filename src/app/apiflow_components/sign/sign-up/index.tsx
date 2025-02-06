@@ -46,7 +46,17 @@ export default function SignUp() {
     {
       id: 1,
       label: "Email *",
-      icon: <Email sx={{ fontSize: "18px", color: "#FFFFFF80" }} />,
+      icon: (
+        <Email
+          sx={{
+            fontSize: "18px",
+            color: "#FFFFFF80",
+            "@media (min-width: 1600px)": {
+              fontSize: "25px",
+            },
+          }}
+        />
+      ),
       type: "email",
       onChange: handleChange,
       name: "email",
@@ -71,7 +81,17 @@ export default function SignUp() {
     {
       id: 2,
       label: "User Name *",
-      icon: <PersonRounded sx={{ fontSize: "18px", color: "#FFFFFF80" }} />,
+      icon: (
+        <PersonRounded
+          sx={{
+            fontSize: "18px",
+            color: "#FFFFFF80",
+            "@media (min-width: 1600px)": {
+              fontSize: "25px",
+            },
+          }}
+        />
+      ),
       type: "text",
       onChange: handleChange,
 
@@ -87,7 +107,17 @@ export default function SignUp() {
     {
       id: 3,
       label: "First Name *",
-      icon: <PersonRounded sx={{ fontSize: "18px", color: "#FFFFFF80" }} />,
+      icon: (
+        <PersonRounded
+          sx={{
+            fontSize: "18px",
+            color: "#FFFFFF80",
+            "@media (min-width: 1600px)": {
+              fontSize: "25px",
+            },
+          }}
+        />
+      ),
       type: "text",
       onChange: handleChange,
       name: "first_name",
@@ -117,7 +147,17 @@ export default function SignUp() {
     {
       id: 5,
       label: "New Password *",
-      icon: <Lock sx={{ fontSize: "15px", color: "#FFFFFF80" }} />,
+      icon: (
+        <Lock
+          sx={{
+            fontSize: "18px",
+            color: "#FFFFFF80",
+            "@media (min-width: 1600px)": {
+              fontSize: "25px",
+            },
+          }}
+        />
+      ),
       type: "password",
       onChange: handleChange,
       name: "password",
@@ -146,7 +186,7 @@ export default function SignUp() {
       pattern: null,
     },
   ];
-  const { isxs, issm, ismd } = useMuiBreakpoints();
+  const { isxs, issm, ismd, isxl } = useMuiBreakpoints();
   useEffect(() => {
     if (userData) {
       setUserData(userData);
@@ -201,6 +241,9 @@ export default function SignUp() {
                   md: "25px", // larger screens
                   lg: "30px", // extra-large screens
                 },
+                "@media (min-width: 1600px)": {
+                  fontSize: "60px",
+                },
               }}
             >
               Create Account
@@ -210,6 +253,9 @@ export default function SignUp() {
                 color: "#F3F3F3BF",
                 marginTop: 1,
                 fontSize: "14px",
+                "@media (min-width: 1600px)": {
+                  fontSize: "20px",
+                },
               }}
             >
               Provide your details to signup
@@ -233,6 +279,9 @@ export default function SignUp() {
                     sx={{
                       color: "white",
                       fontSize: "13px",
+                      "@media (min-width: 1600px)": {
+                        fontSize: "20px",
+                      },
                     }}
                   >
                     {elem?.label}
@@ -243,7 +292,6 @@ export default function SignUp() {
                   name={elem.name}
                   type={elem.type}
                   fullWidth={true}
-                  radius={"5px"}
                   value={elem.value}
                   onChangeHandler={elem.onChange}
                   error={elem.error}
@@ -252,7 +300,8 @@ export default function SignUp() {
                   patternError={elem?.patternError}
                   pattern={elem?.pattern}
                   // register={elem.register}
-                  height="43px"
+                  height={"47px"}
+                  radius={"5px"}
                 />
               </Stack>
             </Grid>
@@ -272,13 +321,13 @@ export default function SignUp() {
             }}
           >
             <GlobalButton
-              padding="5px 30px"
               label={"Submit"}
               iconPosition="end"
               type={"submit"}
               buttonType="primary"
-              radius="9px"
-              fontSize={"15px"}
+              radius={"9px"}
+              padding="8px 35px"
+              fontSize="15px"
               fontFamily={"Firasans-medium !important"}
             />
           </Stack>

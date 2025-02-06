@@ -19,12 +19,12 @@ export default function CompletedSection({ clientSession }: any) {
     resetApiData();
     resetForm();
     removeItem(`userId/${clientSession?.user?.user_id}`);
-    setTimeout(() => {
-      toast.success("Scan started");
-    }, 3000);
-    setTimeout(() => {
-      toast.success("Scan ended");
-    }, 15000);
+    // setTimeout(() => {
+    //   toast.success("Scan started");
+    // }, 3000);
+    // setTimeout(() => {
+    //   toast.success("Scan ended");
+    // }, 15000);
   };
   return (
     <Stack
@@ -42,6 +42,9 @@ export default function CompletedSection({ clientSession }: any) {
           color: "white",
           fontSize: { xs: "20px", md: "20px" },
           textAlign: "center",
+          "@media (min-width: 1600px)": {
+            fontSize: "60px",
+          },
         }}
       >
         Successful
@@ -51,17 +54,21 @@ export default function CompletedSection({ clientSession }: any) {
           color: "#F3F3F3BF",
           marginTop: 1,
           textAlign: "center",
+          "@media (min-width: 1600px)": {
+            fontSize: "30px",
+          },
         }}
       >
         Your account has successfully created, Now Re-directing to application
       </SecondarySignInUPTypography>
       <GlobalButton
+        className="bigButton"
         padding="10px 40px"
         label={"Go to Dashboard"}
         iconPosition="end"
         background={"#7A43FE"}
         color="white"
-        fontSize="15px"
+        fontSize={"15px"}
         margin="30px 0 0 0"
         fontWeight={500}
         onClickHandler={handleSubmit}

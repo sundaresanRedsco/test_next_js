@@ -22,12 +22,19 @@ export default function SelectedCountButton({ count }: Props) {
         justifyContent: "center",
         gap: "3px",
         textAlign: "end",
+        "@media (min-width: 1600px)": {
+          height: "40px",
+          minWidth: "150px",
+        },
       }}
     >
       <PrimarySignInUPTypography
         sx={{
           color: "white",
           fontSize: "13px",
+          "@media (min-width: 1600px)": {
+            fontSize: "20px",
+          },
         }}
       >
         {count}
@@ -36,6 +43,9 @@ export default function SelectedCountButton({ count }: Props) {
         sx={{
           color: "white",
           fontSize: "10px",
+          "@media (min-width: 1600px)": {
+            fontSize: "18px",
+          },
         }}
       >
         Selected

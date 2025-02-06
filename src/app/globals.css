@@ -97,3 +97,9 @@ a {
     color-scheme: dark;
   }
 }
+
+@media (max-width: 957px) {
+  .googleButton {
+    flex-direction: column !important;
+  }
+}

@@ -37,7 +37,7 @@ export default function InvitedUsers({
     members,
     handleInviteUserFormData,
   } = useInvites(clientSession?.data);
-  const { isxs, issm, ismd } = useMuiBreakpoints();
+  const { isxs, issm, ismd, isxl } = useMuiBreakpoints();
   const [columnLabels, setColumnLabels] = useState({
     email: "E-Mail ID",
     role_name: "Role",
@@ -122,7 +122,13 @@ export default function InvitedUsers({
                 }}
               >
                 <PrimarySignInUPTypography
-                  sx={{ color: "white", fontSize: "18px" }}
+                  sx={{
+                    color: "white",
+                    fontSize: "18px",
+                    "@media (min-width: 1600px)": {
+                      fontSize: "25px",
+                    },
+                  }}
                 >
                   {elem?.title}
                 </PrimarySignInUPTypography>
@@ -130,6 +136,9 @@ export default function InvitedUsers({
                   sx={{
                     color: "#F3F3F3BF",
                     fontSize: "10px",
+                    "@media (min-width: 1600px)": {
+                      fontSize: "15px",
+                    },
                   }}
                 >
                   {elem?.description}
@@ -164,6 +173,9 @@ export default function InvitedUsers({
                                 sx={{
                                   color: "white",
                                   fontSize: "13px",
+                                  "@media (min-width: 1600px)": {
+                                    fontSize: "20px",
+                                  },
                                 }}
                               >
                                 {input?.label}
@@ -178,8 +190,8 @@ export default function InvitedUsers({
                               name={input.name}
                               error={input.err}
                               helperText={input.errMsg}
-                              height="43px"
-                              radius="5px"
+                              height={"47px"}
+                              radius={"5px"}
                             />
                           </Stack>
                         </Grid>
@@ -201,6 +213,9 @@ export default function InvitedUsers({
                                 sx={{
                                   color: "white",
                                   fontSize: "13px",
+                                  "@media (min-width: 1600px)": {
+                                    fontSize: "20px",
+                                  },
                                 }}
                               >
                                 {input?.label}
@@ -215,8 +230,8 @@ export default function InvitedUsers({
                               error={input.err}
                               helperText={input.errMsg}
                               value={input.value}
-                              height="43px"
-                              radius="5px"
+                              height={"47px"}
+                              radius={"5px"}
                             />
                           </Stack>
                         </Grid>
@@ -234,17 +249,25 @@ export default function InvitedUsers({
                         label="Invite"
                         width={"100%"}
                         sx={{
-                          height: "43px",
+                          height: "47px",
                           marginBottom:
                             errMsg.email || errMsg.role
                               ? "25px !important"
                               : "5px !important",
-                          fontSize: "13px !important",
+                          fontSize: "13px",
                           fontFamily: "Firasans-medium !important",
+                          "@media (min-width: 1600px)": {
+                            height: "80px",
+                            fontSize: "20px",
+                            marginBottom:
+                              errMsg.email || errMsg.role
+                                ? "25px !important"
+                                : "0px !important",
+                          },
                         }}
                         type={"button"}
                         onClickHandler={handleSubmit}
-                        radius="8px"
+                        radius={"8px"}
                       />
                     </Grid>
                   )}

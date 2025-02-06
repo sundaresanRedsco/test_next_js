@@ -892,7 +892,6 @@ export const changeValueToString = (input: any) => {
       }
     }
   });
-  console.log("showErr-json", lines.join("\n"));
   return lines.join("\n");
 };
 export function validateTernarySyntax(input: any) {

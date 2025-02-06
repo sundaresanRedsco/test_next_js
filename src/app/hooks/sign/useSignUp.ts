@@ -68,7 +68,7 @@ export default function useSignUp() {
   const [errorPassword, setErrorPassword] = useState<string>("");
   const [user, setUser] = useState<any>(null);
   const { instance, accounts } = useMsal();
-  const { setIsLoading } = useSignUpStore();
+  const { setIsLoading, formDataStore } = useSignUpStore();
   const {
     register,
     handleSubmit,
@@ -157,7 +157,7 @@ export default function useSignUp() {
     if (Object.keys(newErrors).length === 0) {
       let updatedData = {
         ...signUpFormData,
-        member_invite_id: Cookies.get("MID") || "null",
+        member_invite_id: formDataStore?.invite_token || "null",
       };
       dispatch(signupUser(updatedData))
         .unwrap()
@@ -177,14 +177,15 @@ export default function useSignUp() {
         })
         .catch((error: any) => {
           // Handle error
-          setError(JSON.parse(error.message));
           setIsLoading(false);
+          setError(JSON.parse(error.message));
         });
     }
   }
 
   let dev =
-    "790333692787-pr3muri10h4quj2iqf9hlqi9olgerfck.apps.googleusercontent.com";
+    // "790333692787-pr3muri10h4quj2iqf9hlqi9olgerfck.apps.googleusercontent.com";
+    "292411272101-9bpkf47ohttlift4u1n25tfk4e3u1fgp.apps.googleusercontent.com";
   let stage =
     "292411272101-9bpkf47ohttlift4u1n25tfk4e3u1fgp.apps.googleusercontent.com";
 

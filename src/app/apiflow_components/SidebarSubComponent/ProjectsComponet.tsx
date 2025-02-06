@@ -439,7 +439,7 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                   {/* {nestedAccordion?.badge === "true" && ( */}
                   {/* //*Make the value zero */}
                   <GBadge
-                    badgeContent={"2"}
+                    badgeContent={"0"}
                     color="#F68E1E"
                     iconRight={"10px"}
                   />
@@ -671,7 +671,7 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                       {/* {nestedAccordion?.badge === "true" && ( */}
                       {/* //*Make the value zero */}
                       <GBadge
-                        badgeContent={"2"}
+                        badgeContent={"0"}
                         color="#F7BD2B"
                         iconRight="15px"
                       />

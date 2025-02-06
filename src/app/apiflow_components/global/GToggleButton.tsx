@@ -19,6 +19,9 @@ const defaultStyle = {
     "&:hover": {
       background: "#7A43FE",
     },
+    "@media (min-width: 1600px)": {
+      borderRadius: "12px",
+    },
   },
   "& .MuiButtonBase-root": {
     color: "white !important",
@@ -27,12 +30,19 @@ const defaultStyle = {
     fontSize: "10px",
     padding: "8px 15px",
     border: "none",
+    "@media (min-width: 1600px)": {
+      padding: "10px 15px",
+      fontSize: "20px",
+    },
   },
   background: "#121212",
   borderRadius: "10px",
   justifyContent: "space-between",
   width: "100%",
   boxShadow: "0px 0px 1.5px  #4F4F4F",
+  "@media (min-width: 1600px)": {
+    borderRadius: "15px",
+  },
 };
 
 export default function GToggleButton({

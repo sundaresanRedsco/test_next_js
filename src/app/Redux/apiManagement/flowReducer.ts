@@ -534,7 +534,8 @@ export const GetGlobalKeys = createAsyncThunk(
     try {
       return await AdminServices(
         "get",
-        `Api/Api_design_flow_service/get_globalkey_by_flowandversion_id?flow_id=${data.flow_id}&version_id=${data.version_id}`,
+        // `Api/Api_design_flow_service/get_globalkey_by_flowandversion_id?flow_id=${data.flow_id}&version_id=${data.version_id}`,
+        `Api/Api_design_flow_service/get_globalkey_by_flowandversion_id?project_id=${data.project_id}&flow_id=${data.flow_id}&version_id=${data.version_id}`,
         null,
         null
       );
@@ -553,7 +554,7 @@ export const CreateGlobalKeys = createAsyncThunk(
     try {
       return await AdminServices(
         "post",
-        `Api/Api_design_flow_service/create_designflow_globalkey`,
+        `Api/Api_design_flow_service/create_designflow_globalkey?project_id=${data.project_id}`,
         data,
         null
       );

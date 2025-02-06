@@ -15,6 +15,7 @@ import useDiscovery from "@/app/hooks/sign/useDiscovery";
 import useCatalogue from "@/app/hooks/sign/useCatalogue";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import GRadioGroup from "../../global/GRadioGroup";
+import { fontSize } from "@mui/system";
 
 type Props = {
   clientSession: any;
@@ -35,7 +36,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
     handleFormData,
   } = useDiscovery(clientSession?.data, fetchData);
 
-  const { isxs, issm, ismd } = useMuiBreakpoints();
+  const { isxs, issm, ismd, isxl } = useMuiBreakpoints();
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormDataStore(name, value);
@@ -278,7 +279,15 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
             },
           }}
         >
-          <PrimarySignInUPTypography sx={{ color: "white", fontSize: "18px" }}>
+          <PrimarySignInUPTypography
+            sx={{
+              color: "white",
+              fontSize: "18px",
+              "@media (min-width: 1600px)": {
+                fontSize: "25px",
+              },
+            }}
+          >
             API discovery via Integration
           </PrimarySignInUPTypography>
           <GSelect
@@ -292,6 +301,14 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
             name={"gateway"}
             background="#7946FD40"
             radius={"7px"}
+            sx={{
+              "@media (min-width: 1600px)": {
+                "& .MuiInputBase-root": {
+                  height: "60px !important",
+                },
+                width: "250px",
+              },
+            }}
           />
         </Stack>
       </Grid>
@@ -313,6 +330,9 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                       sx={{
                         color: "white",
                         fontSize: "13px",
+                        "@media (min-width: 1600px)": {
+                          fontSize: "20px",
+                        },
                       }}
                     >
                       {elem?.label}
@@ -327,8 +347,8 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                     name={elem.name}
                     error={elem.isErr}
                     helperText={elem.errMsg}
-                    height="43px"
-                    radius="5px"
+                    height={"47px"}
+                    radius={"5px"}
                   />
                 </Stack>
               </Grid>
@@ -356,6 +376,9 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                       sx={{
                         color: "white",
                         fontSize: "13px",
+                        "@media (min-width: 1600px)": {
+                          fontSize: "20px",
+                        },
                       }}
                     >
                       {elem?.label}
@@ -394,6 +417,9 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                       fontSize: "15px",
                       position: { xs: "static", sm: "static", md: "absolute" },
                       left: 0,
+                      "@media (min-width: 1600px)": {
+                        fontSize: "23px",
+                      },
                     }}
                   >
                     {elem?.title}
@@ -413,9 +439,6 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                       onChange={elem.onChange}
                     />
                   </Box>
-                  {elem?.inputs?.map((input: any, inputIndex: number) => {
-                    return null;
-                  })}
                 </Box>
               </Grid>
             );
@@ -442,6 +465,9 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                       sx={{
                         color: "white",
                         fontSize: "13px",
+                        "@media (min-width: 1600px)": {
+                          fontSize: "20px",
+                        },
                       }}
                     >
                       {elem?.label}
@@ -455,8 +481,8 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                     onChangeHandler={elem.onChange}
                     error={elem.isErr}
                     helperText={elem.errMsg}
-                    height="43px"
-                    radius="5px"
+                    height={"47px"}
+                    radius={"5px"}
                   />
                 </Stack>
               </Grid>

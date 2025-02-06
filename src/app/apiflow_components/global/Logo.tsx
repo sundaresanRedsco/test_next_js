@@ -8,14 +8,38 @@ type Props = {};
 export default function Logo({}: Props) {
   return (
     <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
-      <Image
-        height={30}
-        width={30}
-        src={"/global/logo.png"}
-        alt="Apiflow-logo"
-        style={{ marginRight: 5 }}
-      />
-      <PrimarySignInUPTypography sx={{ color: "white", fontSize: "25px" }}>
+      <Box
+        sx={{
+          height: "35px",
+          width: "35px",
+          "@media (min-width: 1600px)": {
+            height: "60px",
+            width: "60px",
+          },
+        }}
+      >
+        <Image
+          height={100}
+          width={100}
+          src={"/global/logo.png"}
+          alt="Apiflow-logo"
+          style={{
+            marginRight: 5,
+            height: "100%",
+            width: "100%",
+          }}
+        />
+      </Box>
+
+      <PrimarySignInUPTypography
+        sx={{
+          color: "white",
+          fontSize: "25px",
+          "@media (min-width: 1600px)": {
+            fontSize: "45px",
+          },
+        }}
+      >
         API Flow
       </PrimarySignInUPTypography>
     </Box>

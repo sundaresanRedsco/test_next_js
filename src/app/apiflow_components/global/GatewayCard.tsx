@@ -1,3 +1,4 @@
+import useMuiBreakpoints from "@/app/hooks/useMuiBreakpoints";
 import { SecondarySignInUPTypography } from "@/app/Styles/signInUp";
 import { Box, Button } from "@mui/material";
 import React, { useState } from "react";
@@ -33,6 +34,10 @@ export default function GatewayCard({ isActive, icon, label, onClick }: Props) {
         cursor: "pointer",
         textTransform: "none",
         position: "relative",
+        "@media (min-width: 1600px)": {
+          padding: 8,
+          borderRadius: "15px",
+        },
       }}
       onMouseEnter={() => setisHovered(true)}
       onMouseLeave={() => setisHovered(false)}
@@ -54,6 +59,9 @@ export default function GatewayCard({ isActive, icon, label, onClick }: Props) {
           fontSize: "8px",
           position: "relative",
           zIndex: 1,
+          "@media (min-width: 1600px)": {
+            fontSize: "15px",
+          },
         }}
       >
         {label}
@@ -68,6 +76,9 @@ export default function GatewayCard({ isActive, icon, label, onClick }: Props) {
           opacity: isActive || isHovered ? 1 : 0,
           transition: ".3s",
           boxShadow: "0px 0 1px #FFFFFF40",
+          "@media (min-width: 1600px)": {
+            borderRadius: "15px",
+          },
         }}
       ></Box>
       <Box
@@ -81,6 +92,9 @@ export default function GatewayCard({ isActive, icon, label, onClick }: Props) {
           opacity: !isActive && !isHovered ? 1 : 0,
           transition: ".3s",
           boxShadow: "0px 0 1px #FFFFFF40",
+          "@media (min-width: 1600px)": {
+            borderRadius: "15px",
+          },
         }}
       ></Box>
     </Button>

@@ -1,4 +1,4 @@
-import { Box, Container, Stack } from "@mui/material";
+import { Box, Button, Container, Stack } from "@mui/material";
 import React from "react";
 import Logo from "../global/Logo";
 import SignUPStepper from "./SignUPStepper";
@@ -24,8 +24,13 @@ export default function OnBoardLayout({
   steps,
   isWorkflowModal,
 }: Props) {
-  const { activeStep, handleBack, setFormDataStore, formDataStore } =
-    useSignUpStore();
+  const {
+    activeStep,
+    handleBack,
+    setFormDataStore,
+    formDataStore,
+    setactiveStep,
+  } = useSignUpStore();
   const handleChange = (
     event: React.MouseEvent<HTMLElement>,
     newAlignment: string
@@ -61,10 +66,21 @@ export default function OnBoardLayout({
             justifyContent: "center",
             position: "relative",
             padding:
-              issm || isxs || isWorkflowModal ? "0px !important" : "auto",
-            height: isWorkflowModal ? "100%" : "auto",
+              isxs || isWorkflowModal
+                ? "0px !important"
+                : { xl: "0px 110px !important", sm: "0px 90px !important" },
+            height: isWorkflowModal || isxs ? "100%" : "80vh",
+
+            "@media (min-width: 1400px)": {
+              maxWidth: "93%",
+            },
+            "@media (min-width: 1600px)": {
+              maxWidth: "88%",
+            },
+            transition: ".3s",
           }}
-          maxWidth={issm || isxs || isWorkflowModal ? "xl" : "lg"}
+          maxWidth="xl"
+          // maxWidth={issm || isxs || isWorkflowModal ? "xl" : "lg"}
         >
           <Box
             sx={{
@@ -73,13 +89,18 @@ export default function OnBoardLayout({
                 sm: isWorkflowModal ? "#19181f" : "#12121280",
               },
               borderRadius: "20px",
-              height: activeStep == 0 && !isWorkflowModal ? "500px" : "auto",
-              overflow: "hidden",
+              height: activeStep == 0 && !isWorkflowModal ? "100%" : "auto",
+              // height: activeStep == 0 && !isWorkflowModal ? "500px" : "auto",
+              overflow: { xs: "auto", sm: "hidden" },
               display: "flex",
               alignItems: "center",
-              width: { xs: "100%", sm: isWorkflowModal ? "100%" : "90%" },
+              width: "100%",
+              // width: { xs: "100%", sm: isWorkflowModal ? "100%" : "90%" },
               flexDirection: { xs: "column", sm: "row" },
               position: "relative",
+              "@media (min-width: 1600px)": {
+                borderRadius: "30px",
+              },
             }}
           >
             {isLoading && <GLoader />}
@@ -90,19 +111,18 @@ export default function OnBoardLayout({
                 height: { xs: "auto", sm: "100%", md: "100%" },
                 // width: { xs: "100%", sm: "300px", xl: "400px" },
                 width: {
-                  xs: "100%", // Full width on extra-small screens
-                  sm: "250px", // Fixed width on small screens
-                  md: "28%", // 30% width on medium screens
-                  lg: "28%", // Adjusted width on large screens (e.g., 25%)
-                  xl: "28%", // Optional width on extra-large screens if needed
+                  xs: "100%",
+                  sm: "310px",
+                  md: "40%",
+                  lg: "28%",
+                  xl: "28%",
                 },
 
                 position: "relative",
                 justifyContent: { xs: "flex-start", sm: "space-between" },
                 padding: {
                   xs: "24px 24px 0 24px",
-                  sm: "24px 24px 0 24px",
-                  md: 3,
+                  sm: 3,
                 },
                 background: { xs: "none", sm: "#121212BF" },
                 borderRadius: "20px 0 0 20px",
@@ -139,6 +159,9 @@ export default function OnBoardLayout({
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
+                        "@media (min-width: 1600px)": {
+                          width: "100%",
+                        },
                       }}
                     >
                       <GToggleButton
@@ -147,6 +170,9 @@ export default function OnBoardLayout({
                         buttons={buttons}
                         customStyle={{
                           width: "160px",
+                          "@media (min-width: 1600px)": {
+                            width: "200px",
+                          },
                         }}
                       />
                     </Box>
@@ -175,6 +201,9 @@ export default function OnBoardLayout({
                               (activeStep == 3 || activeStep == 1))
                               ? "gray"
                               : "white",
+                          "@media (min-width: 1600px)": {
+                            fontSize: "20px",
+                          },
                         }}
                       />
                     }
@@ -207,11 +236,11 @@ export default function OnBoardLayout({
               <Box
                 sx={{
                   width: {
-                    xs: "100%", // Full width on extra-small screens
-                    sm: "250px", // Fixed width on small screens
-                    md: "28%", // 28% width on medium screens
-                    lg: "28%", // Adjusted width on large screens (e.g., 25%)
-                    xl: "28%", // Optional width on extra-large screens if needed
+                    xs: "100%",
+                    sm: "310px",
+                    md: "40%",
+                    lg: "28%",
+                    xl: "28%",
                   },
                 }}
               ></Box>
@@ -230,6 +259,22 @@ export default function OnBoardLayout({
             </Box>
           )}
         </Container>
+        {/* <Box sx={{ position: "absolute", bottom: 0 }}>
+          <Button
+            onClick={() => {
+              setactiveStep(activeStep - 1);
+            }}
+          >
+            Prev
+          </Button>
+          <Button
+            onClick={() => {
+              setactiveStep(activeStep + 1);
+            }}
+          >
+            Next
+          </Button>
+        </Box> */}
       </Stack>
     </AlertProvider>
   );

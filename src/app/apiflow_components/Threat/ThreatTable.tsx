@@ -69,26 +69,26 @@ const tableBodyCellCommonStyle = {
 
 // Sample data for four rows
 const tableData: any = [
-  {
-    id: 1,
-    col1: "Method override",
-    col2: "dev",
-    col3: "-",
-    col4: "-",
-    col5: "12",
-    col6: "2025-01-26, 10:00:40 AM",
-    type: "-",
-  },
-  {
-    id: 2,
-    col1: "Cross-site Scripting",
-    col2: "dev",
-    col3: "-",
-    col4: "-",
-    col5: "12",
-    col6: "2025-01-36, 10:00:40 AM",
-    type: "-",
-  },
+  // {
+  //   id: 1,
+  //   col1: "Method override",
+  //   col2: "dev",
+  //   col3: "-",
+  //   col4: "-",
+  //   col5: "12",
+  //   col6: "2025-01-26, 10:00:40 AM",
+  //   type: "-",
+  // },
+  // {
+  //   id: 2,
+  //   col1: "Cross-site Scripting",
+  //   col2: "dev",
+  //   col3: "-",
+  //   col4: "-",
+  //   col5: "12",
+  //   col6: "2025-01-36, 10:00:40 AM",
+  //   type: "-",
+  // },
   // {
   //   id: 1,
   //   col1: "SQL",

@@ -43,7 +43,7 @@ export default function ScrollableLayout({
   //     scrollToEnd.current.scrollTop = scrollToEnd.current.scrollHeight;
   //   }
   // }, [showNextButton, showBackButton]);
-  const { issm, isxs } = useMuiBreakpoints();
+  const { issm, isxs, isxl } = useMuiBreakpoints();
   const { PopUpComponent, handleOpen, open } = useGPopup();
   const { activeStep } = useSignUpStore();
 
@@ -68,7 +68,20 @@ export default function ScrollableLayout({
           marginBottom: "15px",
         }}
       >
-        <PrimarySignInUPTypography sx={{ color: "white", fontSize: "20px" }}>
+        <PrimarySignInUPTypography
+          sx={{
+            color: "white",
+            fontSize: {
+              xs: "18px", // small screens
+              sm: "20px", // medium screens
+              md: "25px", // larger screens
+              lg: "30px", // extra-large screens
+            },
+            "@media (min-width: 1600px)": {
+              fontSize: "60px",
+            },
+          }}
+        >
           {isWorkflowModal ? "Create Workspace" : " API Flow Onboarding"}
         </PrimarySignInUPTypography>
       </Stack>
@@ -77,7 +90,8 @@ export default function ScrollableLayout({
       <div
         ref={scrollToEnd}
         style={{
-          height: isxs ? "auto" : isWorkflowModal ? "520px" : "400px",
+          height: isxs ? "auto" : isWorkflowModal ? "520px" : "70vh",
+          // height: isxs ? "auto" : isWorkflowModal ? "520px" : "400px",
           overflowY: isxs ? "hidden" : "auto",
           background: "#12121280",
           borderRadius: "10px",
@@ -135,7 +149,7 @@ export default function ScrollableLayout({
                   <GlobalButton
                     disabled={elem.isDisabled}
                     key={index}
-                    padding="4px 35px"
+                    // padding="4px 35px"
                     label={elem?.name}
                     iconPosition="end"
                     background={
@@ -148,7 +162,9 @@ export default function ScrollableLayout({
                     fontWeight={500}
                     type={"button"}
                     onClickHandler={elem?.onClick}
-                    fontSize={"15px"}
+                    radius={"9px"}
+                    padding="8px 35px"
+                    fontSize="15px"
                   />
                 );
               }

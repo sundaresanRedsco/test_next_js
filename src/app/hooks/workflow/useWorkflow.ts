@@ -885,6 +885,7 @@ export default function useWorkflow({
     // handleSavePopup()
     const nodeMap = flowYdoc?.getMap("nodes");
     const edgesMap = flowYdoc?.getMap("edges");
+    console.log("showErr-nodeArray", nodeMap);
 
     const { nodeArray, deleteNodeId } = prepareNodes(nodeMap);
     const { edgesArray, deleteEdgeId } = prepareEdges(edgesMap);
@@ -923,6 +924,7 @@ export default function useWorkflow({
       userAction: `${userProfile?.user?.email} initiated Save`,
       errors: [],
     };
+    // console.log("showErr-payload", updatedData);
 
     const runMap = flowYdoc?.getMap<any>("run");
     if (runMap) {
@@ -936,6 +938,7 @@ export default function useWorkflow({
             version_id: versionValue,
             globalKeys: JSON.stringify(keysArrayNew),
             // tenant_id: userProfile.user.tenant_id,
+            project_id: currentFlowDetails?.project_id,
           };
 
           dispatch(CreateGlobalKeys(requestKeys)).then((res: any) => {});

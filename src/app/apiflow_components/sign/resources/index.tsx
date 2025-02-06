@@ -290,7 +290,13 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
             }}
           >
             <PrimarySignInUPTypography
-              sx={{ color: "white", fontSize: "18px" }}
+              sx={{
+                color: "white",
+                fontSize: "18px",
+                "@media (min-width: 1600px)": {
+                  fontSize: "25px",
+                },
+              }}
             >
               {dynamicTitle()}
             </PrimarySignInUPTypography>

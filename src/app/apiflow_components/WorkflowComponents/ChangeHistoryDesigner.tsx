@@ -192,7 +192,7 @@ function ChangeHistoryDesigner(props: any) {
               const parsedDetails = JSON?.parse(item?.details);
               const parsedPosition = JSON?.parse(parsedDetails?.position);
               const nodeIds = nodes.map((elem) => elem.id);
-              if (!nodeIds.includes(parsedDetails.id)) {
+              if (item.type === "DELETED_NODES") {
                 parsedDetails["isDeleted"] = true;
                 parsedDetails.type = "deletedNode";
               } else {

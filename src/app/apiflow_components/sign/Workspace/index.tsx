@@ -75,7 +75,7 @@ export const gatewayList = [
 ];
 export default function Workspace({ clientSession, isWorkflowModal }: Props) {
   const { userData, setFormDataStore, formDataStore } = useSignUpStore();
-  const { isxs, issm, ismd } = useMuiBreakpoints();
+  const { isxs, issm, ismd, isxl } = useMuiBreakpoints();
 
   const {
     formData,
@@ -198,7 +198,13 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                 }}
               >
                 <PrimarySignInUPTypography
-                  sx={{ color: "white", fontSize: "18px" }}
+                  sx={{
+                    color: "white",
+                    fontSize: "18px",
+                    "@media (min-width: 1600px)": {
+                      fontSize: "25px",
+                    },
+                  }}
                 >
                   {elem?.title}
                 </PrimarySignInUPTypography>
@@ -206,6 +212,9 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                   sx={{
                     color: "#F3F3F3BF",
                     fontSize: "10px",
+                    "@media (min-width: 1600px)": {
+                      fontSize: "18px",
+                    },
                   }}
                 >
                   {elem?.description}
@@ -217,6 +226,9 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                       margin: "0px",
                       fontFamily: "Firasans-regular",
                       color: "#d32f2f",
+                      "@media (min-width: 1600px)": {
+                        fontSize: "18px",
+                      },
                     }}
                   >
                     {elem.helperText}
@@ -258,6 +270,9 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                           sx={{
                             color: "white",
                             fontSize: "13px",
+                            "@media (min-width: 1600px)": {
+                              fontSize: "20px",
+                            },
                           }}
                         >
                           {input?.title}
@@ -269,6 +284,9 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                               fontSize: "13px",
                               textTransform: "uppercase",
                               textDecoration: "underline",
+                              "@media (min-width: 1600px)": {
+                                fontSize: "20px",
+                              },
                             }}
                           >
                             {input?.link?.label}
@@ -318,6 +336,9 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                           sx={{
                             color: "white",
                             fontSize: "13px",
+                            "@media (min-width: 1600px)": {
+                              fontSize: "20px",
+                            },
                           }}
                         >
                           {input?.label}
@@ -331,8 +352,9 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                         helperText={input.errMsg}
                         onChangeHandler={input.onChange}
                         value={input.value}
-                        height="43px"
-                        radius="5px"
+                        height={"47px"}
+                        radius={"5px"}
+                        // height="43px"
                       />
                     </Stack>
                   </Grid>

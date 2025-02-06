@@ -20,12 +20,19 @@ const defaultStyle = (isActive: boolean) => {
     },
     "& .MuiStepConnector-root": {
       margin: "0px 10px",
+      "@media (min-width: 1600px)": {
+        margin: "0px 25px",
+      },
     },
     "& .MuiStepConnector-line": {
       borderWidth: "1px",
       borderColor: "#4F4F4F80",
-      marginRight: { xl: 0, lg: 0, md: 0, sm: 0, xs: "30px" },
+      marginRight: { lg: 0, md: 0, sm: 0, xs: "30px" },
       minHeight: "17px",
+      "@media (min-width: 1600px)": {
+        marginRight: 0,
+        minHeight: "45px",
+      },
     },
     "& .MuiStepConnector-root.Mui-active .MuiStepConnector-line": {
       borderColor: "#4F4F4F80",
@@ -72,6 +79,9 @@ const defaultButtonStyle = (activeStep: number, index: number) => {
       color: activeStep >= index ? "white" : "#FFFFFF80",
       fontFamily: activeStep == index ? "FiraSans-medium" : "FiraSans-regular",
       fontSize: "12px",
+      "@media (min-width: 1600px)": {
+        fontSize: "25px",
+      },
     },
     "& .MuiStepLabel-root": {
       width: "100%",
@@ -118,9 +128,25 @@ export default function SignUPStepper({ steps, variant }: Props) {
               alignItems: "center",
               justifyContent: "center",
               borderRadius: "5px",
+              "@media (min-width: 1600px)": {
+                height: "50px",
+                width: "50px",
+                borderRadius: "10px",
+              },
             }}
           >
-            {isCompleted ? <DoneRounded sx={{ fontSize: "15px" }} /> : icon}
+            {isCompleted ? (
+              <DoneRounded
+                sx={{
+                  fontSize: "15px",
+                  "@media (min-width: 1600px)": {
+                    fontSize: "25px",
+                  },
+                }}
+              />
+            ) : (
+              icon
+            )}
           </Box>
         )}
       </>
@@ -130,6 +156,7 @@ export default function SignUPStepper({ steps, variant }: Props) {
 
   const theme = useTheme();
   const isxs = useMediaQuery(theme.breakpoints.only("xs"));
+  const isxl = useMediaQuery(theme.breakpoints.only("xl"));
   const showLabel = variant != "slider" && !isxs;
   const isActive = formDataStore?.currentPage != "Login";
   return (
@@ -178,8 +205,8 @@ export default function SignUPStepper({ steps, variant }: Props) {
                 }}
               >
                 {showLabel && elem?.label}
-                <span
-                  style={{
+                <Box
+                  sx={{
                     fontSize: "8px",
                     position: "absolute",
                     bottom: -15,
@@ -188,10 +215,14 @@ export default function SignUPStepper({ steps, variant }: Props) {
                       activeStep == index && isActive ? "#F3F3F3" : "#F3F3F380",
                     fontWeight: 400,
                     fontFamily: "FiraSans-regular",
+                    "@media (min-width: 1600px)": {
+                      fontSize: "18px",
+                      bottom: -30,
+                    },
                   }}
                 >
                   {showLabel && elem?.description}
-                </span>
+                </Box>
               </span>
             </StepButton>
           </Step>

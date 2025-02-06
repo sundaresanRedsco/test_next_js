@@ -7,13 +7,18 @@ import {
 } from "@/app/Styles/signInUp";
 import { Box, Stack } from "@mui/material";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 import { ArrowForwardRounded } from "@mui/icons-material";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 
 export default function WelcomePage() {
-  const { handleStep } = useSignUpStore();
-  localStorage.clear();
+  const { handleStep, activeStep } = useSignUpStore();
+  useEffect(() => {
+    if (activeStep == -1) {
+      localStorage.clear();
+    }
+  }, []);
+
   return (
     <Stack
       sx={{
@@ -47,6 +52,9 @@ export default function WelcomePage() {
           color: "white",
           fontSize: { xs: "30px", md: "50px" },
           textAlign: "center",
+          "@media (min-width: 1600px)": {
+            fontSize: "70px",
+          },
         }}
       >
         Welcome to API Flows
@@ -55,11 +63,15 @@ export default function WelcomePage() {
         sx={{
           color: "#F3F3F3BF",
           marginTop: 1,
+          "@media (min-width: 1600px)": {
+            fontSize: "25px",
+          },
         }}
       >
         Better API Visibility, Lesser Complexity
       </TertiarySignInUPTypography>
       <GButton
+        className="bigButton"
         padding="12px 40px"
         label={"Let’s Get Started"}
         iconPosition="end"

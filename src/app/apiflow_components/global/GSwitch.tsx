@@ -5,6 +5,7 @@ type Props = {
   value: boolean;
   handleChange: any;
   name: string;
+  size?: "normal" | "large";
 };
 
 const AntSwitch = styled(Switch)(({ theme }) => ({
@@ -15,9 +16,15 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
   "&:active": {
     "& .MuiSwitch-thumb": {
       width: 15,
+      "@media (min-width: 1600px)": {
+        fontSize: 20,
+      },
     },
     "& .MuiSwitch-switchBase.Mui-checked": {
       transform: "translateX(9px)",
+      "@media (min-width: 1600px)": {
+        transform: "translateX(20px)",
+      },
     },
   },
   "& .MuiSwitch-switchBase": {
@@ -32,6 +39,12 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
           backgroundColor: "#7A43FE",
         }),
       },
+      "@media (min-width: 1600px)": {
+        transform: "translateX(20px)",
+      },
+    },
+    "@media (min-width: 1600px)": {
+      padding: 5,
     },
   },
   "& .MuiSwitch-thumb": {
@@ -42,6 +55,11 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
     transition: theme.transitions.create(["width"], {
       duration: 200,
     }),
+    "@media (min-width: 1600px)": {
+      width: 20,
+      height: 20,
+      borderRadius: 20,
+    },
   },
   "& .MuiSwitch-track": {
     borderRadius: 16 / 2,
@@ -51,8 +69,16 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
     ...theme.applyStyles("dark", {
       backgroundColor: "#9A9A9A",
     }),
+    "@media (min-width: 1600px)": {
+      borderRadius: 20,
+    },
+  },
+  "@media (min-width: 1600px)": {
+    width: 50,
+    height: 30,
   },
 }));
+
 export default function GSwitch({ value, handleChange, name }: Props) {
   return <AntSwitch name={name} checked={value} onChange={handleChange} />;
 }
