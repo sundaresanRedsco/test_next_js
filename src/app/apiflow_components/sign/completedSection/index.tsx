@@ -42,7 +42,7 @@ export default function CompletedSection({ clientSession }: any) {
           color: "white",
           fontSize: { xs: "20px", md: "20px" },
           textAlign: "center",
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             fontSize: "60px",
           },
         }}
@@ -54,7 +54,7 @@ export default function CompletedSection({ clientSession }: any) {
           color: "#F3F3F3BF",
           marginTop: 1,
           textAlign: "center",
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             fontSize: "30px",
           },
         }}

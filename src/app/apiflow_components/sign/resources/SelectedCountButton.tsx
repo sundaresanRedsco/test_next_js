@@ -22,7 +22,7 @@ export default function SelectedCountButton({ count }: Props) {
         justifyContent: "center",
         gap: "3px",
         textAlign: "end",
-        "@media (min-width: 1600px)": {
+        "@media (min-width: 2120px)": {
           height: "40px",
           minWidth: "150px",
         },
@@ -32,7 +32,7 @@ export default function SelectedCountButton({ count }: Props) {
         sx={{
           color: "white",
           fontSize: "13px",
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             fontSize: "20px",
           },
         }}
@@ -43,7 +43,7 @@ export default function SelectedCountButton({ count }: Props) {
         sx={{
           color: "white",
           fontSize: "10px",
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             fontSize: "18px",
           },
         }}

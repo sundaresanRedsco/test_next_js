@@ -16,13 +16,13 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
   "&:active": {
     "& .MuiSwitch-thumb": {
       width: 15,
-      "@media (min-width: 1600px)": {
+      "@media (min-width: 2120px)": {
         fontSize: 20,
       },
     },
     "& .MuiSwitch-switchBase.Mui-checked": {
       transform: "translateX(9px)",
-      "@media (min-width: 1600px)": {
+      "@media (min-width: 2120px)": {
         transform: "translateX(20px)",
       },
     },
@@ -39,11 +39,11 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
           backgroundColor: "#7A43FE",
         }),
       },
-      "@media (min-width: 1600px)": {
+      "@media (min-width: 2120px)": {
         transform: "translateX(20px)",
       },
     },
-    "@media (min-width: 1600px)": {
+    "@media (min-width: 2120px)": {
       padding: 5,
     },
   },
@@ -55,7 +55,7 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
     transition: theme.transitions.create(["width"], {
       duration: 200,
     }),
-    "@media (min-width: 1600px)": {
+    "@media (min-width: 2120px)": {
       width: 20,
       height: 20,
       borderRadius: 20,
@@ -69,11 +69,11 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
     ...theme.applyStyles("dark", {
       backgroundColor: "#9A9A9A",
     }),
-    "@media (min-width: 1600px)": {
+    "@media (min-width: 2120px)": {
       borderRadius: 20,
     },
   },
-  "@media (min-width: 1600px)": {
+  "@media (min-width: 2120px)": {
     width: 50,
     height: 30,
   },

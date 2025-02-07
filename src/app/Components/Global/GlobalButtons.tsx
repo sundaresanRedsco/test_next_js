@@ -115,7 +115,7 @@ export default function GButton(props: GButtonProps) {
               : outline,
           textTransform: "inherit",
           fontFamily: "FiraSans-regular",
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             padding:
               className == "bigButton" ? "20px 60px !important" : "15px 60px ",
             fontSize: "25px",

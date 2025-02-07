@@ -122,7 +122,9 @@ export default function useSignIn() {
         code: response.code,
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as any,
         client_secret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET as any,
+        // redirect_uri: process.env.NEXT_PUBLIC_APP_BASE_URL as any,
         redirect_uri: "postmessage",
+
         grant_type: "authorization_code",
       }).toString(),
     });

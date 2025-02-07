@@ -283,7 +283,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
             sx={{
               color: "white",
               fontSize: "18px",
-              "@media (min-width: 1600px)": {
+              "@media (min-width: 2120px)": {
                 fontSize: "25px",
               },
             }}
@@ -302,7 +302,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
             background="#7946FD40"
             radius={"7px"}
             sx={{
-              "@media (min-width: 1600px)": {
+              "@media (min-width: 2120px)": {
                 "& .MuiInputBase-root": {
                   height: "60px !important",
                 },
@@ -330,7 +330,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                       sx={{
                         color: "white",
                         fontSize: "13px",
-                        "@media (min-width: 1600px)": {
+                        "@media (min-width: 2120px)": {
                           fontSize: "20px",
                         },
                       }}
@@ -376,7 +376,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                       sx={{
                         color: "white",
                         fontSize: "13px",
-                        "@media (min-width: 1600px)": {
+                        "@media (min-width: 2120px)": {
                           fontSize: "20px",
                         },
                       }}
@@ -417,7 +417,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                       fontSize: "15px",
                       position: { xs: "static", sm: "static", md: "absolute" },
                       left: 0,
-                      "@media (min-width: 1600px)": {
+                      "@media (min-width: 2120px)": {
                         fontSize: "23px",
                       },
                     }}
@@ -465,7 +465,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                       sx={{
                         color: "white",
                         fontSize: "13px",
-                        "@media (min-width: 1600px)": {
+                        "@media (min-width: 2120px)": {
                           fontSize: "20px",
                         },
                       }}

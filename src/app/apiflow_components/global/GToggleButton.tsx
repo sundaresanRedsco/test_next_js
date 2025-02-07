@@ -19,7 +19,7 @@ const defaultStyle = {
     "&:hover": {
       background: "#7A43FE",
     },
-    "@media (min-width: 1600px)": {
+    "@media (min-width: 2120px)": {
       borderRadius: "12px",
     },
   },
@@ -30,7 +30,7 @@ const defaultStyle = {
     fontSize: "10px",
     padding: "8px 15px",
     border: "none",
-    "@media (min-width: 1600px)": {
+    "@media (min-width: 2120px)": {
       padding: "10px 15px",
       fontSize: "20px",
     },
@@ -40,7 +40,7 @@ const defaultStyle = {
   justifyContent: "space-between",
   width: "100%",
   boxShadow: "0px 0px 1.5px  #4F4F4F",
-  "@media (min-width: 1600px)": {
+  "@media (min-width: 2120px)": {
     borderRadius: "15px",
   },
 };

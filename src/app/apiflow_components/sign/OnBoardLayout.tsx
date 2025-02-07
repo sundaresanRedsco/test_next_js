@@ -74,7 +74,7 @@ export default function OnBoardLayout({
             "@media (min-width: 1400px)": {
               maxWidth: isWorkflowModal ? "100%" : "93%",
             },
-            "@media (min-width: 1600px)": {
+            "@media (min-width: 2120px)": {
               maxWidth: isWorkflowModal ? "100%" : "88%",
             },
             transition: ".5s",
@@ -98,7 +98,7 @@ export default function OnBoardLayout({
               // width: { xs: "100%", sm: isWorkflowModal ? "100%" : "90%" },
               flexDirection: { xs: "column", sm: "row" },
               position: "relative",
-              "@media (min-width: 1600px)": {
+              "@media (min-width: 2120px)": {
                 borderRadius: "30px",
               },
             }}
@@ -160,7 +160,7 @@ export default function OnBoardLayout({
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        "@media (min-width: 1600px)": {
+                        "@media (min-width: 2120px)": {
                           width: "100%",
                         },
                       }}
@@ -171,7 +171,7 @@ export default function OnBoardLayout({
                         buttons={buttons}
                         customStyle={{
                           width: "160px",
-                          "@media (min-width: 1600px)": {
+                          "@media (min-width: 2120px)": {
                             width: "200px",
                           },
                         }}
@@ -204,7 +204,7 @@ export default function OnBoardLayout({
                               (activeStep == 3 || activeStep == 1))
                               ? "gray"
                               : "white",
-                          "@media (min-width: 1600px)": {
+                          "@media (min-width: 2120px)": {
                             fontSize: "20px",
                           },
                         }}

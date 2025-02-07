@@ -52,7 +52,7 @@ export default function WelcomePage() {
           color: "white",
           fontSize: { xs: "30px", md: "50px" },
           textAlign: "center",
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             fontSize: "70px",
           },
         }}
@@ -63,7 +63,7 @@ export default function WelcomePage() {
         sx={{
           color: "#F3F3F3BF",
           marginTop: 1,
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             fontSize: "25px",
           },
         }}

@@ -20,7 +20,7 @@ const defaultStyle = (isActive: boolean) => {
     },
     "& .MuiStepConnector-root": {
       margin: "0px 10px",
-      "@media (min-width: 1600px)": {
+      "@media (min-width: 2120px)": {
         margin: "0px 25px",
       },
     },
@@ -29,7 +29,7 @@ const defaultStyle = (isActive: boolean) => {
       borderColor: "#4F4F4F80",
       marginRight: { lg: 0, md: 0, sm: 0, xs: "30px" },
       minHeight: "17px",
-      "@media (min-width: 1600px)": {
+      "@media (min-width: 2120px)": {
         marginRight: 0,
         minHeight: "45px",
       },
@@ -79,7 +79,7 @@ const defaultButtonStyle = (activeStep: number, index: number) => {
       color: activeStep >= index ? "white" : "#FFFFFF80",
       fontFamily: activeStep == index ? "FiraSans-medium" : "FiraSans-regular",
       fontSize: "12px",
-      "@media (min-width: 1600px)": {
+      "@media (min-width: 2120px)": {
         fontSize: "25px",
       },
     },
@@ -129,7 +129,7 @@ export default function SignUPStepper({ steps, variant }: Props) {
               alignItems: "center",
               justifyContent: "center",
               borderRadius: "5px",
-              "@media (min-width: 1600px)": {
+              "@media (min-width: 2120px)": {
                 height: "50px",
                 width: "50px",
                 borderRadius: "10px",
@@ -140,7 +140,7 @@ export default function SignUPStepper({ steps, variant }: Props) {
               <DoneRounded
                 sx={{
                   fontSize: "15px",
-                  "@media (min-width: 1600px)": {
+                  "@media (min-width: 2120px)": {
                     fontSize: "25px",
                   },
                 }}
@@ -208,7 +208,7 @@ export default function SignUPStepper({ steps, variant }: Props) {
                 {showLabel && elem?.label}
                 <Box
                   sx={{
-                    fontSize: "8px",
+                    fontSize: { lg: "8px", sm: ".456rem" },
                     position: "absolute",
                     bottom: -15,
                     width: "100%",
@@ -216,7 +216,7 @@ export default function SignUPStepper({ steps, variant }: Props) {
                       activeStep == index && isActive ? "#F3F3F3" : "#F3F3F380",
                     fontWeight: 400,
                     fontFamily: "FiraSans-regular",
-                    "@media (min-width: 1600px)": {
+                    "@media (min-width: 2120px)": {
                       fontSize: "18px",
                       bottom: -30,
                     },

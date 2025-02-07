@@ -77,7 +77,7 @@ export default function ScrollableLayout({
               md: "25px", // larger screens
               lg: "30px", // extra-large screens
             },
-            "@media (min-width: 1600px)": {
+            "@media (min-width: 2120px)": {
               fontSize: "60px",
             },
           }}

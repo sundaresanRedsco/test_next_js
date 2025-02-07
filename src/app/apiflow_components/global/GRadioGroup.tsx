@@ -85,7 +85,7 @@ export default function GRadioGroup({ inputs, onChange, value, name }: Props) {
           "& .MuiTypography-root": {
             fontFamily: "Firasans-regular",
             fontSize: "13px",
-            "@media (min-width: 1600px)": {
+            "@media (min-width: 2120px)": {
               fontSize: "20px",
             },
           },

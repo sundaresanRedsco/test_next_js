@@ -201,7 +201,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                   sx={{
                     color: "white",
                     fontSize: "18px",
-                    "@media (min-width: 1600px)": {
+                    "@media (min-width: 2120px)": {
                       fontSize: "25px",
                     },
                   }}
@@ -212,7 +212,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                   sx={{
                     color: "#F3F3F3BF",
                     fontSize: "10px",
-                    "@media (min-width: 1600px)": {
+                    "@media (min-width: 2120px)": {
                       fontSize: "18px",
                     },
                   }}
@@ -226,7 +226,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                       margin: "0px",
                       fontFamily: "Firasans-regular",
                       color: "#d32f2f",
-                      "@media (min-width: 1600px)": {
+                      "@media (min-width: 2120px)": {
                         fontSize: "18px",
                       },
                     }}
@@ -271,7 +271,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                           sx={{
                             color: "white",
                             fontSize: "13px",
-                            "@media (min-width: 1600px)": {
+                            "@media (min-width: 2120px)": {
                               fontSize: "20px",
                             },
                           }}
@@ -285,7 +285,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                               fontSize: "13px",
                               textTransform: "uppercase",
                               textDecoration: "underline",
-                              "@media (min-width: 1600px)": {
+                              "@media (min-width: 2120px)": {
                                 fontSize: "20px",
                               },
                             }}
@@ -350,7 +350,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                           sx={{
                             color: "white",
                             fontSize: "13px",
-                            "@media (min-width: 1600px)": {
+                            "@media (min-width: 2120px)": {
                               fontSize: "20px",
                             },
                           }}

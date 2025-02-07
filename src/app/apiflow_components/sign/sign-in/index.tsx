@@ -188,7 +188,7 @@ export default function SignIn({ clientSession }: any) {
                     md: "25px", // larger screens
                     lg: "30px", // extra-large screens
                   },
-                  "@media (min-width: 1600px)": {
+                  "@media (min-width: 2120px)": {
                     fontSize: "60px",
                   },
                 }}
@@ -200,7 +200,7 @@ export default function SignIn({ clientSession }: any) {
                   color: "#F3F3F3BF",
                   marginTop: 1,
                   fontSize: "14px",
-                  "@media (min-width: 1600px)": {
+                  "@media (min-width: 2120px)": {
                     fontSize: "20px",
                   },
                 }}
@@ -223,7 +223,7 @@ export default function SignIn({ clientSession }: any) {
                 alignItems: "center",
                 flexDirection: "column",
                 height: "100%",
-                "@media (min-width: 1600px)": {
+                "@media (min-width: 2120px)": {
                   width: "60%",
                 },
               }}
@@ -345,7 +345,7 @@ export default function SignIn({ clientSession }: any) {
                               sx={{
                                 color: "white",
                                 fontSize: "13px",
-                                "@media (min-width: 1600px)": {
+                                "@media (min-width: 2120px)": {
                                   fontSize: "20px",
                                 },
                               }}
@@ -402,7 +402,7 @@ export default function SignIn({ clientSession }: any) {
                   justifyContent: "center",
                   alignItems: "center",
                   flexDirection: "column",
-                  "@media (min-width: 1600px)": {
+                  "@media (min-width: 2120px)": {
                     width: "60%",
                   },
                 }}
@@ -433,7 +433,7 @@ export default function SignIn({ clientSession }: any) {
                         borderStyle: "none solid",
                         height: "1px",
                         alignItems: "center",
-                        "@media (min-width: 1600px)": {
+                        "@media (min-width: 2120px)": {
                           height: "3px",
                           borderWidth: "1px 300px 0px 300px",
                         },
@@ -444,7 +444,7 @@ export default function SignIn({ clientSession }: any) {
                           color: "#FFFFFFBF",
                           fontSize: "12px",
                           top: 0,
-                          "@media (min-width: 1600px)": {
+                          "@media (min-width: 2120px)": {
                             fontSize: "20px",
                           },
                         }}

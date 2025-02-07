@@ -12,7 +12,7 @@ export default function Logo({}: Props) {
         sx={{
           height: "35px",
           width: "35px",
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             height: "60px",
             width: "60px",
           },
@@ -35,7 +35,7 @@ export default function Logo({}: Props) {
         sx={{
           color: "white",
           fontSize: "25px",
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             fontSize: "45px",
           },
         }}

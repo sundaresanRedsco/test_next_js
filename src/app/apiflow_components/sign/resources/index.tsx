@@ -293,7 +293,7 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
               sx={{
                 color: "white",
                 fontSize: "18px",
-                "@media (min-width: 1600px)": {
+                "@media (min-width: 2120px)": {
                   fontSize: "25px",
                 },
               }}

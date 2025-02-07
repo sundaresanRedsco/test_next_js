@@ -162,7 +162,7 @@ export default function GSelect(props: Props) {
             alignItems: "center",
             paddingLeft: "10px",
             boxShadow: border ? border : "0 0 0 1.3px #F3F3F340",
-            "@media (min-width: 1600px)": {
+            "@media (min-width: 2120px)": {
               height: "80px",
             },
           },
@@ -184,7 +184,7 @@ export default function GSelect(props: Props) {
             alignItems: "center",
             paddingLeft: "10px",
             padding: padding || "",
-            "@media (min-width: 1600px)": {
+            "@media (min-width: 2120px)": {
               height: "80px",
             },
           },
@@ -223,7 +223,7 @@ export default function GSelect(props: Props) {
             fontWeight: fontWeight,
             borderRadius: radius || "5px",
             cursor: "pointer",
-            "@media (min-width: 1600px)": {
+            "@media (min-width: 2120px)": {
               borderRadius: "13px",
             },
           },

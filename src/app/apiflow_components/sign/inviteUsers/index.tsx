@@ -125,7 +125,7 @@ export default function InvitedUsers({
                   sx={{
                     color: "white",
                     fontSize: "18px",
-                    "@media (min-width: 1600px)": {
+                    "@media (min-width: 2120px)": {
                       fontSize: "25px",
                     },
                   }}
@@ -136,7 +136,7 @@ export default function InvitedUsers({
                   sx={{
                     color: "#F3F3F3BF",
                     fontSize: "10px",
-                    "@media (min-width: 1600px)": {
+                    "@media (min-width: 2120px)": {
                       fontSize: "15px",
                     },
                   }}
@@ -181,7 +181,7 @@ export default function InvitedUsers({
                                 sx={{
                                   color: "white",
                                   fontSize: "13px",
-                                  "@media (min-width: 1600px)": {
+                                  "@media (min-width: 2120px)": {
                                     fontSize: "20px",
                                   },
                                 }}
@@ -229,7 +229,7 @@ export default function InvitedUsers({
                                 sx={{
                                   color: "white",
                                   fontSize: "13px",
-                                  "@media (min-width: 1600px)": {
+                                  "@media (min-width: 2120px)": {
                                     fontSize: "20px",
                                   },
                                 }}
@@ -278,7 +278,7 @@ export default function InvitedUsers({
                               : "5px !important",
                           fontSize: "13px",
                           fontFamily: "Firasans-medium !important",
-                          "@media (min-width: 1600px)": {
+                          "@media (min-width: 2120px)": {
                             height: "80px",
                             fontSize: "20px",
                             marginBottom:

@@ -199,7 +199,7 @@ export default function GInput(props: Props) {
             padding: padding,
             height: height,
             boxShadow: border ? border : "0 0 0 1.3px #F3F3F340",
-            "@media (min-width: 1600px)": {
+            "@media (min-width: 2120px)": {
               height: "80px",
             },
           },
@@ -218,7 +218,7 @@ export default function GInput(props: Props) {
           height: height,
           borderColor: borderColor ? borderColor : "#F3F3F340",
           borderRadius: "7px",
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             height: "80px",
           },
           "&.MuiFormHelperText-root": {
@@ -277,7 +277,7 @@ export default function GInput(props: Props) {
             fontSize: fontSize || "0.7rem",
             fontWeight: fontWeight ? fontWeight : 500,
             borderRadius: radius || "7px", // Set border radius to 0
-            "@media (min-width: 1600px)": {
+            "@media (min-width: 2120px)": {
               borderRadius: "13px",
             },
           },

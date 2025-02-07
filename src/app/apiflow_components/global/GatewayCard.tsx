@@ -34,7 +34,7 @@ export default function GatewayCard({ isActive, icon, label, onClick }: Props) {
         cursor: "pointer",
         textTransform: "none",
         position: "relative",
-        "@media (min-width: 1600px)": {
+        "@media (min-width: 2120px)": {
           padding: 8,
           borderRadius: "15px",
         },
@@ -59,7 +59,7 @@ export default function GatewayCard({ isActive, icon, label, onClick }: Props) {
           fontSize: "8px",
           position: "relative",
           zIndex: 1,
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             fontSize: "15px",
           },
         }}
@@ -76,7 +76,7 @@ export default function GatewayCard({ isActive, icon, label, onClick }: Props) {
           opacity: isActive || isHovered ? 1 : 0,
           transition: ".3s",
           boxShadow: "0px 0 1px #FFFFFF40",
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             borderRadius: "15px",
           },
         }}
@@ -92,7 +92,7 @@ export default function GatewayCard({ isActive, icon, label, onClick }: Props) {
           opacity: !isActive && !isHovered ? 1 : 0,
           transition: ".3s",
           boxShadow: "0px 0 1px #FFFFFF40",
-          "@media (min-width: 1600px)": {
+          "@media (min-width: 2120px)": {
             borderRadius: "15px",
           },
         }}
