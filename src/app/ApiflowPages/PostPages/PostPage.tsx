@@ -7,7 +7,7 @@ import { MqttClient } from "mqtt";
 
 const PostPage: React.FC = () => {
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
-    (state) => state.common,
+    (state) => state.common
   );
   const [client, setClient] = useState<MqttClient | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -19,7 +19,7 @@ const PostPage: React.FC = () => {
     const topic = `users/${userProfile.user.user_id}/notifications`;
 
     const mqttClient = connectToMqtt(
-      "ws://139.99.114.132:15675/ws", // Broker URL
+      process.env.NEXT_PUBLIC_APP_MQTT_URL as string, // Broker URL
       topic,
       (receivedTopic, message) => {
         // Handle incoming messages
@@ -34,7 +34,7 @@ const PostPage: React.FC = () => {
       () => {
         // Handle successful connection
         setIsConnected(true);
-      },
+      }
     );
 
     setClient(mqttClient);
@@ -51,7 +51,7 @@ const PostPage: React.FC = () => {
       sendMqttMessage(
         client,
         `users/${userProfile.user.user_id}/notifications`,
-        "Hello from React!",
+        "Hello from React!"
       );
     }
   };

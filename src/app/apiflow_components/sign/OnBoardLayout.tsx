@@ -77,7 +77,6 @@ export default function OnBoardLayout({
             "@media (min-width: 2120px)": {
               maxWidth: isWorkflowModal ? "100%" : "88%",
             },
-            transition: ".5s",
           }}
           maxWidth="xl"
           // maxWidth={issm || isxs || isWorkflowModal ? "xl" : "lg"}
@@ -165,17 +164,19 @@ export default function OnBoardLayout({
                         },
                       }}
                     >
-                      <GToggleButton
-                        handleChange={handleChange}
-                        alignment={formDataStore?.currentPage}
-                        buttons={buttons}
-                        customStyle={{
-                          width: "160px",
-                          "@media (min-width: 2120px)": {
-                            width: "200px",
-                          },
-                        }}
-                      />
+                      {!formDataStore?.isRegisterd && (
+                        <GToggleButton
+                          handleChange={handleChange}
+                          alignment={formDataStore?.currentPage}
+                          buttons={buttons}
+                          customStyle={{
+                            width: "160px",
+                            "@media (min-width: 2120px)": {
+                              width: "200px",
+                            },
+                          }}
+                        />
+                      )}
                     </Box>
                   )
                 ) : (
@@ -247,18 +248,20 @@ export default function OnBoardLayout({
                   },
                 }}
               ></Box>
-              <Box
-                sx={{
-                  width: "inherit",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Box>
-                  <SignUPStepper steps={steps} variant="slider" />
+              {formDataStore?.currentPage != "Login" && (
+                <Box
+                  sx={{
+                    width: "inherit",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Box>
+                    <SignUPStepper steps={steps} variant="slider" />
+                  </Box>
                 </Box>
-              </Box>
+              )}
             </Box>
           )}
         </Container>

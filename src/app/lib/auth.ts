@@ -73,7 +73,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials): Promise<User | null> {
         try {
           const response = await axios.post(
-            "https://api.apiflow.pro/api/auth/login",
+            process.env.NEXT_PUBLIC_APP_BACKEND_URL + "/api/auth/login",
             {
               email: credentials?.email,
               password: credentials?.password,

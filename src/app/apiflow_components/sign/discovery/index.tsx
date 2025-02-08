@@ -316,7 +316,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
         if (elem.isVisible) {
           if (elem?.type == "select") {
             return (
-              <Grid size={{ md: 6, sm: 6, xs: 12 }} key={index}>
+              <Grid size={{ md: 6, sm: 12, xs: 12 }} key={index}>
                 <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                   <Box
                     sx={{
@@ -447,7 +447,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
               <Grid
                 size={{
                   md: elem?.fullWidth ? 12 : 6,
-                  sm: elem?.fullWidth ? 12 : 6,
+                  sm: 12,
                   xs: 12,
                 }}
                 key={index}

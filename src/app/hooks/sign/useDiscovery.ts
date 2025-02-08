@@ -232,8 +232,12 @@ export default function useDiscovery(userData?: any, fetchData?: any) {
     }
   };
   const APIs: any = {
-    AWS: "https://api.apiflow.pro/api/ImportFromApiGateWay/import_from_api_gateway",
-    SWAGGER: "https://api.apiflow.pro/api/Import_/import_from_swagger",
+    AWS:
+      process.env.NEXT_PUBLIC_APP_BACKEND_URL +
+      "/api/ImportFromApiGateWay/import_from_api_gateway",
+    SWAGGER:
+      process.env.NEXT_PUBLIC_APP_BACKEND_URL +
+      "/api/Import_/import_from_swagger",
   };
   const handleSubmit = async () => {
     setIsLoading(true);

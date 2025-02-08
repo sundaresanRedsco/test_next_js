@@ -15,7 +15,8 @@ export default function useCatalogue(userData?: any, handleStep?: any) {
     try {
       const access_token = userData?.user?.token;
       const { data } = await axios.get(
-        `https://api.apiflow.pro/api/Project/get_group_project_by_workspaceid?WorkspaceId=${apiDataStore?.workspace?.id}&start=0&end=3`,
+        process.env.NEXT_PUBLIC_APP_BACKEND_URL +
+          `/api/Project/get_group_project_by_workspaceid?WorkspaceId=${apiDataStore?.workspace?.id}&start=0&end=3`,
         {
           headers: {
             Authorization: `Bearer ${access_token}`,
@@ -34,7 +35,8 @@ export default function useCatalogue(userData?: any, handleStep?: any) {
     try {
       const access_token = userData?.user?.token;
       const { data } = await axios.post(
-        `https://api.apiflow.pro/api/Project/update_groups?workspace_id=${apiDataStore?.workspace?.id}`,
+        process.env.NEXT_PUBLIC_APP_BACKEND_URL +
+          `/api/Project/update_groups?workspace_id=${apiDataStore?.workspace?.id}`,
         formData,
         {
           headers: {
@@ -57,7 +59,8 @@ export default function useCatalogue(userData?: any, handleStep?: any) {
     try {
       const access_token = userData?.user?.token;
       const { data } = await axios.post(
-        `https://api.apiflow.pro/api/Project/update_project?workspace_id=${apiDataStore?.workspace?.id}`,
+        process.env.NEXT_PUBLIC_APP_BACKEND_URL +
+          `/api/Project/update_project?workspace_id=${apiDataStore?.workspace?.id}`,
         formData,
         {
           headers: {

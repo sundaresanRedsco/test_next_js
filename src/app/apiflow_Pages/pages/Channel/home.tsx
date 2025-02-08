@@ -74,7 +74,7 @@ export default function HomeChannel(props: any) {
     const topic = `users/${userProfile.user.user_id}/notifications`;
 
     const mqttClient = connectToMqtt(
-      "ws://139.99.114.132:15675/ws", // Broker URL
+      process.env.NEXT_PUBLIC_APP_MQTT_URL as string, // Broker URL
       topic,
       (receivedTopic: any, message: any) => {
         // Handle incoming messages

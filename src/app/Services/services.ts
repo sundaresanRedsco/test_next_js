@@ -12,6 +12,7 @@ export async function AdminServices(
       method,
       url: `${adminUrl}/${url}`,
       data,
+      ...(headers && { headers: { Authorization: `Bearer ${headers}` } }),
     });
 
     // const response = await axios({

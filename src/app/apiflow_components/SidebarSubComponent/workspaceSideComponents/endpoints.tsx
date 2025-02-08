@@ -323,6 +323,10 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
                         ? "#FFFFFF"
                         : "#FFFFFF80",
                       fontSize: "12px",
+                      maxWidth: "170px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
                     {col.name}

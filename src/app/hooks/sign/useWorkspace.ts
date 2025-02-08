@@ -137,7 +137,8 @@ export default function useWorkspace(userData?: any) {
         } else {
           try {
             const { data }: any = await axios.post(
-              "https://api.apiflow.pro/Api/Workspace_/update_workspace?workspace_id=" +
+              process.env.NEXT_PUBLIC_APP_BACKEND_URL +
+                "/Api/Workspace_/update_workspace?workspace_id=" +
                 apiDataStore?.workspace?.id,
               {
                 workspace_id: apiDataStore?.workspace?.id,
@@ -177,7 +178,8 @@ export default function useWorkspace(userData?: any) {
       } else {
         try {
           const { data }: any = await axios.post(
-            "https://api.apiflow.pro/Api/Workspace_/workspace_create",
+            process.env.NEXT_PUBLIC_APP_BACKEND_URL +
+              "/Api/Workspace_/workspace_create",
             {
               name: formData.workspace_name,
               summary: formData.description,

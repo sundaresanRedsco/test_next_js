@@ -13,11 +13,11 @@ import toast from "react-hot-toast";
 
 export default function CompletedSection({ clientSession }: any) {
   const router = useRouter();
-  const { resetApiData, resetForm, setactiveStep } = useSignUpStore();
+  const { resetApiData, resetForm, setactiveStep, resetAllSignStoreData } =
+    useSignUpStore();
   const handleSubmit = () => {
     router.push("/userId/" + clientSession?.user?.workspace_id);
-    resetApiData();
-    resetForm();
+    resetAllSignStoreData();
     removeItem(`userId/${clientSession?.user?.user_id}`);
     // setTimeout(() => {
     //   toast.success("Scan started");

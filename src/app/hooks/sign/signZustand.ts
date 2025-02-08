@@ -23,33 +23,47 @@ interface Store {
   handleOpenSignUp: () => void;
   isTotpEnabled: boolean;
   setIsTotpEnabled: (state: boolean) => void;
+  authPage: number;
+  setAuthPage: (state: number) => void;
+  resetAllSignStoreData: () => void;
 }
 const intialState: any = {
   isTotpEnabled: false,
+  authPage: 0,
+  userData: null,
+  open: false,
+  isLoading: false,
+  message: "",
+  openSignUp: false,
+  formDataStore: {
+    doc_type: "URL",
+    currentPage: "Login",
+    invite_token: "",
+    authType: "", //"google","github","email","microsoft"
+    isRegisterd: false,
+    user_id: "",
+    token: "",
+  },
+  apiDataStore: null,
+  activeStep: -1,
 };
 export const useSignUpStore = create<Store>((set, get) => ({
   ...intialState,
   //**Global UserData */
-  userData: null,
   setUserData: (res) => set({ userData: res }),
 
   //**Global loading state */
-  isLoading: false,
   setIsLoading: (res: boolean) => set({ isLoading: res }),
 
   //**Popup function */
-  open: false,
   setopen: (state: boolean) => set({ open: state }),
-  message: "",
   handleOpen: (message?: string) => set({ message: message, open: true }),
 
   //**SignUp POP Up */
-  openSignUp: false,
   setOpenSignUp: (state: boolean) => set({ openSignUp: state }),
   handleOpenSignUp: () => set({ openSignUp: true }),
 
   //**Form Data Store */
-  formDataStore: { doc_type: "URL", currentPage: "Login", invite_token: "" },
   setFormDataStore: (key, value) =>
     set((state) => ({
       formDataStore: { ...state.formDataStore, [key]: value },
@@ -60,11 +74,14 @@ export const useSignUpStore = create<Store>((set, get) => ({
         doc_type: "URL",
         currentPage: "Login",
         invite_token: "",
+        authType: "",
+        isRegisterd: false,
+        user_id: "",
+        token: "",
       },
     }),
 
   //**Api Data Store */
-  apiDataStore: null,
   setApiDataStore: (key, value) =>
     set((state) => ({
       apiDataStore: { ...state.apiDataStore, [key]: value },
@@ -72,7 +89,6 @@ export const useSignUpStore = create<Store>((set, get) => ({
   resetApiData: () => set({ apiDataStore: null }),
 
   //**Stepper Store */
-  activeStep: -1,
   setactiveStep: (value: number) => set({ activeStep: value }),
   handleStep: () => set({ activeStep: get().activeStep + 1 }),
   handleBack: () =>
@@ -83,4 +99,8 @@ export const useSignUpStore = create<Store>((set, get) => ({
 
   //*Totp */
   setIsTotpEnabled: (state) => set({ isTotpEnabled: state }),
+
+  //*SOS */
+  setAuthPage: (state) => set({ authPage: state }),
+  resetAllSignStoreData: () => set(intialState),
 }));

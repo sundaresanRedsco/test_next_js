@@ -74,7 +74,8 @@ export const gatewayList = [
   },
 ];
 export default function Workspace({ clientSession, isWorkflowModal }: Props) {
-  const { userData, setFormDataStore, formDataStore } = useSignUpStore();
+  const { userData, setFormDataStore, formDataStore, setactiveStep } =
+    useSignUpStore();
   const { isxs, issm, ismd, isxl } = useMuiBreakpoints();
 
   const {
@@ -168,6 +169,15 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
       handleNext={handleSubmit}
       showNextButton={true}
       // showNextButton={formDatas.gateway != ""}
+      showBackButton={true}
+      handleBack={() => {
+        setactiveStep(0);
+        if (formDataStore?.authType.split("_")[0] != "email") {
+          setFormDataStore("authType", formDataStore?.authType + "_back");
+        } else {
+          setFormDataStore("isRegisterd", true);
+        }
+      }}
       isWorkflowModal={isWorkflowModal}
     >
       {InputArray?.map((elem: any, index: number) => {

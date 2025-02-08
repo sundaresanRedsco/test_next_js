@@ -27,7 +27,7 @@ export default function useInvites(userData?: any) {
     try {
       const access_token = userData?.user?.token;
       const { data } = await axios.get(
-        `https://api.apiflow.pro/api/Roles/get_all_roles`,
+        process.env.NEXT_PUBLIC_APP_BACKEND_URL + `/api/Roles/get_all_roles`,
         {
           headers: {
             Authorization: `Bearer ${access_token}`,
@@ -64,7 +64,8 @@ export default function useInvites(userData?: any) {
     if (inviteUserForm.email != "" && inviteUserForm.role != "") {
       try {
         const { data }: any = await axios.post(
-          "https://api.apiflow.pro/api/Invitations/create_invitations",
+          process.env.NEXT_PUBLIC_APP_BACKEND_URL +
+            "/api/Invitations/create_invitations",
           {
             invited_by: userData?.user?.user_id,
             email: inviteUserForm?.email,
@@ -112,7 +113,8 @@ export default function useInvites(userData?: any) {
     try {
       const access_token = userData?.user?.token;
       const { data } = await axios.get(
-        `https://api.apiflow.pro/api/Invitations/getall_invitations_details_workspaceandproject_id?workspace_id=${apiDataStore?.workspace?.id}&start=0&end=5`,
+        process.env.NEXT_PUBLIC_APP_BACKEND_URL +
+          `/api/Invitations/getall_invitations_details_workspaceandproject_id?workspace_id=${apiDataStore?.workspace?.id}&start=0&end=5`,
         {
           headers: {
             Authorization: `Bearer ${access_token}`,

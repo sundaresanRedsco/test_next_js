@@ -111,7 +111,7 @@ export default function useSignIn() {
     let email = "null";
     let password = "null";
     let token_type = "GOOGLE";
-    let invitations_token = "null";
+    let invitations_token = formDataStore?.invite_token || "null";
     setIsLoading(true);
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
@@ -155,6 +155,8 @@ export default function useSignIn() {
           });
           setItem(`userId/${res?.user?.user_id}`, "onboarding");
           setFormDataStore("currentPage", "Sign Up");
+          setFormDataStore("token", res?.user?.token);
+          setFormDataStore("authType", formDataStore?.authType + "_back");
           setactiveStep(1);
         } else {
           removeItem(`userId/${res?.user?.user_id}`);
@@ -296,6 +298,7 @@ export default function useSignIn() {
         .unwrap()
         .then((res: any) => {
           setuserData(res);
+          setFormDataStore("user_id", res?.user?.user_id);
           setItem(`userId/${res?.user?.user_id}`, "onboarding");
           setIsLoading(false);
           if (!formDataStore?.invite_token) {
@@ -304,6 +307,7 @@ export default function useSignIn() {
             setactiveStep(5);
             router.push(`/sign`);
           }
+          setFormDataStore("token", res?.user?.token);
         })
         .catch((err: any) => {
           setIsLoading(false);

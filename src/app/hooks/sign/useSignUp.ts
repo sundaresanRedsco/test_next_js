@@ -1,5 +1,9 @@
 "use client";
-import { SignupReducer, signupUser } from "@/app/Redux/signupReducer";
+import {
+  SignupReducer,
+  signupUser,
+  updateUser,
+} from "@/app/Redux/signupReducer";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
@@ -68,7 +72,8 @@ export default function useSignUp() {
   const [errorPassword, setErrorPassword] = useState<string>("");
   const [user, setUser] = useState<any>(null);
   const { instance, accounts } = useMsal();
-  const { setIsLoading, formDataStore } = useSignUpStore();
+  const { setIsLoading, formDataStore, setactiveStep, setFormDataStore } =
+    useSignUpStore();
   const {
     register,
     handleSubmit,
@@ -159,21 +164,41 @@ export default function useSignUp() {
         ...signUpFormData,
         member_invite_id: formDataStore?.invite_token || "null",
       };
-      dispatch(signupUser(updatedData))
+      dispatch(
+        formDataStore?.isRegisterd
+          ? updateUser({
+              value: {
+                first_name: signUpFormData.first_name,
+                last_name: signUpFormData.last_name,
+                profile_picture: "",
+                cover_picture: "",
+                user_id: formDataStore?.user_id,
+                token: formDataStore?.token,
+              },
+              token: formDataStore?.token,
+            })
+          : signupUser(updatedData)
+      )
         .unwrap()
         .then((res: any) => {
-          Cookies.set("ttid", res.tenant, {
-            expires: 1,
-            sameSite: "Strict",
-            secure: true,
-          });
-          Cookies.set("tt-email", res.email, {
-            expires: 1,
-            sameSite: "Strict",
-            secure: true,
-          });
-          Cookies.remove("MID");
-          loginHandler(signUpFormData.email, signUpFormData.password);
+          if (!formDataStore?.isRegisterd) {
+            setFormDataStore("authType", "email");
+            Cookies.set("ttid", res.tenant, {
+              expires: 1,
+              sameSite: "Strict",
+              secure: true,
+            });
+            Cookies.set("tt-email", res.email, {
+              expires: 1,
+              sameSite: "Strict",
+              secure: true,
+            });
+            Cookies.remove("MID");
+            loginHandler(signUpFormData.email, signUpFormData.password);
+          } else {
+            setactiveStep(1);
+            setIsLoading(false);
+          }
         })
         .catch((error: any) => {
           // Handle error
@@ -233,100 +258,21 @@ export default function useSignUp() {
     };
   }, []);
 
-  const handleSuccess = (response: any) => {
-    let token = response.credential;
-    let email = "null";
-    let password = "null";
-    let token_type = "GOOGLE";
-    let invitations_token = "null";
-
-    dispatch(login({ email, password, token, token_type, invitations_token }))
-      .unwrap()
-      .then((res: any) => {
-        if (res?.user?.user_registered !== "EXISTING_USER") {
-          Cookies.remove("MID");
-          Cookies.set("ttid", res?.user?.tenant, {
-            expires: 1,
-            sameSite: "Strict",
-            secure: true,
-          });
-          Cookies.set("tt-email", res?.user?.email, {
-            expires: 1,
-            sameSite: "Strict",
-            secure: true,
-          });
-          Cookies.set("ov", "OVS", {
-            expires: 1,
-            sameSite: "Strict",
-            secure: true,
-          });
-          //   router.push(SIGNINUP_PATH + SIGNINUP_COMPANY_PATH);
-        }
-      })
-      .catch((err: any) => {
-        setErrorMail(err?.message);
-        setErrorPassword(err?.message);
-      });
-  };
-
-  const handleAuthentication = async () => {
-    try {
-      if (user) {
-        setUser(null);
-      } else {
-        instance
-          .loginPopup(loginRequest)
-          .then((response: any) => {
-            console.log(response, "response");
-
-            let token = response.idToken;
-            let email = "null";
-            let password = "null";
-            let token_type = "AZURE";
-            let invitations_token = "null";
-
-            dispatch(
-              login({ email, password, token, token_type, invitations_token })
-            )
-              .unwrap()
-              .then((res: any) => {
-                if (res?.user?.user_registered !== "EXISTING_USER") {
-                  Cookies.remove("MID");
-                  Cookies.set("ttid", res?.user?.tenant, {
-                    expires: 1,
-                    sameSite: "Strict",
-                    secure: true,
-                  });
-                  Cookies.set("tt-email", res?.user?.email, {
-                    expires: 1,
-                    sameSite: "Strict",
-                    secure: true,
-                  });
-                  Cookies.set("ov", "OVS", {
-                    expires: 1,
-                    sameSite: "Strict",
-                    secure: true,
-                  });
-                  router.push(SIGNINUP_PATH + SIGNINUP_COMPANY_PATH);
-                }
-              })
-              .catch((err: any) => {
-                setErrorMail(err?.message);
-                setErrorPassword(err?.message);
-              });
-          })
-          .catch((e: any) => {
-            console.log(e, "test");
-          });
-      }
-    } catch (error) {
-      console.error("Authentication failed:", error);
-    }
-  };
+  const isDataChanged =
+    signUpFormData.last_name != formDataStore?.registeredForm?.last_name ||
+    signUpFormData.first_name != formDataStore?.registeredForm?.first_name;
   const submitform = handleSubmit(signUpHandler);
+  const updateform = handleSubmit(signUpHandler);
+  useEffect(() => {
+    if (formDataStore?.registeredForm) {
+      setsignUpFormData({
+        ...formDataStore?.registeredForm,
+      });
+    }
+  }, []);
+
   return {
-    handleSuccess,
-    handleAuthentication,
+    isDataChanged,
     signUpFormData,
     handleChange,
     handleFormData,
@@ -336,5 +282,6 @@ export default function useSignUp() {
     errors,
     userData,
     setsignUpFormData,
+    updateform,
   };
 }

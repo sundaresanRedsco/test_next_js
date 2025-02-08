@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://api.apiflow.pro",
+  baseURL: process.env.NEXT_PUBLIC_APP_BACKEND_URL,
 });
 export const getApi = async (url: string, token: string) => {
   try {

@@ -204,9 +204,9 @@ function WorkspaceEnvironments() {
             position: "relative",
           }}
         >
-          {getProjectOverViewLoading && (
+          {/* {getProjectOverViewLoading && (
             <GlobalCircularLoader open={getProjectOverViewLoading} noBackdrop />
-          )}
+          )} */}
           {getProjectOverViewTotalCount > 0 ? (
             <GlobalIntegartionData data={projectData} />
           ) : (

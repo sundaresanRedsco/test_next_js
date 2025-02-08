@@ -7,11 +7,13 @@ import {
 import { Email, Lock, PersonRounded, Phone } from "@mui/icons-material";
 import { Box, Stack, useMediaQuery, useTheme } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import GlobalButton from "../../global/GButton";
 import useSignUp from "@/app/hooks/sign/useSignUp";
 import { emailPattern, passwordPattern } from "@/app/Utilities/regex";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
+import AccountCreation from "./AccountCreation";
+import ScrollableLayout from "../ScrollableLayout";
 
 export default function SignUp() {
   const {
@@ -24,8 +26,17 @@ export default function SignUp() {
     errors,
     userData,
     setsignUpFormData,
+    isDataChanged,
+    updateform,
   } = useSignUp();
-  const { setUserData, formDataStore, setFormDataStore } = useSignUpStore();
+  const {
+    setUserData,
+    formDataStore,
+    setFormDataStore,
+    authPage,
+    setAuthPage,
+    setactiveStep,
+  } = useSignUpStore();
   useEffect(() => {
     if (formDataStore?.registeredForm) {
       const data = formDataStore?.registeredForm;
@@ -192,156 +203,111 @@ export default function SignUp() {
       setUserData(userData);
     }
   }, [userData]);
-
-  return (
-    <form
-      onSubmit={async (e) => {
-        e.preventDefault();
-        try {
-          await submitform();
-          setFormDataStore("registeredForm", signUpFormData);
-        } catch (err) {
-          console.error("Error submitting form:", err);
-        }
-      }}
-      style={{
-        width: "100%",
-        padding: isxs ? "10px" : issm ? "10px" : ismd ? "30px" : "0 60px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: isxs ? "auto" : "80vh",
-        overflowY: isxs ? "hidden" : "auto",
-      }}
-    >
-      <Grid
-        container
-        sx={{ width: "100%", height: "90%" }}
-        columnSpacing={isxs ? 1 : issm ? 1 : 6}
-      >
-        <Grid
-          size={{
-            md: 12,
-            xs: 12,
+  switch (authPage) {
+    case 0:
+      return (
+        <AccountCreation currentPage={authPage} setcurrentPage={setAuthPage} />
+      );
+    case 1:
+      return (
+        <ScrollableLayout
+          title={"Create your account"}
+          description={"Account creation using SSO or Email"}
+          showBackButton={true}
+          handleBack={() => {
+            setAuthPage(0);
+            if (formDataStore?.authType == "email") {
+              setFormDataStore("authType", formDataStore?.authType + "_back");
+            }
           }}
+          showNextButton={formDataStore?.isRegisterd ? "Next" : "Create"}
+          handleNext={async () => {
+            try {
+              if (!formDataStore?.isRegisterd) {
+                await submitform();
+              } else {
+                // if (isDataChanged) {
+                updateform();
+                // } else {
+                //   setactiveStep(1);
+                // }
+              }
+              setFormDataStore("registeredForm", signUpFormData);
+            } catch (err) {
+              console.error("Error submitting form:", err);
+            }
+          }}
+          height={"100%"}
+          justifyContent="center"
         >
-          <Stack
+          <Grid
+            container
             sx={{
               width: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: "30px",
+              marginInline: "auto",
             }}
+            columnSpacing={isxs ? 1 : issm ? 1 : 6}
           >
-            <PrimarySignInUPTypography
-              sx={{
-                color: "white",
-                fontSize: {
-                  xs: "18px", // small screens
-                  sm: "20px", // medium screens
-                  md: "25px", // larger screens
-                  lg: "30px", // extra-large screens
-                },
-                "@media (min-width: 2120px)": {
-                  fontSize: "60px",
-                },
-              }}
-            >
-              Create Account
-            </PrimarySignInUPTypography>
-            <SecondarySignInUPTypography
-              sx={{
-                color: "#F3F3F3BF",
-                marginTop: 1,
-                fontSize: "14px",
-                "@media (min-width: 2120px)": {
-                  fontSize: "20px",
-                },
-              }}
-            >
-              Provide your details to signup
-            </SecondarySignInUPTypography>
-          </Stack>
-        </Grid>
-        {InputArray.map((elem, index) => {
-          return (
-            <Grid
-              size={{ md: 6, sm: 6, xs: 12 }}
-              key={index}
-              sx={{
-                "@media (max-width: 850px)": {
-                  width: "100%",
-                },
-              }}
-            >
-              <Stack sx={{ gap: 1.5, marginBottom: "15px" }}>
-                <Box
+            {InputArray.map((elem, index) => {
+              return (
+                <Grid
+                  size={{ md: 6, sm: 6, xs: 12 }}
+                  key={index}
                   sx={{
-                    color: "#FFFFFF80",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "3px",
+                    "@media (max-width: 850px)": {
+                      width: "100%",
+                    },
                   }}
                 >
-                  {elem?.icon}
-                  <SecondarySignInUPTypography
-                    sx={{
-                      color: "white",
-                      fontSize: "13px",
-                      "@media (min-width: 2120px)": {
-                        fontSize: "20px",
-                      },
-                    }}
-                  >
-                    {elem?.label}
-                  </SecondarySignInUPTypography>
-                </Box>
-                <GInput
-                  background={"#31244F80"}
-                  name={elem.name}
-                  type={elem.type}
-                  fullWidth={true}
-                  value={elem.value}
-                  onChangeHandler={elem.onChange}
-                  error={elem.error}
-                  helperText={elem.helperText}
-                  required={elem.required}
-                  patternError={elem?.patternError}
-                  pattern={elem?.pattern}
-                  // register={elem.register}
-                  height={"47px"}
-                  radius={"5px"}
-                />
-              </Stack>
-            </Grid>
-          );
-        })}
-        <Grid
-          size={{
-            md: 12,
-            xs: 12,
-          }}
-        >
-          <Stack
-            sx={{
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <GlobalButton
-              label={"Submit"}
-              iconPosition="end"
-              type={"submit"}
-              buttonType="primary"
-              radius={"9px"}
-              padding="8px 35px"
-              fontSize="15px"
-              fontFamily={"Firasans-medium !important"}
-            />
-          </Stack>
-        </Grid>
-      </Grid>
-    </form>
-  );
+                  <Stack sx={{ gap: 1.5, marginBottom: "15px" }}>
+                    <Box
+                      sx={{
+                        color: "#FFFFFF80",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "3px",
+                      }}
+                    >
+                      {elem?.icon}
+                      <SecondarySignInUPTypography
+                        sx={{
+                          color: "white",
+                          fontSize: "13px",
+                          "@media (min-width: 2120px)": {
+                            fontSize: "20px",
+                          },
+                        }}
+                      >
+                        {elem?.label}
+                      </SecondarySignInUPTypography>
+                    </Box>
+                    <GInput
+                      disabled={
+                        elem.name != "first_name" &&
+                        elem.name != "last_name" &&
+                        formDataStore?.isRegisterd
+                      }
+                      background={"#31244F80"}
+                      name={elem.name}
+                      type={elem.type}
+                      fullWidth={true}
+                      value={elem.value}
+                      onChangeHandler={elem.onChange}
+                      error={elem.error}
+                      helperText={elem.helperText}
+                      required={elem.required}
+                      patternError={elem?.patternError}
+                      pattern={elem?.pattern}
+                      // register={elem.register}
+                      height={"47px"}
+                      radius={"5px"}
+                    />
+                  </Stack>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </ScrollableLayout>
+      );
+  }
 }

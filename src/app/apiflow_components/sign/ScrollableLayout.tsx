@@ -1,16 +1,20 @@
 import React, { useEffect, useRef } from "react";
 import Grid from "@mui/material/Grid2";
 import { Box, Stack } from "@mui/material";
-import { PrimarySignInUPTypography } from "@/app/Styles/signInUp";
+import {
+  PrimarySignInUPTypography,
+  SecondarySignInUPTypography,
+} from "@/app/Styles/signInUp";
 import { KeyboardArrowRight } from "@mui/icons-material";
 import GlobalButton from "../global/GButton";
 import useMuiBreakpoints from "@/app/hooks/useMuiBreakpoints";
 import useGPopup from "@/app/hooks/useGPopup";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
+import { height } from "@mui/system";
 
 type Props = {
   children: any;
-  showNextButton?: boolean;
+  showNextButton?: boolean | string;
   showBackButton?: boolean;
   additionalButton?: boolean;
   loadData?: any;
@@ -21,6 +25,10 @@ type Props = {
   additionalButtonOnClick?: any;
   additionalButtonLabel?: any;
   isWorkflowModal?: boolean;
+  height?: any;
+  title?: any;
+  description?: any;
+  justifyContent?: any;
 };
 
 export default function ScrollableLayout({
@@ -36,6 +44,10 @@ export default function ScrollableLayout({
   additionalButtonOnClick,
   loadData,
   isWorkflowModal,
+  height,
+  title,
+  description,
+  justifyContent,
 }: Props) {
   const scrollToEnd = useRef<HTMLDivElement>(null);
   // useEffect(() => {
@@ -82,15 +94,33 @@ export default function ScrollableLayout({
             },
           }}
         >
-          {isWorkflowModal ? "Create Workspace" : " API Flow Onboarding"}
+          {title
+            ? title
+            : isWorkflowModal
+            ? "Create Workspace"
+            : " API Flow Onboarding"}
         </PrimarySignInUPTypography>
+        {description && (
+          <SecondarySignInUPTypography
+            sx={{
+              color: "#F3F3F3BF",
+              marginTop: 1,
+              fontSize: "14px",
+              "@media (min-width: 2120px)": {
+                fontSize: "20px",
+              },
+            }}
+          >
+            {description}
+          </SecondarySignInUPTypography>
+        )}
       </Stack>
       <PopUpComponent height="86%" />
 
-      <div
+      <Box
         ref={scrollToEnd}
-        style={{
-          height: isxs ? "auto" : "70vh",
+        sx={{
+          height: isxs ? "auto" : description ? "65vh" : "70vh",
           // height: isxs ? "auto" : isWorkflowModal ? "520px" : "400px",
           overflowY: isxs ? "hidden" : "auto",
           background: "#12121280",
@@ -100,6 +130,15 @@ export default function ScrollableLayout({
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
+          "@media (max-width: 1250px)": {
+            height: description ? "63vh" : "66vh",
+          },
+          "@media (max-width: 1220px)": {
+            height: description ? "60vh" : "65vh",
+          },
+          "@media (max-width: 950px)": {
+            height: description ? "55vh" : "62vh",
+          },
         }}
       >
         <Grid
@@ -107,6 +146,12 @@ export default function ScrollableLayout({
           sx={{
             width: "100%",
             padding: "15px",
+            height: issm ? "auto" : height || "auto",
+            ...(justifyContent && {
+              display: "flex",
+              justifyContent: justifyContent,
+              alignItems: "center",
+            }),
           }}
           columnSpacing={columnSpacing}
         >
@@ -135,10 +180,12 @@ export default function ScrollableLayout({
                 isVisible: showBackButton,
                 isDisabled:
                   (isWorkflowModal && activeStep == 2) ||
-                  (!isWorkflowModal && (activeStep == 3 || activeStep == 1)),
+                  (!isWorkflowModal && activeStep == 3),
+                // (!isWorkflowModal && (activeStep == 3 || activeStep == 1)),
               },
               {
-                name: "Next",
+                name:
+                  typeof showNextButton == "string" ? showNextButton : "Next",
                 onClick: handleNext,
                 isVisible: showNextButton,
                 isDisabled: false,
@@ -189,7 +236,7 @@ export default function ScrollableLayout({
             )}
           </Box>
         )}
-      </div>
+      </Box>
     </form>
   );
 }

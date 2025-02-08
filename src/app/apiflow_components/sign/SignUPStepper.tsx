@@ -102,57 +102,65 @@ const smallScreenButtonStyle = (activeStep: number, index: number) => {
     padding: 0,
   };
 };
-export default function SignUPStepper({ steps, variant }: Props) {
-  const StepperIcon = ({ isActive, icon, isCompleted }: any) => {
-    return (
-      <>
-        {variant == "slider" ? (
-          isCompleted || isActive ? (
-            <ActiveStepperBar />
-          ) : (
-            <StepperBar />
-          )
+export const StepperIcon = ({
+  isActive,
+  icon,
+  isCompleted,
+  variant,
+  sx,
+}: any) => {
+  return (
+    <>
+      {variant == "slider" ? (
+        isCompleted || isActive ? (
+          <ActiveStepperBar />
         ) : (
-          <Box
-            sx={{
-              color: isActive || isCompleted ? "white" : "#9A9A9A",
-              background: isCompleted
-                ? "#287444"
-                : isActive
-                ? "#7A43FE"
-                : "#343434",
-              padding: "5px",
-              height: "20px",
-              width: "20px",
-              transition: ".5s",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "5px",
-              "@media (min-width: 2120px)": {
-                height: "50px",
-                width: "50px",
-                borderRadius: "10px",
-              },
-            }}
-          >
-            {isCompleted ? (
-              <DoneRounded
-                sx={{
-                  fontSize: "15px",
-                  "@media (min-width: 2120px)": {
-                    fontSize: "25px",
-                  },
-                }}
-              />
-            ) : (
-              icon
-            )}
-          </Box>
-        )}
-      </>
-    );
-  };
+          <StepperBar />
+        )
+      ) : (
+        <Box
+          sx={{
+            color: isActive || isCompleted ? "white" : "#9A9A9A",
+            background: isCompleted
+              ? "#287444"
+              : isActive
+              ? "#7A43FE"
+              : "#343434",
+            padding: "5px",
+            height: "20px",
+            width: "20px",
+            transition: ".5s",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "5px",
+            "@media (min-width: 2120px)": {
+              height: "50px",
+              width: "50px",
+              borderRadius: "10px",
+            },
+            ...sx,
+            transision: ".3s",
+          }}
+        >
+          {isCompleted ? (
+            <DoneRounded
+              sx={{
+                fontSize: "15px",
+                "@media (min-width: 2120px)": {
+                  fontSize: "25px",
+                },
+              }}
+            />
+          ) : (
+            icon
+          )}
+        </Box>
+      )}
+    </>
+  );
+};
+export default function SignUPStepper({ steps, variant }: Props) {
   const { activeStep, formDataStore } = useSignUpStore();
 
   const theme = useTheme();
@@ -190,6 +198,7 @@ export default function SignUPStepper({ steps, variant }: Props) {
               }
               icon={
                 <StepperIcon
+                  variant={variant}
                   icon={elem.icon}
                   isActive={activeStep == index && isActive}
                   isCompleted={index < activeStep}

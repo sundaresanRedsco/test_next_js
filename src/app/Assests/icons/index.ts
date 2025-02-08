@@ -67,7 +67,9 @@ import RestAPISignUp from "./signup/RESTAPI.svg";
 import SwaggerSignUp from "./signup/swagger.svg";
 import SuccessSignUp from "./signup/Success.svg";
 import AzureIcon from "./signup/AzureIcon.svg";
+import MicrosoftIcon from "./signup/MicrosoftIcon.svg";
 import GoogleIcon from "./signup/GoogleIcon.svg";
+import EmailIcon from "./signup/EmailIcon.svg";
 
 import Profile from "./profile.svg";
 import SidebarIcon from "./SidebarClose.svg";
@@ -188,6 +190,8 @@ export {
   ChipCloseIcon,
   ChannelPlusIcon,
   AzureIcon,
+  MicrosoftIcon,
   GoogleIcon,
+  EmailIcon,
   LogStash,
 };

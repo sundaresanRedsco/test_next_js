@@ -53,6 +53,7 @@ import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import GLoader from "@/app/apiflow_components/global/GLoader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WebSocketProvider from "@/app/hooks/useWebSocket";
+import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 
 const fetchWorkspace = (
   dispatch: any,
@@ -230,9 +231,10 @@ const DashboardLayout = ({ children }: any) => {
   //     fetchProject(dispatch, pathname, currentEnvironment);
   //   }
   // }, [currentEnvironment, pathname]);
-
+  const { resetAllSignStoreData } = useSignUpStore();
   useEffect(() => {
     dispatch(initializeSession());
+    resetAllSignStoreData();
   }, []);
   const { isPageLoading } = useGlobalStore();
 

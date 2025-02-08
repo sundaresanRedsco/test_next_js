@@ -95,15 +95,16 @@ export default function Sign() {
     {
       switch (activeStep) {
         case 0:
-          if (formDataStore?.currentPage == "Login") {
-            return (
-              <GoogleOAuthProvider clientId={CLIENT_ID}>
+          return (
+            <GoogleOAuthProvider clientId={CLIENT_ID}>
+              {formDataStore?.currentPage == "Login" ? (
                 <SignIn clientSession={clientSession} />
-              </GoogleOAuthProvider>
-            );
-          } else {
-            return <SignUp />;
-          }
+              ) : (
+                <SignUp />
+              )}
+            </GoogleOAuthProvider>
+          );
+
         case 1:
           return <Workspace clientSession={clientSession} />;
         case 2:

@@ -1,6 +1,7 @@
 import { styled } from "@mui/system";
 import { Box, Button, IconButton, useTheme } from "@mui/material";
 import { SxProps, Theme } from "@mui/material/styles";
+import { StepperIcon } from "../sign/SignUPStepper";
 
 const StyledButton = styled(Button)`
   font-size: 14px;
@@ -34,6 +35,7 @@ export interface GlobalButtonProps {
   fontFamily?: any;
   onClickHandler?: any;
   disabled?: boolean;
+  isSelected?: boolean;
   sx?: SxProps<Theme>;
   className?: string;
 }
@@ -65,6 +67,7 @@ export default function GlobalButton(props: GlobalButtonProps) {
     fontFamily,
     onClickHandler = () => {},
     className,
+    isSelected,
     // onClickHandler,
     sx,
   } = props;
@@ -143,6 +146,11 @@ export default function GlobalButton(props: GlobalButtonProps) {
       //   )
       // }
     >
+      {isSelected && (
+        <Box sx={{ position: "absolute", left: -7 }}>
+          <StepperIcon isCompleted={true} sx={{ borderRadius: "3px" }} />
+        </Box>
+      )}
       {icon && iconPosition === "start" && (
         <IconButton
           className="p-0 me-1"

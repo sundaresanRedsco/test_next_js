@@ -148,7 +148,10 @@ function OverView() {
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [tableList, setTableList] = useState<any[]>([]);
+
+  const [avatarColor, setAvatarColor] = useState<string>("");
 
   const fetchTableData = async (page: number) => {
     let data = {
@@ -336,6 +339,10 @@ function OverView() {
       });
   }, [currentWorkspace?.id]);
 
+  useEffect(() => {
+    setAvatarColor(getRandomColor());
+  }, []);
+
   return (
     <div>
       <div>
@@ -422,6 +429,7 @@ function OverView() {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  fontFamily: "FiraSans-Regular",
                 }}
                 src={
                   currentWorkspace?.profile_picture
@@ -507,6 +515,8 @@ function OverView() {
                     <GInput
                       value={data?.name}
                       fullWidth
+                      margin={"10px 0px 0px 0px"}
+                      height="40px"
                       onChangeHandler={(e: any) => {
                         let name = e.target.value;
                         handleChange("name", name);
@@ -530,6 +540,8 @@ function OverView() {
                       <GInput
                         value={data?.description as string}
                         fullWidth
+                        margin={"10px 0px 0px 0px"}
+                        height="40px"
                         onChangeHandler={(e: any) => {
                           let name = e.target.value;
                           handleChange("description", name);
@@ -570,6 +582,9 @@ function OverView() {
                       disabledColor="#FFFFFFA6"
                       fullWidth
                       disabled={true}
+                      height="40px"
+                      margin={"10px 0px 0px 0px"}
+                      border="none"
                       background="rgba(18, 18, 18, 0.35"
                       onChangeHandler={(value: any) => {}}
                     />
@@ -594,6 +609,10 @@ function OverView() {
                       disabledColor="#FFFFFFA6"
                       fullWidth
                       disabled={true}
+                      height="40px"
+                      margin={"10px 0px 0px 0px"}
+                      background="rgba(18, 18, 18, 0.35"
+                      border="none"
                       onChangeHandler={(value: any) => {}}
                     />
                   </Grid2>
@@ -657,11 +676,11 @@ function OverView() {
                         },
                       }}
                     >
-                      {getAcceptedInvitationLoading && (
+                      {/* {getAcceptedInvitationLoading && (
                         <GlobalCircularLoader
                           open={getAcceptedInvitationLoading}
                         />
-                      )}
+                      )} */}
                       <TableCell key="email">
                         <div className="d-flex">
                           <Avatar

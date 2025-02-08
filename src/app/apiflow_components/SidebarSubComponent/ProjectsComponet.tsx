@@ -432,6 +432,10 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                       color:
                         expanded === env.project_id ? "#FFFFFF" : "#FFFFFF80",
                       fontSize: "15px",
+                      maxWidth: "140px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
                     {env.name}
@@ -890,9 +894,13 @@ const ProjectTree = () => {
                           ? "#FFFFFF"
                           : "#FFFFFF80",
                       fontSize: "18px",
+                      maxWidth: "170px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
-                    {accordion.name}
+                    {`${accordion.name}`}
                   </SecondaryTextTypography>
                 </Box>
               </AccordionSummary>
@@ -1011,8 +1019,12 @@ export default function ProjectsComponet() {
                 color: "#7A43FE",
                 fontSize: "0.8rem",
                 marginTop: "1rem",
-                marginLeft: "10px",
+                // marginLeft: "10px",
                 cursor: "pointer",
+                padding: "0px 10px",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               See all Projects

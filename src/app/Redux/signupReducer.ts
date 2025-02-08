@@ -14,6 +14,21 @@ export const signupUser = createAsyncThunk(
     }
   }
 );
+export const updateUser = createAsyncThunk(
+  "signup/update_user",
+  async (data: any) => {
+    try {
+      return await AdminServices(
+        "post",
+        "api/auth/update_user",
+        data?.value,
+        data?.token
+      );
+    } catch (err: any) {
+      throw new Error(errorHandling(err));
+    }
+  }
+);
 
 export const verifyOtp = createAsyncThunk(
   "signup/verifyOtp",

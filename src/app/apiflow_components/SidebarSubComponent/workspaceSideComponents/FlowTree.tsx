@@ -251,6 +251,10 @@ export const FlowTree = ({ nestedExpandedIndexes }: any) => {
                 fontSize: "10px",
                 //   marginTop: "2rem",
                 cursor: "pointer",
+                maxWidth: "160px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               {`${flow.name}`}

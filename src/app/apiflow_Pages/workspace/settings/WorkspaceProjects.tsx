@@ -86,9 +86,6 @@ function WorkspaceProjects() {
     "getGroupOverViewLoading"
   );
 
-
-
-
   const fetchPageData = async (endValue: number) => {
     const data = {
       WorkspaceId: currentWorkspace?.id as string,
@@ -208,12 +205,12 @@ function WorkspaceProjects() {
               position: "relative",
             }}
           >
-            {getGroupOverViewLoading && (
+            {/* {getGroupOverViewLoading && (
               <GlobalCircularLoader
                 open={getGroupOverViewLoading}
                 noBackdrop={true}
               />
-            )}
+            )} */}
             {getGroupTotalCount > 0 ? (
               <GlobalOverViewGroupIntegration data={getGroupList?.groups} />
             ) : (

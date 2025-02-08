@@ -75,14 +75,14 @@ export default function WorkflowDrawer(props: any) {
       name: "Run Results",
       type: "filled",
     },
-    {
-      name: "Test Cases Results",
-      type: "outline",
-    },
-    {
-      name: "Security Scan Results",
-      type: "outline",
-    },
+    // {
+    //   name: "Test Cases Results",
+    //   type: "outline",
+    // },
+    // {
+    //   name: "Security Scan Results",
+    //   type: "outline",
+    // },
   ];
 
   const [selectedBtn, setSelectedBtn] = useState("Run Results");
