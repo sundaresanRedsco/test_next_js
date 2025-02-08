@@ -15,7 +15,6 @@ import apiTeamReducer from "./apiTeamReducer";
 import settingsReducer from "./settingsReducer";
 import { socketMiddleware } from "../Services/WebSocket/middleware";
 
-import { apiManagementProjects } from "./apiManagement/projectSlice";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { apiTeams } from "./manageTeam/teamProjectSlice";
 // import resetReducer from "./resetReducer";
@@ -57,7 +56,6 @@ const store = configureStore({
     // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(resetMiddleware),
     // app: appReducer,
 
-    [apiManagementProjects.reducerPath]: apiManagementProjects.reducer,
     [apiTeams.reducerPath]: apiTeams.reducer,
   },
 
