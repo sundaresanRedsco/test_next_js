@@ -9,10 +9,14 @@ export default function useMqttClient(userId: any) {
 
   useEffect(() => {
     // Create MQTT client and connect
-    const client = mqtt.connect("ws://139.99.114.132:15675", {
-      username: "mqttapiflow",
-      password: "mqttapiflow",
-    });
+    // const client = mqtt.connect("ws://139.99.114.132:15675", {
+    const client = mqtt.connect(
+      process.env.NEXT_PUBLIC_APP_MQTT_CLIENT as string,
+      {
+        username: "mqttapiflow",
+        password: "mqttapiflow",
+      }
+    );
 
     client.on("connect", () => {
       console.log("Connected to MQTT broker");

@@ -1,3 +1,4 @@
+"use client";
 import GInput from "@/app/apiflow_components/global/GInput";
 import useMuiBreakpoints from "@/app/hooks/useMuiBreakpoints";
 import {
@@ -24,21 +25,15 @@ import GOtpField from "../../global/GOtpField";
 
 export default function SignIn({ clientSession }: any) {
   const {
-    checkBoxVal,
     handleSuccess,
     handleAuthentication,
     handleInputChange,
     loginHandler,
     handleRememberMe,
-    pathName,
-    accounts,
-    loading,
-    passwordVisibility,
     errorPassword,
     errorEmail,
     setErrorMail,
     formData,
-    CLIENT_ID,
     handleSubmitOtp,
     otp,
     setOtp,
@@ -297,7 +292,8 @@ export default function SignIn({ clientSession }: any) {
                               <SecondarySignInUPTypography
                                 sx={{
                                   color: "gray",
-                                  fontSize: "14px",
+                                  fontSize: "12px",
+                                  textAlign: "left",
                                 }}
                               >
                                 If you are unable to access the authenticator
@@ -307,7 +303,7 @@ export default function SignIn({ clientSession }: any) {
                             <SecondarySignInUPTypography
                               sx={{
                                 color: "#327fb9",
-                                fontSize: "14px",
+                                fontSize: "12px",
                                 cursor: "pointer",
                               }}
                               onClick={handleEnableRecoveyCode}
@@ -328,7 +324,7 @@ export default function SignIn({ clientSession }: any) {
                             alignItems: "flex-start",
                             justifyContent: "center",
                             width: "100%",
-                            // width: { xs: "100%", sm: "80%", md: "70%" },
+
                             marginBottom: index == 0 ? 1 : 0,
                           }}
                         >
@@ -471,11 +467,6 @@ export default function SignIn({ clientSession }: any) {
                         icon: <GoogleIcon />,
                         onClick: googleLogin,
                       },
-                      // {
-                      //   label: "Continue with Azure",
-                      //   icon: <AzureIcon />,
-                      //   onClick: handleAuthentication,
-                      // },
                     ].map((btn: any, index: number) => {
                       return (
                         <GlobalButton

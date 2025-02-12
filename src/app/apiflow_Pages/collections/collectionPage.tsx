@@ -1,20 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Box, Card, Grid2, Skeleton, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 import { styled, useTheme } from "@mui/system";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-// import WorkflowImage from "@/app/Assests/images/WorkflowImage.png";
-import Image from "next/image";
-// import PostCard from "../apiflow_components/channels/post/PostCard";
 import { environmentReducer } from "../../Redux/apiManagement/environmentReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "../../Redux/store";
-import {
-  FlowReducer,
-  GetRecentModification,
-} from "../../Redux/apiManagement/flowReducer";
-import GlobalCircularLoader from "../../ApiFlowComponents/Global/GlobalCircularLoader";
 import GInput from "@/app/apiflow_components/global/GInput";
 import {
   CancelOutlined,
@@ -47,7 +37,7 @@ const PrimaryTypography = styled(Typography)`
 
 const OuterStyledCard = styled(Card)(({ theme }) => ({
   backgroundColor: "#251A28",
-  // backgroundColor: "red",
+
   borderRadius: "20px",
   flex: "none",
   order: 1,
@@ -68,7 +58,7 @@ const InnerStyledCard = styled(Card)(({ theme }) => ({
 }));
 
 export default function CollectionPage() {
-  const pathname = usePathname(); // E.g., /userId/3299b43c7f134fbf90a941334f333667/workspaceId/f69f9185a94e48fd9c9861ea7b469ba8/collections/aa4d1648022d41aa97ec980c2b2c6500
+  const pathname = usePathname();
 
   // Extract segments from the pathname
   const pathSegments = pathname?.split("/") || [];
@@ -137,9 +127,6 @@ export default function CollectionPage() {
       .unwrap()
       .then((res: any) => {
         if (selectOption === "url") {
-          //   toast.success("URL Imported");
-          //   handleUrlSubmit();
-
           let data = {
             project_id: currentEnvironmentDetails?.project_id,
             collection_id: collectionId,
@@ -162,13 +149,7 @@ export default function CollectionPage() {
             });
         }
       })
-      .catch((error: any) => {
-        // if (error.message === "UNAUTHORIZED") {
-        //   dispatch(updateSessionPopup(true));
-        // } else {
-        //   toast.error(error?.message);
-        // }
-      });
+      .catch((error: any) => {});
   };
 
   const handleFileClick = () => {
@@ -178,45 +159,9 @@ export default function CollectionPage() {
     }
   };
 
-  // useEffect(() => {
-  //   if (details) {
-  //     dispatch(GetOperationTagsCountbyCollectionId(details.collections_id))
-  //       .unwrap()
-  //       .then((res: any) => {
-  //         const arrayOfObjects = Object.keys(res).map((key) => ({
-  //           name: key,
-  //           value: res[key],
-  //         }));
-
-  //         setTags(arrayOfObjects);
-  //       });
-
-  //     dispatch(GetOperationCountbyCollectionId(details.collections_id))
-  //       .unwrap()
-  //       .then((res: any) => {
-  //         setEndpointCount(res?.active_Operationcount);
-  //       });
-  //   }
-  // }, [details]);
-
-  // useEffect(() => {
-  //   if (details) {
-  //     let data = {
-  //       project_id: currentEnvironmentDetails?.project_id,
-  //       collection_id: details.collections_id,
-  //     };
-  //     dispatch(GetCollectionDocsById(data))
-  //       .unwrap()
-  //       .then((res: any) => {
-  //         setSwaggerDocs(res);
-  //       });
-  //   }
-  // }, [details, currentEnvironmentDetails]);
-
   return (
     <Box
       sx={{
-        // padding: "20px",
         overflowY: "auto",
       }}
     >
@@ -338,7 +283,6 @@ export default function CollectionPage() {
                     console.log("file", file);
                     setSelectedFile(file);
                   } else {
-                    //   toast.error("Upload only JSON or YAML File");
                   }
                 }
               }}

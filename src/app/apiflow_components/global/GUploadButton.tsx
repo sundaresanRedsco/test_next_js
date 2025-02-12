@@ -1,4 +1,4 @@
-import GButton from "@/app/Components/Global/GlobalButtons";
+import GButton from "@/app/apiflow_components/global/GlobalButtons";
 import { SecondarySignInUPTypography } from "@/app/Styles/signInUp";
 import { Close, FileUpload } from "@mui/icons-material";
 import { Box, FormHelperText, IconButton, Stack } from "@mui/material";

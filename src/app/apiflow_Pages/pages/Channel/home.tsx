@@ -1,6 +1,4 @@
 "use client";
-
-import Channel from "@/app/apiflow_components/channels/channelpage";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
 import {
   ChannelReducer,
@@ -19,6 +17,7 @@ import useWorkflowPost from "@/app/hooks/posts/useWorkflowPost";
 import { MqttClient } from "mqtt";
 import toast from "react-hot-toast";
 import { connectToMqtt, sendMqttMessage } from "@/app/Helpers/mqttHelpers";
+import { usePostStore } from "@/app/store/usePostStore";
 export default function HomeChannel(props: any) {
   const dispatch = useDispatch<any>();
   const router = useRouter();
@@ -37,9 +36,9 @@ export default function HomeChannel(props: any) {
   );
   // Use the custom hook to get the message
 
-  const { openPosts, setopenPostAnchorEl, openPostAnchorEl, setChannelId } =
-    useWorkflowPost();
-
+  const { setopenPostAnchorEl, openPostAnchorEl, setChannelId } =
+    usePostStore();
+  const openPosts = Boolean(openPostAnchorEl);
   useEffect(() => {
     dispatch(
       getChannels({
@@ -78,27 +77,14 @@ export default function HomeChannel(props: any) {
       topic,
       (receivedTopic: any, message: any) => {
         // Handle incoming messages
-        console.log(
-          `Received message 1: ${message} on topic: ${receivedTopic}`
-        );
-        console.log(
-          `Received message 2: ${message?.message} on topic: ${receivedTopic}`
-        );
 
         let mess = JSON.parse(message);
-        console.log(`Received message 3: ${mess}`);
 
-        console.log(`Received message 4: ${mess?.message}`);
         toast.success(mess?.message, {
           position: "top-left", // Options: "top-left", "top-right", "top-center", "bottom-left", "bottom-right", "bottom-center"
         });
-        // setMessages((prevMessages) => [...prevMessages, message]);
       },
-      (error: any) => {
-        // Handle errors
-
-        console.error("MQTT error:", error);
-      },
+      (error: any) => {},
       () => {
         // Handle successful connection
         setIsConnected(true);
@@ -183,6 +169,7 @@ export default function HomeChannel(props: any) {
           zIndex: 9999,
           "& .MuiPaper-root": {
             padding: "10px",
+            background: "black",
           },
         }}
       >

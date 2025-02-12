@@ -54,13 +54,6 @@ const workspaceData = [
     regex:
       /^\/userId\/[a-fA-F0-9]+\/workspaceId\/[a-fA-F0-9]+\/settings\/integration$/,
   },
-  {
-    id: "collaborators",
-    icon: <Collbrate />,
-    text: "Collaborators",
-    regex:
-      /^\/userId\/[a-fA-F0-9]+\/workspaceId\/[a-fA-F0-9]+\/settings\/collaborators$/,
-  },
 ];
 
 function WorkspaceSettings() {
@@ -76,7 +69,6 @@ function WorkspaceSettings() {
   const [selectedLink, setSelectedLink] = useState<any>("overview");
   const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/settings`;
   const handleActive = (id: any) => {
-    // setSelectedLink(id); // Set selected link on click
     router.push(`${newUrl}/${id}`);
   };
 
@@ -181,7 +173,7 @@ function WorkspaceSettings() {
                 style={{
                   color: "#FFFFFF",
                   marginLeft: "0.8rem",
-                  marginTop:"3px",
+                  marginTop: "3px",
                   fontFamily:
                     workspace?.id === selectedLink
                       ? "Firasans-medium"

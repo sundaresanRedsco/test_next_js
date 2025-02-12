@@ -25,7 +25,7 @@ import { PrimaryTypography } from "@/app/Styles/signInUp";
 import { TotalNewProjectIcon } from "@/app/Assests/icons";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { RenderNoDataFound } from "@/app/ApiFlowComponents/ApiDesigner/renderNoDataFound";
+import { RenderNoDataFound } from "@/app/apiflow_components/WorkflowComponents/RenderNoDataFound";
 import GButton from "@/app/apiflow_components/global/GButton";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 import GSelect from "@/app/apiflow_components/global/GSelect";
@@ -641,7 +641,6 @@ export default function DeletedNode({ data }: any) {
 
   const handleCloseInput = () => {
     setAnchorElInput(null);
-    // setWarning([]);
   };
 
   const handleCloseResponse = () => {
@@ -708,20 +707,18 @@ export default function DeletedNode({ data }: any) {
       sx={{
         width: "230px",
         height: "120px",
-        // borderColor: "#F3F3F340",
-        // backdropFilter: "blur(14.19)",
+
         background: "rgba(243, 243, 243, 0.15)",
         boxShadow: "inset 0px 4.73px 11.82px rgba(255, 255, 255, 0.17)",
-        backdropFilter: "blur(7.09px)", // Note: minimal browser support
-        borderRadius: "15px", // Rounded to 2 decimal places
-        // background: "transparent",
+        backdropFilter: "blur(7.09px)",
+        borderRadius: "15px",
+
         animation:
           nextNode?.includes(nodeData?.id) || currentNodeRun
             ? "blinkShadow 3s infinite"
             : "",
         border: `3px solid ${theme.palette.mainRed.main}`,
       }}
-      // className="rounded"
     >
       <div
         style={{
@@ -744,7 +741,6 @@ export default function DeletedNode({ data }: any) {
         type="target"
         position={Position.Left}
         id={nodeData?.id + "_input"}
-        // isConnectable={3}
         style={{
           height: "7px",
           width: "6px",
@@ -753,10 +749,8 @@ export default function DeletedNode({ data }: any) {
           borderColor: "#D2D2D2",
           boxShadow: "0 0 12px 2px rgb(85, 204, 255)",
         }}
-        // isValidConnection={isValidConnection}
       />
       <Box
-        // className="p-2 rounded"
         sx={{
           background: "rgba(243, 243, 243, 0.25)",
           backdropFilter: "blur(7.09px)",
@@ -766,8 +760,7 @@ export default function DeletedNode({ data }: any) {
           width: "100%",
           height: "40%",
           padding: "10px",
-          // borderTopLeftRadius: "10px",
-          // borderTopRightRadius: "10px",
+
           borderRadius: "15px 15px 0px 0px",
         }}
       >
@@ -809,9 +802,6 @@ export default function DeletedNode({ data }: any) {
       <Box
         sx={{
           overflowWrap: "anywhere",
-          // background: "#F3F3F326",
-          // backdropFilter: "blur(14.19)",
-          // //  boxShadow: "inset 0px 4px 10px 0px rgba(0, 0, 0, 0.25)",
         }}
       >
         <div
@@ -873,8 +863,6 @@ export default function DeletedNode({ data }: any) {
                   marginBottom: "10px",
                 }}
                 onClick={handleClickInput}
-                // onMouseEnter={handleClickInput}
-                // onMouseLeave={handleCloseInput}
               >
                 Input
                 <span>
@@ -898,8 +886,6 @@ export default function DeletedNode({ data }: any) {
                   marginBottom: "10px",
                 }}
                 onClick={handleClickHeader}
-                // onMouseEnter={handleClickHeader}
-                // onMouseLeave={handleCloseInput}
               >
                 Header
                 <span>
@@ -922,8 +908,6 @@ export default function DeletedNode({ data }: any) {
                   marginBottom: "10px",
                 }}
                 onClick={handleClickQuery}
-                // onMouseEnter={handleClickHeader}
-                // onMouseLeave={handleCloseInput}
               >
                 Query Params
                 <span>
@@ -946,8 +930,6 @@ export default function DeletedNode({ data }: any) {
                   marginBottom: "10px",
                 }}
                 onClick={handleGlobalKeys}
-                // onMouseEnter={handleClickHeader}
-                // onMouseLeave={handleCloseInput}
               >
                 Global keys
                 <span>
@@ -961,7 +943,6 @@ export default function DeletedNode({ data }: any) {
               {/* <hr /> */}
             </Box>
             <Popover
-              // id={id}
               id="mouse-over-popover"
               open={Boolean(anchorElInput)}
               anchorEl={anchorElInput}
@@ -974,10 +955,8 @@ export default function DeletedNode({ data }: any) {
                 sx:
                   inputClicked === true
                     ? {
-                        // minWidth: "180px",
-                        // overflowY: "auto",
                         overflow: "hidden",
-                        // pointerEvents: 'none',
+
                         background: "transparent",
                         boxShadow: "none",
                       }
@@ -1003,7 +982,6 @@ export default function DeletedNode({ data }: any) {
                     onInputVal={handleInputDataFromAceEditor}
                     defaultInputVal={inputsPayload}
                     currentNode={nodeData.node_name}
-                    // suggestionVal={previousOpRaw}
                   />
                 </div>
               ) : headerClicked === true ? (
@@ -1035,7 +1013,7 @@ export default function DeletedNode({ data }: any) {
                               data_type: "STRING",
                             },
                           ]);
-                          // setWarning(null);
+
                           onClickHeaderHandler();
                         }}
                       />
@@ -1048,13 +1026,13 @@ export default function DeletedNode({ data }: any) {
                                 style={{
                                   display: "inline-flex",
                                   alignItems: "center",
-                                  backgroundColor: "#E50001", // Soft pink background
-                                  color: "white", // White text color
-                                  fontWeight: "bold", // Bold text
-                                  padding: "8px 12px", // Padding around the label
-                                  borderRadius: "20px", // Rounded corners
-                                  fontSize: "14px", // Font size for the text
-                                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Slight shadow for depth
+                                  backgroundColor: "#E50001",
+                                  color: "white",
+                                  fontWeight: "bold",
+                                  padding: "8px 12px",
+                                  borderRadius: "20px",
+                                  fontSize: "14px",
+                                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
                                 }}
                               >
                                 <span style={{ fontSize: "10px" }}>
@@ -1070,15 +1048,6 @@ export default function DeletedNode({ data }: any) {
                               value={val?.name}
                               className="form-control my-1"
                               name="name"
-                              // onChange={(e) => {
-                              //   onChangeHandler(
-                              //     "name",
-                              //     e.target.value,
-                              //     val,
-                              //     index,
-                              //     "headers"
-                              //   );
-                              // }}
                             />
                           </TextTypography>
 
@@ -1094,15 +1063,6 @@ export default function DeletedNode({ data }: any) {
                                 value: data.id,
                               }))}
                               defaultValue={"1"}
-                              // onChange={(value: any, e: any) => {
-                              //   onChangeHandler(
-                              //     "data_type",
-                              //     e.target.value,
-                              //     val,
-                              //     index,
-                              //     "headers"
-                              //   );
-                              // }}
                               value={val.data_type}
                             />
                           </TextTypography>
@@ -1112,15 +1072,6 @@ export default function DeletedNode({ data }: any) {
                             <TextEditor
                               inputData={val?.test_value}
                               currentNode={nodeData?.node_name}
-                              // onChange={(value: any) => {
-                              //   onChangeHandler(
-                              //     "test_value",
-                              //     value,
-                              //     val,
-                              //     index,
-                              //     "headers"
-                              //   );
-                              // }}
                               multiline
                             />
                           </TextTypography>
@@ -1134,19 +1085,11 @@ export default function DeletedNode({ data }: any) {
                               );
                               updateNodeData(updatedHeaders, "header");
                               setHeaders(updatedHeaders);
-
-                              // Also remove the warning for this field
-                              // setWarning((prevWarnings: any[]) => {
-                              //   return prevWarnings.filter(
-                              //     (_: any, i: number) => i !== index
-                              //   );
-                              // });
                             }}
                           />
                         </div>
                       ))}
                     </>
-                    {/* // )} */}
                   </>
                 </>
               ) : queryClicked === true ? (
@@ -1213,13 +1156,13 @@ export default function DeletedNode({ data }: any) {
                                 style={{
                                   display: "inline-flex",
                                   alignItems: "center",
-                                  backgroundColor: "#E50001", // Soft pink background
-                                  color: "white", // White text color
-                                  fontWeight: "bold", // Bold text
-                                  padding: "8px 12px", // Padding around the label
-                                  borderRadius: "20px", // Rounded corners
-                                  fontSize: "14px", // Font size for the text
-                                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Slight shadow for depth
+                                  backgroundColor: "#E50001",
+                                  color: "white",
+                                  fontWeight: "bold",
+                                  padding: "8px 12px",
+                                  borderRadius: "20px",
+                                  fontSize: "14px",
+                                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
                                 }}
                               >
                                 <span style={{ fontSize: "10px" }}>
@@ -1383,13 +1326,13 @@ export default function DeletedNode({ data }: any) {
                                   style={{
                                     display: "inline-flex",
                                     alignItems: "center",
-                                    backgroundColor: "#E50001", // Soft pink background
-                                    color: "white", // White text color
-                                    fontWeight: "bold", // Bold text
-                                    padding: "8px 12px", // Padding around the label
-                                    borderRadius: "20px", // Rounded corners
-                                    fontSize: "14px", // Font size for the text
-                                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Slight shadow for depth
+                                    backgroundColor: "#E50001",
+                                    color: "white",
+                                    fontWeight: "bold",
+                                    padding: "8px 12px",
+                                    borderRadius: "20px",
+                                    fontSize: "14px",
+                                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
                                   }}
                                 >
                                   <span style={{ fontSize: "10px" }}>
@@ -1566,432 +1509,417 @@ export default function DeletedNode({ data }: any) {
                     </PrimaryTypography>
                   </div>
                   <>
-                    {
-                      // ((currentResultRun === null) || (currentResultRun === undefined)) ?
-                      JSON?.stringify(currentResultRun) === "{}" ? (
-                        <>
-                          <RenderNoDataFound />
-                        </>
-                      ) : (
-                        <>
-                          <div
-                            style={{ marginTop: "-5px", marginLeft: "-18px" }}
-                          >
-                            <Accordion
-                              style={{
-                                background: "transparent",
-                                boxShadow: "none",
-                              }}
-                              onClick={() => {
-                                setSizeAccClicked(!sizeAccClicked);
-                              }}
-                            >
-                              <AccordionSummary
-                                aria-controls="panel1a-content"
-                                id="panel1a-header"
-                                expandIcon={<ExpandMoreIcon />}
-                              >
-                                <div>
-                                  <TextTypography
-                                    style={{
-                                      fontWeight: 900,
-                                    }}
-                                  >
-                                    Size:{" "}
-                                    <span
-                                      style={{
-                                        color: `${theme.palette.v2PrimaryColor.main}`,
-                                        fontWeight: 900,
-                                      }}
-                                    >
-                                      {/* {currentResultRun?.size?.response_BodySize} KB */}
-                                      {/* {currentResultRun?.size && `${currentResultRun?.size?.request_HeaderSize + currentResultRun?.size?.request_BodySize + currentResultRun?.size?.response_BodySize + currentResultRun?.size?.response_HeaderSize}`} KB */}
-                                      {calculateTotalSize()} KB
-                                    </span>
-                                  </TextTypography>
-                                </div>
-                              </AccordionSummary>
-                              <AccordionDetails>
-                                <div
-                                  style={{
-                                    marginTop: "-25px",
-                                    marginLeft: "15px",
-                                  }}
-                                >
-                                  <Box
-                                    sx={{
-                                      width: "100%",
-                                      height: "100%",
-                                      background:
-                                        theme.palette.primaryWhite.main,
-                                    }}
-                                  >
-                                    <div
-                                      style={{
-                                        display: "grid",
-                                        gridTemplateColumns: "auto auto",
-                                        rowGap: "4px",
-                                        // columnGap: '5px'
-                                      }}
-                                    >
-                                      <TextTypography>
-                                        Request Body Size:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-105px",
-                                        }}
-                                      >
-                                        {
-                                          currentResultRun?.size
-                                            ?.request_BodySize
-                                        }{" "}
-                                        KB
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Request Header Size:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-105px",
-                                        }}
-                                      >
-                                        {
-                                          currentResultRun?.size
-                                            ?.request_HeaderSize
-                                        }{" "}
-                                        KB
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Response Body Size:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-105px",
-                                        }}
-                                      >
-                                        {
-                                          currentResultRun?.size
-                                            ?.response_BodySize
-                                        }{" "}
-                                        KB
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Responce Header Size:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-105px",
-                                        }}
-                                      >
-                                        {
-                                          currentResultRun?.size
-                                            ?.response_HeaderSize
-                                        }{" "}
-                                        KB
-                                      </TextTypography>
-                                    </div>
-                                  </Box>
-                                </div>
-                              </AccordionDetails>
-                            </Accordion>
-                          </div>
-                          <div
+                    {JSON?.stringify(currentResultRun) === "{}" ? (
+                      <>
+                        <RenderNoDataFound />
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ marginTop: "-5px", marginLeft: "-18px" }}>
+                          <Accordion
                             style={{
-                              marginTop: "-25px",
-                              marginLeft: "-18px",
+                              background: "transparent",
+                              boxShadow: "none",
+                            }}
+                            onClick={() => {
+                              setSizeAccClicked(!sizeAccClicked);
                             }}
                           >
-                            <Accordion
-                              style={{
-                                background: "transparent",
-                                boxShadow: "none",
-                              }}
-                              onClick={() => {
-                                setTimeAccClicked(!timeAccClicked);
-                              }}
+                            <AccordionSummary
+                              aria-controls="panel1a-content"
+                              id="panel1a-header"
+                              expandIcon={<ExpandMoreIcon />}
                             >
-                              <AccordionSummary
-                                aria-controls="panel1a-content"
-                                id="panel1a-header"
-                                expandIcon={<ExpandMoreIcon />}
-                              >
-                                <div>
-                                  <TextTypography
-                                    style={{
-                                      fontWeight: 900,
-                                    }}
-                                  >
-                                    Time:{" "}
-                                    <span
-                                      style={{
-                                        color: `${theme.palette.v2PrimaryColor.main}`,
-                                        fontWeight: 900,
-                                      }}
-                                    >
-                                      {/* {convertToMilliSeconds(currentResultRun?.lookups?.totalTime)} ms */}
-                                      {calculateTotalTime()} ms
-                                    </span>
-                                  </TextTypography>
-                                </div>
-                              </AccordionSummary>
-                              <AccordionDetails>
-                                <div
-                                  style={{
-                                    marginTop: "-25px",
-                                    marginLeft: "15px",
-                                  }}
-                                >
-                                  <Box
-                                    sx={{
-                                      width: "100%",
-                                      height: "100%",
-                                      background:
-                                        theme.palette.primaryWhite.main,
-                                    }}
-                                  >
-                                    <div
-                                      style={{
-                                        display: "grid",
-                                        gridTemplateColumns: "auto auto",
-                                        rowGap: "4px",
-                                        // columnGap: '5px'
-                                      }}
-                                    >
-                                      <TextTypography>
-                                        Dns Lookup Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.dnsLookupTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Download Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.downloadTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Response Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.responseTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        SSL Handshake Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.sslHandshakeTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        Total Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups?.totalTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        TransferStart Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.transferStartTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                      <TextTypography>
-                                        TCP Handshake Time:{" "}
-                                      </TextTypography>
-                                      <TextTypography
-                                        style={{
-                                          color: `${theme.palette.v2PrimaryColor.main}`,
-                                          fontWeight: 900,
-                                          marginLeft: "-90px",
-                                        }}
-                                      >
-                                        {convertToMilliSeconds(
-                                          currentResultRun?.lookups
-                                            ?.tcpHandshakeTime
-                                        )}{" "}
-                                        ms
-                                      </TextTypography>
-                                    </div>
-                                  </Box>
-                                </div>
-                              </AccordionDetails>
-                            </Accordion>
-                          </div>
-                          <div style={{ marginTop: "-10px" }}>
-                            <TextTypography>
-                              <span
-                                style={{
-                                  fontWeight: 900,
-                                }}
-                              >
-                                {`StatusCode: `}
-                              </span>
-                              <span
-                                style={{
-                                  fontWeight: 900,
-                                }}
-                              >
-                                {/* {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`} */}
-                                {currentResultRun?.statusCode >= 100 &&
-                                currentResultRun?.statusCode <= 199 ? (
-                                  <span
-                                    style={{
-                                      color: `${theme.palette.primaryBlue.main}`,
-                                    }}
-                                  >
-                                    {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                                  </span>
-                                ) : currentResultRun?.statusCode >= 200 &&
-                                  currentResultRun?.statusCode <= 299 ? (
-                                  <span
-                                    style={{
-                                      color: `#16A34A`,
-                                    }}
-                                  >
-                                    {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                                  </span>
-                                ) : currentResultRun?.statusCode >= 300 &&
-                                  currentResultRun?.statusCode <= 399 ? (
-                                  <span
-                                    style={{
-                                      color: `#D8A805`,
-                                    }}
-                                  >
-                                    {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                                  </span>
-                                ) : currentResultRun?.statusCode >= 400 &&
-                                  currentResultRun?.statusCode <= 499 ? (
-                                  <span
-                                    style={{
-                                      color: `#FF8C00`,
-                                    }}
-                                  >
-                                    {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                                  </span>
-                                ) : currentResultRun?.statusCode >= 500 &&
-                                  currentResultRun?.statusCode <= 509 ? (
-                                  <span
-                                    style={{
-                                      color: `${theme.palette.mainRed.main}`,
-                                    }}
-                                  >
-                                    {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                                  </span>
-                                ) : (
-                                  ""
-                                )}
-                              </span>
-                            </TextTypography>
-                          </div>
-
-                          {data?.currentResultRun?.node_id !== undefined ? (
-                            <>
-                              <TextTypography
-                                style={{
-                                  margin: "10px",
-                                  fontSize: "12px",
-                                  fontWeight: 900,
-                                  color: `${theme.palette.teritiaryColor.main}`,
-                                }}
-                              >
-                                No data found
-                              </TextTypography>
-                            </>
-                          ) : (
-                            <>
-                              <div style={{ marginTop: "5px" }}>
+                              <div>
                                 <TextTypography
                                   style={{
                                     fontWeight: 900,
                                   }}
                                 >
-                                  Response:
+                                  Size:{" "}
+                                  <span
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                    }}
+                                  >
+                                    {/* {currentResultRun?.size?.response_BodySize} KB */}
+                                    {/* {currentResultRun?.size && `${currentResultRun?.size?.request_HeaderSize + currentResultRun?.size?.request_BodySize + currentResultRun?.size?.response_BodySize + currentResultRun?.size?.response_HeaderSize}`} KB */}
+                                    {calculateTotalSize()} KB
+                                  </span>
                                 </TextTypography>
-                                <pre
-                                  style={{
-                                    fontSize: "9px",
+                              </div>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              <div
+                                style={{
+                                  marginTop: "-25px",
+                                  marginLeft: "15px",
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    width: "100%",
+                                    height: "100%",
+                                    background: theme.palette.primaryWhite.main,
                                   }}
                                 >
-                                  {formatWithLineNumbers(
-                                    JSON.stringify(
-                                      currentResultRun?.response,
-                                      null,
-                                      2
-                                    )
-                                  )}
-                                </pre>
+                                  <div
+                                    style={{
+                                      display: "grid",
+                                      gridTemplateColumns: "auto auto",
+                                      rowGap: "4px",
+                                    }}
+                                  >
+                                    <TextTypography>
+                                      Request Body Size:{" "}
+                                    </TextTypography>
+                                    <TextTypography
+                                      style={{
+                                        color: `${theme.palette.v2PrimaryColor.main}`,
+                                        fontWeight: 900,
+                                        marginLeft: "-105px",
+                                      }}
+                                    >
+                                      {currentResultRun?.size?.request_BodySize}{" "}
+                                      KB
+                                    </TextTypography>
+                                    <TextTypography>
+                                      Request Header Size:{" "}
+                                    </TextTypography>
+                                    <TextTypography
+                                      style={{
+                                        color: `${theme.palette.v2PrimaryColor.main}`,
+                                        fontWeight: 900,
+                                        marginLeft: "-105px",
+                                      }}
+                                    >
+                                      {
+                                        currentResultRun?.size
+                                          ?.request_HeaderSize
+                                      }{" "}
+                                      KB
+                                    </TextTypography>
+                                    <TextTypography>
+                                      Response Body Size:{" "}
+                                    </TextTypography>
+                                    <TextTypography
+                                      style={{
+                                        color: `${theme.palette.v2PrimaryColor.main}`,
+                                        fontWeight: 900,
+                                        marginLeft: "-105px",
+                                      }}
+                                    >
+                                      {
+                                        currentResultRun?.size
+                                          ?.response_BodySize
+                                      }{" "}
+                                      KB
+                                    </TextTypography>
+                                    <TextTypography>
+                                      Responce Header Size:{" "}
+                                    </TextTypography>
+                                    <TextTypography
+                                      style={{
+                                        color: `${theme.palette.v2PrimaryColor.main}`,
+                                        fontWeight: 900,
+                                        marginLeft: "-105px",
+                                      }}
+                                    >
+                                      {
+                                        currentResultRun?.size
+                                          ?.response_HeaderSize
+                                      }{" "}
+                                      KB
+                                    </TextTypography>
+                                  </div>
+                                </Box>
                               </div>
-                            </>
-                          )}
-                        </>
-                      )
-                    }
+                            </AccordionDetails>
+                          </Accordion>
+                        </div>
+                        <div
+                          style={{
+                            marginTop: "-25px",
+                            marginLeft: "-18px",
+                          }}
+                        >
+                          <Accordion
+                            style={{
+                              background: "transparent",
+                              boxShadow: "none",
+                            }}
+                            onClick={() => {
+                              setTimeAccClicked(!timeAccClicked);
+                            }}
+                          >
+                            <AccordionSummary
+                              aria-controls="panel1a-content"
+                              id="panel1a-header"
+                              expandIcon={<ExpandMoreIcon />}
+                            >
+                              <div>
+                                <TextTypography
+                                  style={{
+                                    fontWeight: 900,
+                                  }}
+                                >
+                                  Time:{" "}
+                                  <span
+                                    style={{
+                                      color: `${theme.palette.v2PrimaryColor.main}`,
+                                      fontWeight: 900,
+                                    }}
+                                  >
+                                    {/* {convertToMilliSeconds(currentResultRun?.lookups?.totalTime)} ms */}
+                                    {calculateTotalTime()} ms
+                                  </span>
+                                </TextTypography>
+                              </div>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              <div
+                                style={{
+                                  marginTop: "-25px",
+                                  marginLeft: "15px",
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    width: "100%",
+                                    height: "100%",
+                                    background: theme.palette.primaryWhite.main,
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      display: "grid",
+                                      gridTemplateColumns: "auto auto",
+                                      rowGap: "4px",
+                                    }}
+                                  >
+                                    <TextTypography>
+                                      Dns Lookup Time:{" "}
+                                    </TextTypography>
+                                    <TextTypography
+                                      style={{
+                                        color: `${theme.palette.v2PrimaryColor.main}`,
+                                        fontWeight: 900,
+                                        marginLeft: "-90px",
+                                      }}
+                                    >
+                                      {convertToMilliSeconds(
+                                        currentResultRun?.lookups?.dnsLookupTime
+                                      )}{" "}
+                                      ms
+                                    </TextTypography>
+                                    <TextTypography>
+                                      Download Time:{" "}
+                                    </TextTypography>
+                                    <TextTypography
+                                      style={{
+                                        color: `${theme.palette.v2PrimaryColor.main}`,
+                                        fontWeight: 900,
+                                        marginLeft: "-90px",
+                                      }}
+                                    >
+                                      {convertToMilliSeconds(
+                                        currentResultRun?.lookups?.downloadTime
+                                      )}{" "}
+                                      ms
+                                    </TextTypography>
+                                    <TextTypography>
+                                      Response Time:{" "}
+                                    </TextTypography>
+                                    <TextTypography
+                                      style={{
+                                        color: `${theme.palette.v2PrimaryColor.main}`,
+                                        fontWeight: 900,
+                                        marginLeft: "-90px",
+                                      }}
+                                    >
+                                      {convertToMilliSeconds(
+                                        currentResultRun?.lookups?.responseTime
+                                      )}{" "}
+                                      ms
+                                    </TextTypography>
+                                    <TextTypography>
+                                      SSL Handshake Time:{" "}
+                                    </TextTypography>
+                                    <TextTypography
+                                      style={{
+                                        color: `${theme.palette.v2PrimaryColor.main}`,
+                                        fontWeight: 900,
+                                        marginLeft: "-90px",
+                                      }}
+                                    >
+                                      {convertToMilliSeconds(
+                                        currentResultRun?.lookups
+                                          ?.sslHandshakeTime
+                                      )}{" "}
+                                      ms
+                                    </TextTypography>
+                                    <TextTypography>
+                                      Total Time:{" "}
+                                    </TextTypography>
+                                    <TextTypography
+                                      style={{
+                                        color: `${theme.palette.v2PrimaryColor.main}`,
+                                        fontWeight: 900,
+                                        marginLeft: "-90px",
+                                      }}
+                                    >
+                                      {convertToMilliSeconds(
+                                        currentResultRun?.lookups?.totalTime
+                                      )}{" "}
+                                      ms
+                                    </TextTypography>
+                                    <TextTypography>
+                                      TransferStart Time:{" "}
+                                    </TextTypography>
+                                    <TextTypography
+                                      style={{
+                                        color: `${theme.palette.v2PrimaryColor.main}`,
+                                        fontWeight: 900,
+                                        marginLeft: "-90px",
+                                      }}
+                                    >
+                                      {convertToMilliSeconds(
+                                        currentResultRun?.lookups
+                                          ?.transferStartTime
+                                      )}{" "}
+                                      ms
+                                    </TextTypography>
+                                    <TextTypography>
+                                      TCP Handshake Time:{" "}
+                                    </TextTypography>
+                                    <TextTypography
+                                      style={{
+                                        color: `${theme.palette.v2PrimaryColor.main}`,
+                                        fontWeight: 900,
+                                        marginLeft: "-90px",
+                                      }}
+                                    >
+                                      {convertToMilliSeconds(
+                                        currentResultRun?.lookups
+                                          ?.tcpHandshakeTime
+                                      )}{" "}
+                                      ms
+                                    </TextTypography>
+                                  </div>
+                                </Box>
+                              </div>
+                            </AccordionDetails>
+                          </Accordion>
+                        </div>
+                        <div style={{ marginTop: "-10px" }}>
+                          <TextTypography>
+                            <span
+                              style={{
+                                fontWeight: 900,
+                              }}
+                            >
+                              {`StatusCode: `}
+                            </span>
+                            <span
+                              style={{
+                                fontWeight: 900,
+                              }}
+                            >
+                              {/* {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`} */}
+                              {currentResultRun?.statusCode >= 100 &&
+                              currentResultRun?.statusCode <= 199 ? (
+                                <span
+                                  style={{
+                                    color: `${theme.palette.primaryBlue.main}`,
+                                  }}
+                                >
+                                  {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                                </span>
+                              ) : currentResultRun?.statusCode >= 200 &&
+                                currentResultRun?.statusCode <= 299 ? (
+                                <span
+                                  style={{
+                                    color: `#16A34A`,
+                                  }}
+                                >
+                                  {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                                </span>
+                              ) : currentResultRun?.statusCode >= 300 &&
+                                currentResultRun?.statusCode <= 399 ? (
+                                <span
+                                  style={{
+                                    color: `#D8A805`,
+                                  }}
+                                >
+                                  {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                                </span>
+                              ) : currentResultRun?.statusCode >= 400 &&
+                                currentResultRun?.statusCode <= 499 ? (
+                                <span
+                                  style={{
+                                    color: `#FF8C00`,
+                                  }}
+                                >
+                                  {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                                </span>
+                              ) : currentResultRun?.statusCode >= 500 &&
+                                currentResultRun?.statusCode <= 509 ? (
+                                <span
+                                  style={{
+                                    color: `${theme.palette.mainRed.main}`,
+                                  }}
+                                >
+                                  {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                                </span>
+                              ) : (
+                                ""
+                              )}
+                            </span>
+                          </TextTypography>
+                        </div>
+
+                        {data?.currentResultRun?.node_id !== undefined ? (
+                          <>
+                            <TextTypography
+                              style={{
+                                margin: "10px",
+                                fontSize: "12px",
+                                fontWeight: 900,
+                                color: `${theme.palette.teritiaryColor.main}`,
+                              }}
+                            >
+                              No data found
+                            </TextTypography>
+                          </>
+                        ) : (
+                          <>
+                            <div style={{ marginTop: "5px" }}>
+                              <TextTypography
+                                style={{
+                                  fontWeight: 900,
+                                }}
+                              >
+                                Response:
+                              </TextTypography>
+                              <pre
+                                style={{
+                                  fontSize: "9px",
+                                }}
+                              >
+                                {formatWithLineNumbers(
+                                  JSON.stringify(
+                                    currentResultRun?.response,
+                                    null,
+                                    2
+                                  )
+                                )}
+                              </pre>
+                            </div>
+                          </>
+                        )}
+                      </>
+                    )}
                   </>
                 </>
               )}
@@ -2011,12 +1939,11 @@ export default function DeletedNode({ data }: any) {
           PaperProps={{
             sx: {
               width: "400px",
-              // minWidth: "180px",
+
               padding: "15px",
               maxHeight: "200px",
-              // overflowY: "auto",
+
               overflow: "auto",
-              // pointerEvents: 'none',
             },
           }}
           disableRestoreFocus
@@ -2039,402 +1966,389 @@ export default function DeletedNode({ data }: any) {
               </PrimaryTypography>
             </div>
             <>
-              {
-                // ((currentResultRun === null) || (currentResultRun === undefined)) ?
-                JSON?.stringify(currentResultRun) === "{}" ? (
-                  <>
-                    <RenderNoDataFound />
-                  </>
-                ) : (
-                  <>
-                    <div style={{ marginTop: "-5px", marginLeft: "-18px" }}>
-                      <Accordion
-                        style={{
-                          background: "transparent",
-                          boxShadow: "none",
-                        }}
-                        onClick={() => {
-                          setSizeAccClicked(!sizeAccClicked);
-                        }}
-                      >
-                        <AccordionSummary
-                          aria-controls="panel1a-content"
-                          id="panel1a-header"
-                          expandIcon={<ExpandMoreIcon />}
-                        >
-                          <div>
-                            <TextTypography
-                              style={{
-                                fontWeight: 900,
-                              }}
-                            >
-                              Size:{" "}
-                              <span
-                                style={{
-                                  color: `${theme.palette.v2PrimaryColor.main}`,
-                                  fontWeight: 900,
-                                }}
-                              >
-                                {/* {currentResultRun?.size?.response_BodySize} KB */}
-                                {/* {currentResultRun?.size && `${currentResultRun?.size?.request_HeaderSize + currentResultRun?.size?.request_BodySize + currentResultRun?.size?.response_BodySize + currentResultRun?.size?.response_HeaderSize}`} KB */}
-                                {calculateTotalSize()} KB
-                              </span>
-                            </TextTypography>
-                          </div>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <div
-                            style={{
-                              marginTop: "-25px",
-                              marginLeft: "15px",
-                            }}
-                          >
-                            <Box
-                              sx={{
-                                width: "100%",
-                                height: "100%",
-                                background: theme.palette.primaryWhite.main,
-                              }}
-                            >
-                              <div
-                                style={{
-                                  display: "grid",
-                                  gridTemplateColumns: "auto auto",
-                                  rowGap: "4px",
-                                  // columnGap: '5px'
-                                }}
-                              >
-                                <TextTypography>
-                                  Request Body Size:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-105px",
-                                  }}
-                                >
-                                  {currentResultRun?.size?.request_BodySize} KB
-                                </TextTypography>
-                                <TextTypography>
-                                  Request Header Size:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-105px",
-                                  }}
-                                >
-                                  {currentResultRun?.size?.request_HeaderSize}{" "}
-                                  KB
-                                </TextTypography>
-                                <TextTypography>
-                                  Response Body Size:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-105px",
-                                  }}
-                                >
-                                  {currentResultRun?.size?.response_BodySize} KB
-                                </TextTypography>
-                                <TextTypography>
-                                  Response Header Size:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-105px",
-                                  }}
-                                >
-                                  {currentResultRun?.size?.response_HeaderSize}{" "}
-                                  KB
-                                </TextTypography>
-                              </div>
-                            </Box>
-                          </div>
-                        </AccordionDetails>
-                      </Accordion>
-                    </div>
-                    <div
+              {JSON?.stringify(currentResultRun) === "{}" ? (
+                <>
+                  <RenderNoDataFound />
+                </>
+              ) : (
+                <>
+                  <div style={{ marginTop: "-5px", marginLeft: "-18px" }}>
+                    <Accordion
                       style={{
-                        marginTop: "-25px",
-                        marginLeft: "-18px",
+                        background: "transparent",
+                        boxShadow: "none",
+                      }}
+                      onClick={() => {
+                        setSizeAccClicked(!sizeAccClicked);
                       }}
                     >
-                      <Accordion
-                        style={{
-                          background: "transparent",
-                          boxShadow: "none",
-                        }}
-                        onClick={() => {
-                          setTimeAccClicked(!timeAccClicked);
-                        }}
+                      <AccordionSummary
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                        expandIcon={<ExpandMoreIcon />}
                       >
-                        <AccordionSummary
-                          aria-controls="panel1a-content"
-                          id="panel1a-header"
-                          expandIcon={<ExpandMoreIcon />}
-                        >
-                          <div>
-                            <TextTypography
-                              style={{
-                                fontWeight: 900,
-                              }}
-                            >
-                              Time:{" "}
-                              <span
-                                style={{
-                                  color: `${theme.palette.v2PrimaryColor.main}`,
-                                  fontWeight: 900,
-                                }}
-                              >
-                                {/* {convertToMilliSeconds(currentResultRun?.lookups?.totalTime)} ms */}
-                                {calculateTotalTime()} ms
-                              </span>
-                            </TextTypography>
-                          </div>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <div
-                            style={{
-                              marginTop: "-25px",
-                              marginLeft: "15px",
-                            }}
-                          >
-                            <Box
-                              sx={{
-                                width: "100%",
-                                height: "100%",
-                                background: theme.palette.primaryWhite.main,
-                              }}
-                            >
-                              <div
-                                style={{
-                                  display: "grid",
-                                  gridTemplateColumns: "auto auto",
-                                  rowGap: "4px",
-                                  // columnGap: '5px'
-                                }}
-                              >
-                                <TextTypography>
-                                  Dns Lookup Time:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.dnsLookupTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>Download Time: </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.downloadTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>Response Time: </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.responseTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>
-                                  SSL Handshake Time:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.sslHandshakeTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>Total Time: </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.totalTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>
-                                  TransferStart Time:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.transferStartTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                                <TextTypography>
-                                  TCP Handshake Time:{" "}
-                                </TextTypography>
-                                <TextTypography
-                                  style={{
-                                    color: `${theme.palette.v2PrimaryColor.main}`,
-                                    fontWeight: 900,
-                                    marginLeft: "-90px",
-                                  }}
-                                >
-                                  {convertToMilliSeconds(
-                                    currentResultRun?.lookups?.tcpHandshakeTime
-                                  )}{" "}
-                                  ms
-                                </TextTypography>
-                              </div>
-                            </Box>
-                          </div>
-                        </AccordionDetails>
-                      </Accordion>
-                    </div>
-                    <div style={{ marginTop: "-10px" }}>
-                      <TextTypography>
-                        <span
-                          style={{
-                            fontWeight: 900,
-                          }}
-                        >
-                          {`StatusCode: `}
-                        </span>
-                        <span
-                          style={{
-                            fontWeight: 900,
-                          }}
-                        >
-                          {/* {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`} */}
-                          {currentResultRun?.statusCode >= 100 &&
-                          currentResultRun?.statusCode <= 199 ? (
-                            <span
-                              style={{
-                                color: `${theme.palette.primaryBlue.main}`,
-                              }}
-                            >
-                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                            </span>
-                          ) : currentResultRun?.statusCode >= 200 &&
-                            currentResultRun?.statusCode <= 299 ? (
-                            <span
-                              style={{
-                                color: `#16A34A`,
-                              }}
-                            >
-                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                            </span>
-                          ) : currentResultRun?.statusCode >= 300 &&
-                            currentResultRun?.statusCode <= 399 ? (
-                            <span
-                              style={{
-                                color: `#D8A805`,
-                              }}
-                            >
-                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                            </span>
-                          ) : currentResultRun?.statusCode >= 400 &&
-                            currentResultRun?.statusCode <= 499 ? (
-                            <span
-                              style={{
-                                color: `#FF8C00`,
-                              }}
-                            >
-                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                            </span>
-                          ) : currentResultRun?.statusCode >= 500 &&
-                            currentResultRun?.statusCode <= 509 ? (
-                            <span
-                              style={{
-                                color: `${theme.palette.mainRed.main}`,
-                              }}
-                            >
-                              {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
-                            </span>
-                          ) : (
-                            ""
-                          )}
-                        </span>
-                      </TextTypography>
-                    </div>
-
-                    {data?.currentResultRun?.node_id !== undefined ? (
-                      <>
-                        <TextTypography
-                          style={{
-                            margin: "10px",
-                            fontSize: "12px",
-                            fontWeight: 900,
-                            color: `${theme.palette.teritiaryColor.main}`,
-                          }}
-                        >
-                          No data found
-                        </TextTypography>
-                      </>
-                    ) : (
-                      <>
-                        <div style={{ marginTop: "5px" }}>
+                        <div>
                           <TextTypography
                             style={{
                               fontWeight: 900,
                             }}
                           >
-                            Response:
+                            Size:{" "}
+                            <span
+                              style={{
+                                color: `${theme.palette.v2PrimaryColor.main}`,
+                                fontWeight: 900,
+                              }}
+                            >
+                              {/* {currentResultRun?.size?.response_BodySize} KB */}
+                              {/* {currentResultRun?.size && `${currentResultRun?.size?.request_HeaderSize + currentResultRun?.size?.request_BodySize + currentResultRun?.size?.response_BodySize + currentResultRun?.size?.response_HeaderSize}`} KB */}
+                              {calculateTotalSize()} KB
+                            </span>
                           </TextTypography>
-                          <pre
-                            style={{
-                              fontSize: "9px",
+                        </div>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <div
+                          style={{
+                            marginTop: "-25px",
+                            marginLeft: "15px",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: "100%",
+                              height: "100%",
+                              background: theme.palette.primaryWhite.main,
                             }}
                           >
-                            {formatWithLineNumbers(
-                              JSON.stringify(
-                                currentResultRun?.response,
-                                null,
-                                2
-                              )
-                            )}
-                          </pre>
+                            <div
+                              style={{
+                                display: "grid",
+                                gridTemplateColumns: "auto auto",
+                                rowGap: "4px",
+                              }}
+                            >
+                              <TextTypography>
+                                Request Body Size:{" "}
+                              </TextTypography>
+                              <TextTypography
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                  marginLeft: "-105px",
+                                }}
+                              >
+                                {currentResultRun?.size?.request_BodySize} KB
+                              </TextTypography>
+                              <TextTypography>
+                                Request Header Size:{" "}
+                              </TextTypography>
+                              <TextTypography
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                  marginLeft: "-105px",
+                                }}
+                              >
+                                {currentResultRun?.size?.request_HeaderSize} KB
+                              </TextTypography>
+                              <TextTypography>
+                                Response Body Size:{" "}
+                              </TextTypography>
+                              <TextTypography
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                  marginLeft: "-105px",
+                                }}
+                              >
+                                {currentResultRun?.size?.response_BodySize} KB
+                              </TextTypography>
+                              <TextTypography>
+                                Response Header Size:{" "}
+                              </TextTypography>
+                              <TextTypography
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                  marginLeft: "-105px",
+                                }}
+                              >
+                                {currentResultRun?.size?.response_HeaderSize} KB
+                              </TextTypography>
+                            </div>
+                          </Box>
                         </div>
-                      </>
-                    )}
-                  </>
-                )
-              }
+                      </AccordionDetails>
+                    </Accordion>
+                  </div>
+                  <div
+                    style={{
+                      marginTop: "-25px",
+                      marginLeft: "-18px",
+                    }}
+                  >
+                    <Accordion
+                      style={{
+                        background: "transparent",
+                        boxShadow: "none",
+                      }}
+                      onClick={() => {
+                        setTimeAccClicked(!timeAccClicked);
+                      }}
+                    >
+                      <AccordionSummary
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                        expandIcon={<ExpandMoreIcon />}
+                      >
+                        <div>
+                          <TextTypography
+                            style={{
+                              fontWeight: 900,
+                            }}
+                          >
+                            Time:{" "}
+                            <span
+                              style={{
+                                color: `${theme.palette.v2PrimaryColor.main}`,
+                                fontWeight: 900,
+                              }}
+                            >
+                              {/* {convertToMilliSeconds(currentResultRun?.lookups?.totalTime)} ms */}
+                              {calculateTotalTime()} ms
+                            </span>
+                          </TextTypography>
+                        </div>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <div
+                          style={{
+                            marginTop: "-25px",
+                            marginLeft: "15px",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: "100%",
+                              height: "100%",
+                              background: theme.palette.primaryWhite.main,
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "grid",
+                                gridTemplateColumns: "auto auto",
+                                rowGap: "4px",
+                              }}
+                            >
+                              <TextTypography>Dns Lookup Time: </TextTypography>
+                              <TextTypography
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                  marginLeft: "-90px",
+                                }}
+                              >
+                                {convertToMilliSeconds(
+                                  currentResultRun?.lookups?.dnsLookupTime
+                                )}{" "}
+                                ms
+                              </TextTypography>
+                              <TextTypography>Download Time: </TextTypography>
+                              <TextTypography
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                  marginLeft: "-90px",
+                                }}
+                              >
+                                {convertToMilliSeconds(
+                                  currentResultRun?.lookups?.downloadTime
+                                )}{" "}
+                                ms
+                              </TextTypography>
+                              <TextTypography>Response Time: </TextTypography>
+                              <TextTypography
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                  marginLeft: "-90px",
+                                }}
+                              >
+                                {convertToMilliSeconds(
+                                  currentResultRun?.lookups?.responseTime
+                                )}{" "}
+                                ms
+                              </TextTypography>
+                              <TextTypography>
+                                SSL Handshake Time:{" "}
+                              </TextTypography>
+                              <TextTypography
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                  marginLeft: "-90px",
+                                }}
+                              >
+                                {convertToMilliSeconds(
+                                  currentResultRun?.lookups?.sslHandshakeTime
+                                )}{" "}
+                                ms
+                              </TextTypography>
+                              <TextTypography>Total Time: </TextTypography>
+                              <TextTypography
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                  marginLeft: "-90px",
+                                }}
+                              >
+                                {convertToMilliSeconds(
+                                  currentResultRun?.lookups?.totalTime
+                                )}{" "}
+                                ms
+                              </TextTypography>
+                              <TextTypography>
+                                TransferStart Time:{" "}
+                              </TextTypography>
+                              <TextTypography
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                  marginLeft: "-90px",
+                                }}
+                              >
+                                {convertToMilliSeconds(
+                                  currentResultRun?.lookups?.transferStartTime
+                                )}{" "}
+                                ms
+                              </TextTypography>
+                              <TextTypography>
+                                TCP Handshake Time:{" "}
+                              </TextTypography>
+                              <TextTypography
+                                style={{
+                                  color: `${theme.palette.v2PrimaryColor.main}`,
+                                  fontWeight: 900,
+                                  marginLeft: "-90px",
+                                }}
+                              >
+                                {convertToMilliSeconds(
+                                  currentResultRun?.lookups?.tcpHandshakeTime
+                                )}{" "}
+                                ms
+                              </TextTypography>
+                            </div>
+                          </Box>
+                        </div>
+                      </AccordionDetails>
+                    </Accordion>
+                  </div>
+                  <div style={{ marginTop: "-10px" }}>
+                    <TextTypography>
+                      <span
+                        style={{
+                          fontWeight: 900,
+                        }}
+                      >
+                        {`StatusCode: `}
+                      </span>
+                      <span
+                        style={{
+                          fontWeight: 900,
+                        }}
+                      >
+                        {/* {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`} */}
+                        {currentResultRun?.statusCode >= 100 &&
+                        currentResultRun?.statusCode <= 199 ? (
+                          <span
+                            style={{
+                              color: `${theme.palette.primaryBlue.main}`,
+                            }}
+                          >
+                            {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                          </span>
+                        ) : currentResultRun?.statusCode >= 200 &&
+                          currentResultRun?.statusCode <= 299 ? (
+                          <span
+                            style={{
+                              color: `#16A34A`,
+                            }}
+                          >
+                            {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                          </span>
+                        ) : currentResultRun?.statusCode >= 300 &&
+                          currentResultRun?.statusCode <= 399 ? (
+                          <span
+                            style={{
+                              color: `#D8A805`,
+                            }}
+                          >
+                            {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                          </span>
+                        ) : currentResultRun?.statusCode >= 400 &&
+                          currentResultRun?.statusCode <= 499 ? (
+                          <span
+                            style={{
+                              color: `#FF8C00`,
+                            }}
+                          >
+                            {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                          </span>
+                        ) : currentResultRun?.statusCode >= 500 &&
+                          currentResultRun?.statusCode <= 509 ? (
+                          <span
+                            style={{
+                              color: `${theme.palette.mainRed.main}`,
+                            }}
+                          >
+                            {`${currentResultRun?.statusCode}  ${currentResultRun?.request_status}`}
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                    </TextTypography>
+                  </div>
+
+                  {data?.currentResultRun?.node_id !== undefined ? (
+                    <>
+                      <TextTypography
+                        style={{
+                          margin: "10px",
+                          fontSize: "12px",
+                          fontWeight: 900,
+                          color: `${theme.palette.teritiaryColor.main}`,
+                        }}
+                      >
+                        No data found
+                      </TextTypography>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ marginTop: "5px" }}>
+                        <TextTypography
+                          style={{
+                            fontWeight: 900,
+                          }}
+                        >
+                          Response:
+                        </TextTypography>
+                        <pre
+                          style={{
+                            fontSize: "9px",
+                          }}
+                        >
+                          {formatWithLineNumbers(
+                            JSON.stringify(currentResultRun?.response, null, 2)
+                          )}
+                        </pre>
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
             </>
           </>
         </Popover>
@@ -2447,13 +2361,12 @@ export default function DeletedNode({ data }: any) {
         style={{
           height: "8px",
           width: "8px",
-          // background: "#55CCFF",
+
           background: "#4CAF50",
           borderRadius: "inherit",
           borderColor: "#D2D2D2",
           boxShadow: "0 0 10px 2px rgb(76, 175, 80, 0.5)",
         }}
-        // isValidConnection={isValidConnection}
       />
       <WorkflowCustomHandle
         type="source"
@@ -2462,14 +2375,13 @@ export default function DeletedNode({ data }: any) {
         style={{
           height: "8px",
           width: "8px",
-          // background: "#55CCFF",
+
           background: "#FF5252",
           borderRadius: "inherit",
           borderColor: "#D2D2D2",
           marginTop: "20px",
           boxShadow: "0 0 10px 2px rgba(255, 82, 82, 0.5)",
         }}
-        // isValidConnection={isValidConnection}
       />
 
       <style>

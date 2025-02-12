@@ -59,15 +59,6 @@ export default function GFlowSelect(props: any) {
           size={size}
           onChange={handleSelectChange}
           IconComponent={KeyboardArrowDownIcon}
-          //   inputProps={{
-          //     style: {
-          //       fontFamily: "FiraSans-medium !important",
-          //       color: "red",
-          //       fontSize: fontSize || "0.7rem",
-          //       fontWeight: fontWeight || 500,
-          //       borderRadius: radius || "5px",
-          //     },
-          //   }}
           sx={{
             fontFamily: "FiraSans-medium !important",
             width: width,

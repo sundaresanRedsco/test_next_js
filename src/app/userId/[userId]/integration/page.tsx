@@ -8,7 +8,7 @@ import {
   GetApiGatewaySdkKeys,
   apiGatewayReducer,
 } from "@/app/Redux/apiManagement/apiGatewayReducer";
-// import ApiManageHeaders from "@/app/Components/ApiManagement/apiManageHeaders";
+
 import {
   Accordion,
   AccordionDetails,
@@ -35,17 +35,14 @@ import GButton from "@/app/apiflow_components/global/GButton";
 import theme from "@/Theme/theme";
 import { PrimaryTypography, SecondaryTypography } from "@/app/Styles/signInUp";
 import GsearchBar from "@/app/apiflow_components/global/GSearchBar";
-// import { paginator } from "../../Components/Global/paginator";
+
 import { paginator } from "@/app/apiflow_components/global/GPaginator";
 import { CommonReducer, updateSessionPopup } from "@/app/Redux/commonReducer";
 import GlobalCircularLoader from "@/app/apiflow_components/global/GCircularLoader";
-// import { InfoIcon, PlusIcon } from "../../Assests/icons";
-// import InfoIcon from "../../Assests/icons/info.svg";
+
 import InfoIcon from "@/app/Assests/icons/info.svg";
 import PlusIcon from "@/app/Assests/icons/circleplus.svg";
 
-// "./circleplus.svg";
-// "./info.svg";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -53,7 +50,6 @@ import {
   getCookies,
   translate,
 } from "@/app/Helpers/helpersFunctions";
-import AwsImportPopup from "@/app/apiflow_components/Integration/AwsImportPopup";
 import ImportLogsSteps from "@/app/apiflow_components/Integration/ImportLogsSteps";
 import SplunkImage1 from "@/app/Assests/images/Splunk-Symbol1.png";
 import ServiceNowImage from "@/app/Assests/images/serviceNow.png";
@@ -1557,11 +1553,6 @@ export default function Integrations() {
             </PrimaryTypography>
 
             <div>
-              <AwsImportPopup
-                open={opens}
-                anchorEl={anchorEl9}
-                handleClose={handleCloseGateways}
-              />
               {activeBtn === true && (
                 <PrimaryTypography
                   style={{
@@ -2143,13 +2134,6 @@ export default function Integrations() {
                     </div>
                     {types === "enable" && <div>test</div>}
                   </Dialog>
-
-                  <AwsImportPopup
-                    open={anchorElDrop}
-                    handleClose={handleClose}
-                    edits
-                    gatewayData={apiEditData}
-                  />
 
                   {filteredData.length === 0 ? (
                     <div></div>

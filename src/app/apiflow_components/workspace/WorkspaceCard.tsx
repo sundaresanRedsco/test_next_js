@@ -1,7 +1,6 @@
-// src/components/WorkspaceCard.tsx
 import React from "react";
 import { Card, CardContent, Typography } from "@mui/material";
-import GButton from "@/app/ApiFlowComponents/Global/GButton";
+import GButton from "@/app/apiflow_components/global/GButtonV1";
 import { styled } from "@mui/system";
 export const HeadingTypography = styled(Typography)(({ theme }) => ({
   fontFamily: "FiraSans-regular !important",

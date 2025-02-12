@@ -18,7 +18,7 @@ import {
   Typography,
   Stack,
 } from "@mui/material";
-import GButton from "@/app/Components/Global/GlobalButtons";
+import GButton from "@/app/apiflow_components/global/GlobalButtons";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
 import {
@@ -37,7 +37,7 @@ import {
   updateTableEndValue,
   updateTableStartValue,
 } from "@/app/Redux/apiInvitationReducer";
-import GlobalCircularLoader from "@/app/Components/Global/GlobalCircularLoader";
+
 import dynamic from "next/dynamic";
 
 const GSwitch = dynamic(
@@ -83,7 +83,6 @@ const TableTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
   color: #ffffff;
   font-size: 0.8rem;
-  // margin-top: 0.7rem;
 `;
 
 const PurpleSwitch = styled(Switch)(({ theme }) => ({
@@ -113,13 +112,10 @@ function OverView() {
     (state) => state.apiManagement.workspace
   );
 
-  console.log(currentWorkspace, "currentWorkspace");
-
   const {
     tableStartValue,
     tableEndValue,
-    getAcceptedInvitationList,
-    getAcceptedInvitationLoading,
+
     acceptedInvitationTotalCount,
   } = useSelector<RootStateType, apiInvitationReducer>(
     (state) => state.apiInvitation
@@ -275,14 +271,12 @@ function OverView() {
   }, [currentWorkspace]);
 
   useEffect(() => {
-    // const container = document.getElementById(maninContainer);
     const container = document.getElementById("scrollable-container");
     container?.addEventListener("scroll", handleScroll);
 
     return () => {
       container?.removeEventListener("scroll", handleScroll);
     };
-    // }, [maninContainer]); // Include maninContainer as a dependency
   }, []);
 
   useEffect(() => {
@@ -308,35 +302,11 @@ function OverView() {
     };
   }, [data, avatarImage]);
 
-  // useEffect(() => {
-  //   const handleBeforeUnload = (event: {
-  //     preventDefault: () => void;
-  //     returnValue: string;
-  //   }) => {
-  //     if (hasChanges()) {
-  //       // event.preventDefault();
-  //       // event.returnValue = "";
-  //       setTimeout(() => {
-  //         alert("The page is reloading, you have unsaved changes!");
-  //       }, 0);
-  //     }
-  //   };
-
-  //   window.addEventListener("beforeunload", handleBeforeUnload);
-  //   return () => {
-  //     window.removeEventListener("beforeunload", handleBeforeUnload);
-  //   };
-  // }, [data, avatarImage]);
-
   useEffect(() => {
     dispatch(GetWorkspacesById(currentWorkspace?.id as string))
       .unwrap()
-      .then((getRes: any) => {
-        console.log(getRes, "getRes");
-      })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .then((getRes: any) => {})
+      .catch((error: any) => {});
   }, [currentWorkspace?.id]);
 
   useEffect(() => {
@@ -347,7 +317,6 @@ function OverView() {
     <div>
       <div>
         <HeadingTypography style={{ marginTop: "1rem" }}>
-          {/* Carrefour Workspace <LeftArrowIcon /> */}
           {data?.name} <LeftArrowIcon />
           <span
             style={{
@@ -423,7 +392,8 @@ function OverView() {
                     avatarImage || avatarImage === "null" ? "" : "#3F64FA",
                   border: avatarImage ? "1px solid #F3F3F340" : "",
                   color: "white",
-                  fontSize: "1.3rem",
+                  fontSize: "2rem",
+                  fontWeight: 900,
                   width: 150,
                   height: 150,
                   display: "flex",
@@ -437,9 +407,6 @@ function OverView() {
                     : avatarImage
                 }
               >
-                {/* {console.log(avatarImage, "avatarImage")} */}
-                {/* {avatarText(data?.name as string)} */}
-                {/* {!avatarImage && avatarText(data?.name as string)} */}
                 {(!avatarImage || avatarImage === "null") &&
                   data?.name?.slice(0, 3).toUpperCase()}
               </Avatar>
@@ -585,7 +552,7 @@ function OverView() {
                       height="40px"
                       margin={"10px 0px 0px 0px"}
                       border="none"
-                      background="rgba(18, 18, 18, 0.35"
+                      background="rgba(18, 18, 18, 0.35)"
                       onChangeHandler={(value: any) => {}}
                     />
                   </Grid2>
@@ -611,7 +578,7 @@ function OverView() {
                       disabled={true}
                       height="40px"
                       margin={"10px 0px 0px 0px"}
-                      background="rgba(18, 18, 18, 0.35"
+                      background="rgba(18, 18, 18, 0.35)"
                       border="none"
                       onChangeHandler={(value: any) => {}}
                     />
@@ -631,11 +598,11 @@ function OverView() {
               marginTop: "1rem",
               overflowY: "auto",
               "&::-webkit-scrollbar": {
-                width: "2px", // Adjust the width of the scrollbar
+                width: "2px",
               },
             }}
           >
-            <Table>
+            <Table sx={{ tableLayout: "fixed", width: "100%" }}>
               <TableHead>
                 <TableRow
                   sx={{
@@ -649,6 +616,7 @@ function OverView() {
                     (header, index) => (
                       <TableCell
                         key={index}
+                        align={header === "E-Mail ID" ? "left" : "center"}
                         sx={{
                           color: "white",
                           fontFamily: "FiraSans-Regular",
@@ -663,9 +631,7 @@ function OverView() {
               </TableHead>
 
               <TableBody>
-                {/* {getAcceptedInvitationList.length > 0 ? ( */}
                 {tableList?.length > 0 ? (
-                  // getAcceptedInvitationList.map((row, rowIndex) => (
                   tableList?.map((row, rowIndex) => (
                     <TableRow
                       key={rowIndex}
@@ -676,11 +642,6 @@ function OverView() {
                         },
                       }}
                     >
-                      {/* {getAcceptedInvitationLoading && (
-                        <GlobalCircularLoader
-                          open={getAcceptedInvitationLoading}
-                        />
-                      )} */}
                       <TableCell key="email">
                         <div className="d-flex">
                           <Avatar
@@ -700,17 +661,17 @@ function OverView() {
                           </TableTypography>
                         </div>
                       </TableCell>
-                      <TableCell key="name">
+                      <TableCell key="name" align="center">
                         <TableTypography>
                           {getValueOrDefault(row?.user_name)}
                         </TableTypography>
                       </TableCell>
-                      <TableCell key="role">
+                      <TableCell key="role" align="center">
                         <TableTypography>
                           {getValueOrDefault(row?.role_name)}
                         </TableTypography>
                       </TableCell>
-                      <TableCell key="action">
+                      <TableCell key="action" align="center">
                         <TableTypography>{<DeleteIconNew />}</TableTypography>
                       </TableCell>
                     </TableRow>

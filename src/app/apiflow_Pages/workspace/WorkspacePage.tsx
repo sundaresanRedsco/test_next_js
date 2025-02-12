@@ -1,10 +1,8 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-// import WorkspaceCard from "../../apiflow_components/workspace/WorkspaceCard";
 import { Box, Grid, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/system";
-// import PostCard from "../../apiflow_components/channels/post/PostCard";
-// import WorkspaceCreateCard from "../../apiflow_components/workspace/workspaceCreateCard";
+
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "../../Redux/store";
 import { CommonReducer, initializeSession } from "../../Redux/commonReducer";
@@ -18,7 +16,6 @@ import Cookies from "js-cookie";
 import { resetEnvironmentState } from "../../Redux/apiManagement/environmentReducer";
 import { setTabs } from "../../Redux/tabReducer";
 import { useRouter } from "next/navigation";
-import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
 import { useSideBarStore } from "@/app/hooks/sideBarStore";
 import { setItem } from "@/app/Services/localstorage";
 import dynamic from "next/dynamic";
@@ -26,8 +23,6 @@ import WorkspacePageSkeleton from "@/app/apiflow_components/skeletons/WorkspaceP
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import { useSession } from "next-auth/react";
-import toast from "react-hot-toast";
-import { setTimeout } from "timers";
 
 const WorkspaceCard = dynamic(
   () => import("../../apiflow_components/workspace/WorkspaceCard"),
@@ -195,32 +190,7 @@ function WorkspacePage() {
           ))
         )}
         {isLoading && <SkeletonLoader />}
-        {/* {getWsidLoading && (
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={4}
-            lg={4}
-            xl={4}
-            sx={{
-              display: "flex",
-              position: "relative",
-              minHeight: "300px",
-              "@media (min-width: 1600px)": {
-                // Change '1920px' to any custom breakpoint
-                flexBasis: "25%", // Adjust as per your needs
-                maxWidth: "25%", // Same as the flexBasis for proper alignment
-              },
-            }}
-          >
-            <GlobalCircularLoader open={true} noBackdrop={true} />
-          </Grid>
-        )} */}
 
-        {/* )} */}
-
-        {/* For the Create Workspace card */}
         <Grid
           item
           xs={12}
@@ -239,11 +209,9 @@ function WorkspacePage() {
         >
           <WorkspaceCreateCard />
         </Grid>
-        {/* {getWsidLoading && ( */}
       </Grid>
 
       <div ref={containerRef}></div>
-      {/* <PostCard /> */}
     </div>
   );
 }

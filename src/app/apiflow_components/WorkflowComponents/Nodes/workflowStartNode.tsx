@@ -8,8 +8,6 @@ export default function WorkflowStartNode({ id }: any) {
     <>
       <div>
         <GButton
-          //   background="#7A43FE"
-          //   color="#EEEEEE"
           buttonType="primary"
           label={"Start"}
           fontSize="0.6rem"

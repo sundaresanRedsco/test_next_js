@@ -27,7 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
 import { CommonReducer, updateSessionPopup } from "@/app/Redux/commonReducer";
 import ServiceNowImage from "@/app/Assests/images/serviceNow.webp";
-// import SplunkImage1 from "../../../Assests/images/Splunk-Symbol1.png";
+
 import SplunkImage1 from "@/app/Assests/images/Splunk-Symbol1.webp";
 import GlobalButton from "@/app/apiflow_components/global/GButton";
 import { useAlert } from "@/context/alertContext";
@@ -140,7 +140,6 @@ function IntegrationPage(props: any) {
     if (id === "integration_page_splunk_siem") {
       const errors: any = {};
 
-      // Check for empty values
       if (splunkValues?.url?.trim() === "") {
         errors.api_url = "API URL is required";
       } else if (/\s/.test(splunkValues?.url)) {
@@ -153,7 +152,6 @@ function IntegrationPage(props: any) {
         errors.api_key = "Spaces are not allowed in API Key";
       }
 
-      // If there are any errors, set them and return false
       if (Object.keys(errors).length > 0) {
         setError({
           ...error,
@@ -401,34 +399,6 @@ function IntegrationPage(props: any) {
       } else {
         return true; // No errors, validation passed
       }
-
-      // //for empty value
-      // const hasValidationApiUrl = jiraValues?.email?.trim() === "";
-      // //containing space
-      // const hasNoSpaceApiUrl = /\s/.test(jiraValues?.email);
-
-      // const hasValidationApiKey = pagerValues?.api_key?.trim() === "";
-      // const hasNoSpaceApiKey = /\s/.test(pagerValues?.api_key);
-      // const hasemailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-      // if (hasValidationApiUrl) {
-      //   setErrorPagerApiUrl("Mail Id is required");
-      //   return false;
-      // } else if (hasNoSpaceApiUrl) {
-      //   setErrorPagerApiUrl("Spaces are not allowed");
-      //   return false;
-      // } else if (hasemailRegex) {
-      //   setErrorPagerApiUrl("Invalid Mail format");
-      //   return false;
-      // } else if (hasValidationApiKey) {
-      //   setErrorPagerApiKey("Api Key is required");
-      //   return false;
-      // } else if (hasNoSpaceApiKey) {
-      //   setErrorPagerApiKey("Spaces are not allowed");
-      //   return false;
-      // } else {
-      //   return true;
-      // }
     }
 
     return false;
@@ -436,7 +406,6 @@ function IntegrationPage(props: any) {
 
   const handleGetIntergrationByTenantId = () => {
     dispatch(GetIntegrationByTenantId(userProfile?.user?.tenant_id))
-      // dispatch(GetIntegrationByTenantId("db567d96817040ce90286387dd4b7d2e"))
       .unwrap()
       .then((getRes: any) => {
         console.log("getRes: ", getRes);
@@ -484,8 +453,6 @@ function IntegrationPage(props: any) {
         serviceNowValues?.api_version +
         "/table";
       let serviceNowDataCreate = {
-        // user_id: userProfile?.user.user_id,
-        // tenant_id: userProfile?.user?.tenant_id,
         type: "SERVICE_NOW",
         url: api_url.trim(),
         api_key: serviceNowValues?.api_key,
@@ -499,8 +466,6 @@ function IntegrationPage(props: any) {
       };
 
       let serviceNowDataUpdate = {
-        // user_id: userProfile?.user.user_id,
-        // tenant_id: userProfile?.user?.tenant_id,
         type: "SERVICE_NOW",
         id: serviceNowValues?.id,
         url: api_url.trim(),
@@ -561,8 +526,6 @@ function IntegrationPage(props: any) {
 
     if (validationCheck) {
       let splunkDataCreate = {
-        // user_id: userProfile?.user.user_id,
-        // tenant_id: userProfile?.user?.tenant_id,
         isFieldCreation: false,
         type: "SPLUNK_SIEM",
         email: "",
@@ -576,7 +539,6 @@ function IntegrationPage(props: any) {
       };
 
       let splunkDataUpdata = {
-        // user_id: userProfile?.user.user_id,
         type: "SPLUNK_SIEM",
         id: splunkValues?.id,
         url: splunkValues?.url,
@@ -590,7 +552,6 @@ function IntegrationPage(props: any) {
       // If Splunk SIEM instance already exists, update it, otherwise create new
 
       if (splunkValues?.id) {
-        // Update existing Splunk SIEM instance
         dispatch(UpdateIntegration(splunkDataUpdata))
           .unwrap()
           .then((updateRes: any) => {
@@ -638,8 +599,6 @@ function IntegrationPage(props: any) {
 
     if (validationCheck === true) {
       let jiraDataCreate = {
-        // user_id: userProfile?.user?.user_id,
-        // tenant_id: userProfile?.user?.tenant_id,
         type: "JIRA",
         email: jiraValues?.email,
         api_key: jiraValues?.token,
@@ -654,7 +613,6 @@ function IntegrationPage(props: any) {
       };
 
       let jiraDataUpdata = {
-        // user_id: userProfile?.user?.user_id,
         type: "JIRA",
         id: jiraValues?.id,
         email: pagerValues?.email,
@@ -698,8 +656,6 @@ function IntegrationPage(props: any) {
 
     if (validationCheck === true) {
       let pagerDataCreate = {
-        // user_id: userProfile?.user?.user_id,
-        // tenant_id: userProfile?.user?.tenant_id,
         url: "",
         api_key: pagerValues?.api_key,
         type: "PAGER_DUTY",
@@ -714,7 +670,6 @@ function IntegrationPage(props: any) {
       };
 
       let pagerDataUpdata = {
-        // user_id: userProfile?.user?.user_id,
         type: "PAGER_DUTY",
         id: pagerValues?.id,
         email: pagerValues?.email,
@@ -795,7 +750,6 @@ function IntegrationPage(props: any) {
 
   useEffect(() => {
     const data = {
-      // tenant_id: userProfile?.user?.tenant_id,
       project_id: currentEnvironment,
       type: type,
       start: 1,
@@ -855,9 +809,9 @@ function IntegrationPage(props: any) {
               setJiraValues((prevValues) => ({
                 ...prevValues,
                 email: value?.email,
-                token: value?.token,
+                token: value?.api_key,
                 url: value?.url,
-                projectKey: value?.projectKey,
+                projectKey: value?.servicenow_tblname,
                 id: value.id,
               }));
             }
@@ -871,8 +825,7 @@ function IntegrationPage(props: any) {
       style={{
         padding: "0px 10px",
         width: "100%",
-        // backgroundColor: "#F6F9FF",
-        height: "100vh",
+
         overflowY: "auto",
       }}
     >
@@ -882,14 +835,6 @@ function IntegrationPage(props: any) {
         <div>
           {
             id === "integration_page_splunk_siem" ? (
-              // <img
-              //   src={SplunkImage1}
-              //   alt="Splunk Siem"
-              //   style={{
-              //     width: "60px",
-              //     height: "33px",
-              //   }}
-              // />
               <Image
                 src={SplunkImage1}
                 alt="Splunk Siem"
@@ -899,16 +844,6 @@ function IntegrationPage(props: any) {
                 }}
               />
             ) : id === "integration_page_service_now" ? (
-              // <img
-              //   src={ServiceNowImage}
-              //   alt="Service Now"
-              //   style={{
-              //     width: "25px",
-              //     height: "25px",
-              //     marginRight: "10px",
-              //     marginLeft: "10px",
-              //   }}
-              // />
               <Image
                 src={ServiceNowImage}
                 alt="Service Now"
@@ -964,7 +899,7 @@ function IntegrationPage(props: any) {
               : id === "integration_page_service_now"
               ? "ServiceNow provides comprehensive APIs that empower seamless integration and automation across enterprise workflows and service management processes."
               : id === "integration_page_pager_duty"
-              ? "PagerDuty helps you bring together the right people with the right information in real time. Address the unplanned, critical work that your teams aren’t prepared for"
+              ? "PagerDuty helps you bring together the right people with the right information in real time. Address the unplanned, critical work that your teams aren’t prepared for 2"
               : id === "integration_page_jira"
               ? "Jira is the #1 agile project management tool used by teams to plan, track, release and support world-class software with confidence"
               : ""}
@@ -1031,9 +966,6 @@ function IntegrationPage(props: any) {
                   }}
                   name={""} //
                   error={error?.api_url}
-                  // errorHandler={(error: any) =>
-                  //   setErrorFieldApiUrl(error)
-                  // }
                 />
               </div>
               <div style={{ marginTop: "10px" }}>
@@ -1055,11 +987,8 @@ function IntegrationPage(props: any) {
                       handleApplicationInValidation();
                     }
                   }}
-                  name={""} // error={errorFieldApiKey}
+                  name={""}
                   error={error?.api_key}
-                  // errorHandler={(error: any) =>
-                  //   setErrorFieldApiKey(error)
-                  // }
                 />
               </div>
             </div>
@@ -1621,7 +1550,7 @@ function IntegrationPage(props: any) {
                         handleApplicationInValidation();
                       }
                     }}
-                    name={""} // error={errorFieldApiKey}
+                    name={""}
                     error={error?.api_key}
                     errorHandler={(error: any) =>
                       setError({
@@ -1650,7 +1579,7 @@ function IntegrationPage(props: any) {
                         handleApplicationInValidation();
                       }
                     }}
-                    name={""} // error={errorFieldApiKey}
+                    name={""}
                     error={error?.escalation_id}
                     errorHandler={(error: any) =>
                       setError({
@@ -1684,7 +1613,7 @@ function IntegrationPage(props: any) {
                         handleApplicationInValidation();
                       }
                     }}
-                    name={""} // error={errorFieldApiKey}
+                    name={""}
                     error={error?.token}
                     errorHandler={(error: any) =>
                       setError({
@@ -1713,7 +1642,7 @@ function IntegrationPage(props: any) {
                         handleApplicationInValidation();
                       }
                     }}
-                    name={""} // error={errorFieldApiKey}
+                    name={""}
                     error={error?.url}
                     errorHandler={(error: any) =>
                       setError({
@@ -1742,7 +1671,7 @@ function IntegrationPage(props: any) {
                         handleApplicationInValidation();
                       }
                     }}
-                    name={""} // error={errorFieldApiKey}
+                    name={""}
                     error={error?.projectKey}
                     errorHandler={(error: any) =>
                       setError({

@@ -32,7 +32,7 @@ const intialState: any = {
   authPage: 0,
   userData: null,
   open: false,
-  isLoading: false,
+  isLoading: true,
   message: "",
   openSignUp: false,
   formDataStore: {

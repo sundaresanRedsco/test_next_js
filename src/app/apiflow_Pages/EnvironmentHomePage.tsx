@@ -70,7 +70,6 @@ const HeadingTypography = styled(Typography)`
   color: #ffffff;
   font-size: 20px;
   font-weight: 600;
-  //   margin-bottom: 1rem;
   margin: 10px 0px;
 `;
 
@@ -81,32 +80,7 @@ const ProgressTypography = styled(Typography)`
   margin-top: 1.5rem;
 `;
 
-const projectData: any = [
-  // {
-  //   title: "Risk Detected",
-  //   dataValue: 48,
-  //   percentageChange: 10,
-  //   dotColor: "red",
-  // },
-  // {
-  //   title: "Frequent Changes",
-  //   dataValue: 30,
-  //   percentageChange: 5,
-  //   dotColor: "#55FF46",
-  // },
-  // {
-  //   title: "Compliance Risk",
-  //   dataValue: 25,
-  //   percentageChange: 15,
-  //   dotColor: "red",
-  // },
-  // {
-  //   title: "Recent Messages",
-  //   dataValue: 40,
-  //   percentageChange: 8,
-  //   dotColor: "#55FF46",
-  // },
-];
+const projectData: any = [];
 
 const EnvironmentHomePage = () => {
   const { currentEnvironment, currentEnvironmentDetails } = useSelector<
@@ -121,9 +95,6 @@ const EnvironmentHomePage = () => {
   const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
     (state) => state.apiManagement.workspace
   );
-
-  console.log(currentEnvironmentDetails, "currentEnvironmentsNwe");
-  console.log(currentEnvironment, "sdcurrentEnvironmentsdsdw");
 
   const router = useRouter();
   const baseUrl = `/userId/${userProfile.user.user_id}/workspaceId/${currentWorkspace?.id}/environment`;
@@ -146,50 +117,18 @@ const EnvironmentHomePage = () => {
               display: "flex",
               justifyContent: { xs: "center", sm: "flex-end", md: "flex-end" },
             }}
-
-            // flexDirection: { xs: "column", sm: "column", md: "row" },
           >
-            {/* <HeadingTypography>Button</HeadingTypography> */}
             <Box sx={{ display: "flex" }}>
-              {/* <Stack
-              sx={{
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-              
-              }}
-            > */}
-
               <Stack
                 direction={{ xs: "column", sm: "row" }}
                 spacing={{ xs: 1, sm: 2, md: 4 }}
               >
-                {/* <GlobalButton
-                  padding="6px 15px"
-                  label={"ProjectIntegration"}
-                  iconPosition="start"
-                  fontWeight={500}
-                  // type={"submit"}
-                  // buttonType="primary"
-                  // width={"100%"}
-                  background="#7A43FE26"
-                  color="#FFFFFF"
-                  marginRight="5px"
-                  border="solid 1px #FFFFFF40"
-                  icon={<ButtonPlusIcon />}
-                  onClickHandler={() => {
-                    router?.push(`${baseUrl}/projectIntegration`);
-                  }}
-                /> */}
                 <GlobalButton
                   padding="6px 15px"
                   label={"New Environment"}
                   iconPosition="start"
                   marginRight="5px"
                   fontWeight={500}
-                  // type={"submit"}
-                  // buttonType="primary"
-                  // width={"100%"}
                   background="#7A43FE26"
                   color="#FFFFFF"
                   border="solid 1px #FFFFFF40"
@@ -201,9 +140,6 @@ const EnvironmentHomePage = () => {
                   label={"Project Integration"}
                   iconPosition="start"
                   fontWeight={500}
-                  // type={"submit"}
-                  // buttonType="primary"
-                  // width={"100%"}
                   background="#7A43FE26"
                   color="#FFFFFF"
                   border="solid 1px #FFFFFF40"
@@ -250,16 +186,6 @@ const EnvironmentHomePage = () => {
           Threat Activity By Category (Total : {projectData?.length})
         </ProgressTypography>
         <GlobalProgressBar />
-
-        {/* </div> */}
-        {/* {projectData?.length === 0 ? (
-          <div></div>
-        ) : (
-          <>
-          
-            <GlobalProgressBar />
-          </>
-        )} */}
       </BackgroundContainer>
       <div style={{ marginTop: "1.5rem" }}>
         <ThreatHeader />

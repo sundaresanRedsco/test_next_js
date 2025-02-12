@@ -14,36 +14,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "../../Redux/store";
 import {
   CommonReducer,
-  GetRefreshToken,
   initializeSession,
   selectContainer,
-  // fetchPermissions,
 } from "../../Redux/commonReducer";
-import {
-  fetchPermissions,
-  setPermissionState,
-} from "../../Redux/permissionReducer/permissionReducer";
 
 import { logout } from "../../Redux/loginReducer";
 import Cookies from "js-cookie";
-import { PrimaryTypography, SecondaryTypography } from "../../Styles/signInUp";
-import GlobalLoader from "../../Components/Global/GlobalLoader";
+
 import { darkTheme, lightTheme } from "../../../Theme/theme";
-import ApiManage from "../../ApiflowPages/apiManage";
 import {
   GetWorkspacesById,
   workspaceReducer,
 } from "../../Redux/apiManagement/workspaceReducer";
-import {
-  environmentReducer,
-  GetAllStagesByProjectId,
-  GetProjectById,
-} from "../../Redux/apiManagement/environmentReducer";
+
 import { AlertProvider } from "../../../context/alertContext";
 import { useRouter, usePathname } from "next/navigation";
-import dynamic from "next/dynamic";
-import GlobalCircularLoader from "../../Components/Global/GlobalCircularLoader";
-import { getCookies } from "../../Helpers/helpersFunctions";
 import { useSession } from "next-auth/react";
 import SidebarComponent from "../../apiflow_components/SidebarComponent";
 import { SidebarIcon } from "../../Assests/icons";
@@ -62,67 +47,22 @@ const fetchWorkspace = (
 ) => {
   const parts = pathname.split("/");
   const workspaceIdIndex = parts.indexOf("workspaceId") + 1;
-  console.log(pathname, "GetWorkspacesById");
   const workspace_id = parts[workspaceIdIndex] || "";
   if (workspace_id) {
     if (currentWorkspace?.id !== workspace_id) {
       dispatch(GetWorkspacesById(workspace_id))
         .unwrap()
-        .then((res: any) => {
-          // Handle success
-        })
-        .catch((err: any) => {
-          // Handle error
-        });
+        .then((res: any) => {})
+        .catch((err: any) => {});
     }
   }
 };
 
-// const fetchProject = (
-//   dispatch: any,
-//   pathname: string,
-//   currentEnvironment: any
-// ) => {
-//   // const parts = pathname.split("/");
-//   // const projectIdIndex = parts.indexOf("projects") + 1;
-//   const projectId = getCookies(
-//     process.env.NEXT_PUBLIC_COOKIE_USERPROFILE ?? ""
-//   );
-//   console.log(projectId, "projectIdDAS");
-//   const parts = pathname.split("/");
-//   const workspaceIdIndex = parts.indexOf("workspaceId") + 1;
-//   const workspace_id = parts[workspaceIdIndex] || "";
-//   if (projectId && workspace_id) {
-//     if (currentEnvironment !== projectId) {
-//       dispatch(
-//         GetProjectById({ project_id: projectId, workspace_id: workspace_id })
-//       )
-//         .unwrap()
-//         .then((res: any) => {
-//           dispatch(GetAllStagesByProjectId(projectId));
-//         })
-//         .catch((err: any) => {
-//           // Handle error
-//         });
-//     }
-//   }
-// };
-
 const SidebarContainer = styled(Box)<{ isCollapsed: boolean }>`
   position: relative;
   display: flex;
-  // height: 100vh;
-  // width: ${({ isCollapsed }) => (isCollapsed ? "60px" : "280px")};
 
   transition: width 0.3s linear;
-
-  // @media (min-width: 1440px) {
-  //   width: ${({ isCollapsed }) => (isCollapsed ? "60px" : "280px")};
-  // }
-
-  // @media (max-width: 768px) {
-  //   width: ${({ isCollapsed }) => (isCollapsed ? "60px" : "250px")};
-  // }
 `;
 
 const SidebarIconWithRotation = styled(SidebarIcon)<{ isOpen: boolean }>`
@@ -135,13 +75,11 @@ const SidebarIconWithRotation = styled(SidebarIcon)<{ isOpen: boolean }>`
 `;
 export const queryClient = new QueryClient();
 const DashboardLayout = ({ children }: any) => {
-  //   const { allowedTabs, userPermissions } = props;
   const { data: session, status } = useSession(); // Get session data and status
   useSecuredRoutes();
 
   const isMounted = useRef(true);
   const pathname = usePathname();
-  console.log("pathnameDashboard: ", pathname);
 
   const { loading, themeValue } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
@@ -155,7 +93,6 @@ const DashboardLayout = ({ children }: any) => {
   const router = useRouter();
 
   const locationVal = pathname.split("/");
-  let wsidVal = locationVal[4];
 
   const common = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
@@ -168,14 +105,6 @@ const DashboardLayout = ({ children }: any) => {
     (state) => state.common
   );
   const { isSidebarCollapsed, setIsSidebarCollapsed } = useSideBarStore();
-  // const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
-
-  console.log(
-    common?.userProfile?.user?.expiration_time,
-    common?.userProfile?.user?.user_id,
-    common?.userProfile?.user,
-    "userProfile"
-  );
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
@@ -226,11 +155,6 @@ const DashboardLayout = ({ children }: any) => {
     }
   }, [currentWorkspace, pathname, userProfile]);
 
-  // useEffect(() => {
-  //   if (!currentEnvironment) {
-  //     fetchProject(dispatch, pathname, currentEnvironment);
-  //   }
-  // }, [currentEnvironment, pathname]);
   const { resetAllSignStoreData } = useSignUpStore();
   useEffect(() => {
     dispatch(initializeSession());
@@ -238,12 +162,10 @@ const DashboardLayout = ({ children }: any) => {
   }, []);
   const { isPageLoading } = useGlobalStore();
 
-  console.log(isSidebarCollapsed, "isSidebarCollapsedisSidebarCollapsed");
   if (pathname.includes("/userId")) {
     return (
       <ThemeProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
-          {" "}
           <WebSocketProvider>
             <AlertProvider>
               <Grid
@@ -261,11 +183,6 @@ const DashboardLayout = ({ children }: any) => {
                       setIsSidebarCollapsed={setIsSidebarCollapsed}
                       onClick={toggleSidebar}
                     />
-                    {/* <button style={{color:"red"}}>close</button> */}
-                    {/* <SidebarIconWithRotation
-                  isOpen={isSidebarCollapsed} // Pass the state to the styled component
-                  onClick={toggleSidebar}
-                /> */}
                   </SidebarContainer>
                 </Grid>
                 <Grid
@@ -287,7 +204,9 @@ const DashboardLayout = ({ children }: any) => {
       </ThemeProvider>
     );
   } else {
-    return children;
+    return (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
   }
 };
 

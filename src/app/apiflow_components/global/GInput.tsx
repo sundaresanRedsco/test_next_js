@@ -169,7 +169,6 @@ export default function GInput(props: Props) {
           style: {
             fontFamily: "FiraSans-regular",
             color: color ? color : theme.palette.teritiaryColor.main,
-            // color: color ? color : theme.palette.primaryBlack.main,
 
             fontSize: fontSize || "0.7rem",
             fontWeight: fontWeight,
@@ -208,6 +207,9 @@ export default function GInput(props: Props) {
           },
           "& .MuiInputBase-input": {
             fontFamily: "FiraSans-medium !important",
+            "&.Mui-disabled": {
+              WebkitTextFillColor: "#c9c9c961",
+            },
           },
           "& .MuiInputBase-input::placeholder": {
             fontFamily: "Firasans-light",
@@ -272,7 +274,7 @@ export default function GInput(props: Props) {
           sx: {
             background: background,
             color: color ? color : "white",
-            // color: color ? color : theme.palette.primaryBlack.main,
+
             fontFamily: "FiraSans-regular",
             fontSize: fontSize || "0.7rem",
             fontWeight: fontWeight ? fontWeight : 500,
@@ -300,8 +302,6 @@ export default function GInput(props: Props) {
           minLength: 0,
           maxLength: maxLength, // Set maximum length
         }}
-        // startAdornment={startAdornment}
-        // endAdornment={endAdornment}
       />
     </Box>
   );

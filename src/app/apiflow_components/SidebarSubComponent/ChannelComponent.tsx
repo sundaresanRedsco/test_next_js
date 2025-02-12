@@ -63,27 +63,6 @@ function ChannelComponent() {
         />
       ),
     },
-    // {
-    //   label: "Project",
-    //   onClick: undefined,
-    //   icon: false,
-    //   isDropDown: false,
-    //   dropDownData: [],
-    // },
-    // {
-    //   label: "Personal",
-    //   onClick: undefined,
-
-    //   isDropDown: false,
-    //   dropDownData: [],
-    // },
-    // {
-    //   label: "External",
-    //   onClick: undefined,
-    //   icon: false,
-    //   isDropDown: false,
-    //   dropDownData: [],
-    // },
   ];
   return (
     <Box sx={{ color: "white" }}>
@@ -136,44 +115,6 @@ function ChannelComponent() {
                 </SecondaryTextTypography>
                 {elem?.icon}
               </Box>
-              {/* <SecondaryTextTypography>
-            # Public Announcement
-          </SecondaryTextTypography>
-          <SecondaryTextTypography>
-            # Workspace Announcement
-          </SecondaryTextTypography>
-          <SecondaryTextTypography>
-            # Project Announcement
-          </SecondaryTextTypography> */}
-              {/* Project Section */}
-              {/* <Box sx={{ marginTop: "30px" }}>
-                <PrimaryTextTypography>Project</PrimaryTextTypography>
-            
-              </Box> */}
-
-              {/* <Box sx={{ marginTop: "30px" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    flexDirection: "row",
-                  }}
-                >
-                  <PrimaryTextTypography>Personals</PrimaryTextTypography>
-                  <ChannelPlusIcon
-                    style={{ margin: "10px", cursor: "pointer" }}
-                    onClick={() => {
-                      router.push(
-                        `/userId/${userProfile?.user?.user_id}/channel/createChannel`
-                      );
-                    }}
-                  />
-                </Box>
-              </Box> */}
-              {/* <SecondaryTextTypography># My Team Channel</SecondaryTextTypography>
-              {/* <SecondaryTextTypography># My Team Channel</SecondaryTextTypography>
-          <SecondaryTextTypography># My Environment</SecondaryTextTypography> */}
             </Box>
           );
         })}

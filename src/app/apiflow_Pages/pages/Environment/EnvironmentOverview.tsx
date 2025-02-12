@@ -3,9 +3,6 @@
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { setPermissionState } from "../../../Redux/permissionReducer/permissionReducer";
-
-import dynamic from "next/dynamic";
-import GlobalLoader from "@/app/Components/Global/GlobalLoader";
 import EnvironmentHomePage from "../../EnvironmentHomePage";
 
 export default function EnvironmentOverview(props: any) {

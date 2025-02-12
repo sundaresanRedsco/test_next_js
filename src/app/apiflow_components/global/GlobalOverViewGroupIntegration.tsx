@@ -1,30 +1,11 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Avatar,
-  IconButton,
-  Box,
-  Grid2,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  AwsCardIcon,
-  AzureCardIcon,
-  DeleteEnvironment,
-  EditEnvironment,
-  GcpCarIcon,
-  ProjectCardIcon,
-} from "@/app/Assests/icons";
+import { Card, Typography, Box, Grid2 } from "@mui/material";
+
+import { DeleteEnvironment, EditEnvironment } from "@/app/Assests/icons";
 import { styled } from "@mui/system";
 import { PrimaryTypography } from "@/app/Styles/signInUp";
 
 export interface GlobalOverViewGroupIntegrationProps {
-  // title: string;
-  // secondaryTitle: string;
-  // type: any;
   data: any[];
 }
 
@@ -44,12 +25,7 @@ const TextTypography = styled(Typography)`
 
 const GlobalOverViewGroupIntegration: React.FC<
   GlobalOverViewGroupIntegrationProps
-> = ({
-  // title,
-  // secondaryTitle,
-  // type,
-  data,
-}) => {
+> = ({ data }) => {
   return (
     <div>
       <Grid2 container spacing={2}>
@@ -60,7 +36,6 @@ const GlobalOverViewGroupIntegration: React.FC<
               padding: "15px 20px",
               borderRadius: "10px", // Rounded corners
               width: "100%",
-              // height: "100px",
             }}
           >
             {data.map((item: any, index: number) => (
@@ -70,7 +45,6 @@ const GlobalOverViewGroupIntegration: React.FC<
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    // height: "200px",
                   }}
                 >
                   <Box
@@ -104,7 +78,7 @@ const GlobalOverViewGroupIntegration: React.FC<
                     </Box>
 
                     {/* Text Content */}
-                    <Box sx={{ marginLeft: "1rem" }}>
+                    <Box sx={{ marginLeft: "1rem", marginBottom: "15px" }}>
                       <TextTypography>
                         {item?.group_type} {item?.name}
                       </TextTypography>

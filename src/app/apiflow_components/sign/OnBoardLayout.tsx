@@ -5,7 +5,6 @@ import SignUPStepper from "./SignUPStepper";
 import GToggleButton from "../global/GToggleButton";
 import { ArrowBackIosNewRounded } from "@mui/icons-material";
 import GLoader from "../global/GLoader";
-import useSignIn from "@/app/hooks/sign/useSignIn";
 import GlobalButton from "../global/GButton";
 import { AlertProvider } from "@/context/alertContext";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
@@ -79,7 +78,6 @@ export default function OnBoardLayout({
             },
           }}
           maxWidth="xl"
-          // maxWidth={issm || isxs || isWorkflowModal ? "xl" : "lg"}
         >
           <Box
             sx={{
@@ -89,12 +87,12 @@ export default function OnBoardLayout({
               },
               borderRadius: "20px",
               height: activeStep == 0 && !isWorkflowModal ? "100%" : "auto",
-              // height: activeStep == 0 && !isWorkflowModal ? "500px" : "auto",
+
               overflow: { xs: "auto", sm: "hidden" },
               display: "flex",
               alignItems: "center",
               width: "100%",
-              // width: { xs: "100%", sm: isWorkflowModal ? "100%" : "90%" },
+
               flexDirection: { xs: "column", sm: "row" },
               position: "relative",
               "@media (min-width: 2120px)": {
@@ -141,30 +139,33 @@ export default function OnBoardLayout({
                 }}
               />
               <Logo />
-              <SignUPStepper steps={steps} />
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: { xs: 2, sm: 0 },
-                }}
-              >
-                {activeStep == 0 ? (
-                  !isWorkflowModal && (
-                    <Box
-                      sx={{
-                        width: "135px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        "@media (min-width: 2120px)": {
-                          width: "100%",
-                        },
-                      }}
-                    >
-                      {!formDataStore?.isRegisterd && (
+              {formDataStore?.currentPage != "Login" && (
+                <SignUPStepper steps={steps} />
+              )}
+              {formDataStore?.currentPage != "Login" && (
+                <Box
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: { xs: 2, sm: 0 },
+                  }}
+                >
+                  {activeStep == 0 || activeStep == -1 ? (
+                    !isWorkflowModal && (
+                      <Box
+                        sx={{
+                          width: "135px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          "@media (min-width: 2120px)": {
+                            width: "100%",
+                          },
+                        }}
+                      >
+                        {/* {!formDataStore?.isRegisterd && (
                         <GToggleButton
                           handleChange={handleChange}
                           alignment={formDataStore?.currentPage}
@@ -176,44 +177,45 @@ export default function OnBoardLayout({
                             },
                           }}
                         />
-                      )}
-                    </Box>
-                  )
-                ) : (
-                  <GlobalButton
-                    disabled={
-                      isWorkflowModal
-                        ? activeStep == 2
-                        : activeStep == 5
-                        ? activeStep == 5 && formDataStore?.invite_token
-                        : activeStep == 3 || activeStep == 1
-                    }
-                    padding="5px 15px"
-                    label={"Back to " + steps[activeStep - 1]?.label}
-                    iconPosition="start"
-                    background={"none"}
-                    color="white"
-                    fontWeight={500}
-                    onClickHandler={handleBack}
-                    icon={
-                      <ArrowBackIosNewRounded
-                        sx={{
-                          fontSize: "12px",
-                          color:
-                            (isWorkflowModal && activeStep == 2) ||
-                            (!isWorkflowModal &&
-                              (activeStep == 3 || activeStep == 1))
-                              ? "gray"
-                              : "white",
-                          "@media (min-width: 2120px)": {
-                            fontSize: "20px",
-                          },
-                        }}
-                      />
-                    }
-                  />
-                )}
-              </Box>
+                      )} */}
+                      </Box>
+                    )
+                  ) : (
+                    <GlobalButton
+                      disabled={
+                        isWorkflowModal
+                          ? activeStep == 2
+                          : activeStep == 5
+                          ? activeStep == 5 && formDataStore?.invite_token
+                          : activeStep == 3 || activeStep == 1
+                      }
+                      padding="5px 15px"
+                      label={"Back to " + steps[activeStep - 1]?.label}
+                      iconPosition="start"
+                      background={"none"}
+                      color="white"
+                      fontWeight={500}
+                      onClickHandler={handleBack}
+                      icon={
+                        <ArrowBackIosNewRounded
+                          sx={{
+                            fontSize: "12px",
+                            color:
+                              (isWorkflowModal && activeStep == 2) ||
+                              (!isWorkflowModal &&
+                                (activeStep == 3 || activeStep == 1))
+                                ? "gray"
+                                : "white",
+                            "@media (min-width: 2120px)": {
+                              fontSize: "20px",
+                            },
+                          }}
+                        />
+                      }
+                    />
+                  )}
+                </Box>
+              )}
             </Box>
             <Box
               sx={{

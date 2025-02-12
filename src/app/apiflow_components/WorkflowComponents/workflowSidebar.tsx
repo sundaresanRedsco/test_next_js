@@ -19,8 +19,6 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import Divider from "@mui/material/Divider";
 import { Union } from "@/app/Assests/icons";
-import { useDrag } from "react-dnd";
-import { SecondaryTextTypography } from "@/app/Styles/signInUp";
 import {
   endpointReducer,
   GetCollectionOperationTreeFlow,
@@ -29,12 +27,7 @@ import {
 } from "@/app/Redux/apiManagement/endpointReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
-import { apiEndPointReducer } from "@/app/Redux/apiIntelligence/apiEndPointReducer";
-import { CommonReducer } from "@/app/Redux/commonReducer";
-import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
-import { environmentReducer } from "@/app/Redux/apiManagement/environmentReducer";
-import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
-import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
+import GlobalCircularLoader from "@/app/apiflow_components/global/GlobalCircularLoaderV2";
 import { useSideBarStore } from "@/app/hooks/sideBarStore";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import { v4 as uuidv4 } from "uuid";
@@ -62,22 +55,16 @@ const DraggableCard = ({
   name,
   http_method,
   type,
-  // tabs,
   collection_id,
   recentlyModifiedProp,
   full_url,
-}: // onSelectCurrentOperation,
-any) => {
+}: any) => {
   const theme = useTheme();
-  // const [, drag] = useDrag({
-  //   type: ItemTypes.CARD,
-  //   item: { id, name, http_method, type },
-  // });
 
   const divRef = useRef<HTMLDivElement>(null);
 
   // Attach the drag to the ref, as React DnD will correctly handle this ref
-  // drag(divRef);
+
   const { dropItem, setdropItems } = useGlobalStore();
   const [isDragging, setisDragging] = useState(false);
   useEffect(() => {
@@ -96,36 +83,6 @@ any) => {
       }}
       draggable
     >
-      {/* <SecondaryTextTypography
-          key={id}
-          style={{
-            fontSize: "8px",
-            marginLeft: "15px",
-            // color: `${theme.palette.v2EndpointColor.main}`,
-            color: tabs.some((tab: any) => tab.includes(`Operat_${id}`))
-              ? `${theme.palette.v2EndpointActiveColor.main}`
-              : `${theme.palette.v2EndpointColor.main}`,
-
-            fontWeight: tabs.some((tab: any) => tab.includes(`Operat_${id}`))
-              ? `600`
-              : ``,
-            marginTop: "3px",
-            cursor: "grab",
-            display: "flex",
-            alignItems: "center",
-            maxWidth: "150px",
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-            minWidth: 0,
-            padding: "2px 0px",
-          }}
-          onClick={() => {
-            onSelectCurrentOperation(collection_id, id);
-          }}
-        >
-          {name}
-        </SecondaryTextTypography> */}
       <Box
         key={id}
         sx={{
@@ -135,7 +92,7 @@ any) => {
           alignItems: "center",
           padding: recentlyModifiedProp === true ? "8px" : "6px 15px",
           gap: recentlyModifiedProp === true ? "" : "10px",
-          // width: "100%",
+
           height: recentlyModifiedProp === true ? "20px" : "",
           left: "0px",
           top: recentlyModifiedProp === true ? "" : "58px",
@@ -210,7 +167,6 @@ export default function WorkflowSidebar(props: any) {
 
   type ExpandedState = { [key: number]: boolean };
   const [expanded, setExpanded] = useState<ExpandedState>({ 0: true });
-  const [sidebarVal, setSidebarVal] = useState(workflowSidebarCollOperVal);
 
   const handleAccordionToggle = (index: number) => {
     setExpanded((prevState: any) => ({
@@ -219,27 +175,13 @@ export default function WorkflowSidebar(props: any) {
     }));
   };
 
-  const [endpointSearchClicked, setEndpointSearchClicked] = useState(false);
-  const [endpointVal, setEndpointVal] = useState<any[]>([]);
-
-  const [stateId, setStageId] = useState<string>("");
-  const [collOperVal, setCollOperVal] = useState<any[]>([]);
-
   const [currentPage, setCurrentPage] = useState<number>(5);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [startVal, setStartVal] = useState<number>(0);
   const [endVal, setEndVal] = useState<number>(5);
   const [collOperTreeCount, setCollOperTreeCount] = useState(0);
   const [collOperDetails, setCollOperDetails] = useState<any[]>([]);
 
   const [searchVal, setSearchVal] = useState("");
-
-  const handleToggle = (
-    event: React.SyntheticEvent,
-    nodeIds: string[] | any
-  ) => {
-    setExpanded(nodeIds);
-  };
 
   const fetchPageData = async (page: number) => {
     if (project_id) {
@@ -247,7 +189,7 @@ export default function WorkflowSidebar(props: any) {
       setEndVal((prevEnd: any) => prevEnd + 5);
       let requestData = {
         project_id: project_id,
-        // offsetStart: 0,
+
         offsetStart: workflowSidebarStart,
         offsetEnd: page,
       };
@@ -255,12 +197,6 @@ export default function WorkflowSidebar(props: any) {
         .unwrap()
         .then((res: any) => {
           setCollOperTreeCount(res?.count);
-
-          // const filterStatusVal = res?.collections?.filter(
-          //   (filterStatus: any) => filterStatus?.status === "ACTIVE"
-          // );
-
-          // setCollOperDetails(filterStatusVal);
 
           setCollOperDetails((prevValues: any) => {
             const newData = Array.isArray(res?.collections)
@@ -290,9 +226,6 @@ export default function WorkflowSidebar(props: any) {
   const handleScroll = () => {
     if (containerRef?.current) {
       const { scrollTop, clientHeight, scrollHeight } = containerRef?.current;
-      // if (scrollTop + clientHeight >= scrollHeight - 100) {
-      //   setCurrentPage((prevPage) => prevPage + 5);
-      // }
       if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading) {
         if (workflowSidebarEnd <= collOperTreeCount) {
           dispatch(updateWorkflowSidebarStart(workflowSidebarStart + 8));
@@ -302,26 +235,7 @@ export default function WorkflowSidebar(props: any) {
     }
   };
 
-  // useEffect(() => {
-  //   if (currentEnvironment && currentStage) {
-  //     let getOperationValues = {
-  //       project_id: currentEnvironment,
-  //       stage_id: currentStage,
-  //     };
-  //     dispatch(GetOperations(getOperationValues))
-  //       .unwrap()
-  //       .then((operRes: any) => {
-
-  //         setCollOperVal(operRes);
-  //       })
-  //       .catch((error: any) => {
-
-  //       });
-  //   }
-  // }, [currentEnvironment, currentStage]);
-
   useEffect(() => {
-    // const container = document.getElementById(maninContainer);
     const container = document.getElementById("scrollable-container");
     container?.addEventListener("scroll", handleScroll);
     setSearchVal("");
@@ -330,18 +244,7 @@ export default function WorkflowSidebar(props: any) {
       container?.removeEventListener("scroll", handleScroll);
       setSearchVal("");
     };
-    // }, [maninContainer]); // Include maninContainer as a dependency
   }, []);
-
-  // useEffect(() => {
-  //   if (project_id) {
-  //     fetchPageData(currentPage);
-  //     setIsLoading(false);
-  //   } else {
-  //     setCollOperDetails([]);
-  //     setCollOperTreeCount(0);
-  //   }
-  // }, [currentPage, project_id]);
 
   useEffect(() => {
     if (project_id) {
@@ -367,11 +270,6 @@ export default function WorkflowSidebar(props: any) {
         width: "95%",
       }}
     >
-      {/* <Box
-      // sx={{
-      //   padding: "10px",
-      // }}
-      > */}
       <Grid
         container
         sx={{
@@ -396,7 +294,7 @@ export default function WorkflowSidebar(props: any) {
                 alignItems: "center",
                 justifyContent: "space-between",
                 width: "100%",
-                // height: "45px",
+
                 background: "rgba(122, 67, 254, 0.35)",
                 border: "0.5px solid rgba(255, 255, 255, 0.25)",
                 borderRadius: "7px",
@@ -479,15 +377,12 @@ export default function WorkflowSidebar(props: any) {
       {/* Collections and Operations */}
       <Box sx={{ margin: recentlyModifiedProp === true ? "" : "10px 0px" }}>
         <DraggableCard
-          // id={operation?.operation_id}
           id={123}
           name={"Frame"}
           http_method={"GET"}
           type={"groupNode"}
           collection_id={123}
           recentlyModifiedProp={recentlyModifiedProp}
-          // tabs={tabs}
-          // onSelectCurrentOperation={onSelectCurrentOperation}
         />
         {collOperDetails?.map((item: any, index: number) => (
           <Accordion
@@ -577,7 +472,6 @@ export default function WorkflowSidebar(props: any) {
             <Divider
               color="#FFFFFF"
               sx={{
-                // backgroundColor: "#FFFFFF",
                 height: "1px",
                 marginBottom: "10px",
                 marginTop: "-5px",
@@ -592,35 +486,8 @@ export default function WorkflowSidebar(props: any) {
               }}
             >
               {item?.operations?.map((operation: any, idx: number) => (
-                // <Box
-                //   key={idx}
-                //   sx={{
-                //     boxSizing: "border-box",
-                //     display: "flex",
-                //     flexDirection: "row",
-                //     alignItems: "center",
-                //     padding: "18px 15px",
-                //     gap: "10px",
-                //     width: "100%",
-                //     height: "55px",
-                //     left: "0px",
-                //     top: "58px",
-                //     background: "rgba(255, 255, 255, 0.1)",
-                //     border: "0.5px solid rgba(255, 255, 255, 0.25)",
-                //     borderRadius: "10px",
-                //     marginBottom: "10px",
-                //   }}
-                // >
-                //   <TertiaryTypogrpahy>
-                //     {detail?.operName}
-                //   </TertiaryTypogrpahy>
-                //   <Box sx={{ marginLeft: "auto" }}>
-                //     <Union />
-                //   </Box>
-                // </Box>
                 <DraggableCard
                   key={operation?.operation_id}
-                  // id={operation?.operation_id}
                   id={operation?.operation_id}
                   name={operation?.operation_name}
                   http_method={operation?.method}
@@ -628,8 +495,6 @@ export default function WorkflowSidebar(props: any) {
                   collection_id={operation?.collection_id}
                   recentlyModifiedProp={recentlyModifiedProp}
                   full_url={operation?.full_url}
-                  // tabs={tabs}
-                  // onSelectCurrentOperation={onSelectCurrentOperation}
                 />
               ))}
             </AccordionDetails>

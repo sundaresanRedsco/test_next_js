@@ -141,15 +141,12 @@ export default function OutputParamTable(props: any) {
       }}
     >
       <GDataGrid
-        // hideFooter
         dataGridType={"primary"}
         columns={columnsOutputParameters}
         rows={rowsOutput}
         disableColumnMenu={true}
         fontSize="0.6rem"
         fontWeight={800}
-        // backgroundColor="#F3F3F340"
-        // color={`black`}
         hideFooter={false}
       />
     </Box>

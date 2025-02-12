@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import GlobalButton from "../../global/GButton";
 import IconLayout from "../../global/IconLayout";
 import {
@@ -39,10 +39,13 @@ export default function AccountCreation({
     flow: "auth-code",
     scope: "openid email profile",
   });
+  useEffect(() => {
+    setFormDataStore("currentPage", "SignUp");
+    setactiveStep(0);
+  }, []);
+
   return (
     <ScrollableLayout
-      //   showBackButton={true}
-      //   handleBack={() => {}}
       showNextButton={!!formDataStore?.authType}
       handleNext={() => {
         if (formDataStore?.authType.split("_")[0] == "email") {

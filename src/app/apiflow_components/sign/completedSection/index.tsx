@@ -19,12 +19,6 @@ export default function CompletedSection({ clientSession }: any) {
     router.push("/userId/" + clientSession?.user?.workspace_id);
     resetAllSignStoreData();
     removeItem(`userId/${clientSession?.user?.user_id}`);
-    // setTimeout(() => {
-    //   toast.success("Scan started");
-    // }, 3000);
-    // setTimeout(() => {
-    //   toast.success("Scan ended");
-    // }, 15000);
   };
   return (
     <Stack

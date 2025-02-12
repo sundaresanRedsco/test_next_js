@@ -249,7 +249,6 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
       showBackButton={true}
       handleBack={handleBack}
       columnSpacing={isxs ? 1 : issm ? 1 : 2}
-      // handleSubmit={}
       isWorkflowModal={isWorkflowModal}
     >
       <Grid

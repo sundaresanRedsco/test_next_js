@@ -8,14 +8,10 @@ export default function useScrollRef(
 ) {
   const [offsetVal, setoffsetVal] = useState(data ? data : 0);
   const handleScroll = () => {
-    console.log("testScroll", data);
     if (ref.current) {
       const bottom = ref.current.getBoundingClientRect().bottom;
-      console.log("testScroll1", data);
       if (bottom <= window.innerHeight) {
-        console.log("testScroll2", data);
         if (isIncrease) {
-          console.log("testScroll3", data);
           if (setLoading) {
             setLoading(true);
           }

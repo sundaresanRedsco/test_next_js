@@ -29,6 +29,7 @@ import { useParams } from "react-router-dom";
 import * as Y from "yjs";
 import html2canvas from "html2canvas";
 import useNodeErr from "./useNodeErr";
+import { usePostStore } from "@/app/store/usePostStore";
 
 type YDoc = Y.Doc;
 
@@ -72,6 +73,7 @@ export default function useWorkflow({
   //--------------------------------------Custom Hooks---------------------------------------------------------
 
   const { handleAddInitialErrors } = useNodeErr();
+  const { resetAllPostStoreData } = usePostStore();
 
   //--------------------------------------Stores---------------------------------------------------------
 
@@ -92,6 +94,7 @@ export default function useWorkflow({
 
   useEffect(() => {
     resetWorkFlowState("storedNodes");
+    resetAllPostStoreData();
   }, []);
 
   useEffect(() => {

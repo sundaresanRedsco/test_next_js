@@ -1,5 +1,3 @@
-// import Environments from "@/app/apiflow_Pages/pages/workspace/environments";
-
 import WorkspaceEnvironments from "@/app/apiflow_Pages/workspace/settings/WorkspaceEnvironments";
 
 export default async function Home(context: {
@@ -11,10 +9,6 @@ export default async function Home(context: {
   return (
     <div>
       <WorkspaceEnvironments />
-      {/* <Environments
-        allowedTabs={allowedTabs}
-        userPermissions={userPermissions}
-      /> */}
     </div>
   );
 }

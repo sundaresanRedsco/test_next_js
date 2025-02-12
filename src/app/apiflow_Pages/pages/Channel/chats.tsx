@@ -15,6 +15,7 @@ import WorkflowPosts from "@/app/apiflow_components/WorkflowComponents/workflowP
 import { IconButton, Popover } from "@mui/material";
 import { ChatBubble } from "@mui/icons-material";
 import useWorkflowPost from "@/app/hooks/posts/useWorkflowPost";
+import { usePostStore } from "@/app/store/usePostStore";
 export default function Chats(props: any) {
   const dispatch = useDispatch<any>();
   const router = useRouter();
@@ -32,9 +33,8 @@ export default function Chats(props: any) {
     (state) => state.common
   );
 
-  const { openPosts, setopenPostAnchorEl, openPostAnchorEl } =
-    useWorkflowPost();
-
+  const { setopenPostAnchorEl, openPostAnchorEl } = usePostStore();
+  const openPosts = Boolean(openPostAnchorEl);
   useEffect(() => {
     dispatch(
       getChannels({
@@ -46,9 +46,6 @@ export default function Chats(props: any) {
       .unwrap()
       .then((res: any) => {
         setCurrentChannel(res[0]);
-        // console.log("UpdateResponse: ", res);
-        // router.push(`/userId/${userProfile?.user?.user_id}/channel`);
-        // toast.success("channel Created");
       });
   }, []);
   return (
@@ -71,9 +68,6 @@ export default function Chats(props: any) {
           setopenPostAnchorEl(event.currentTarget);
         }}
         sx={{
-          //   position: "absolute",
-          //   right: 20,
-          //   bottom: 20,
           zIndex: 1,
           background:
             "linear-gradient(90deg, rgb(155, 83, 176) 0%, rgb(122, 67, 254) 100%)",
@@ -103,9 +97,7 @@ export default function Chats(props: any) {
             padding: "10px",
           },
         }}
-      >
-        {/* <WorkflowPosts /> */}
-      </Popover>
+      ></Popover>
     </div>
   );
 }

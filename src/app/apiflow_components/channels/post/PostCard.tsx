@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, Typography, Box, Grid } from "@mui/material";
 import { styled } from "@mui/system";
-import GButton from "@/app/ApiFlowComponents/Global/GButton";
+import GButton from "@/app/apiflow_components/global/GButtonV1";
 import { Profile } from "@/app/Assests/icons";
 
 // Sample data for workspace cards

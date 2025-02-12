@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-// import { LeftArrowIcon } from "@/app/Assests/icons";
+
 import { styled } from "@mui/system";
 import { Box, Typography } from "@mui/material";
 
@@ -16,9 +16,7 @@ import {
   updateGroupOverViewEnd,
   updateGroupOverViewStart,
 } from "@/app/Redux/apiManagement/projectApiReducer";
-import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
 import { PrimaryTypography } from "@/app/Styles/signInUp";
-// import GlobalOverViewGroupIntegration from "@/app/apiflow_components/global/GlobalOverViewGroupIntegration";
 import Grid from "@mui/material/Grid2";
 import dynamic from "next/dynamic";
 import WorkspaceProjectSkeleton from "@/app/apiflow_components/skeletons/WorkspaceProjectSkeleton";
@@ -66,25 +64,14 @@ function WorkspaceProjects() {
   } = useSelector<RootStateType, projectApiReducer>(
     (state) => state.apiManagement.apiProjects
   );
-  console.log(getGroupList, "getGroupListsd");
 
   const dispatch = useDispatch<any>();
-  // const containerRef = useRef<any>(null);
 
   const [groupData, setGroupData] = useState<any>([]);
-  console.log(groupData, "groupDatasd");
+
   const [offsetVal, setoffsetVal] = useState<number>(1);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  console.log(groupData, "projetDatasdsd");
-  console.log(
-    getGroupOverViewLoading,
-    groupData,
-    groupOverViewEnd,
-    groupOverViewStart,
-    "getGroupOverViewLoading"
-  );
 
   const fetchPageData = async (endValue: number) => {
     const data = {
@@ -95,12 +82,8 @@ function WorkspaceProjects() {
 
     dispatch(GetGroupsByWorkspaceIdOVerView(data))
       .unwrap()
-      .then((workspaceRes: any) => {
-        console.log("Fetched data:", workspaceRes);
-      })
-      .catch((error: any) => {
-        console.log("ErrorWorkspace: ", error);
-      });
+      .then((workspaceRes: any) => {})
+      .catch((error: any) => {});
   };
 
   useEffect(() => {
@@ -140,7 +123,6 @@ function WorkspaceProjects() {
     <div style={{ margin: "10px 15px" }}>
       <div>
         <HeadingTypography style={{ marginTop: "1rem" }}>
-          {/* Carrefour Workspace <LeftArrowIcon /> */}
           {currentWorkspace?.name} <LeftArrowIcon />
           <span
             style={{
@@ -197,20 +179,12 @@ function WorkspaceProjects() {
       <div>
         <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
           <Box
-            // ref={containerRef}
-            // onScroll={handleScroll}
             sx={{
               height: 500,
               overflowY: "auto",
               position: "relative",
             }}
           >
-            {/* {getGroupOverViewLoading && (
-              <GlobalCircularLoader
-                open={getGroupOverViewLoading}
-                noBackdrop={true}
-              />
-            )} */}
             {getGroupTotalCount > 0 ? (
               <GlobalOverViewGroupIntegration data={getGroupList?.groups} />
             ) : (

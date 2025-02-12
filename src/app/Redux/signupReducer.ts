@@ -2,7 +2,6 @@ import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as authService from "../Services/auth";
 import { AdminServices } from "../Services/services";
 import { errorHandling } from "../Services/errorHandling";
-// import errorHandling from "../services/errorHandling";
 
 export const signupUser = createAsyncThunk(
   "signup/user",

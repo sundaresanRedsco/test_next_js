@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import GlobalAlert from "../app/ApiFlowComponents/Global/GlobalAlert";
+import GlobalAlert from "../app/apiflow_components/global/GlobalAlert";
 
 interface AlertContextType {
   showAlert: (

@@ -1,35 +1,16 @@
 import React, { useRef } from "react";
 import ReactFlow, {
-  Background,
-  Controls,
   ReactFlowProvider, // Import ReactFlowProvider
   Node,
   Edge,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import WorkflowStartNode from "./Nodes/workflowStartNode";
-import WorkflowOperationNode from "./Nodes/workflowOperationNode";
-import CustomEdge from "@/app/ApiFlowComponents/ApiDesigner/Edges/customEdge";
-import ChangeEdge from "@/app/ApiFlowComponents/ApiDesigner/Edges/changeEdge";
+import ChangeEdge from "@/app/apiflow_components/WorkflowComponents/Edges/changeEdge";
 import { Box } from "@mui/material";
 import RevHistoryNode from "@/app/apiflow_components/WorkflowComponents/Nodes/RevHistoryNode";
 import DeletedNode from "./Nodes/DeletedNode";
-// const DeletedNode = ({ data }: any) => {
-//   return (
-//     <div
-//       style={{
-//         backgroundColor: "gray",
-//         color: "white",
-//         border: "1px solid red",
-//         padding: "10px",
-//         borderRadius: "5px",
-//         opacity: 0.5, // Reduced opacity for deleted nodes
-//       }}
-//     >
-//       {data?.operations_header || "Deleted Node"}
-//     </div>
-//   );
-// };
+
 const nodeTypes = {
   startButtonNode: WorkflowStartNode,
   operationNode: RevHistoryNode,

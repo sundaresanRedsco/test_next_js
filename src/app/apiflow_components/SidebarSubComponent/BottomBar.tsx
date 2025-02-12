@@ -24,7 +24,6 @@ export const BottomBar = (props: any) => {
           }}
           onClick={onClickHandler}
         >
-          {/* {selectedText} */}
           {title}
         </SecondaryTextTypography>
       </Box>

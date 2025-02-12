@@ -1,5 +1,12 @@
 import { TeritaryTextTypography } from "@/app/Styles/signInUp";
-import { Avatar, Box, IconButton, Popover, Stack } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  IconButton,
+  Popover,
+  Skeleton,
+  Stack,
+} from "@mui/material";
 import React, { useState } from "react";
 import { FaRegComment } from "react-icons/fa";
 import { AddReaction, ArrowDropDown, Send } from "@mui/icons-material";
@@ -11,7 +18,12 @@ import { RootStateType } from "@/app/Redux/store";
 import { CommonReducer } from "@/app/Redux/commonReducer";
 import CustomEmojiPicker from "./CustomEmojiPicker";
 import CommentsContainer from "./CommentsContainer";
-import useComments from "@/app/hooks/posts/useComments";
+import useLikes from "@/app/hooks/posts/useLikes";
+import theme from "@/Theme/theme";
+import { AdminServices } from "@/app/Services/services";
+import { useQuery } from "@tanstack/react-query";
+import { usePostStore } from "@/app/store/usePostStore";
+import { queryClient } from "@/app/apiflow_Pages/layout/dashboardLayout";
 
 type Props = {
   type: "me" | "other";
@@ -22,9 +34,9 @@ type Props = {
   id: any;
   imageUrl?: any;
   commentsCount?: any;
-  likes: any;
   likesCount?: any;
   channel_id?: any;
+  likes?: any;
 };
 
 export default function PostBubble({
@@ -35,35 +47,33 @@ export default function PostBubble({
   name,
   id,
   imageUrl,
-  likes,
   likesCount,
   commentsCount,
   channel_id,
+  likes,
 }: Props) {
   const [isHover, setisHover] = useState(false);
 
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
   );
-  const {
-    openComments,
-    setopenCommentAnchorEl,
-    openCommentAnchorEl,
-    commentsLoading,
-    comments,
-    createComment,
-    commentCreationLoading,
-  } = useComments(id, userProfile?.user?.user_id);
+  const { createLike, likeCreating } = useLikes({ postid: id });
+
+  const { openCommentAnchorEl, setopenCommentAnchorEl, setPostId } =
+    usePostStore();
+
+  const openComments = Boolean(openCommentAnchorEl);
   const popOverId = openComments ? "simple-popover" : undefined;
 
   const handlePopoverOpen = (event: any) => {
     setopenCommentAnchorEl(event.currentTarget);
+    setPostId(id);
+    queryClient.invalidateQueries({ queryKey: ["comments"] });
   };
   const handlePopoverClose = (event: any) => {
     setopenCommentAnchorEl(null);
+    setPostId("");
   };
-
-  // console.log(userProfile.user, "showErr-user");
 
   return (
     <Stack
@@ -81,7 +91,7 @@ export default function PostBubble({
       <Stack
         sx={{
           padding: 1,
-          background: "#f2e7ff",
+          background: theme.palette.sidebarMainBackground.main,
           borderRadius:
             type == "me" ? "10px 10px 0 10px" : "0px 10px 10px 10px",
           width: "70%",
@@ -89,35 +99,79 @@ export default function PostBubble({
         }}
         spacing={1}
       >
-        {likesCount != 0 && (
-          <Stack
-            direction={"row"}
+        {likeCreating ? (
+          <Box
             sx={{
               position: "absolute",
               bottom: "-8px",
               right: type == "me" ? "auto" : "-2px",
               left: type == "me" ? "-2px" : "auto",
-              paddingX: "10px",
               borderRadius: "20px",
-              background: "#f2e7ff",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: "0 0 1px 1px #c6c6c6",
+              boxShadow: "0 0 1px 1px #373737",
               gap: "5px",
-              paddingY: "2px",
+              background: theme.palette.modalBoxShadow.main,
             }}
           >
-            {likes?.map((elem: any, index: number) => {
-              return <Emoji key={index} unified={elem.emojis} size={13} />;
-            })}
-            <TeritaryTextTypography sx={{ fontSize: "11px", color: "black" }}>
-              {likesCount}
-            </TeritaryTextTypography>
-          </Stack>
+            <Skeleton
+              sx={{
+                width: "100px",
+                height: "20px",
+                borderRadius: "10px",
+                background: theme.palette.modalBoxShadow.main,
+              }}
+              variant="rectangular"
+            />
+          </Box>
+        ) : (
+          likesCount != 0 && (
+            <Stack
+              direction={"row"}
+              sx={{
+                position: "absolute",
+                bottom: "-8px",
+                right: type == "me" ? "auto" : "-2px",
+                left: type == "me" ? "-2px" : "auto",
+                paddingX: "10px",
+                borderRadius: "20px",
+                background: theme.palette.modalBoxShadow.main,
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: `0 0 1px 1px ${theme.palette.modalBoxShadow.main}`,
+                gap: "5px",
+                paddingY: "2px",
+              }}
+            >
+              {likes?.map((elem: any, index: number) => {
+                return <Emoji key={index} unified={elem.emojis} size={13} />;
+              })}
+              <TeritaryTextTypography
+                sx={{
+                  fontSize: "11px",
+                  color: theme.palette.textTertiaryColor.main,
+                }}
+              >
+                {likesCount}
+              </TeritaryTextTypography>
+            </Stack>
+          )
         )}
         <Stack direction={"row"} spacing={1} sx={{ alignItems: "center" }}>
-          <Avatar sx={{ width: 30, height: 30 }} />
-          <TeritaryTextTypography>{name}</TeritaryTextTypography>
+          <Avatar
+            sx={{
+              width: 30,
+              height: 30,
+              // background: theme.palette.textTertiaryColor.main,
+            }}
+          />
+          <TeritaryTextTypography
+            sx={{
+              color: theme.palette.textSecondaryColor.main,
+            }}
+          >
+            {name}
+          </TeritaryTextTypography>
         </Stack>
         {imageUrl && <Box component={"img"} src={imageUrl} />}
         <Box
@@ -129,25 +183,43 @@ export default function PostBubble({
             justifyContent: "space-between",
           }}
         >
-          <TeritaryTextTypography>{text}</TeritaryTextTypography>
-          <Stack direction={"row"}>
+          <TeritaryTextTypography
+            sx={{
+              color: theme.palette.textSecondaryColor.main,
+            }}
+          >
+            {text}
+          </TeritaryTextTypography>
+          <Stack
+            direction={"row"}
+            sx={{ alignItems: "center", position: "relative" }}
+          >
             <IconButton
               aria-owns={popOverId}
               aria-haspopup={true}
               onClick={handlePopoverOpen}
-              size="small"
+              sx={{ color: theme.palette.textTertiaryColor.main }}
             >
               <FaRegComment size={"15px"} />
-              {commentsCount ? commentsCount : ""}
             </IconButton>
-
+            {commentsCount > 0 && (
+              <TeritaryTextTypography
+                sx={{
+                  color: theme.palette.textSecondaryColor.main,
+                  fontSize: "12px",
+                  position: "absolute",
+                  right: 0,
+                }}
+              >
+                {commentsCount}
+              </TeritaryTextTypography>
+            )}
             <Popover
               sx={{
                 "& .MuiPaper-root": {
                   background: "transparent",
                   boxShadow: "none",
                   padding: "17px 10px",
-                  // padding: "28px 10px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -168,17 +240,17 @@ export default function PostBubble({
                 horizontal: "center",
               }}
             >
-              <CommentsContainer
-                postId={id}
-                type={type}
-                // channel_id={channel_id}
-              />
+              <CommentsContainer type={type} />
             </Popover>
           </Stack>
         </Box>
       </Stack>
 
-      <CustomEmojiPicker id={id} channel_id={channel_id} />
+      <CustomEmojiPicker
+        id={id}
+        channel_id={channel_id}
+        createLike={createLike}
+      />
     </Stack>
   );
 }

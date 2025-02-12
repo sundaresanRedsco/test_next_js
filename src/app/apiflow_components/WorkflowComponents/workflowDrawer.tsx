@@ -5,8 +5,6 @@ import {
   AccordionSummary,
   Box,
   IconButton,
-  Tab,
-  Tabs,
   Typography,
 } from "@mui/material";
 import GButton from "@/app/apiflow_components/global/GButton";
@@ -14,16 +12,14 @@ import { styled } from "@mui/system";
 import { useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
 import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
-import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import theme from "@/Theme/theme";
+import GlobalCircularLoader from "@/app/apiflow_components/global/GlobalCircularLoaderV2";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import JsonViewer from "@/app/ApiFlowComponents/ApiDesigner/jsonViewer";
 import { TeritaryTextTypography } from "@/app/Styles/signInUp";
 import { ArrowForwardIosRounded } from "@mui/icons-material";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
+import JsonViewer from "./jsonViewer";
 
 const CustomizedAccSummary = styled(AccordionSummary)(({ theme }) => ({
   flexDirection: "row-reverse",
@@ -55,16 +51,8 @@ export const TertiaryTypogrpahy = styled(Typography)`
 `;
 
 export default function WorkflowDrawer(props: any) {
-  const {
-    containerRef,
-    openDrawer,
-    setOpenDrawer,
-    errors,
-    SuccessMessages,
-    // errorJson,
-    // errorMessages
-    //  compiling
-  } = props;
+  const { containerRef, openDrawer, setOpenDrawer, errors, SuccessMessages } =
+    props;
 
   const { flowYdoc, compiling } = useSelector<RootStateType, FlowReducer>(
     (state) => state.apiManagement.apiFlowDesign
@@ -75,27 +63,19 @@ export default function WorkflowDrawer(props: any) {
       name: "Run Results",
       type: "filled",
     },
-    // {
-    //   name: "Test Cases Results",
-    //   type: "outline",
-    // },
-    // {
-    //   name: "Security Scan Results",
-    //   type: "outline",
-    // },
   ];
 
   const [selectedBtn, setSelectedBtn] = useState("Run Results");
   const [drawerBtnVal, setDrawerBtnVal] = useState(btnData);
   const [runResult, setRunResult] = useState<any>([]);
-  const { height, setHeight } = useGlobalStore(); // Default height
+  const { height, setHeight } = useGlobalStore();
 
   const handleResize = (event: any, { size }: any) => {
     setHeight(size.height);
   };
 
   const handleClose = () => {
-    setOpenDrawer(false); // Hide the drawer when the close button is clicked
+    setOpenDrawer(false);
   };
 
   const handleBtnClick = (val: any) => {
@@ -160,9 +140,6 @@ export default function WorkflowDrawer(props: any) {
   useEffect(() => {
     if (!flowYdoc) return;
     const runMap = flowYdoc?.getMap<any>("run");
-    console.log("FlowYDoc: ", flowYdoc, runMap.toJSON(), runMap?.size);
-
-    // const editNodesArry = ydoc.getArray<any>("nodes");
 
     const runFlow = () => {
       let runData = runMap?.toJSON();
@@ -180,10 +157,6 @@ export default function WorkflowDrawer(props: any) {
     };
   }, [flowYdoc]);
 
-  const containerWidth = containerRef.current
-    ? containerRef.current.offsetWidth
-    : typeof window !== "undefined" && window.innerWidth;
-
   return (
     <>
       {openDrawer && (
@@ -191,7 +164,6 @@ export default function WorkflowDrawer(props: any) {
           sx={{
             position: "absolute",
             width: "100%",
-            // height: "auto",
             background: "rgba(18, 18, 18, 0.5)",
             backdropFilter: "blur(3px)",
             bottom: 0,
@@ -204,15 +176,13 @@ export default function WorkflowDrawer(props: any) {
         >
           <ResizableBox
             width={undefined}
-            // width={containerWidth}
             height={height}
             minConstraints={[10, 10]}
-            maxConstraints={[Infinity, 600]} // Maximum height for resizing
+            maxConstraints={[Infinity, 600]}
             onResize={handleResize}
             axis="y"
             resizeHandles={["n"]}
             style={{
-              // position: "absolute",
               bottom: 0,
               left: 0,
               width: "100%",
@@ -309,7 +279,6 @@ export default function WorkflowDrawer(props: any) {
                       height: "100%",
                       overflowY: "auto",
                       maxHeight: "500px",
-                      // marginBottom: "30px",
                       padding: "0px 20px",
                     }}
                   >

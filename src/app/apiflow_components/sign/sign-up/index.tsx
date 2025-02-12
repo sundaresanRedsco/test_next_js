@@ -226,11 +226,11 @@ export default function SignUp() {
               if (!formDataStore?.isRegisterd) {
                 await submitform();
               } else {
-                // if (isDataChanged) {
-                updateform();
-                // } else {
-                //   setactiveStep(1);
-                // }
+                if (isDataChanged) {
+                  updateform();
+                } else {
+                  setactiveStep(1);
+                }
               }
               setFormDataStore("registeredForm", signUpFormData);
             } catch (err) {

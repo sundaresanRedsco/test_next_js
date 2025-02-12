@@ -44,14 +44,8 @@ function WorkflowSidebarSkeleton() {
           alignItems: "center",
           padding: "3px 15px",
           gap: "0px",
-          // width: "100%",
-          //   height: "90px",
-        //   left: "0px",
-        //   top: "20px",
-          //   background: "rgba(255, 255, 255, 0.1)",
-          //   border: "0.5px solid #FFFFFF40",
+
           borderRadius: "7px",
-          //   cursor: "grab",
         }}
       >
         {/* Additional skeletons */}

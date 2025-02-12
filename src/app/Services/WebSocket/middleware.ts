@@ -1,4 +1,5 @@
-const WS_URL = "ws://10.11.13.83:7040";
+// const WS_URL = "ws://10.11.13.83:7040";
+const WS_URL = process.env.NEXT_PUBLIC_APP_WS_URL;
 export const socketMiddleware =
   (socket: any) => (params: any) => (next: any) => (action: any) => {
     const { dispatch, getState } = params;

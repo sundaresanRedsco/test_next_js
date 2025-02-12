@@ -19,24 +19,7 @@ const IconSkeleton = styled(Skeleton)`
 const WorkFlowHeaderSkeleton = () => {
   return (
     <Box
-      //   sx={{
-      //     background: "#F3F3F340",
-      //     backdropFilter: "blur(9.54)",
-      //     borderTopLeftRadius: "15px",
-      //     borderTopRightRadius: "15px",
-      //     display: "flex",
-      //     alignItems: "center",
-      //     justifyContent: "space-between",
-      //     padding: "0px 10px",
-      //   }}
-
       sx={{
-        // position: "relative",
-        // zIndex: 9999999,
-        // width: "100%",
-        // height: "20%",
-        // background: "rgba(243, 243, 243, 0.25)", // Transparent background
-        // backdropFilter: "blur(4.76914px)", // Backdrop blur
         background: "#F3F3F340",
         backdropFilter: "blur(9.54)",
         borderTopLeftRadius: "15px",
@@ -48,20 +31,12 @@ const WorkFlowHeaderSkeleton = () => {
           xs: "0px 10px",
           sm: "0px 10px",
           md: "0px 10px",
-          // md: recentlyModifiedProp ? "5px" : "8px",
           lg: "0px 10px",
           xl: "5px 10px",
         },
       }}
     >
       <Box
-        // sx={{
-        //   display: "flex",
-        //   alignItems: "center",
-        //   justifyContent: "space-between",
-        //   gap: "10px",
-        // }}
-
         sx={{
           display: "flex",
           alignItems: "center",
@@ -120,7 +95,7 @@ const WorkFlowHeaderSkeleton = () => {
           variant="rectangular"
           width={70}
           height={30}
-          sx={{ backgroundColor: "#00000052",borderRadius:"10px" }}
+          sx={{ backgroundColor: "#00000052", borderRadius: "10px" }}
         />
       </Stack>
     </Box>

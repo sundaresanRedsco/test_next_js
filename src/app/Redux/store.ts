@@ -1,14 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import appReducer from "./appReducer";
+
 import { Socket } from "../Services/WebSocket/Socket";
-// import { socketMiddleware } from "../Services/WebSocket/middleware";
+
 import loginReducer from "./loginReducer";
 import commonReducer from "./commonReducer";
 import signupReducer from "./signupReducer";
 import apiManagementReducer from "./apiManagementReducer";
 import apiRiskReducer from "./apiRiskReducer";
-// import riskapiTablereducer from "./apiRisk/riskapiTablereducer";
-// import riskDashboardtablereducer from "./apiRisk/riskDashboardtablereducer";
+
 import apiInteligenceReducer from "./apiIntelligenceReducer";
 import apiTestingReducer from "./apiTestingReducer";
 import apiTeamReducer from "./apiTeamReducer";
@@ -17,16 +16,14 @@ import { socketMiddleware } from "../Services/WebSocket/middleware";
 
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { apiTeams } from "./manageTeam/teamProjectSlice";
-// import resetReducer from "./resetReducer";
-// import rootReducer1 from "./rootReducer";
-// import resetMiddleware from "./rootReducer";
+
 import resetReducer from "./resetReducer";
 import rootReducer from "./rootReducer";
-import SecurityCompilanceReducer from "./SecurityCompilance/SecurityCompilanceReducer";
+
 import apiCompilanceReducer from "./apiCompilanceReducer";
 import tabsReducer from "./tabReducer";
 import permissionReducer from "./permissionReducer/permissionReducer";
-import postReducer from "./PostReducer/postReducer";
+
 import apiPostReducer from "./apiPostReducer";
 import apiInvitationReducer from "./apiInvitationReducer";
 import apiChannelReducer from "./apiChannelReducer";
@@ -53,28 +50,9 @@ const store = configureStore({
     apiInvitation: apiInvitationReducer,
     channels: apiChannelReducer,
 
-    // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(resetMiddleware),
-    // app: appReducer,
-
     [apiTeams.reducerPath]: apiTeams.reducer,
   },
-
-  //   middleware: (getDefaultMiddleware) => [
-  //     ...getDefaultMiddleware({
-  //       serializableCheck: false, // Disable serializable check for WebSocket actions
-  //       // }),
-  //       // apiManagementProjects.middleware,
-  //     }).concat(
-  //       apiManagementProjects.middleware,
-  //       apiTeams.middleware
-  //       // resetMiddleware,
-  //     ),
-  //     // getDefaultMiddleware().concat(apiManagementProjects.middleware),
-  //     socketMiddleware(socket), // Add your socket middleware
-  //     // Add other middleware if needed
-  //   ],
 });
-console.log(apiRiskReducer);
 
 setupListeners(store.dispatch);
 

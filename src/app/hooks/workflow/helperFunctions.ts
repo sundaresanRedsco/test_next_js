@@ -1,8 +1,8 @@
 import GroupNode from "@/app/apiflow_components/WorkflowComponents/Nodes/GroupNode";
 import WorkflowOperationNode from "@/app/apiflow_components/WorkflowComponents/Nodes/workflowOperationNode";
 import WorkflowStartNode from "@/app/apiflow_components/WorkflowComponents/Nodes/workflowStartNode";
-import ChangeEdge from "@/app/ApiFlowComponents/ApiDesigner/Edges/changeEdge";
-import CustomEdge from "@/app/ApiFlowComponents/ApiDesigner/Edges/customEdge";
+import ChangeEdge from "@/app/apiflow_components/WorkflowComponents/Edges/changeEdge";
+import CustomEdge from "@/app/apiflow_components/WorkflowComponents/Edges/customEdge";
 import {
   changeValueToString,
   // replacePlaceholders,

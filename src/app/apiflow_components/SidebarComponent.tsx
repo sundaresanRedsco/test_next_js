@@ -18,7 +18,7 @@ import MenuMaximize from "../Assests/icons/SidebarMaximize.svg";
 import MenuAccount from "../Assests/icons/SidebarAccount.svg";
 import MenuLogout from "../Assests/icons/SidebarLogout.svg";
 import { HeaderTextTypography } from "../Styles/signInUp";
-// import WorkSpaceInfoComponent from './SidebarSubComponent/WorkspaceComponent';
+
 import ChannelComponent from "./SidebarSubComponent/ChannelComponent";
 import ProjectsComponet from "./SidebarSubComponent/ProjectsComponet";
 import WorkspaceComponent from "./SidebarSubComponent/workspaceSideComponents/WorkspaceSettings";
@@ -69,6 +69,8 @@ import IconLayout from "./global/IconLayout";
 import { useGlobalStore } from "../hooks/useGlobalStore";
 import { resetProjectList } from "../Redux/apiManagement/projectApiReducer";
 import { resetCollOperTreeData } from "../Redux/apiManagement/endpointReducer";
+import SettingsSidebar from "./SidebarSubComponent/SettingsSidebar";
+import { usePostStore } from "../store/usePostStore";
 
 interface SidebarContainerProps {
   expanded?: boolean;
@@ -132,31 +134,6 @@ const SidebarIconWithRotation = styled(SidebarIcon)<{
     showIcon ? "block" : "none"}; // Control visibility
 `;
 
-// const SubMenuItem = styled(Box)<SubMenuItemProps>`
-//   cursor: pointer;
-//   text-align: center;
-//   height: 50px;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   margin-top: 5px;
-//   margin-bottom: 5px;
-//   stroke: ${({ theme }) => theme.palette.v2SidebarIconColor.main};
-//   svg {
-//     width: 3rem;
-//     height: 3rem;
-//     fill: red;
-//   }
-//   ${({ active }) =>
-//     active &&
-//     `
-//     background: #7A43FE;
-//     svg {
-//       fill: red;
-//     }
-//   `}
-// `;
-
 const SubMenuItem = styled(Box)<SubMenuItemProps>`
   cursor: pointer;
   text-align: center;
@@ -178,9 +155,9 @@ const SubMenuItem = styled(Box)<SubMenuItemProps>`
     `
       background: ${theme.palette.iconSidebarIconHoverBackground.main};
       svg {
-        // fill: red;
+
            fill: white;
-           
+
       }
     `}
 `;
@@ -197,6 +174,7 @@ const SidebarMenu = styled(Box)<SidebarMenuProps>`
 function SidebarComponent(props: any) {
   const { isCollapsed, setIsSidebarCollapsed, onClick } = props;
   const { setactiveStep, setFormDataStore } = useSignUpStore();
+  const { resetAllPostStoreData } = usePostStore();
   const dispatch = useDispatch<any>();
   const pathname = usePathname();
 
@@ -213,17 +191,10 @@ function SidebarComponent(props: any) {
   );
 
   const [selectedLink, setSelectedLink] = useState<any>("apiMan");
-  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+
   const router = useRouter();
 
-  // const handleLinkHover = (id: any) => {
-  //   console.log(id, "Linkid");
-  //   setSelectedLink(id);
-  //   sessionStorage.setItem("path-id", id);
-  // };
-
   const toggleSidebar = () => {
-    // setIsExpanded((prev) => !prev); // Toggle the sidebar state
     setIsSidebarCollapsed(!isCollapsed); // Toggle the sidebar state
   };
 
@@ -289,11 +260,10 @@ function SidebarComponent(props: any) {
     },
     {
       label: "Integration",
-      // path: "",
+
       id: "integration",
       icon: <MenuSearch style={{ height: "60%", width: "60%" }} />,
       onClickHandler: (id: any, index?: number) => {
-        // commonFunctions(id, index);
         router?.push(`${baseUrl}/integration`);
         setSelectedLink(id);
         setIsSidebarCollapsed(true);
@@ -313,17 +283,20 @@ function SidebarComponent(props: any) {
         router.push(`/userId/${userProfile?.user?.user_id}/channel`);
       },
     },
-
     {
       label: "Settings",
       path: "",
       id: "settings",
       icon: <MenuSettings style={{ height: "60%", width: "60%" }} />,
       onClickHandler: (id: any, index?: number) => {
+        if (pathname != `/userId/${userProfile?.user?.user_id}/settings`) {
+          setIsPageLoading(true);
+        }
         commonFunctions(id, index);
+        setSelectedLink(id);
+        router.push(`/userId/${userProfile?.user?.user_id}/settings`);
       },
     },
-
     {
       label: "Account",
       path: "",
@@ -345,6 +318,7 @@ function SidebarComponent(props: any) {
         setFormDataStore("currentPage", "Login");
         handleLogout();
         setIsSidebarCollapsed(true);
+        resetAllPostStoreData();
       },
     },
   ];
@@ -386,7 +360,10 @@ function SidebarComponent(props: any) {
     `/sidebarMenuId/${userProfile?.user?.user_id}`
   );
   useEffect(() => {
-    if (cachedSidebarMenuIdCookie && pathname.includes("/workspaceId")) {
+    if (
+      cachedSidebarMenuIdCookie &&
+      (pathname.includes("/workspaceId") || pathname.includes("/settings"))
+    ) {
       setIsSidebarCollapsed(false);
       setSelectedLink(cachedSidebarMenuIdCookie);
     }
@@ -420,7 +397,6 @@ function SidebarComponent(props: any) {
     dispatch(resetGatewayStateApiAnalytics());
     dispatch(resetGatewayStateApiEndpoint());
     dispatch(logout()).then((res: any) => {
-      console.log("LOgoutRes: ", res);
       Cookies.remove(process.env.NEXT_PUBLIC_COOKIE_STAGEID ?? "");
 
       if (store) {
@@ -626,15 +602,12 @@ function SidebarComponent(props: any) {
           }}
         >
           {isCollapsed === false && selectedLink == "apiMan" ? (
-            // <ChannelComponent />
             <ProjectsComponet />
           ) : selectedLink === "messages" && isCollapsed === false ? (
-            // <WorkspaceComponent />
             <ChannelComponent />
+          ) : selectedLink === "settings" && isCollapsed === false ? (
+            <SettingsSidebar />
           ) : (
-            //   : selectedLink === "settings" && isCollapsed === false ? (
-            // <WorkspaceComponent />
-            //   )
             ""
           )}
         </Box>

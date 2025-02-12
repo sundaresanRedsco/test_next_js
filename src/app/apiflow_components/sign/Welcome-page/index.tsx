@@ -1,4 +1,5 @@
-import GButton from "@/app/Components/Global/GlobalButtons";
+"use client";
+import GButton from "@/app/apiflow_components/global/GlobalButtons";
 import {
   PrimarySignInUPTypography,
   PrimaryTypography,
@@ -10,13 +11,17 @@ import Image from "next/image";
 import React, { useEffect } from "react";
 import { ArrowForwardRounded } from "@mui/icons-material";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
+import { useRouter } from "next/navigation";
 
 export default function WelcomePage() {
-  const { handleStep, activeStep } = useSignUpStore();
+  const router = useRouter();
+  const { setIsLoading } = useSignUpStore();
+  const { handleStep, activeStep, setFormDataStore } = useSignUpStore();
   useEffect(() => {
     if (activeStep == -1) {
       localStorage.clear();
     }
+    setFormDataStore("currentPage", "SignUp");
   }, []);
 
   return (
@@ -81,7 +86,11 @@ export default function WelcomePage() {
         fontSize="15px"
         margin="70px 0 0 0"
         fontWeight={600}
-        onClickHandler={handleStep}
+        onClickHandler={() => {
+          setIsLoading(true);
+          router.push("/sign/signup");
+          handleStep();
+        }}
         radius="10px"
       />
     </Stack>

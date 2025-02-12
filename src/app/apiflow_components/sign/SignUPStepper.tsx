@@ -37,10 +37,7 @@ const defaultStyle = (isActive: boolean) => {
     "& .MuiStepConnector-root.Mui-active .MuiStepConnector-line": {
       borderColor: "#4F4F4F80",
     },
-    // "& .Mui-active": {
-    //   fontWeight: isActive ? "bold" : "",
-    //   transition: ".6s",
-    // },
+
     "& .MuiStepLabel-label.Mui-active": {
       color: isActive ? "white" : "#FFFFFF80",
     },
@@ -57,7 +54,7 @@ const smallScreenStyle = (isSlider: boolean) => {
       borderWidth: isSlider ? 0 : "3px",
       borderColor: "#4F4F4F80",
       width: "100%",
-      // borderColor: activeStep > 0 ? "#015578" : "",
+
       marginRight: isSlider ? 0 : "30px",
     },
     "& .MuiStepConnector-root.Mui-active .MuiStepConnector-line": {
@@ -186,9 +183,8 @@ export default function SignUPStepper({ steps, variant }: Props) {
             : defaultStyle(isActive)
         }
         nonLinear
-        // activeStep={activeStep}
       >
-        {steps.map((elem: any, index: number) => (
+        {steps?.map((elem: any, index: number) => (
           <Step key={index}>
             <StepButton
               sx={
@@ -204,7 +200,6 @@ export default function SignUPStepper({ steps, variant }: Props) {
                   isCompleted={index < activeStep}
                 />
               }
-              // onClick={handleStep(index)}
             >
               {/* {showLabel && elem?.label} */}
               <span

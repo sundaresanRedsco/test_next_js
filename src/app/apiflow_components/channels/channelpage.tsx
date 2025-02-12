@@ -62,15 +62,9 @@ function Channel() {
   console.log(selectedImageBase64, "selectedImageBase64sdlsdl");
 
   const [participantName, setParticipantName] = useState("");
-  const [participants, setParticipants] = useState<any[]>([
-    // "Karthi G",
-    // "Singara V",
-    // "Senthilraj Kappini",
-  ]);
+  const [participants, setParticipants] = useState<any[]>([]);
   const [environmentName, setEnvironmentName] = useState("");
-  const [environments, setEnvironments] = useState<any[]>([
-    // "Environment1"
-  ]);
+  const [environments, setEnvironments] = useState<any[]>([]);
 
   const [channelData, setChanneldata] = useState<any>({
     channel_name: "",
@@ -342,7 +336,6 @@ function Channel() {
                   fullWidth={true}
                   height="50px"
                   value={channelData?.description}
-                  // value="getUsers"
                   margin="10px 0px"
                   padding="7px 0px"
                   onChangeHandler={(e: any) => {
@@ -361,150 +354,6 @@ function Channel() {
           <PrimaryTypography>@Searchable</PrimaryTypography>
           <GMentionDropdown options={members} placeholder="Search..." />
         </Box>
-        {/* <Grid
-          size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
-          sx={{ marginTop: "10px" }}
-        >
-          <Box>
-            <PrimaryTypography
-              sx={{
-                color: "#ffffffbf",
-              }}
-            >
-              Add Participants
-            </PrimaryTypography>
-            <GInput
-              fullWidth={true}
-              height="50px"
-              value={participantName}
-              // value="getUsers"
-              margin="10px 0px"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  paddingLeft: "0px",
-                },
-              }}
-              onKeyUp={(event: any) => {
-                if (event?.key === "Enter") {
-                  handleAddParticipants(participantName);
-                }
-              }}
-              onChangeHandler={(e: any) => {
-                let name = e.target.value;
-                setParticipantName(name);
-              }}
-              startAdornment={
-                <InputAdornment position="start">
-                  <Box
-                    sx={{
-                      backgroundColor: "#12121280",
-                      color: "white",
-                      height: "50px", // Same height as the input field
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      padding: "0 20px",
-                      borderRadius: "4px 0 0 4px", // Rounded left corners to match input field
-                    }}
-                  >
-                    #
-                  </Box>
-                </InputAdornment>
-              }
-            />
-          </Box>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
-          {participants?.map((val: any) => (
-            <Chip
-              label={val}
-              deleteIcon={<ChipCloseIcon />}
-              onDelete={() => handleDeleteParticipants(val)}
-              sx={{
-                background: "rgba(121, 70, 253, 0.25)",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
-                fontFamily: "FiraSans-Regular",
-                "&.MuiButtonBase-root": {
-                  borderRadius: "5px",
-                  color: "#FFFFFF",
-                },
-                marginRight: "10px",
-              }}
-            />
-          ))}
-        </Grid> */}
-        {/* <Grid
-          size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
-          sx={{ marginTop: "10px" }}
-        >
-          <Box>
-            <PrimaryTypography
-              sx={{
-                color: "#ffffffbf",
-              }}
-            >
-              Environment
-            </PrimaryTypography>
-            <GInput
-              fullWidth={true}
-              height="50px"
-              value={environmentName}
-              // value="getUsers"
-              margin="10px 0px"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  paddingLeft: "0px",
-                },
-              }}
-              onKeyUp={(event: any) => {
-                if (event?.key === "Enter") {
-                  handleAddEnvironemnts(environmentName);
-                }
-              }}
-              onChangeHandler={(e: any) => {
-                let name = e.target.value;
-                setEnvironmentName(name);
-              }}
-              startAdornment={
-                <InputAdornment position="start">
-                  <Box
-                    sx={{
-                      backgroundColor: "#12121280",
-                      color: "white",
-                      height: "50px", // Same height as the input field
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      padding: "0 20px",
-                      borderRadius: "4px 0 0 4px", // Rounded left corners to match input field
-                    }}
-                  >
-                    #
-                  </Box>
-                </InputAdornment>
-              }
-            />
-          </Box>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
-          {environments?.map((val: any) => (
-            <Chip
-              label={val}
-              deleteIcon={<ChipCloseIcon />}
-              onDelete={() => handleDeleteEnvironments(val)}
-              sx={{
-                background: "rgba(121, 70, 253, 0.25)",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
-                fontFamily: "FiraSans-Regular",
-                "&.MuiButtonBase-root": {
-                  borderRadius: "5px",
-                  color: "#FFFFFF",
-                },
-                marginRight: "10px",
-              }}
-            />
-          ))}
-        </Grid> */}
       </Box>
       <Box
         sx={{

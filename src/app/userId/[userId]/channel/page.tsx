@@ -1,8 +1,5 @@
 "use client";
 // Make sure this points to your NextAuth options
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/lib/auth";
-import OverviewChannel from "@/app/apiflow_Pages/pages/Channel/overViewChannel";
 import { styled } from "@mui/system";
 import { Typography } from "@mui/material";
 import HomeChannel from "@/app/apiflow_Pages/pages/Channel/home";
@@ -17,14 +14,8 @@ const HeadingTypography = styled(Typography)`
 export default async function Home(context: {
   searchParams: { tabs?: string };
 }) {
-  let allowedTabs: any[] = [];
-  let userPermissions: any[] = [];
   return (
     <div>
-      {/* <OverviewChannel
-        allowedTabs={allowedTabs}
-        userPermissions={userPermissions}
-      /> */}
       <HeadingTypography> Channel</HeadingTypography>
       <HomeChannel />
     </div>

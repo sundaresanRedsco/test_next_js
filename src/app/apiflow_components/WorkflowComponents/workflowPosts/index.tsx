@@ -7,7 +7,7 @@ import {
   EmojiEmotions,
   Send,
 } from "@mui/icons-material";
-import { Box, IconButton, Popover, Stack } from "@mui/material";
+import { Box, IconButton, Popover, Skeleton, Stack } from "@mui/material";
 import {
   PrimarySignInUPTypography,
   SecondarySignInUPTypography,
@@ -18,6 +18,8 @@ import EmojiPicker, { Emoji } from "emoji-picker-react";
 import { useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
 import { CommonReducer } from "@/app/Redux/commonReducer";
+import EmptyData from "./EmptyData";
+import theme from "@/Theme/theme";
 
 type Props = {
   channel_id: string;
@@ -25,7 +27,8 @@ type Props = {
 
 export default function WorkflowPosts({ channel_id }: Props) {
   //*HOOKS
-  const { posts, postLoading, createPost, getPosts, postCreationLoading } =
+
+  const { posts, postLoading, createPost, postCreationLoading } =
     useWorkflowPost();
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
@@ -98,10 +101,6 @@ export default function WorkflowPosts({ channel_id }: Props) {
     setEmojiAnchorEl(null);
   };
 
-  useEffect(() => {
-    getPosts(channel_id);
-  }, [channel_id]);
-
   return (
     <Stack
       spacing={2}
@@ -119,13 +118,39 @@ export default function WorkflowPosts({ channel_id }: Props) {
       </Stack>
 
       <Stack
-        spacing={3}
-        sx={{ height: "70vh", overflowY: "auto", paddingBottom: 3 }}
+        sx={{
+          height: "70vh",
+          overflowY: "auto",
+          paddingBottom: 3,
+          flexDirection: "column-reverse",
+          gap: 3,
+        }}
       >
-        {posts ? (
+        {postLoading || postCreationLoading ? (
+          [1, 8, 2].map((elem) => (
+            <Box
+              key={elem}
+              sx={{
+                width: "100%",
+                display: "flex",
+                justifyContent:
+                  elem == 2 || elem == 1 ? "flex-end" : "flex-start",
+              }}
+            >
+              <Skeleton
+                sx={{
+                  width: "250px",
+                  height: `${100 + elem * 10}px`,
+                  borderRadius: "10px",
+                  background: theme.palette.modalBoxShadow.main,
+                }}
+                variant="rectangular"
+              />
+            </Box>
+          ))
+        ) : posts?.length > 0 ? (
           posts
             ?.slice()
-            .reverse()
             .map((elem: any, index: number) => (
               <PostBubble
                 imageUrl={elem?.media_url}
@@ -145,20 +170,7 @@ export default function WorkflowPosts({ channel_id }: Props) {
               />
             ))
         ) : (
-          <Box
-            sx={{
-              height: "100%",
-              width: "100%",
-              textAlign: "center",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <SecondarySignInUPTypography sx={{ color: "slategray" }}>
-              No Posts Yet
-            </SecondarySignInUPTypography>
-          </Box>
+          <EmptyData text=" No Posts Yet" />
         )}
       </Stack>
 

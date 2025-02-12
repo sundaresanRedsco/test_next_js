@@ -3,14 +3,12 @@ import { styled } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import ApacheApiSix from "@/app/Assests/icons/ApacheApisixSvg.svg";
 import AwsIcon from "@/app/Assests/icons/AwsIcon.svg";
-// import AzureImage from "@/app/Assests/images/azure-logo.png";
 import AzureImage from "@/app/Assests/images/azure-logo.webp";
 import CloudImage from "@/app/Assests/images/Cloud.webp";
 import SwaggerImage from "@/app/Assests/images/swagger.webp";
 import Kong from "@/app/Assests/images/downimage.webp";
 import theme from "@/Theme/theme";
 import GlobalTextField from "@/app/apiflow_components/global/GlobalTextField";
-// import { MuiChipsInput } from "mui-chips-input";
 import GlobalSelect from "@/app/apiflow_components/global/GSelect";
 import GlobalButton from "@/app/apiflow_components/global/GButton";
 import GlobalBackButton from "@/app/apiflow_components/global/GlobalBackButton";
@@ -72,27 +70,12 @@ const schema = {
 
 const validate = ajv.compile(schema);
 
-// background: red;
-// background: ${({ theme }) => theme.palette.v2WhiteColour.main};
-// height: 470px
 const CardContainer = styled(Box)`
   padding: 10px 0px;
   margin-top: 1.5rem;
   height: 470px;
   max-height: 470px;
 `;
-
-// const PrimaryTypography = styled(Typography)`
-//   font-family: Inter-Medium !important;
-//   color: ${({ theme }) => theme.palette.V2TextColor.main};
-//   font-size: 0.7555rem;
-// `;
-
-// const SecondaryTypography = styled(Typography)`
-//   font-family: Inter-Regular !important;
-//   color: ${({ theme }) => theme.palette.primaryText.main};
-//   font-size: 0.6rem;
-// `;
 
 const awsRegions = [
   { id: 1, region: "us-east-1" },
@@ -212,20 +195,14 @@ function ImportsCard(props: any) {
 
   const [errorMsg, setErrorMsg] = useState<any>();
 
-  const [sdkType, setSdkType] = useState(
-    // edits ? gatewayData?.type :
-    add ? type : ""
-  );
-
-  // const [newProjId, setNewProjId] = useState<any>();
-  // // const [newData, setNewData] = useState<any>(datas);
+  const [sdkType, setSdkType] = useState(add ? type : "");
 
   const [errorApigateway, setErrorApigateway] = useState<
     Partial<Record<keyof ApiGatewayType, string>>
   >({
     Secretkey: "",
     name: "",
-    // description: "",
+
     region: "",
     accessKey: "",
     subscription_id: "",
@@ -253,7 +230,6 @@ function ImportsCard(props: any) {
   const [fileContentNew, setFileContentNew] = useState<string>("");
 
   const [jsonError, setJsonError] = useState<string | null>(null);
-  // const [dropDownState, setDropdownState] = useState<any>(true);
 
   const gatewayList = [
     {
@@ -263,7 +239,7 @@ function ImportsCard(props: any) {
     },
     {
       name: "Google Cloud",
-      // icon: <img src={CloudImage} alt="" width={"100%"} height={"100%"} />,
+
       icon: (
         <Image
           src={CloudImage}
@@ -276,7 +252,7 @@ function ImportsCard(props: any) {
 
     {
       name: "Azure",
-      // icon: <img src={AzureImage} alt="" width={"100%"} height={"100%"} />,
+
       icon: (
         <Image
           src={AzureImage}
@@ -289,7 +265,7 @@ function ImportsCard(props: any) {
 
     {
       name: "Swagger",
-      // icon: <img src={SwaggerImage} alt="" width={"100%"} height={"100%"} />,
+
       icon: (
         <Image
           src={SwaggerImage}
@@ -302,7 +278,7 @@ function ImportsCard(props: any) {
 
     {
       name: "Kong",
-      // icon: <img src={Kong} alt="" width={"100%"} height={"100%"} />,
+
       icon: (
         <Image src={Kong} alt="" style={{ width: "100%", height: "100%" }} />
       ),
@@ -317,26 +293,23 @@ function ImportsCard(props: any) {
 
   const handleNextStep = (type: string) => {
     setSdkType(type);
-    // setCurrentStep(currentStep === 1 ? 2 : 1);
 
     setNextstep(true);
     setImportsstep(false);
   };
 
   const handleBackToStep = () => {
-    // setSdkType(type);
-    // setCurrentStep(currentStep === 1 ? 2 : 1);
     setSelectedFile(null);
     setJsonError("");
     setFileUrl(false);
-    // setDropdownState(true);
+
     setNextstep(false);
     setImportsstep(true);
     setSelectedName("");
     setErrorApigateway({
       Secretkey: "",
       name: "",
-      // description: "",
+
       region: "",
       accessKey: "",
       client_id: "",
@@ -347,7 +320,6 @@ function ImportsCard(props: any) {
       server_urls: "",
 
       authentication_key: "",
-      // interval: ""
     });
     setApiGateway({
       Secretkey: "",
@@ -433,15 +405,12 @@ function ImportsCard(props: any) {
       type: "AWS",
     },
 
-    //AZURE Fields
-
     {
       id: "name",
       label: "Name",
       placeholder: "name",
       dataTest: "name-key-input",
       type: "AZURE",
-      // integration: add ? true : false
     },
 
     {
@@ -500,7 +469,6 @@ function ImportsCard(props: any) {
       placeholder: "name",
       dataTest: "name-key-input",
       type: "KONG",
-      // integration: add ? true : false
     },
 
     {
@@ -608,7 +576,6 @@ function ImportsCard(props: any) {
       placeholder: "",
       dataTest: "file-input",
       type: "GCP",
-      // integration: add ? true : false
     },
     {
       id: "interval",
@@ -629,51 +596,6 @@ function ImportsCard(props: any) {
       dataTest: "description-key-input",
       type: "GCP",
     },
-
-    //Swagger Fields
-    // {
-    //   id: "name",
-    //   label: "Name",
-    //   placeholder: "name",
-    //   dataTest: "name-key-input",
-    //   type: "SWAGGER",
-    //   // integration: add ? true : false
-    // },
-
-    // {
-    //   id: "server_urls",
-    //   label: "Swagger Url",
-    //   placeholder: "Please Enter Swagger Url",
-    //   dataTest: "swagger-url-input",
-    //   type: "SWAGGER",
-    // },
-    // {
-    //   id: "swaggerchip",
-    //   label: "Server Url",
-    //   placeholder: "Please Enter Server Url",
-    //   dataTest: "swagger-url-input",
-    //   type: "SWAGGER",
-    // },
-    // {
-    //   id: "interval",
-    //   label: "Interval",
-    //   placeholder: "",
-    //   dataTest: "interval-select",
-    //   type: "SWAGGER",
-    //   options: timesData.map((times) => ({
-    //     value: times.id,
-    //     label: times.name,
-    //   })),
-    // },
-
-    // {
-    //   id: "description",
-    //   label: "Description",
-    //   placeholder: "description",
-    //   dataTest: "description-key-input",
-    //   type: "SWAGGER",
-    //   // integration: add ? true : false
-    // },
   ];
 
   const swagggerFields = [
@@ -683,7 +605,6 @@ function ImportsCard(props: any) {
       placeholder: "name",
       dataTest: "name-key-input",
       type: "SWAGGER",
-      // integration: add ? true : false
     },
 
     {
@@ -693,13 +614,7 @@ function ImportsCard(props: any) {
       dataTest: "swagger-url-input",
       type: "SWAGGER",
     },
-    // {
-    //   id: "swaggerchip",
-    //   label: "Server Url",
-    //   placeholder: "Please Enter Server Url",
-    //   dataTest: "swagger-url-input",
-    //   type: "SWAGGER",
-    // },
+
     {
       id: "interval",
       label: "Interval",
@@ -718,7 +633,6 @@ function ImportsCard(props: any) {
       placeholder: "description",
       dataTest: "description-key-input",
       type: "SWAGGER",
-      // integration: add ? true : false
     },
   ];
 
@@ -736,37 +650,9 @@ function ImportsCard(props: any) {
       setSelectedName(selectedOption.name); // Update state with the selected name
     }
     setFileUrl(true);
-    // setDropdownState(false);
   };
 
-  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-  //   if (file) {
-  //     setFileName(file.name);
-  //     const reader = new FileReader();
-  //     reader.onload = (e: any) => {
-  //       try {
-  //         const json = JSON.parse(e.target?.result as string);
-  //         setFileContent(json);
-  //         const valid = validate(json);
-  //         if (valid) {
-  //           const jsonStringified = JSON.stringify(json, null, 2);
-  //           setJsonString(jsonStringified);
-
-  //           toast.success("Valid Json File");
-  //           // setValidationMessage('File is valid according to the schema');
-  //         } else {
-  //           toast.error("provide valid json file");
-  //           // setValidationMessage('File validation errors: ' + JSON.stringify(validate.errors, null, 2));
-  //         }
-  //       } catch (error) {
-  //         //   setValidationMessage('Invalid JSON file: ' + error.message);
-  //       }
-  //     };
-  //     reader.readAsText(file);
-  //   }
-  // };
-
+  //
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -950,10 +836,6 @@ function ImportsCard(props: any) {
     }
   };
 
-  // const filteredApiFieldsConfig = apiFieldsConfig.filter(
-  //   (field) => field.id !== "name" && field.id !== "description"
-  // );
-
   const handleChangeData = (inputName: string, file: File) => {
     // Update the file state when a file is selected
     const reader = new FileReader();
@@ -986,8 +868,6 @@ function ImportsCard(props: any) {
 
   const handleSubmit = () => {
     vadilate();
-    // setGatewaysType(selectGateway);
-    // e.preventDefault();
 
     let addGatewayDetails: any;
     let hasNoErrors: boolean = false;
@@ -997,7 +877,7 @@ function ImportsCard(props: any) {
       addGatewayDetails = {
         accessKey: apiGateway?.accessKey,
         secretKey: apiGateway?.secretKey,
-        // name: apiGateway?.name,
+
         region: apiGateway.region,
         workspace_id: currentWorkspace?.id,
         user_id: userProfile?.user?.user_id,
@@ -1020,7 +900,7 @@ function ImportsCard(props: any) {
       addGatewayDetails = {
         accessKey: "",
         secretKey: "",
-        // name: apiGateway?.name,
+
         region: "",
         workspace_id: currentWorkspace?.id,
         user_id: userProfile?.user?.user_id,
@@ -1043,7 +923,7 @@ function ImportsCard(props: any) {
       addGatewayDetails = {
         accessKey: "",
         secretKey: "",
-        // name: apiGateway?.name,
+
         region: "",
         workspace_id: currentWorkspace?.id,
         user_id: userProfile?.user?.user_id,
@@ -1052,7 +932,7 @@ function ImportsCard(props: any) {
         api_url: apiGateway?.api_url,
         authentication_key: apiGateway?.authentication_key,
         admin_url: apiGateway?.admin_url,
-        // tenant_id: "",
+
         tenant_id: userProfile?.user?.tenant_id,
         azure_tenat_id: "",
         subscription_id: "",
@@ -1067,7 +947,7 @@ function ImportsCard(props: any) {
       addGatewayDetails = {
         accessKey: apiGateway?.accessKey,
         secretKey: apiGateway?.secretKey,
-        // name: apiGateway?.name,
+
         region: "",
         workspace_id: currentWorkspace?.id,
         user_id: userProfile?.user?.user_id,
@@ -1090,7 +970,7 @@ function ImportsCard(props: any) {
       addGatewayDetails = {
         accessKey: "",
         secretKey: "",
-        // name: apiGateway.name,
+
         region: "",
         workspace_id: currentWorkspace?.id,
         user_id: userProfile?.user?.user_id,
@@ -1113,7 +993,7 @@ function ImportsCard(props: any) {
       addGatewayDetails = {
         accessKey: "",
         secretKey: "",
-        // name: apiGateway.name,
+
         region: "",
         workspace_id: currentWorkspace?.id,
         user_id: userProfile?.user?.user_id,
@@ -1122,7 +1002,7 @@ function ImportsCard(props: any) {
         api_url: "",
         authentication_key: "",
         admin_url: apiGateway.server_urls,
-        // tenant_id: userProfile?.user?.tenant_id,
+
         azure_tenat_id: "",
         subscription_id: "",
         private_key: "",
@@ -1143,25 +1023,13 @@ function ImportsCard(props: any) {
         : projectEndValue + 5;
     if (!projectId) {
       if (hasNoErrors) {
-        // projectDetails = {
-        //   user_id: userProfile?.user?.user_id,
-        //   tenant_id: userProfile?.user?.tenant_id,
-        //   workspace_id: currentWorkspace?.id,
-        //   api_project_name: datas.project_name,
-        //   description: datas.description,
-        //   project_type: sdkType,
-        //   gateway_location: "null",
-        // };
-        // dispatch(CreateProjects(projectDetails))
-        //   .unwrap()
-        //   .then((res: any) => {
         let updateData = {
           ...addGatewayDetails,
           name: datas?.project_name,
           description: datas?.description,
           import_type: "WORKSPACE",
         };
-        // let projName = res?.project_name;
+
         showAlert(
           "Success",
           "",
@@ -1183,7 +1051,6 @@ function ImportsCard(props: any) {
             );
 
             let requestData = {
-              // wsid: wsidVal,
               wsid: currentWorkspace?.id,
               sortByField: "name",
               sortByValue: "",
@@ -1232,23 +1099,6 @@ function ImportsCard(props: any) {
               () => console.log("Alert closed")
             );
           });
-        // })
-        // .catch((error: any) => {
-
-        //   onErrorData({
-        //     project_name: error?.message,
-        //   });
-        // toast.error(error.message);
-        // const errorMsag = error?.message
-        //             showAlert(
-        //               "Error",
-        //               "error, Next create flow",
-        //               errorMsag,
-
-        //               "Add {APIFlow} to start security scan and API testing",
-        //               () => console.log("Alert closed"),
-        //               () => console.log("Alert clicked")
-        //             );
       }
     } else {
       if (hasNoErrors) {
@@ -1320,9 +1170,7 @@ function ImportsCard(props: any) {
         stage_id: "",
         project_id: "",
         url: (selectedName === "Url" && apiGateway.server_urls) || "", // Ensure the URL is set correctly
-        // tenant_id: userProfile?.user?.tenant_id,
         workspace_id: currentWorkspace?.id,
-        // user_id: userProfile?.user?.user_id,
         file_store: selectedFile || "",
         doc_type: selectedName === "Url" ? "URL" : "FILE",
         name: datas?.project_name || "",
@@ -1356,7 +1204,6 @@ function ImportsCard(props: any) {
           );
 
           let requestData = {
-            // wsid: wsidVal,
             wsid: currentWorkspace?.id,
             sortByField: "name",
             sortByValue: "",
@@ -1374,12 +1221,6 @@ function ImportsCard(props: any) {
         })
         .catch((error: any) => {
           setErrorMsg(error);
-          // Optional UNAUTHORIZED check
-          // if (error.message === "UNAUTHORIZED") {
-          //   dispatch(updateSessionPopup(true));
-          // } else {
-          //   toast.error(error?.message);
-          // }
         });
     }
   };
@@ -1401,7 +1242,6 @@ function ImportsCard(props: any) {
           >
             {ImportsStep &&
               gatewayList?.map((val: any, index: number) => (
-                // <Grid container spacing={3} key={index}>
                 <Grid
                   size={{ xs: 12, sm: 12, md: 12, lg: 6, xl: 6 }}
                   sx={{ padding: "0rem 1rem", marginTop: "2rem" }}
@@ -1415,14 +1255,12 @@ function ImportsCard(props: any) {
                       padding: "20px",
                       width: "100%", // Adjusted width to be responsive
                       height: "80px",
-                      // background:"red",
                       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
                       cursor: "pointer",
                       margin: "0.6rem",
                     }}
                     onClick={() => {
                       handleNextStep(val?.clickable);
-                      // handleSubmit();
                     }}
                   >
                     <div
@@ -1438,7 +1276,7 @@ function ImportsCard(props: any) {
                       <SecondaryTypography
                         style={{
                           fontSize: "0.6rem",
-                          // color: `${theme.palette.teritiaryColor.main}`,
+
                           fontWeight: 900,
                           marginLeft: "10px",
                         }}
@@ -1493,7 +1331,6 @@ function ImportsCard(props: any) {
               <div style={{ marginTop: "2rem" }}>
                 <GlobalSelect
                   fullWidth={false}
-                  // placeholder="nosd"
                   label="Select the value"
                   borderHeight="40px"
                   size="small"
@@ -1504,39 +1341,9 @@ function ImportsCard(props: any) {
                     value: data.id,
                   }))}
                   onChange={handleSelectChange}
-                  // defaultValue={0}
                 />
               </div>
             )}
-            {/* 
-            {sdkType === "SWAGGER" && selectedName === "File" && (
-              <div style={{ marginTop: "2rem" }}>
-                <Button
-                  component="span"
-                  variant="outlined"
-                  style={{
-
-                    textTransform: "none",
-                    marginTop: "0.8rem",
-                    width: "150px",
-                    color: `${theme.palette.secondaryColor.main}`,
-                    backgroundColor: "transparent",
-                    border: `1.5px solid ${theme.palette.secondaryColor.main}`,
-                  }}
-                >
-                  Select File
-                </Button>
-                <input
-                  type="file"
-                  accept=".json"
-                  id="fileInput"
-                  style={{ display: "none" }}
-                  onChange={(e: any) =>
-                    handleChange("fileInput", e.target.files[0])
-                  }
-                />
-              </div>
-            )} */}
 
             {sdkType === "SWAGGER" && selectedName === "File" && (
               <div style={{ marginTop: "2rem" }}>
@@ -1665,139 +1472,6 @@ function ImportsCard(props: any) {
                 }
               })}
 
-            {/* {apiFieldsConfig.map((field) => (
-              <div key={field.id}>
-                {field && field?.type === sdkType && (
-                  // ||
-                  //   (gatewayData && gatewayData.type === field?.type)
-                  <div>
-                    <>
-                     
-                     
-                    </>
-                    {field.id === "region" ? (
-                      <div style={{ marginTop: "2rem" }}>
-                        <GlobalSelect
-                          placeholder={field.placeholder}
-                          // fullWidth
-                          fontSize="0.6rem"
-                          width={"100%"}
-                          size="small"
-                          radius="0px"
-                          paddingRight="1rem"
-                          options={field.options}
-                          value={apiGateway[field.id]}
-                          onChange={(e: any) =>
-                            handleChange(field.id as keyof ApiGatewayType, e)
-                          }
-                          dataTest={field.dataTest}
-                          defaultValue={"0"}
-                          helperText={errorApigateway?.region}
-                          error={errorApigateway?.region}
-                          // maxLength={30}
-                        />
-                      </div>
-                    ) : field.id === "interval" ? (
-                      <div style={{ marginTop: "2rem" }}>
-                        <GlobalSelect
-                          placeholder={field.placeholder}
-                          // fullWidth
-                          width={"100%"}
-                          fontSize="0.6rem"
-                          size="small"
-                          radius="0px"
-                          value={selectedRoleId}
-                          options={field.options}
-                          onChange={kongHandleRoleChange}
-                          dataTest={field.dataTest}
-                          defaultValue={"0"}
-                        />
-                      </div>
-                    ) : field.id === "swaggerchip" ? (
-                      <div>
-                        <MuiChipsInput
-                          sx={{
-                            width: "29rem",
-                            marginTop: "10px",
-
-                            "& .MuiInputBase-root.MuiOutlinedInput-root": {
-                              // padding:"0px",
-                              // paddingLeft:"1rem",
-                              border: "1px solid #2c2c2c",
-                              fontSize: "12px",
-                              height: "6rem",
-                              // overflowY: "auto",
-                            },
-                          }}
-                          value={emails}
-                          onChange={handleChangeChip}
-                          placeholder="Enter the Url"
-                          // error={Boolean(error)}
-                          // helperText={error}
-                        />
-                      </div>
-                    ) : field.id === "fileInput" ? (
-                      <div>
-                        <div>
-                          <Button
-                            component="span"
-                            variant="outlined"
-                            style={{
-                              textTransform: "none",
-                              marginTop: "0.8rem",
-                              width: "150px",
-                              color: `${theme.palette.secondaryColor.main}`,
-                              backgroundColor: "transparent",
-                              border: `1.5px solid ${theme.palette.secondaryColor.main}`,
-                            }}
-                            // onClick={() => handleButtonClick()}
-                          >
-                            Select File
-                          </Button>
-                          <br></br>
-                          <span
-                            style={{
-                              color: "#d32f2f",
-                              fontSize: "0.75rem",
-                            }}
-                          ></span>
-                          <input
-                            type="file"
-                            accept=".json"
-                            id="fileInput"
-                            style={{ display: "none" }}
-                            onChange={handleFileChange}
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <div
-                        style={{ marginTop: "1rem", paddingRight: "0.8rem" }}
-                      >
-                        <GlobalTextField
-                          value={apiGateway[field.id as keyof ApiGatewayType]}
-                          error={
-                            errorApigateway[field.id as keyof ApiGatewayType]
-                          }
-                          onChange={(e: any) =>
-                            handleChange(field.id, e.target.value)
-                          }
-                          id={field.id}
-                          width={"100%"}
-                          fontSize="0.6rem"
-                          height="42px"
-                          // borderColor="#9CA3AF"
-                          // borderRadius="4px"
-                          placeholder={field.placeholder}
-                          name={""}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))} */}
-
             {apiFieldsConfig.map((field) => (
               <div key={field.id}>
                 {field && field.type === sdkType && (
@@ -1808,7 +1482,6 @@ function ImportsCard(props: any) {
                         {field.id === "region" ? (
                           <div style={{ marginTop: "2rem" }}>
                             <GlobalSelect
-                              // placeholder={field.placeholder}
                               fontSize="0.6rem"
                               label={field.placeholder}
                               width={"100%"}
@@ -1826,7 +1499,6 @@ function ImportsCard(props: any) {
                         ) : field.id === "interval" ? (
                           <div style={{ marginTop: "2rem" }}>
                             <GlobalSelect
-                              // placeholder={field.placeholder}
                               label={field.placeholder}
                               fontSize="0.6rem"
                               width={"100%"}
@@ -1836,32 +1508,10 @@ function ImportsCard(props: any) {
                               options={field.options}
                               onChange={(e: any) => handleChange("interval", e)}
                               dataTest={field.dataTest}
-                              // defaultValue={"0"}
                             />
                           </div>
                         ) : field.id === "swaggerchip" ? (
-                          <div style={{ marginTop: "2rem" }}>
-                            {/* <MuiChipsInput
-                              sx={{
-                                width: "29rem",
-                                marginTop: "10px",
-
-                                "& .MuiInputBase-root.MuiOutlinedInput-root": {
-                                  // padding:"0px",
-                                  // paddingLeft:"1rem",
-                                  border: "1px solid #2c2c2c",
-                                  fontSize: "12px",
-                                  height: "6rem",
-                                  // overflowY: "auto",
-                                },
-                              }}
-                              value={emails}
-                              onChange={handleChangeChip}
-                              placeholder="Enter the Url"
-                              // error={Boolean(error)}
-                              // helperText={error}
-                            /> */}
-                          </div>
+                          <div style={{ marginTop: "2rem" }}></div>
                         ) : field.id === "fileInput" ? (
                           <div style={{ marginTop: "2rem" }}>
                             <label htmlFor="fileInput">
@@ -1911,7 +1561,6 @@ function ImportsCard(props: any) {
                               width={"100%"}
                               fontSize="0.6rem"
                               height="42px"
-                              // placeholder={field.placeholder}
                               label={field.placeholder}
                               name={""}
                             />
@@ -1930,14 +1579,12 @@ function ImportsCard(props: any) {
               background="#282F79"
               color="#FFFFFF"
               fontSize="0.6rem"
-              // width={"100%"}
               padding="10px"
               borderRadius="8px"
               marginRight="1.5rem"
               label={"Import"}
               width="50%"
               onClickHandler={() => {
-                // handleSubmit();
                 sdkType === "SWAGGER"
                   ? handleSwaggerFormSubmit()
                   : handleSubmit();

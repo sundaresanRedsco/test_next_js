@@ -68,7 +68,7 @@ export default function GlobalButton(props: GlobalButtonProps) {
     onClickHandler = () => {},
     className,
     isSelected,
-    // onClickHandler,
+
     sx,
   } = props;
 
@@ -101,7 +101,7 @@ export default function GlobalButton(props: GlobalButtonProps) {
           color: Color,
           cursor: cursor,
           background: backgroundColor,
-          // fontSize:   "0.7rem",
+
           fontSize: fontSize || "0.7rem",
           borderRadius: radius || "7px",
           width: width,
@@ -113,7 +113,7 @@ export default function GlobalButton(props: GlobalButtonProps) {
           margin: margin || "10px 0px",
           marginLeft: marginLeft || "0px",
           marginRight: marginRight || "0px",
-          // borderRadius: borderRadius || "0px",
+
           padding: padding || "3px 8px",
           fontWeight: fontWeight || 400,
           outline:
@@ -139,12 +139,6 @@ export default function GlobalButton(props: GlobalButtonProps) {
       type={type ? type : ""}
       disabled={disabled}
       onClick={onClickHandler}
-      // startIcon={
-      //   icon &&
-      //   iconPosition === "start" && (
-      //     <Box sx={{ fill: Color, color: Color }}>{icon}</Box>
-      //   )
-      // }
     >
       {isSelected && (
         <Box sx={{ position: "absolute", left: -7 }}>
