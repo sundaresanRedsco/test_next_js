@@ -69,7 +69,6 @@ const HeadingTypography = styled(Typography)({
 
 // Styled Accordion for Violations
 const StyledAccordion = styled(Accordion)({
-  boxShadow: "none",
   "&::before": {
     display: "none",
   },
