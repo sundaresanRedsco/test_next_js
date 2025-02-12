@@ -13,7 +13,7 @@ import { AccordionDetails, Box, useTheme } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
-import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
+import GSkeletonLoader from "@/app/apiflow_components/global/GSkeletonLoader";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import { useQuery } from "@tanstack/react-query";
 
@@ -76,7 +76,6 @@ export const FlowTree = ({ nestedExpandedIndexes }: any) => {
       currentWorkspace?.id
     }?tabs=${tempArr.join(",")}`;
 
-    // const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/design-api/${flowId}?tabs=${flowTab}`;
     dispatch(setTabs(tempArr));
 
     window.history.pushState({}, "", newUrl);
@@ -105,17 +104,6 @@ export const FlowTree = ({ nestedExpandedIndexes }: any) => {
       setIsLoading(false);
       return null;
     }
-
-    //     .then((flowRes: any) => {
-    //       setFlowVal(flowRes);
-    //       setIsLoading(false);
-    //     })
-    //     .catch((error: any) => {
-    //       console.log("Error: ", error);
-    //       setIsLoading(false);
-    //     })
-    //     .finally(() => setIsLoading(false));
-    //   // }
   };
   const pathname = usePathname();
 
@@ -130,12 +118,7 @@ export const FlowTree = ({ nestedExpandedIndexes }: any) => {
     queryFn: fetchPageData,
     enabled: isFetchAllowed,
   });
-  // const { handleScroll, offsetVal } = useScrollRef(
-  //   containerRef,
-  //   setIsLoading,
-  //   { start: 1, end: 5 },
-  //   isIncrease
-  // );
+
   const [offsetVal, setoffsetVal] = useState({ start: 1, end: 6 });
   const handleScroll = () => {
     if (containerRef.current) {
@@ -149,16 +132,6 @@ export const FlowTree = ({ nestedExpandedIndexes }: any) => {
       }
     }
   };
-
-  // const handleScroll = () => {
-  //   if (containerRef?.current) {
-  //     const { scrollTop, clientHeight, scrollHeight } = containerRef?.current;
-  //     if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading) {
-  //       // setCurrentPage((prevPage) => prevPage + 8);
-  //       setCurrentPage((prevPage) => prevPage + 5);
-  //     }
-  //   }
-  // };
 
   useEffect(() => {
     if (currentEnvironment && isFetchAllowed) fetchPageData();
@@ -205,9 +178,6 @@ export const FlowTree = ({ nestedExpandedIndexes }: any) => {
         },
         maxHeight: "160px",
         overflowY: "auto",
-        // "&:hover": {
-        //   overflowY: "auto",
-        // },
       }}
     >
       {getDesignFlowOffsetLoading && !isLoading ? (
@@ -236,20 +206,13 @@ export const FlowTree = ({ nestedExpandedIndexes }: any) => {
                 `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/workflow/${flow?.id}`
               );
               dispatch(setCurrentTreeActive(flow?.id));
-              // .unwrap()
-              // .then((res: any) => {
-              //
-              // });
             }}
           >
-            {/* {getDesignFlowOffsetLoading && (
-            <GlobalCircularLoader open={getDesignFlowOffsetLoading} />
-          )} */}
             <TeritaryTextTypography
               style={{
                 color: currentTreeActive === flow.id ? "#FFFFFF" : "#FFFFFF80",
                 fontSize: "10px",
-                //   marginTop: "2rem",
+
                 cursor: "pointer",
                 maxWidth: "160px",
                 whiteSpace: "nowrap",

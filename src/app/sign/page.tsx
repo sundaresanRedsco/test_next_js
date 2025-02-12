@@ -1,5 +1,5 @@
-import Sign from "../apiflow_Pages/sign/page";
+import SignInPage from "../apiflow_Pages/sign/page";
 
-export default function SignInUpForm() {
-  return <Sign />;
+export default function SignIn() {
+  return <SignInPage />;
 }

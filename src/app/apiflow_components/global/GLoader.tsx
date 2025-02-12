@@ -2,7 +2,7 @@
 
 import React from "react";
 import { styled, keyframes } from "@mui/system";
-import { Backdrop, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 const loaderAnimation = keyframes({
   "0%": { left: "-100px" },
@@ -55,7 +55,6 @@ const Shadow = styled("div")({
   animation: `${shadowAnimation} 0.5s linear infinite`,
 });
 
-// color: ${({ theme }) => theme.palette.primaryWhite.main};
 const HeadingTypography = styled(Typography)`
   font-family: Firasans-regular !important;
   color: white;

@@ -13,7 +13,7 @@ export const SignOuterContainer = styled(Box)`
 `;
 
 export const PrimarySignInUPTypography = styled(Typography)`
-  color: ${({ theme }) => theme.palette.signInUpBlack.main};
+  color: #fff;
   font-family: FiraSans-medium;
   font-style: normal;
   font-weight: 500;
@@ -58,14 +58,14 @@ export const LinkSignInUPTypography = styled(Link)`
 `;
 
 export const HeadingTypography = styled(Typography)`
-  font-family: FiraSans !important;
-  color: ${({ theme }) => theme.palette.signInUpBlack.main};
+  font-family: FiraSans-Regular !important;
+  color: #fff;
   font-weight: 600;
 `;
 
 export const FormHeadingTypography = styled(Typography)`
   font-family: FiraSans-semibold;
-  color: ${({ theme }) => theme.palette.signInUpBlack.main};
+  color: #fff;
   font-weight: 600;
 `;
 
@@ -83,13 +83,13 @@ export const SignupMicrosoft = styled(Typography)`
 
 export const PrimaryTypography = styled(Typography)`
   font-family: FiraSans-light !important;
-  color: ${({ theme }) => theme.palette.signInUpBlack.main};
+  color: #fff;
   font-size: 0.8rem;
 `;
 
 export const CardImage = styled(Typography)`
   font-family: FiraSans-light !important;
-  color: ${({ theme }) => theme.palette.signInUpBlack.main};
+  color: #fff;
   font-size: 0.8rem;
   box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
     0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
@@ -99,7 +99,7 @@ export const CardImage = styled(Typography)`
 
 export const SecondaryTypography = styled(Typography)`
   font-family: FiraSans-light !important;
-  color: ${({ theme }) => theme.palette.primaryText.main};
+  color: #9e9fa1;
   font-size: 0.6rem;
 `;
 

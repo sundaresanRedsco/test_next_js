@@ -2,7 +2,6 @@ import {
   environmentReducer,
   GetAllStagesByProjectId,
 } from "@/app/Redux/apiManagement/environmentReducer";
-import { GetCollectionOperationTree } from "@/app/Redux/apiManagement/projectReducer";
 import { RootStateType } from "@/app/Redux/store";
 import { setAddTabs, setRemoveTabs, tabsReducer } from "@/app/Redux/tabReducer";
 import {
@@ -28,9 +27,8 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { CommonReducer, setCurrentTreeActive } from "@/app/Redux/commonReducer";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
-import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
 import { getItems, setItem } from "@/app/Services/localstorage";
-import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
+import GSkeletonLoader from "@/app/apiflow_components/global/GSkeletonLoader";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import path from "path";
 import { ProjectTreeSkeleton } from "../SkeletonProjectContainer";
@@ -253,6 +251,7 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
               }}
             >
               <AccordionSummary
+                key={col.id}
                 sx={{
                   background:
                     currentTreeActive === col?.id
@@ -266,7 +265,6 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
 
                   "&.Mui-expanded": {
                     minHeight: "34px",
-                    // marginTop: "10px",
                   },
                   "& .MuiAccordionSummary-content": {
                     margin: "0",
@@ -291,7 +289,6 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
                   }
 
                   router.push(
-                    // `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/operations/${op?.id}`
                     `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/collections/${col?.id}`
                   );
                 }}
@@ -334,10 +331,9 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
                 </Box>
               </AccordionSummary>
               <AccordionDetails
+                key={col?.id}
                 sx={{
                   background: theme.palette.sidebarMainBackground.main,
-                  // maxHeight: "150px",
-                  // overflowY: "auto",
                   width: "100%",
                   "&.MuiAccordionDetails-root": {
                     padding: "0px !important",
@@ -355,10 +351,6 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
                       paddingLeft: 8,
                       position: "relative",
                       gap: "5px",
-                      // background:
-                      //   pathname?.split("/")[6] === op?.id
-                      //     ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
-                      //     : "",
 
                       background:
                         currentTreeActive === op?.id
@@ -376,7 +368,6 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
                       }
                       dispatch(setCurrentTreeActive(op?.id));
                       router.push(
-                        // `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/operations/${op?.id}`
                         `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/operations/${op?.id}`
                       );
                     }}

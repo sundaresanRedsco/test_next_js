@@ -4,15 +4,11 @@ import React from "react";
 import { Box, Menu, MenuItem, Stack, Typography } from "@mui/material";
 import GButton from "@/app/apiflow_components/global/GButton";
 import { styled } from "@mui/system";
-import { ArrowIcon } from "@/app/Assests/icons";
 import WorkflowCustomIconButton from "@/app/apiflow_components/WorkflowComponents/workflowCustomIconButton";
-// import GSelect from "@/app/apiflow_components/global/GSelect";
 import GFlowSelect from "../global/GFLowSelect";
 import theme from "@/Theme/theme";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MaximizeV2 from "@/app/Assests/icons/maximize-image.svg";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   PrimarySignInUPTypography,
   SecondaryTypography,
@@ -60,17 +56,9 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
     setAnchorEl2(null);
   };
 
-  // const isXsScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
   return (
     <Box
       sx={{
-        // position: "relative",
-        // zIndex: 9999999,
-        // width: "100%",
-        // height: "20%",
-        // background: "rgba(243, 243, 243, 0.25)", // Transparent background
-        // backdropFilter: "blur(4.76914px)", // Backdrop blur
         background: "#F3F3F340",
         backdropFilter: "blur(9.54)",
         borderTopLeftRadius: "15px",
@@ -82,7 +70,7 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
           xs: "0px 10px",
           sm: "0px 10px",
           md: "0px 10px",
-          // md: recentlyModifiedProp ? "5px" : "8px",
+
           lg: "0px 10px",
           xl: "5px 10px",
         },
@@ -115,13 +103,9 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
               lg: recentlyModifiedProp === true ? "8px" : "13px",
               xl: recentlyModifiedProp === true ? "8px" : "13px",
             },
-            // whiteSpace: "nowrap",
-            // overflow: "hidden",
-            // textOverflow: "ellipsis",
           }}
         >
           {apiFlowName}
-          {/* V2New */}
         </PrimarySignInUPTypography>
 
         <GButton
@@ -166,13 +150,6 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
       <Stack
         direction="row"
         spacing={1}
-        // spacing={{
-        //   xs: 0,
-        //   sm: 0,
-        //   md: 0,
-        //   lg: recentlyModifiedProp === true ? 0 : 1,
-        //   xl: recentlyModifiedProp === true ? 0 : 1,
-        // }}
         sx={{
           display: "flex",
           alignItems: "center",
@@ -219,39 +196,6 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
           />
         </div>
 
-        {/* <div>
-          <GSelect
-            fullWidth={false}
-            fontSize="10px"
-            size={"small"}
-            borderHeight={"2rem"}
-            radius="4px"
-            width={recentlyModifiedProp === true ? "60px" : "70px"}
-            options={flowVersions?.map((x) => ({
-              label: x.name,
-              value: x.id,
-            }))}
-            value={versionValue}
-            iconPosition="end"
-            icon={
-              <KeyboardArrowDownIcon
-                sx={{
-                  color: "#EEEEEE",
-                  fontSize: "10px",
-                  fontWeight: "800",
-                  // cursor: "pointer",
-                }}
-                // onClick={() => {
-                //   alert("WOrking");
-                // }}
-              />
-            }
-            onChange={(val: any) => {
-              setVersionValue(val);
-            }}
-          />
-        </div> */}
-
         <div>
           <div
             style={{ padding: "0px" }}
@@ -265,7 +209,7 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
               style={{
                 fontSize: recentlyModifiedProp === true ? "15px" : "20px",
                 cursor: "pointer",
-                // marginLeft: "10px",
+
                 color: "#FFFFFF",
                 fontWeight: "800",
                 alignItems: "center",
@@ -282,13 +226,10 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
             }}
             sx={{
               "& .MuiPaper-root": {
-                // backgroundColor: "#F3F3F340", // Ensures the paper of the menu has the red background
                 background: "#12121259",
                 backdropFilter: "blur(158.97px)",
                 boxShadow: "0 0 1px 0px #000000a3",
               },
-              // width: "auto",
-              // height: "auto",
               padding: "5px",
             }}
           >

@@ -23,22 +23,6 @@ export default function Home(context: { searchParams: { tabs?: string } }) {
       <React.Suspense fallback={<OverviewPageSkeleton />}>
         <OverviewPage />
       </React.Suspense>
-
-      {/* <OverviewSettings
-        allowedTabs={allowedTabs}
-        userPermissions={userPermissions}
-      /> */}
-
-      {/* <React.Suspense fallback={<WorkspacePageSkeleton />}>
-              <WorkspaceCard
-                membersCount={workspace?.members_count}
-                syncTime={"2 mins ago"}
-                riskCount={2}
-                projectCount={workspace?.group_count}
-                title={workspace?.name}
-                onClickHandler={() => handleSelectedTeam(workspace.id)}
-              />
-            </React.Suspense> */}
     </div>
   );
 }

@@ -23,27 +23,9 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-// ** Custom CSS
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import {
-  borderBottom,
-  borderRadius,
-  fontFamily,
-  fontSize,
-  useTheme,
-} from "@mui/system";
 import { DeleteTableIcon } from "@/app/Assests/icons";
-import GInput from "./GInput";
-import {
-  PrimarySignInUPTypography,
-  SecondarySignInUPTypography,
-} from "@/app/Styles/signInUp";
-import GSelect from "../sign/discovery/GSelect";
+
+// ** Custom CSS
 
 // ** Select Field Styles
 const ITEM_HEIGHT = 48;
@@ -57,16 +39,6 @@ const MenuProps = {
   },
 };
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  //   "&:nth-of-type(odd)": {
-  //     // backgroundColor: "#241D35",
-  //   },
-  //   "&:nth-of-type(even)": {
-  //     backgroundColor: theme.palette.action.hover,
-  //   },
-  // hide last border
-  //   "&:last-child td, &:last-child th": {
-  //     border: 0,
-  //   },
   "& .MuiTableCell-root": {
     fontFamily: "Firasans-light",
     color: "#FFFFFF",
@@ -415,45 +387,6 @@ const GDataTable = ({
             </TableHead>
             <TableBody sx={defaultTableBodyStyles}>{formedTrows()}</TableBody>
           </Table>
-
-          {/* <TablePagination
-            sx={{
-              overflow: "hidden",
-              width: {
-                xl: "auto",
-                lg: "auto",
-                md: "auto",
-                sm: "auto",
-                xs: "max-content",
-              },
-              position: "sticky",
-              left: {
-                xl: "auto",
-                lg: "auto",
-                md: "auto",
-                sm: "auto",
-                xs: 0,
-              },
-              [themes.breakpoints.down(460)]: {
-                "& .MuiInputBase-root": {
-                  margin: 0,
-                },
-              },
-              [themes.breakpoints.down(376)]: {
-                "& .MuiTablePagination-actions": {
-                  margin: 0,
-                },
-              },
-            }}
-            hidden={data.length == 0 || totalRecords == 0}
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={totalRecords}
-            rowsPerPage={rowsPerPage}
-            page={totalRecords > page ? page : 0}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          /> */}
         </Box>
         {/* // ** Skeleton Table */}
         <div hidden={!isLoading}>

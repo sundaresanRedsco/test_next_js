@@ -1,10 +1,8 @@
 "use client";
 
-import { Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import GlobalIntegrationCard from "@/app/apiflow_components/global/GlobalIntegrationCard";
-import styled from "@emotion/styled";
-import GButton from "@/app/apiflow_components/global/GButton";
+
 import { RootStateType } from "@/app/Redux/store";
 import {
   apiGatewayReducer,
@@ -13,16 +11,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { updateSessionPopup } from "@/app/Redux/commonReducer";
 import { environmentReducer } from "@/app/Redux/apiManagement/environmentReducer";
-import IntegrationSidebar from "@/app/apiflow_components/Integration/IntegrationSidebar";
+import IntegrationSidebar from "@/app/apiflow_components/Integration/IntegrationEnvironmentSidebar";
 import ImportsCard from "@/app/apiflow_components/Integration/ImportsCard";
 import IntegrationPage from "@/app/apiflow_components/Integration/IntegrationPage";
 import IntegrationList from "@/app/apiflow_components/Integration/IntegrationList";
 import Grid from "@mui/material/Grid2";
-import {
-  PrimaryTypography,
-  SecondaryTypography,
-} from "@/app/hooks/operations/useOperationHelpers";
-import { Box } from "@mui/system";
 
 function ProjectIntegrations() {
   const dispatch = useDispatch<any>();
@@ -38,8 +31,8 @@ function ProjectIntegrations() {
   >((state) => state.apiManagement.environment);
 
   const [activeButton, setActiveButton] = useState({
-    section: "API_MANAGEMENT",
-    label: "GCP",
+    section: "INCIDENT_TASK_MANAGEMENT",
+    label: "JIRA",
   });
 
   const [crudType, setcrudType] = useState("VIEW");
@@ -114,8 +107,8 @@ function ProjectIntegrations() {
             padding: "0px",
             margin: "0px",
             // height: "450px",
-            height: "100vh",
-            overflowY: "auto",
+            // height: "100vh",
+            // overflowY: "auto",
             "&::-webkit-scrollbar": {
               width: "3px",
             },
@@ -128,8 +121,8 @@ function ProjectIntegrations() {
             sx={{
               //   paddingLeft: "0.5rem",
               //   borderRight: "1px solid #A4A8C9",
-              height: "100vh",
-              overflowY: "auto", // Adding vertical scrolling only
+              // height: "100vh",
+              // overflowY: "auto", // Adding vertical scrolling only
               "&::-webkit-scrollbar": {
                 width: "1px",
               },
@@ -147,7 +140,7 @@ function ProjectIntegrations() {
             className="pt-0"
             sx={{
               //   backgroundColor: "rgba(18, 18, 18, 0.5)",
-              height: "100vh",
+              // height: "100vh",
               padding: "20px",
               overflowY: "auto",
               "&::-webkit-scrollbar": {
@@ -155,7 +148,7 @@ function ProjectIntegrations() {
               },
             }}
           >
-            {activeButton.section !== "GLOBAL_INTEGRATION" && (
+            {/* {activeButton.section !== "GLOBAL_INTEGRATION" && (
               <>
                 <PrimaryTypography>
                   {activeButton.label}{" "}
@@ -174,7 +167,7 @@ function ProjectIntegrations() {
                   Configuration is added and available to this environment.
                 </SecondaryTypography>
               </>
-            )}
+            )} */}
 
             {/* {activeButton.section === "API_MANAGEMENT" && ( */}
             <>

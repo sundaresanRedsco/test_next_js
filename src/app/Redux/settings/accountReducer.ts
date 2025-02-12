@@ -13,12 +13,12 @@ export const SendEmailOtp = createAsyncThunk(
         // `api/auth/ve?email=${value}`,
 
         value,
-        null,
+        null
       );
     } catch (error) {
       throw new Error(errorHandling(error));
     }
-  },
+  }
 );
 
 export const TwoFactorOtpVerification = createAsyncThunk(
@@ -30,12 +30,12 @@ export const TwoFactorOtpVerification = createAsyncThunk(
         // `api/Operations/operation_create?collectionId=${value.collections_id}`,
         `api/auth/2fa_otp_verfications`,
         value,
-        null,
+        null
       );
     } catch (error) {
       throw new Error(errorHandling(error));
     }
-  },
+  }
 );
 
 export const TwoFactorCodeVerification = createAsyncThunk(
@@ -48,12 +48,12 @@ export const TwoFactorCodeVerification = createAsyncThunk(
         `api/auth/2fa_code_verifications?code=${value.code}&secretkey=${value.secretkey}`,
 
         value,
-        null,
+        null
       );
     } catch (error) {
       throw new Error(errorHandling(error));
     }
-  },
+  }
 );
 
 export const DisableTwoFactor = createAsyncThunk(
@@ -62,15 +62,15 @@ export const DisableTwoFactor = createAsyncThunk(
     try {
       return await AdminServices(
         "post",
-        // `api/Operations/operation_create?collectionId=${value.collections_id}`,
+
         `api/auth/2fa_disable`,
         value,
-        null,
+        null
       );
     } catch (error) {
       throw new Error(errorHandling(error));
     }
-  },
+  }
 );
 
 export const resetGatewayStateAccount = createAction("Gateway/resetState");

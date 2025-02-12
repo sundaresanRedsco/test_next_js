@@ -93,38 +93,6 @@ export default function useWorkspace(userData?: any) {
     setIsLoading(true);
     const access_token = userData?.user?.token;
     if (validateForm()) {
-      // let WorkSpaceDetails;
-      // WorkSpaceDetails = {
-      //   // user_id: userProfile?.user.user_id,
-      //   // tenant_id: userProfile?.user?.tenant_id,
-      //   name: formData.workspace_name,
-      //   summary: formData.description,
-      //   permission: formData?.visibility,
-      //   post_content: "null",
-      // };
-
-      // dispatch(CreateWorkspace(WorkSpaceDetails))
-      //   .unwrap()
-      //   .then((res: any) => {
-      //     toast.success("Workspace Created");
-      //     console.log("UpdateResponse: ", res);
-      //     let name = res?.name;
-      //     showAlert(
-      //       "Success",
-      //       name,
-      //       "Workspace Created",
-      //       "",
-      //       () => console.log("Alert closed"),
-      //       () => console.log("Alert clicked")
-      //     );
-      //     dispatch(setRemoveTabs("new_workspace"));
-      //   })
-      //   .catch((error: any) => {
-      //     console.log(error, "error OccurredWork");
-      //     setFormNewerror(error.message);
-      //     toast.error(error.message);
-      //   });
-
       if (apiDataStore?.workspace?.id && apiDataStore?.workspace) {
         const prevData = apiDataStore?.workspace;
         if (
@@ -156,7 +124,6 @@ export default function useWorkspace(userData?: any) {
               handleStep();
               setIsLoading(false);
             } else {
-              console.log("Form has errors.");
               setIsLoading(false);
             }
           } catch (error: any) {
@@ -197,7 +164,6 @@ export default function useWorkspace(userData?: any) {
             handleStep();
             setIsLoading(false);
           } else {
-            console.log("Form has errors.");
             setIsLoading(false);
           }
         } catch (error: any) {

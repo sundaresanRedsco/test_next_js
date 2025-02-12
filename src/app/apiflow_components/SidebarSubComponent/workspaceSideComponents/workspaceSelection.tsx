@@ -6,7 +6,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   GetSelectionWorkspaces,
-  GetWorkspacesByUserId,
   setCurrentWorkspace,
   workspaceReducer,
 } from "../../../Redux/apiManagement/workspaceReducer";
@@ -23,7 +22,7 @@ import { setCookies } from "@/app/Helpers/helpersFunctions";
 import { resetProjectState } from "@/app/Redux/apiManagement/projectApiReducer";
 
 import GSelect from "../../sign/discovery/GSelect";
-import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
+import GSkeletonLoader from "@/app/apiflow_components/global/GSkeletonLoader";
 import { resetCollOperTreeData } from "@/app/Redux/apiManagement/endpointReducer";
 import { clearFlowList } from "@/app/Redux/apiManagement/flowReducer";
 
@@ -117,8 +116,6 @@ const WorkspaceSelection = () => {
 
     const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${wsidVal}`;
     router.push(newUrl);
-
-    // window.history.pushState({}, "", newUrl);
   };
 
   useEffect(() => {

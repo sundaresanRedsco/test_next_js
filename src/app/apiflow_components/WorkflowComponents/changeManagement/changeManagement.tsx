@@ -1,6 +1,6 @@
 import { Box, Drawer, Grid, Tab, Tabs } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import GlobalCircularLoader from "../../../Components/Global/GlobalCircularLoader";
+import GlobalCircularLoader from "@/app/apiflow_components/global/GCircularLoader";
 import {
   PrimaryTypography,
   SecondaryTypography,
@@ -98,25 +98,20 @@ export const ChangeNodeManage = (props: any) => {
     status_code: changeManResponse?.statusCode,
   };
 
-  // ?.filter((val: any) => val?.created_date === selectedDate)
-  // ?.find((val: any) => val?.created_date === "2024-08-16T17:48:10.203")
-  // ?.map((item: any) => item?.properties)
-
   const fetchPageData = async (page: number) => {
     let requestData = {
       flow_id: flow_id,
       project_id: project_id,
-      // flow_id: "6c990d814bc04f9f8be794bea0061bfc",
+
       node_id: node_id,
       version_id: versionId,
-      // version_id: "e2cce2cd927448efac120298a0a5f9ae",
+
       offset: 0,
       limit: page,
       sort_order: "asc",
       sort_by: "created_date",
     };
 
-    // if (requestData?.flow_id?.trim() && requestData?.version_id?.trim()) {
     dispatch(GetNodeChangesTrackingOffset(requestData))
       .unwrap()
       .then((revisionRes: any) => {
@@ -126,7 +121,6 @@ export const ChangeNodeManage = (props: any) => {
       .catch((error: any) => {
         console.log("Error: ", error);
       });
-    // }
   };
 
   function revisionHandler(id: string) {
@@ -269,7 +263,7 @@ export const ChangeNodeManage = (props: any) => {
                         changeManResponse?.statusCode <= 399
                       ? `#D8A805`
                       : `${theme.palette.mainRed.main}`,
-                  //   : "",
+
                   fontWeight: 800,
                 }}
               >
@@ -279,11 +273,7 @@ export const ChangeNodeManage = (props: any) => {
             </PrimaryTypography>
           </div>
           <Grid container sx={{ height: "320px" }}>
-            <Grid
-              item
-              xs={7}
-              // sx={{ borderRight: "1px solid black" }}
-            >
+            <Grid item xs={7}>
               <PrimaryTypography
                 style={{
                   marginTop: "10px",
@@ -382,10 +372,8 @@ export const ChangeNodeManage = (props: any) => {
 
                 <div>
                   <Box
-                    // className='container'
                     ref={containerRef}
                     onScroll={handleScroll}
-                    // minHeight={"100px"}
                     height={"430px"}
                     sx={{
                       overflowY: "auto",
@@ -507,7 +495,6 @@ export const ChangeNodeManage = (props: any) => {
             <Box>
               <ReactJsonViewCompare
                 oldData={compareResponse}
-                // oldData={(oldJson)}
                 newData={currentJson}
               />
             </Box>

@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 // import "./ace.css";
 import { RootStateType } from "@/app/Redux/store";
 import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
-import GlobalSensitiveData from "@/app/ApiFlowComponents/Global/GlobalSenstiveData";
+import GlobalSensitiveData from "@/app/apiflow_components/global/GlobalSenstiveData";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import { PrimaryTypography } from "@/app/Styles/signInUp";
 import { Box } from "@mui/material";
@@ -766,7 +766,6 @@ const AceEditorComponent = (props: any) => {
             readOnly={disabled}
             ref={editorRef}
             mode="json"
-            //  mode={warning ? "json" : "text"}
             theme="tomorrow"
             onChange={handleChange}
             name="json_editor"
@@ -783,9 +782,6 @@ const AceEditorComponent = (props: any) => {
               maxHeight: "180px",
               width: "380px",
             }}
-
-            // markers={markers}
-            // annotations={annotations} // Pass the annotations to the editor
           />
 
           <div

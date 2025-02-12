@@ -1,15 +1,20 @@
 import { queryClient } from "@/app/apiflow_Pages/layout/dashboardLayout";
+import { CommonReducer } from "@/app/Redux/commonReducer";
+import { RootStateType } from "@/app/Redux/store";
 import { AdminServices } from "@/app/Services/services";
+import { usePostStore } from "@/app/store/usePostStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 type Props = {};
 
-export default function useComments(postId: any, user_id: any) {
-  const [openCommentAnchorEl, setopenCommentAnchorEl] = useState<any>(null);
-  const openComments = Boolean(openCommentAnchorEl);
-
+export default function useComments() {
+  const { openCommentAnchorEl, postId } = usePostStore();
+  const { userProfile } = useSelector<RootStateType, CommonReducer>(
+    (state) => state.common
+  );
   const pathname = usePathname();
   const [workSpaceId, setworkSpaceId] = useState("");
   useEffect(() => {
@@ -21,11 +26,14 @@ export default function useComments(postId: any, user_id: any) {
       setworkSpaceId(pathParts[workspaceIndex + 1]);
     }
   }, [pathname]);
-  console.log(postId, openComments, openCommentAnchorEl, "showErr-comment");
 
   //*API CALLS
-  const { data: comments, isLoading: commentsLoading } = useQuery({
-    queryKey: ["getComments"],
+  const {
+    data: comments,
+    isLoading: commentsLoading,
+    refetch: getComments,
+  } = useQuery({
+    queryKey: ["comments"],
     queryFn: async () => {
       const data = await AdminServices(
         "get",
@@ -33,9 +41,10 @@ export default function useComments(postId: any, user_id: any) {
           postId +
           "&start=0&end=10"
       );
+
       return data;
     },
-    enabled: !!postId && !!openComments,
+    enabled: !!postId && !!openCommentAnchorEl,
   });
   const { mutate: createComment, isPending: commentCreationLoading } =
     useMutation({
@@ -52,26 +61,10 @@ export default function useComments(postId: any, user_id: any) {
         return data;
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["getComments"] });
+        queryClient.invalidateQueries({ queryKey: ["comments"] });
+        queryClient.invalidateQueries({ queryKey: ["posts"] });
       },
     });
-
-  const {
-    data: replies,
-    mutate: getReplies,
-    isPending: repliesLoading,
-  } = useMutation({
-    mutationFn: async (comment_id: any) => {
-      const data = await AdminServices(
-        "get",
-        "Api/Post/getpost_commentsreplylist_by_comment_id?comment_id=" +
-          comment_id +
-          "&start=0&end=10"
-      );
-      return data;
-    },
-    // enabled: !!openComments, // Only run the mutation when `openComments` is truthy
-  });
 
   const { mutate: createReplies, isPending: createRepliesLoading } =
     useMutation({
@@ -83,34 +76,23 @@ export default function useComments(postId: any, user_id: any) {
           {
             ...formData,
             post_id: postId,
-            mentioned_user_id: user_id,
+            mentioned_user_id: userProfile?.user?.user_id,
           }
         );
         return data;
       },
       onSuccess: (data: any, formData: any) => {
-        queryClient.invalidateQueries({ queryKey: ["getComments"] });
-        // queryClient.invalidateQueries({ queryKey: ["getReplies"] });
-
-        // // Get the channelId from the variables
-        // const comment_id = formData.comment_id;
-        // getReplies(comment_id); // Refetch posts after creating a new post
-        // console.log("Like created, method called...");
+        queryClient.invalidateQueries({ queryKey: ["comments"] });
       },
     });
 
   return {
-    openComments,
-    setopenCommentAnchorEl,
-    openCommentAnchorEl,
     commentsLoading,
     comments,
-    getReplies,
-    replies,
-    repliesLoading,
     createComment,
     commentCreationLoading,
     createReplies,
     createRepliesLoading,
+    getComments,
   };
 }

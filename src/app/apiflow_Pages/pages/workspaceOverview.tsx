@@ -7,21 +7,5 @@ import DashboardLayout from "../layout/dashboardLayout";
 import OverView from "../workspace/OverView";
 
 export default function WorkspaceOverview(props: any) {
-  const { allowedTabs, userPermissions } = props;
-
-  const isMounted = useRef(true);
-
-  const dispatch = useDispatch<any>();
-
-  useEffect(() => {
-    isMounted.current = true;
-
-    dispatch(setPermissionState(userPermissions));
-
-    return () => {
-      isMounted.current = false;
-    };
-  }, [userPermissions]);
-
   return <OverView />;
 }

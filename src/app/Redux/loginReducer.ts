@@ -46,17 +46,22 @@ export const resetPassword = createAsyncThunk(
 
 export const TwoFactorLogin = createAsyncThunk(
   "common/TwoFactorLogin",
-  async (value: any) => {
+  async (value: any, { rejectWithValue }) => {
     try {
-      return await AdminServices(
-        "post",
-        // `api/Operations/operation_create?collectionId=${value.collections_id}`,
-        `api/auth/2fa_login`,
-        value,
-        null
-      );
-    } catch (error) {
-      throw new Error(errorHandling(error));
+      const response = await signIn("credentials", {
+        ...value,
+        redirect: false,
+      });
+      const session = await getSession();
+      if (response && response.error) {
+        throw response.error;
+        // return rejectWithValue(errorHandling(response));
+      }
+      return session;
+    } catch (err: any) {
+      throw new Error(err);
+
+      // return rejectWithValue(errorHandling(err));
     }
   }
 );

@@ -1,8 +1,8 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
-import CustomPagination from "@/app/Components/Global/customPagination";
 import theme from "@/Theme/theme";
+import CustomPagination from "./customPagination";
 
 export default function GDataGrid(props: any) {
   const {

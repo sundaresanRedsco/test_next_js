@@ -2,7 +2,7 @@ import React from "react";
 import Accordion from "@mui/material/Accordion";
 import { accordionCollectionStyles } from "./ProjectsComponet";
 import { AccordionDetails, AccordionSummary, Box } from "@mui/material";
-import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
+import GSkeletonLoader from "@/app/apiflow_components/global/GSkeletonLoader";
 import theme from "@/Theme/theme";
 import { TeritaryTextTypography } from "@/app/Styles/signInUp";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -22,7 +22,6 @@ export default function SkeletonProjectContainer() {
             height: "45px",
             "&.Mui-expanded": {
               minHeight: "34px",
-              // marginTop: "10px",
             },
             "& .MuiAccordionSummary-content": {
               margin: "0",
@@ -141,7 +140,6 @@ const EnvTreeSkeleton = ({ isEndpoint }: any) => {
           background: theme.palette.sidebarMainBackground.main,
           color: "white",
           boxShadow: "none",
-          // marginTop: "10px",
           margin: "0px !important",
         }}
         expanded={true}
@@ -154,7 +152,6 @@ const EnvTreeSkeleton = ({ isEndpoint }: any) => {
               minHeight: "34px",
               "&.Mui-expanded": {
                 minHeight: "34px",
-                // marginTop: "10px",
               },
               "& .MuiAccordionSummary-content": {
                 margin: 0,

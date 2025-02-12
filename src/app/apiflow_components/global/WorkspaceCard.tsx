@@ -1,12 +1,12 @@
 import React from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import { styled } from "@mui/system";
-import GButton from "@/app/ApiFlowComponents/Global/GButton";
+import GButton from "@/app/apiflow_components/global/GButtonV1";
 
 type Props = {
   membersCount: any;
   syncTime: any;
-  // onClick: () => void;
+
   riskCount: any;
   projetCount: any;
   title: any;
@@ -30,11 +30,10 @@ function WorkspaceCard({
   title,
 }: Props) {
   return (
-    <Box gap={2} padding={2} sx={{display:"flex", flexWrap:"warp"}}>
+    <Box gap={2} padding={2} sx={{ display: "flex", flexWrap: "warp" }}>
       {/* First Card */}
-    
+
       <Card
-      
         sx={{
           backgroundColor: "#12121280",
           color: "#fff",
@@ -82,7 +81,6 @@ function WorkspaceCard({
       </Card>
 
       {/* Second Card with centered content */}
-      
     </Box>
   );
 }

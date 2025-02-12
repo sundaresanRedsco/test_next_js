@@ -6,7 +6,8 @@ import { createSlice } from "@reduxjs/toolkit";
 export const apiTeams = createApi({
   reducerPath: "apiTeams",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.apiflow.pro",
+    // baseUrl: "https://api.apiflow.pro",
+    baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
     prepareHeaders: (headers) => {
       headers.set("Authorization", "Bearer " + Cookies.get("token"));
       return headers;

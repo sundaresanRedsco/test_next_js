@@ -29,7 +29,7 @@ import loggroup2 from "@/app/Assests/images/2.png";
 import logtrace from "@/app/Assests/images/3.png";
 import logtrace1 from "@/app/Assests/images/4.png";
 import lamda from "@/app/Assests/images/5.png";
-// import trigger from '@/app/Assests/images/6.png'
+
 import trigger1 from "@/app/Assests/images/7.png";
 import tri from "@/app/Assests/images/6.png";
 import deploy from "@/app/Assests/images/8.png";
@@ -56,10 +56,6 @@ import { createTeamreducer } from "@/app/Redux/manageTeam/teamReducer";
 import GlobalCircularLoader from "@/app/apiflow_components/global/GCircularLoader";
 import GlobalLoader from "@/app/apiflow_components/global/GLoader";
 import Image from "next/image";
-
-interface FormData {
-  name: string;
-}
 
 function ImportLogsSteps(props: any) {
   const { open, onClose, nameData, types, idData, enables } = props;
@@ -126,7 +122,7 @@ function ImportLogsSteps(props: any) {
   const [regnerateType, setRegnerateType] = useState(null);
   const [actionType, setActionType] = useState(null);
   const [eabledata, setEnableData] = useState<any>(enables);
-  // const [idNew, setIdNew] = useState<any>(idData)
+
   const [trigger, setTrigger] = useState(0);
   const [jsonData, setJsonData] = useState(lambdaFunctionString);
   const [copied, setCopied] = useState(false);
@@ -215,12 +211,10 @@ function ImportLogsSteps(props: any) {
       subtext: "- In Lambda Console, add a trigger for CloudWatch Logs.",
       subtext1: "- Select your log group and configure filters if needed.",
       image: tri,
-      // subimage: trigger1,
     },
     {
       text: "5.Write Lambda Function Code:",
       subtext: "- Write code to process log events in your chosen runtime.",
-      // image: cloud5,
     },
   ];
 
@@ -391,26 +385,6 @@ function ImportLogsSteps(props: any) {
     }
   }, [idData]);
 
-  // useEffect(() => {
-  //   // let isMounted = true;
-
-  //   if (currentTeam?.workspace_id) {
-  //     dispatch(GetApiGatewaySdkKeys(currentTeam?.workspace_id))
-  //       .unwrap()
-  //       .then()
-  //       .catch((errr: any) => {
-  //         if (errr.message == "UNAUTHORIZED") {
-  //           dispatch(updateSessionPopup(true));
-  //         }
-  //       });
-  //   }
-  //   console.log("samplesdsd");
-
-  //   return () => {
-  //     console.log("Component is unmounting");
-  //   };
-  // }, [currentTeam.workspace_id]);
-
   const handleUrlClick = () => {
     setInputVisible(true);
   };
@@ -440,7 +414,6 @@ function ImportLogsSteps(props: any) {
 
   const createLogsbySdkId = () => {
     const otp = logsName || "";
-    // const urlRegex = /^(http|https):\/\/[^ "]+$/;
 
     if (otp === "") {
       setNameError({
@@ -455,7 +428,6 @@ function ImportLogsSteps(props: any) {
       sdk_id: idData,
       tenant_id: userProfile?.user?.tenant_id,
     };
-    // if(validateForm){
 
     dispatch(CreateLogsKeys(logsKeyDetails))
       .unwrap()
@@ -481,7 +453,6 @@ function ImportLogsSteps(props: any) {
           toast.error(error.message);
         }
       });
-    // }
   };
 
   useEffect(() => {
@@ -574,7 +545,6 @@ function ImportLogsSteps(props: any) {
   const formattedRequest = formatWithLineNumbers(jsonData);
 
   const handleJsonCopy = () => {
-    // navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2));
     const cleanedData = jsonData.replaceAll("\n", "");
     navigator.clipboard.writeText(cleanedData);
     setCopied(true);
@@ -582,71 +552,6 @@ function ImportLogsSteps(props: any) {
       setCopied(false);
     }, 2000);
   };
-
-  // const errorHandles = () => {
-  //   // const value = e.target.value;
-  //   let errorMessage = "";
-
-  //   if (logsName === "") {
-  //     // errorMessage = "Name is required";
-  //   setNameError("Name is required");
-
-  //   }
-  //   // else if (logsName.length > 30) {
-  //   //   errorMessage = "Name must be at most 30 characters long";
-  //   // }
-
-  //   // setLogsName(logsName);
-  //   // setNameError(errorMessage);
-  // };
-  // const [formData, setFormData] = useState<FormData>({
-  //   name: "",
-
-  // });
-
-  // const [errors1, setErrors1] = useState<Partial<FormData>>({});
-  // const validateForm = (): any => {
-  //   const newErrors: Partial<FormData> = {};
-  //   if (!formData.name) {
-  //     newErrors.name = " name is required";
-  //   }
-
-  //   setErrors1(newErrors);
-  //   return Object.keys(newErrors).length === 0;
-  // };
-  const [errorOtpDetails, setErrorOtpdetails] = useState<any>({
-    errorData: "",
-  });
-
-  //   const validateForm = (dataType: any) => {
-  //   if (dataType === "url") {
-  //     const otp = logsName || "";
-  //     // const urlRegex = /^(http|https):\/\/[^ "]+$/;
-
-  //     if (otp === "") {
-  //       setErrorOtpdetails({
-  //         otp: "name is required",
-  //       });
-  //       return;
-  //     }
-
-  //     if (otp.length > 30) {
-  //       setErrorOtpdetails({
-  //         otp: "name must be 30 characters or less",
-  //       });
-  //       return;
-  //     }
-  //     //  else if (!urlRegex.test(otp?.trim())) {
-  //     //   setErrorOtpdetails({
-  //     //     otp: "Invalid URL format",
-  //     //   });
-  //     //   return;
-  //     // }
-  //     else {
-  //       setErrorOtpdetails({});
-  //     }
-  //   }
-  // }
 
   return (
     <div>
@@ -696,7 +601,6 @@ function ImportLogsSteps(props: any) {
 
               <GButton
                 buttonType="primary"
-                // label={"Enable Logs"}
                 label={eabledata == true ? "Disable Logs" : "Enable Logs"}
                 margin="2rem 0rem"
                 onClickHandler={enableDisableLogs}
@@ -745,7 +649,6 @@ function ImportLogsSteps(props: any) {
                       <GButton
                         buttonType="primary"
                         label={"Add Key"}
-                        // margin="2rem 0rem"
                         onClickHandler={handleUrlClick}
                       />
                     </div>
@@ -755,7 +658,7 @@ function ImportLogsSteps(props: any) {
                         <TeamProfileHeading
                           style={{
                             fontSize: "0.6rem",
-                            // marginTop: "1rem",
+
                             marginBottom: "1px",
                           }}
                         >
@@ -768,14 +671,12 @@ function ImportLogsSteps(props: any) {
                             type="text"
                             color={"#000000"}
                             background={"#ffffff"}
-                            // fontWeight={700}
                             radius="5px"
                             labelShrink={true}
                             dataTest={"email-input"}
                             variant="outlined"
                             value={logsName}
                             helperText={nameError?.otp}
-                            // maxLength={30}
                             error={nameError?.otp}
                             onChangeHandler={(e: any) => {
                               setLogsName(e.target.value);
@@ -791,7 +692,6 @@ function ImportLogsSteps(props: any) {
                             }}
                             onClick={() => {
                               createLogsbySdkId();
-                              // errorHandles();
                             }}
                           />
                           <CancelIcon
@@ -910,7 +810,6 @@ function ImportLogsSteps(props: any) {
                                     cursor: "pointer",
                                     fontSize: "1rem",
                                   }}
-                                  //   onClick={regnerateLogsbyId}
                                   onClick={() => {
                                     handleRegenerateClick("REGENARATE");
                                     setRegnerateType(datas?.id);
@@ -1006,7 +905,6 @@ function ImportLogsSteps(props: any) {
                             marginBottom: "1rem",
                             fontSize: "0.8rem",
                             fontWeight: "600",
-                            // color: "rgb(173, 181, 189)",
                           }}
                         >
                           {step.text}
@@ -1084,7 +982,6 @@ function ImportLogsSteps(props: any) {
                             marginBottom: "1rem",
                             fontSize: "0.8rem",
                             fontWeight: "600",
-                            // color: "rgb(173, 181, 189)",
                           }}
                         >
                           {step.awstext}

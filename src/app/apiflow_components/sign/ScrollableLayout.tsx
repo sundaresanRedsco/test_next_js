@@ -50,11 +50,7 @@ export default function ScrollableLayout({
   justifyContent,
 }: Props) {
   const scrollToEnd = useRef<HTMLDivElement>(null);
-  // useEffect(() => {
-  //   if (scrollToEnd && scrollToEnd.current) {
-  //     scrollToEnd.current.scrollTop = scrollToEnd.current.scrollHeight;
-  //   }
-  // }, [showNextButton, showBackButton]);
+
   const { issm, isxs, isxl } = useMuiBreakpoints();
   const { PopUpComponent, handleOpen, open } = useGPopup();
   const { activeStep } = useSignUpStore();
@@ -121,7 +117,7 @@ export default function ScrollableLayout({
         ref={scrollToEnd}
         sx={{
           height: isxs ? "auto" : description ? "65vh" : "70vh",
-          // height: isxs ? "auto" : isWorkflowModal ? "520px" : "400px",
+
           overflowY: isxs ? "hidden" : "auto",
           background: "#12121280",
           borderRadius: "10px",
@@ -181,7 +177,6 @@ export default function ScrollableLayout({
                 isDisabled:
                   (isWorkflowModal && activeStep == 2) ||
                   (!isWorkflowModal && activeStep == 3),
-                // (!isWorkflowModal && (activeStep == 3 || activeStep == 1)),
               },
               {
                 name:
@@ -196,7 +191,6 @@ export default function ScrollableLayout({
                   <GlobalButton
                     disabled={elem.isDisabled}
                     key={index}
-                    // padding="4px 35px"
                     label={elem?.name}
                     iconPosition="end"
                     background={

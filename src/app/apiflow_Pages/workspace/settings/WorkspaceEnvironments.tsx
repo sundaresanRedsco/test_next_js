@@ -1,10 +1,9 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-// import GlobalIntegartionData from "";
-// import { LeftArrowIcon } from "@/app/Assests/icons";
+
 import { styled } from "@mui/system";
 import { Box, Typography } from "@mui/material";
-// import GButton from "@/app/ApiFlowComponents/Global/GButton";
+
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
@@ -16,7 +15,7 @@ import {
   updateProjectOverViewEnd,
   updateProjectOverViewStart,
 } from "@/app/Redux/apiManagement/environmentReducer";
-import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
+import GlobalCircularLoader from "@/app/apiflow_components/global/GlobalCircularLoaderV2";
 import { PrimaryTypography } from "@/app/Styles/signInUp";
 import Grid from "@mui/material/Grid2";
 import dynamic from "next/dynamic";
@@ -81,11 +80,6 @@ function WorkspaceEnvironments() {
     dispatch(GetProjectByWorkspaceIdSolrOffsetOverView(data))
       .unwrap()
       .then((projectRes: any) => {
-        // if (groupRes?.length > 0) {
-        //   // Handle success
-        // }
-        console.log(projectRes, "projectRes");
-        // setGroupData(groupRes);
         setProjectData((prevValues: any) => {
           const newData = Array.isArray(projectRes?.projects)
             ? projectRes?.projects
@@ -121,14 +115,12 @@ function WorkspaceEnvironments() {
   };
 
   useEffect(() => {
-    // const container = document.getElementById(maninContainer);
     const container: any = document.getElementById("scrollable-container");
     container?.addEventListener("scroll", handleScroll);
 
     return () => {
       container?.removeEventListener("scroll", handleScroll);
     };
-    // }, [maninContainer]); // Include maninContainer as a dependency
   }, []);
 
   useEffect(() => {
@@ -140,7 +132,6 @@ function WorkspaceEnvironments() {
       {/* Header */}
       <div>
         <HeadingTypography style={{ marginTop: "1rem" }}>
-          {/* Carrefour Workspace <LeftArrowIcon /> */}
           {currentWorkspace?.name} <LeftArrowIcon />
           <span
             style={{
@@ -204,9 +195,6 @@ function WorkspaceEnvironments() {
             position: "relative",
           }}
         >
-          {/* {getProjectOverViewLoading && (
-            <GlobalCircularLoader open={getProjectOverViewLoading} noBackdrop />
-          )} */}
           {getProjectOverViewTotalCount > 0 ? (
             <GlobalIntegartionData data={projectData} />
           ) : (

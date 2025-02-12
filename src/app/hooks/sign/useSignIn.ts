@@ -6,11 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter, usePathname } from "next/navigation";
 import { useMsal } from "@azure/msal-react";
 import { RootStateType } from "@/app/Redux/store";
-import { login, LoginReducer } from "@/app/Redux/loginReducer";
+import { login, LoginReducer, TwoFactorLogin } from "@/app/Redux/loginReducer";
 import { EncrouptionLogic } from "@/app/Helpers/helpersFunctions";
 import { loginRequest } from "@/app/Services/azureServices";
 import { useSignUpStore } from "./signZustand";
 import { removeItem, setItem } from "@/app/Services/localstorage";
+import { useMutation } from "@tanstack/react-query";
+import { AdminServices } from "@/app/Services/services";
 
 interface loginInfoType {
   email: string;
@@ -28,6 +30,7 @@ export default function useSignIn() {
     setFormDataStore,
     setIsTotpEnabled,
     formDataStore,
+    resetAllSignStoreData,
   } = useSignUpStore();
 
   const { instance, accounts } = useMsal();
@@ -78,19 +81,19 @@ export default function useSignIn() {
           color: #000000 !important;           /* Black text color */
           border-radius: 5px !important;       /* Rounded corners */
           padding:10px !important;       /* Add padding */
-        
+
           border: 1px solid #000000 !important; /* Black border */
           box-shadow: none !important;         /* Remove the shadow */
           font-size: 10px !important;          /* Font size */
           display: flex !important;
-          
-         
+
+
         }
-  
+
         // .nsm7Bb-HzV7m-LgbsSe-MJoBVe {
         //   margin-right: 8px !important;
         // }
-  
+
         .nsm7Bb-HzV7m-LgbsSe:hover {
           background-color: #f0f0f0 !important; /* Light grey on hover */
         }
@@ -105,9 +108,6 @@ export default function useSignIn() {
   }, []);
 
   const handleSuccess = async (response: any) => {
-    console.log(response, "HandleSuccess");
-    // let token = response.access_token;
-    // let token = response.credentials;
     let email = "null";
     let password = "null";
     let token_type = "GOOGLE";
@@ -130,40 +130,35 @@ export default function useSignIn() {
     });
 
     const tokenData = await tokenResponse.json();
-    console.log("HandleSuccessID Token:", tokenData, tokenData.id_token);
     let token = tokenData?.id_token;
+    if (tokenData) {
+      const userInfoResponse = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${tokenData.access_token}`,
+          },
+        }
+      );
 
+      const userInfo = await userInfoResponse.json();
+      if (userInfo.email) {
+        setFormData((prev) => ({ ...prev, email: userInfo.email }));
+      }
+    }
     dispatch(login({ email, password, token, token_type, invitations_token }))
       .unwrap()
       .then((res: any) => {
-        if (res?.user?.user_registered !== "EXISTING_USER") {
-          Cookies.remove("MID");
-          Cookies.set("ttid", res?.user?.tenant, {
-            expires: 1,
-            sameSite: "Strict",
-            secure: true,
-          });
-          Cookies.set("tt-email", res?.user?.email, {
-            expires: 1,
-            sameSite: "Strict",
-            secure: true,
-          });
-          Cookies.set("ov", "OVS", {
-            expires: 1,
-            sameSite: "Strict",
-            secure: true,
-          });
+        if (res && res?.user?.user_registered != "EXISTING_USER") {
+          if (pathName != "/sign/signup") {
+            router.push("/sign/signup");
+          }
           setItem(`userId/${res?.user?.user_id}`, "onboarding");
-          setFormDataStore("currentPage", "Sign Up");
-          setFormDataStore("token", res?.user?.token);
-          setFormDataStore("authType", formDataStore?.authType + "_back");
           setactiveStep(1);
-        } else {
-          removeItem(`userId/${res?.user?.user_id}`);
-          router.push(`/userId/${res?.user?.user_id}`);
-
+          setFormDataStore("currentPage", "SignUp");
+          setFormDataStore("authType", "google");
           const encryptedWsidId = EncrouptionLogic(res?.user?.workspace_id);
-
           Cookies.set(
             process.env.NEXT_PUBLIC_COOKIE_WSID || "",
             encryptedWsidId,
@@ -172,16 +167,47 @@ export default function useSignIn() {
               secure: true,
             }
           );
+        } else {
+          if (res == "TWO FACTOR:Enable") {
+            setIsTotpEnabled(true);
+          } else {
+            removeItem(`userId/${res?.user?.user_id}`);
+            Cookies.remove("MID");
+            Cookies.set("ttid", res?.user?.tenant, {
+              expires: 1,
+              sameSite: "Strict",
+              secure: true,
+            });
+            Cookies.set("tt-email", res?.user?.email, {
+              expires: 1,
+              sameSite: "Strict",
+              secure: true,
+            });
+            Cookies.set("ov", "OVS", {
+              expires: 1,
+              sameSite: "Strict",
+              secure: true,
+            });
+            setFormDataStore("token", res?.user?.token);
+          }
         }
         setIsLoading(false);
       })
       .catch((err: any) => {
+        if (err?.message === '"TWO FACTOR:Enable"') {
+          Cookies.set("2FE", email, {
+            expires: 1,
+            sameSite: "Strict",
+            secure: true,
+          });
+          setIsTotpEnabled(true);
+        } else {
+          setErrorMail(err?.message);
+          setErrorPassword(err?.message);
+          setFormDataStore("authType", "");
+        }
         setIsLoading(false);
-        setErrorMail(err?.message);
-        setErrorPassword(err?.message);
       });
-
-    console.log("loginRes after");
   };
 
   const handleAuthentication = async () => {
@@ -244,15 +270,8 @@ export default function useSignIn() {
                 setErrorMail(err?.message);
                 setErrorPassword(err?.message);
               });
-            // const refreshToken = account.idTokenClaims.ssoToken;
-            // setUser(account);
-            // console.log(account, "account");
-            // console.log(tokenInfo, "Token");
-            // console.log(refreshToken, "refreshToken");
           })
-          .catch((e) => {
-            console.log(e, "test");
-          });
+          .catch((e) => {});
       }
     } catch (error) {
       console.error("Authentication failed:", error);
@@ -302,10 +321,10 @@ export default function useSignIn() {
           setItem(`userId/${res?.user?.user_id}`, "onboarding");
           setIsLoading(false);
           if (!formDataStore?.invite_token) {
-            handleStep();
+            setactiveStep(1);
           } else {
             setactiveStep(5);
-            router.push(`/sign`);
+            router.push(`/sign/signup`);
           }
           setFormDataStore("token", res?.user?.token);
         })
@@ -339,34 +358,23 @@ export default function useSignIn() {
             if (res == "TWO FACTOR:Enable") {
               setIsTotpEnabled(true);
             } else {
-              router.push(`/userId/${res?.user?.user_id}`);
-              // setactiveStep(4);
               setIsLoading(false);
-              // setItem(`userId/${res?.user?.user_id}`, "onboarding");
+              resetAllSignStoreData();
             }
-            // const encryptedWsidId = EncrouptionLogic(res?.user?.workspace_id);
-            // Cookies.set(
-            //   process.env.NEXT_PUBLIC_COOKIE_WSID || "",
-            //   encryptedWsidId,
-            //   {
-            //     sameSite: "Strict",
-            //     secure: true,
-            //   }
-            // );
           })
           .catch((err: any) => {
-            console.log(err, "LoginError");
-            if (err?.message === "TWO FACTOR:Enable") {
+            if (err?.message === '"TWO FACTOR:Enable"') {
               Cookies.set("2FE", email, {
                 expires: 1,
                 sameSite: "Strict",
                 secure: true,
               });
               setIsTotpEnabled(true);
+            } else {
+              setErrorMail(err?.message);
+              setErrorPassword(err?.message);
             }
 
-            setErrorMail(err?.message);
-            setErrorPassword(err?.message);
             setIsLoading(false);
           });
       }
@@ -375,12 +383,7 @@ export default function useSignIn() {
 
   const handleRememberMe = (e: any) => {
     let checkBoxValue = e.target.checked;
-    console.log(
-      "CheckboxVal: ",
-      checkBoxValue,
-      formData?.email,
-      formData?.password
-    );
+
     setCheckBoxVal(checkBoxValue);
     if (checkBoxValue === false) {
       Cookies.set("LoginEmail", formData?.email, {
@@ -391,43 +394,67 @@ export default function useSignIn() {
         sameSite: "Strict",
         secure: true,
       });
-      console.log("FormData: ", formData);
     } else {
       Cookies.remove("LoginEmail");
       Cookies.remove("LoginPassword");
     }
   };
-  // const {} = useQuery({
-  //   queryKey: ["submitOtp"],
-  //   queryFn: () => loginHandler(),
-  // });
+  const handleAuthBy2fa = async (data: any) => {
+    setIsLoading(true);
+    let token_type = "null";
+    let token = "null";
+    let invitations_token = "null";
+
+    try {
+      dispatch(
+        TwoFactorLogin({
+          token_type,
+          token,
+          invitations_token,
+          ...data,
+        })
+      )
+        .unwrap()
+        .then((res: any) => {
+          if (res == "TWO FACTOR:Enable") {
+            setIsTotpEnabled(true);
+          } else {
+            resetAllSignStoreData();
+          }
+        })
+        .catch((err: any) => {
+          setErrorOtp(JSON.parse(err?.message));
+          setErrorRecoveryCode(JSON.parse(err?.message));
+          setIsLoading(false);
+        });
+    } catch (err: any) {
+      setErrorOtp(err?.response?.data);
+      setErrorRecoveryCode(err?.response?.data);
+    }
+  };
   const handleSubmitOtp = () => {
     if (enableRecovery) {
       if (recoveryCode === "") {
         setErrorRecoveryCode("Recovery Code is required");
       } else {
-        console.log(
-          {
-            email: formData?.email,
-            totp: "",
-            recoveryKey: recoveryCode,
-          },
-          "showErr-otp"
-        );
+        handleAuthBy2fa({
+          email: formData?.email,
+          totp: "",
+          recoveryKey: recoveryCode,
+        });
+
         setErrorRecoveryCode("");
       }
     } else {
       if (otp === "") {
         setErrorOtp("OTP is required");
       } else {
-        console.log(
-          {
-            email: formData?.email,
-            totp: otp,
-            recoveryKey: "",
-          },
-          "showErr-otp"
-        );
+        handleAuthBy2fa({
+          email: formData?.email,
+          totp: otp,
+          recoveryKey: "",
+        });
+
         setErrorOtp("");
       }
     }

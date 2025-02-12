@@ -19,6 +19,7 @@ import {
   TableRow,
   Tooltip,
   tableCellClasses,
+  useTheme,
 } from "@mui/material";
 import InsightsIcon from "@mui/icons-material/Insights";
 import theme from "../../../Theme/theme";
@@ -61,6 +62,7 @@ const OperationApiInsights = () => {
   const containerRef = useRef<any>(null);
 
   const dispatch = useDispatch<any>();
+  const theme = useTheme();
 
   const operIdVal = getCookies(process.env.NEXT_PUBLIC_COOKIE_OPERID ?? "");
 
@@ -122,8 +124,6 @@ const OperationApiInsights = () => {
 
   const [loadingState, setLoadingState] = useState(false);
 
-  // const [filteredSensLogData, setFilteredSensLogData] = useState<any[]>([]);
-
   const [filteredVal, setFilteredVal] = useState(
     filterStatusVal === "ApiStatus"
       ? statusValues?.[0]
@@ -183,7 +183,6 @@ const OperationApiInsights = () => {
   const contentStyles: React.CSSProperties = {
     width: "100%",
     height: "100%",
-    backgroundColor: "white",
     transition: "left 0.3s ease",
     padding: "0.1rem 2rem",
     overflow: "auto",
@@ -200,18 +199,6 @@ const OperationApiInsights = () => {
     setIsPopupOpen(false);
   };
 
-  // const handlePublicPrivateApiStatus = () => {
-  //     dispatch(GetApiStatusByOpperationId("17a400da1e37401dabc7d8fb27f56341"))
-  //         .unwrap()
-  //         .then((res: any) => {
-  //             setApiStatusData(res)
-  //             setPublicPrivateClicked(true);
-  //         })
-  //         .catch((error: any) => {
-  //             console.log("Error: ", error);
-  //         });
-  // };
-
   const filteredData = apiStatusResut?.filter((filterVal: any) => {
     if (filterStatusVal === "All") {
       return true;
@@ -222,9 +209,6 @@ const OperationApiInsights = () => {
         return filterVal?.dateTime === filteredVal;
       }
     }
-    // else {
-    //     return filterVal?.operation_status === filterStatusVal;
-    // }
   });
 
   const filteredSensLogData = sensLogResult?.filter((filterVal: any) => {
@@ -239,12 +223,7 @@ const OperationApiInsights = () => {
         return filterVal?.created_at === filteredSensVal;
       }
     }
-    // else {
-    //     return filterVal?.operation_status === filterStatusVal;
-    // }
   });
-  // console.log("filteredSensLogDataVal: ", filteredSensLogDataVal)
-  // setFilteredSensLogData(filteredSensLogDataVal)
 
   const filteredOrphanData = orphanLogResult?.filter((filterVal: any) => {
     if (filterOrphanLogVal === "All") {
@@ -257,8 +236,6 @@ const OperationApiInsights = () => {
       }
     }
   });
-
-  // const filteredData = apiStatusData?.result;
 
   const handleSensitivityLogs = () => {
     setSensLogsClicked(true);
@@ -280,7 +257,7 @@ const OperationApiInsights = () => {
   const fetchPageData = async (page: number) => {
     let requestData = {
       operation_id: operIdVal,
-      // operation_id: "a7d256739ff64f69b80f3670d319a254",
+
       offsetStart: 0,
       offsetEnd: page,
       fieldName: "",
@@ -291,7 +268,7 @@ const OperationApiInsights = () => {
       .unwrap()
       .then((apiStatusRes: any) => {
         const apiResultValues = apiStatusRes?.result;
-        // setTimeout(() => setApiStatusResult(apiResultValues), 15000)
+
         setApiStatusResult(apiResultValues);
         const filteringOnlyDates = apiResultValues?.map(
           (obj: any) => obj?.dateTime
@@ -306,7 +283,7 @@ const OperationApiInsights = () => {
   const fetchSensLogsData = async (page: number) => {
     let requestDataSensLogs = {
       operation_id: operIdVal,
-      // operation_id: "a7d256739ff64f69b80f3670d319a254",
+
       offsetStart: 0,
       offsetEnd: page,
       fieldName: "",
@@ -332,7 +309,6 @@ const OperationApiInsights = () => {
   const fetchOrphanLogsData = (page: number) => {
     let requestOrphanData = {
       operationId: operIdVal,
-      // operationId: "e075ea7bf3c84d86a2411ced2079e93c",
       offset: 0,
       limit: page,
       searchField: "",
@@ -340,8 +316,6 @@ const OperationApiInsights = () => {
       sortBy: "asc",
       sortField: "",
     };
-
-    console.log("requestOrphanData: ", requestOrphanData, currentPage);
 
     dispatch(LogStashOffsetFromClickhouse(requestOrphanData))
       .unwrap()
@@ -353,9 +327,7 @@ const OperationApiInsights = () => {
         );
         setOrphanLogDates(filteringOrphanLogDates);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   };
 
   const handleScroll = () => {
@@ -368,18 +340,11 @@ const OperationApiInsights = () => {
   };
 
   const getValueOrDefault = (value: any) => {
-    // Check if value is null, "null", or undefined
     const checkValue =
       value === null || value === "null" || value === undefined ? "-" : value;
     console.log("checkValue: ", checkValue);
     return checkValue; // Ensure the returned value is always a string
   };
-
-  //useEffect
-
-  // useEffect(() => {
-  //     filteredSensLogDataHandler()
-  // }, [sensLogResult, filterSensLogVal, filteredSensVal, sensLogsClicked])
 
   useEffect(() => {
     setFilteredSensVal(
@@ -443,27 +408,22 @@ const OperationApiInsights = () => {
       .then((operRes: any) => {
         setOperationDetails(operRes);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   }, [operIdVal]);
 
   useEffect(() => {
     dispatch(GetAllSenseDataKeyInOperByOperId(operIdVal))
-      // dispatch(GetAllSenseDataKeyInOperByOperId("f8f79014274c4915a6c25ee6c141a9c1"))
       .unwrap()
       .then((sensitiveDataRes: any) => {
         setKeyOperationData(sensitiveDataRes);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   }, [dispatch, operIdVal]);
 
   useEffect(() => {
     let requestData = {
       operation_id: operIdVal,
-      // operation_id: "a7d256739ff64f69b80f3670d319a254",
+
       offsetStart: startVal,
       offsetEnd: endVal,
       fieldName: "",
@@ -482,21 +442,10 @@ const OperationApiInsights = () => {
 
   return (
     <div>
-      {/* {loading && isPopupOpen && <GlobalLoader />}
-            <Backdrop
-                sx={{ zIndex: 998, backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-                open={isPopupOpen}
-            /> */}
       <div>
         <Button
           variant="contained"
           startIcon={
-            // <InsightsIcon
-            //   style={{
-            //     color: `#595959`,
-            //     fontSize: "15px",
-            //   }}
-            // />
             <InfoIcon
               style={{
                 fontSize: "16px",
@@ -539,7 +488,20 @@ const OperationApiInsights = () => {
       {/* drawer code */}
       <Backdrop open={isPopupOpen} sx={{ zIndex: "99" }}>
         <div style={popupStyles} onClick={togglePopup}>
-          <div style={contentStyles} onClick={(e) => e.stopPropagation()}>
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              transition: "left 0.3s ease",
+              padding: "0.1rem 2rem",
+              overflow: "auto",
+              left: isPopupOpen ? 0 : "100%",
+              maxHeight: "auto",
+              overflowY: "auto",
+              background: theme.palette.apiInsightsBackgroundColor.main,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div onClick={closePopup}>
               <div style={{ margin: "1rem 0rem" }}>
                 <ArrowBackIosIcon
@@ -604,8 +566,6 @@ const OperationApiInsights = () => {
               <Box
                 width={"80%"}
                 sx={{
-                  // border: '1px solid black',
-                  // margin: '20px',
                   marginTop: "10px",
                   padding: "5px",
                 }}
@@ -624,8 +584,7 @@ const OperationApiInsights = () => {
                         elevation={8}
                         sx={{
                           padding: "8px",
-                          // background: '#6CB4EE',
-                          // background: `${theme.palette.primaryPurple.main}`,
+
                           background: `${theme.palette.v2PrimaryColor.main}`,
                           width: "160px",
                           height: "60px",
@@ -686,7 +645,6 @@ const OperationApiInsights = () => {
                                     cursor: "pointer",
                                     fontSize: "15px",
                                   }}
-                                  // onClick={handlePublicPrivateApiStatus}
                                   onClick={handlePublicLogs}
                                 />
                               </Tooltip>
@@ -703,8 +661,7 @@ const OperationApiInsights = () => {
                         elevation={8}
                         sx={{
                           padding: "8px",
-                          // background: '#50C878',
-                          // background: `${theme.palette.primaryPurple.main}`,
+
                           background: `${theme.palette.v2PrimaryColor.main}`,
                           width: "160px",
                           height: "60px",
@@ -756,8 +713,7 @@ const OperationApiInsights = () => {
                         elevation={8}
                         sx={{
                           padding: "8px",
-                          // background: '#50C878',
-                          // background: `${theme.palette.primaryPurple.main}`,
+
                           background: `${theme.palette.v2PrimaryColor.main}`,
                           width: "160px",
                           height: "60px",
@@ -827,68 +783,7 @@ const OperationApiInsights = () => {
                     </Box>
                   </div>
                 </div>
-                {/* <div>
-                                    <div style={{
-                                        margin: '30px 0px 10px 90px'
-                                    }}>
-                                        <Box>
-                                            <Card
-                                                square={false}
-                                                elevation={8}
-                                                sx={{
-                                                    // padding: '12px',
-                                                    // background: '#FFAC1C',
-                                                    // background: '#FF69B4',
-                                                    // background: `#e9d5ff`,
-                                                    // background: `${theme.palette.primaryPurple.main}`,
-                                                    // width: '200px',
-                                                    width: '90%',
-                                                    height: '55px',
-                                                    // background: 'transparent',
-                                                    // border: '1px solid black'
-                                                    padding: "15px",
-                                                    margin: "10px 0px",
-                                                    border: " 1px solid #F87171",
-                                                    // border: `1px solid ${theme.palette.primaryPurple.main}`,
-                                                    background: "#FEF2F2",
-                                                    // background: "#e9d5ff",
-                                                    borderRadius: "5px",
-                                                }}>
-                                                <div>
-                                                    <PrimaryTypography
-                                                        style={{
-                                                            color: `${theme.palette.primaryBlack.main}`,
-                                                            fontSize: '14px'
-                                                        }}
-                                                    >
-                                                        <span>
-                                                            <InsightsOutlinedIcon
-                                                                style={{
-                                                                    fontSize: '20px',
-                                                                    marginRight: '5px',
-                                                                    marginBottom: '3px'
-                                                                }}
-                                                            />
-                                                        </span>
-                                                        Intent
-                                                    </PrimaryTypography>
-                                                </div>
-                                                <div style={{
-                                                    marginTop: '10px',
-                                                    marginLeft: '10px'
-                                                }}>
-                                                    <SecondaryTypography style={{
-                                                        color: `${theme.palette.primaryBlack.main}`,
-                                                        fontWeight: 600,
-                                                        fontSize: '16px'
-                                                    }}>
-                                                        {operationDetails?.[0]?.intent?.trim() === '' ? 'NIL' : operationDetails?.[0]?.intent}
-                                                    </SecondaryTypography>
-                                                </div>
-                                            </Card>
-                                        </Box>
-                                    </div>
-                                </div> */}
+
                 <div
                   style={{
                     marginTop: "20px",
@@ -941,14 +836,11 @@ const OperationApiInsights = () => {
                     <div
                       style={{
                         margin: "30px",
-                        // marginLeft: '47px',
-                        // marginTop:'20px'
                       }}
                     >
                       <TableContainer
                         sx={{ width: "100%" }}
                         component={Paper}
-                        // className='position-relative'
                         elevation={4}
                       >
                         <Table stickyHeader>
@@ -963,7 +855,7 @@ const OperationApiInsights = () => {
                                 </PrimaryTypography>
                               </TableCell>
                               <TableCell></TableCell>
-                              {/* <TableCell></TableCell> */}
+
                               <TableCell align="right">
                                 <Tooltip
                                   arrow
@@ -971,11 +863,9 @@ const OperationApiInsights = () => {
                                 >
                                   <ArrowCircleRightOutlinedIcon
                                     style={{
-                                      // color: `${theme.palette.mainWhite.main}`,
                                       cursor: "pointer",
                                       fontSize: "18px",
                                     }}
-                                    // onClick={handlePublicPrivateApiStatus}
                                     onClick={handleSensitivityLogs}
                                   />
                                 </Tooltip>
@@ -1065,7 +955,6 @@ const OperationApiInsights = () => {
                                         >
                                           <PrimaryTypography
                                             style={{
-                                              // color: `${theme.palette.mainWhite.main}`,
                                               fontSize: "10px",
                                             }}
                                           >
@@ -1100,7 +989,6 @@ const OperationApiInsights = () => {
               {publicPrivateClicked === true && (
                 <div>
                   <Drawer
-                    // hideBackdrop
                     anchor="right"
                     open={publicPrivateClicked}
                     onClose={() => {
@@ -1116,22 +1004,16 @@ const OperationApiInsights = () => {
                         }}
                       >
                         {publicPrivateClicked && filteredData?.length <= 0 && (
-                          <GCircularLoader
-                            // open={publicPrivateClicked && filteredData?.length <= 0}
-                            open={loadingValue}
-                          />
+                          <GCircularLoader open={loadingValue} />
                         )}
-                        {/* <Backdrop
-                                                            sx={{ backgroundColor: "rgba(0, 0, 0, 0.5)", }}
-                                                            open={true}
-                                                        /> */}
+
                         <div
                           style={{ margin: "1rem 0rem" }}
                           onClick={() => {
                             setPublicPrivateClicked(false);
                             setCurrentPage(7);
                             setFilterStatusVal("All");
-                            // setFilteredVal("");
+
                             setFilteredVal(
                               filterStatusVal === "ApiStatus"
                                 ? statusValues?.[0]
@@ -1281,10 +1163,8 @@ const OperationApiInsights = () => {
                             </>
                           </div>
                           <Box
-                            // className='container'
                             ref={containerRef}
                             onScroll={handleScroll}
-                            // minHeight={"100px"}
                             height={"380px"}
                             sx={{
                               overflowY: "auto",
@@ -1375,7 +1255,6 @@ const OperationApiInsights = () => {
               {sensLogsClicked === true && (
                 <div>
                   <Drawer
-                    // hideBackdrop
                     anchor="right"
                     open={sensLogsClicked}
                     onClose={() => {
@@ -1392,15 +1271,9 @@ const OperationApiInsights = () => {
                       >
                         {sensLogsClicked &&
                           filteredSensLogData?.length <= 0 && (
-                            <GCircularLoader
-                              // open={sensLogsClicked && filteredSensLogData?.length <= 0}
-                              open={loadingValue}
-                            />
+                            <GCircularLoader open={loadingValue} />
                           )}
-                        {/* <Backdrop
-                                                            sx={{ backgroundColor: "rgba(0, 0, 0, 0.5)", }}
-                                                            open={true}
-                                                        /> */}
+
                         <div
                           style={{ margin: "1rem 0rem" }}
                           onClick={() => {
@@ -1581,10 +1454,8 @@ const OperationApiInsights = () => {
                             </>
                           </div>
                           <Box
-                            // className='container'
                             ref={containerRef}
                             onScroll={handleScroll}
-                            // minHeight={"100px"}
                             height={"380px"}
                             sx={{
                               overflowY: "auto",
@@ -1704,7 +1575,6 @@ const OperationApiInsights = () => {
               {orphanLogClicked === true && (
                 <div>
                   <Drawer
-                    // hideBackdrop
                     anchor="right"
                     open={orphanLogClicked}
                     onClose={() => {
@@ -1721,15 +1591,9 @@ const OperationApiInsights = () => {
                       >
                         {orphanLogClicked &&
                           filteredOrphanData?.length <= 0 && (
-                            <GCircularLoader
-                              // open={orphanLogClicked && filteredOrphanData?.length <= 0}
-                              open={loadingValue}
-                            />
+                            <GCircularLoader open={loadingValue} />
                           )}
-                        {/* <Backdrop
-                                                            sx={{ backgroundColor: "rgba(0, 0, 0, 0.5)", }}
-                                                            open={true}
-                                                        /> */}
+
                         <div
                           style={{ margin: "1rem 0rem" }}
                           onClick={() => {
@@ -1886,10 +1750,8 @@ const OperationApiInsights = () => {
                             </>
                           </div>
                           <Box
-                            // className='container'
                             ref={containerRef}
                             onScroll={handleScroll}
-                            // minHeight={"100px"}
                             height={"380px"}
                             sx={{
                               overflowY: "auto",

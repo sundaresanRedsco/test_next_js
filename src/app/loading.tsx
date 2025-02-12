@@ -1,6 +1,5 @@
-// "use client";
 import React from "react";
-import GlobalLoader from "./Components/Global/GlobalLoader";
+import GlobalLoader from "@/app/apiflow_components/global/GlobalLoaderV1";
 
 export default function Loading() {
   return <GlobalLoader />;

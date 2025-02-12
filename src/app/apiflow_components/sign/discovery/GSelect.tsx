@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { KeyboardArrowDownRounded } from "@mui/icons-material";
 import theme from "@/Theme/theme";
-import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
+import GSkeletonLoader from "@/app/apiflow_components/global/GSkeletonLoader";
 import useScrollRef from "@/app/hooks/useScrollRef";
 type Props = {
   fullWidth?: boolean;
@@ -83,14 +83,13 @@ export default function GSelect(props: Props) {
   } = props;
   const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const selectedValue = event.target.value;
-    console.log("Selected Value:", selectedValue);
 
     if (onChange) {
       onChange(selectedValue, event);
     }
   };
   const containerRef = useRef<any>();
-  // const { handleScroll, offsetVal } = useScrollRef(containerRef);
+
   const [offsetVal, setoffsetVal] = useState(0);
   const selectMenuRef = useRef<any>();
 
@@ -139,7 +138,6 @@ export default function GSelect(props: Props) {
       }}
     >
       <TextField
-        // ref={selectMenuRef}
         name={name}
         fullWidth={fullWidth}
         size={size}
@@ -156,7 +154,6 @@ export default function GSelect(props: Props) {
           width: width,
           background: background || "transparent",
           "& .MuiInputBase-root": {
-            // border: border || "1.5px solid #F3F3F340",
             height: height,
             display: "flex",
             alignItems: "center",
@@ -238,12 +235,7 @@ export default function GSelect(props: Props) {
                 sx: {
                   fontFamily: "FiraSans-Regular ! important",
                   backgroundColor: "#211c27",
-                  // "& .MuiMenuItem-root": {
-                  //   // backgroundColor: "red",
-                  //   "&:hover": {
-                  //     backgroundColor: "yourItemHoverColor",
-                  //   },
-                  // },
+
                   color: "white",
                   ...additionalMenuItemsStyle,
                 },

@@ -9,19 +9,7 @@ const ProgressTypography = styled(Typography)`
 `;
 
 const GlobalProgressBar = () => {
-  const segments: any = [
-    //   { label: "OWASP API9-35", color: "#55FF46", value: 20 },
-    //   { label: "Parameter Anomalies-35", color: "#00EAFF", value: 10 },
-    //   { label: "OWASP API1: BOLA 35", color: "#FF0304", value: 15 },
-    //   {
-    //     label: "OWASP API2: Broken Authentication-75",
-    //     color: "#FEBF00",
-    //     value: 25,
-    //   },
-    //   { label: "Blocked Geo-45", color: "#CE26FF", value: 10 },
-    //   { label: "OWASP API8: Injection-70", color: "#F5FF6A", value: 15 },
-    //   { label: "Others", color: "#6F6880", value: 5 },
-  ]; // Empty array for testing "No data found" case
+  const segments: any = []; // Empty array for testing "No data found" case
 
   return (
     <div>

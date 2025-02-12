@@ -61,7 +61,6 @@ export default function GToggleButton({
       sx={{
         ...defaultStyle,
         ...customStyle,
-        // minWidth: "160px",
       }}
       size="small"
     >

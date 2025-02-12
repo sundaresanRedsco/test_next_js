@@ -7,30 +7,12 @@ import WorkspacePage from "../../workspace/WorkspacePage";
 import DashboardLayout from "../../layout/dashboardLayout";
 
 import dynamic from "next/dynamic";
-import GlobalLoader from "@/app/Components/Global/GlobalLoader";
+import GlobalLoader from "@/app/apiflow_components/global/GlobalLoaderV1";
 
 const WorkflowHomePage = dynamic(() => import("../../WorkflowHomePage"), {
-  // const WorkflowHomePage = dynamic(() => import("../Projects/ProjectSummaryPage"), {
-
   loading: () => <GlobalLoader />,
 });
 
 export default function Overview(props: any) {
-  const { allowedTabs, userPermissions } = props;
-
-  const isMounted = useRef(true);
-
-  const dispatch = useDispatch<any>();
-
-  useEffect(() => {
-    isMounted.current = true;
-
-    dispatch(setPermissionState(userPermissions));
-
-    return () => {
-      isMounted.current = false;
-    };
-  }, [userPermissions]);
-
   return <WorkflowHomePage />;
 }

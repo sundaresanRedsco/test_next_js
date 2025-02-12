@@ -121,6 +121,63 @@ export const GetProjectByWorkspaceIdSolrOffsetOverView = createAsyncThunk(
   }
 );
 
+export const GetProjectCounts = createAsyncThunk(
+  "projects/GetProjectCounts",
+  async (data: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        `api/Project/get_project_counts?workspace_id=${data?.workspace_id}&group_id=${data?.group_id}`,
+        null,
+        null
+      );
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
+      throw new Error(errorHandling(error));
+    }
+  }
+);
+
+export const UpdateProject = createAsyncThunk(
+  "projects/UpdateProject",
+  async (data: any) => {
+    try {
+      return await AdminServices(
+        "post",
+        `api/Project/update_project?workspace_id=${data?.workspace_id}`,
+        data?.requestBody,
+        null
+      );
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
+      throw new Error(errorHandling(error));
+    }
+  }
+);
+
+export const UpdateGroups = createAsyncThunk(
+  "projects/UpdateGroups",
+  async (data: any) => {
+    try {
+      return await AdminServices(
+        "post",
+        `api/Project/update_groups?workspace_id=${data?.workspace_id}`,
+        data?.requestBody,
+        null
+      );
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
+      throw new Error(errorHandling(error));
+    }
+  }
+);
+
 export const resetGatewayStateSwaggerDoc = createAction("Gateway/resetState");
 
 export const resetSwaggerState = createAction("swaggerDoc/resetState");
@@ -141,6 +198,9 @@ type InitialStateType = {
   getProjectOverViewStart: number;
   getProjectOverViewEnd: number;
   getProjectOverViewTotalCount: number;
+  getProjectCountsLoading: boolean;
+  getUpdateProjectLoading: boolean;
+  getUpdateGroupLoading: boolean;
 };
 
 const initialState: InitialStateType = {
@@ -159,6 +219,9 @@ const initialState: InitialStateType = {
   getProjectOverViewStart: 0,
   getProjectOverViewEnd: 8,
   getProjectOverViewTotalCount: 0,
+  getProjectCountsLoading: false,
+  getUpdateProjectLoading: false,
+  getUpdateGroupLoading: false,
 };
 
 export const environmentSlice = createSlice({
@@ -365,6 +428,42 @@ export const environmentSlice = createSlice({
         state.getProjectOverViewLoading = false;
       }
     );
+
+    builder.addCase(GetProjectCounts.pending, (state, action) => {
+      state.getProjectCountsLoading = true;
+    });
+
+    builder.addCase(GetProjectCounts.fulfilled, (state, action) => {
+      state.getProjectCountsLoading = false;
+    });
+
+    builder.addCase(GetProjectCounts.rejected, (state, action) => {
+      state.getProjectCountsLoading = false;
+    });
+
+    builder.addCase(UpdateProject.pending, (state, action) => {
+      state.getUpdateProjectLoading = true;
+    });
+
+    builder.addCase(UpdateProject.fulfilled, (state, action) => {
+      state.getUpdateProjectLoading = false;
+    });
+
+    builder.addCase(UpdateProject.rejected, (state, action) => {
+      state.getUpdateProjectLoading = false;
+    });
+
+    builder.addCase(UpdateGroups.pending, (state, action) => {
+      state.getUpdateGroupLoading = true;
+    });
+
+    builder.addCase(UpdateGroups.fulfilled, (state, action) => {
+      state.getUpdateGroupLoading = false;
+    });
+
+    builder.addCase(UpdateGroups.rejected, (state, action) => {
+      state.getUpdateGroupLoading = false;
+    });
   },
 });
 

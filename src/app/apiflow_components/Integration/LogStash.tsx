@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import ApiManageHeaders from "../../Components/ApiManagement/apiManageHeaders";
 import { OuterBoxContainer } from "@/app/Styles/dashboradStyledComponents";
 import {
   Box,
@@ -12,7 +11,7 @@ import {
 import { PrimaryTypography, SecondaryTypography } from "@/app/Styles/signInUp";
 import GButton from "@/app/apiflow_components/global/GButton";
 import toast from "react-hot-toast";
-import { FileCopy } from "@mui/icons-material";
+import { Edit, FileCopy } from "@mui/icons-material";
 import Logstash from "@/app/Assests/icons/logstash.svg";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import {
@@ -26,27 +25,18 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
 import { CommonReducer, updateSessionPopup } from "@/app/Redux/commonReducer";
-import {
-  GetTeamsByWorkspaceId,
-  createTeamreducer,
-  selectCurrentTeam,
-} from "@/app/Redux/manageTeam/teamReducer";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TableRow,
   Paper,
 } from "@mui/material";
-import { EditIcon } from "@/app/Assests/icons";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import CancelIcon from "@mui/icons-material/Cancel";
 import GInput from "@/app/apiflow_components/global/GInput";
-// import ApiTextField from "../../Components/ApiManagement/apiTextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
@@ -55,9 +45,8 @@ import {
   projectReducer,
 } from "@/app/Redux/apiManagement/projectReducer";
 import GlobalCircularLoader from "@/app/apiflow_components/global/GCircularLoader";
-import Image from "next/image";
-import { getCookies } from "@/app/Helpers/helpersFunctions";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
+import { getCookies } from "@/app/Helpers/helpersFunctions";
 
 interface Project {
   project_id: any;
@@ -69,20 +58,14 @@ interface Project {
 function LogSlash() {
   const dispatch = useDispatch<any>();
 
-  const { userProfile, maninContainer } = useSelector<
-    RootStateType,
-    CommonReducer
-  >((state) => state.common);
-
-  const { currentTeam } = useSelector<RootStateType, createTeamreducer>(
-    (state) => state.apiTeam.createTeam
+  const { userProfile } = useSelector<RootStateType, CommonReducer>(
+    (state) => state.common
   );
 
   const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
     (state) => state.apiManagement.workspace
   );
 
-  // const wsidVal = Cookies?.get("WSID");
   const wsidVal = getCookies(process.env.NEXT_PUBLIC_COOKIE_WSID ?? "");
 
   const { instanceId, ipDetails, loading, loadingValue } = useSelector<
@@ -240,7 +223,6 @@ function LogSlash() {
     // showText === false
     if (showText === false) {
       const addGatewayDetails = {
-        // workspace_id: currentTeam?.workspace_id,
         workspace_id: currentWorkspace?.id,
         user_id: userProfile?.user?.user_id,
         tenant_id: userProfile?.user?.tenant_id,
@@ -253,12 +235,11 @@ function LogSlash() {
           toast.success("Logstash Enabled");
           setShowText(true);
           setStatus("Active");
-          // dispatch(GetLogstashData(currentTeam?.workspace_id));
+
           dispatch(GetLogstashData(currentWorkspace?.id));
         });
     } else {
       const addGatewayDetails = {
-        // workspace_id: currentTeam?.workspace_id,
         workspace_id: currentWorkspace?.id,
         user_id: userProfile?.user?.user_id,
         tenant_id: userProfile?.user?.tenant_id,
@@ -270,8 +251,7 @@ function LogSlash() {
         .then((res: any) => {
           toast.success("Logstash Disabled");
           setShowText(true);
-          // setStatus("In Active");
-          // dispatch(GetLogstashData(currentTeam?.workspace_id));
+
           dispatch(GetLogstashData(currentWorkspace?.id));
         });
     }
@@ -282,7 +262,7 @@ function LogSlash() {
       .unwrap()
       .then((res: any) => {
         toast.success("AuthKey Regenerated");
-        // dispatch(GetLogstashData(currentTeam?.workspace_id))
+
         dispatch(GetLogstashData(currentWorkspace?.id))
           .unwrap()
           .then()
@@ -373,7 +353,6 @@ function LogSlash() {
   }, [instanceId]);
 
   useEffect(() => {
-    // dispatch(GetLogstashData(currentTeam?.workspace_id))
     dispatch(GetLogstashData(currentWorkspace?.id))
       .unwrap()
       .then()
@@ -382,7 +361,6 @@ function LogSlash() {
           dispatch(updateSessionPopup(true));
         }
       });
-    // }, [instanceId?.authendication_key, currentTeam?.workspace_id]);
   }, [instanceId?.authendication_key, currentWorkspace?.id]);
 
   useEffect(() => {
@@ -421,7 +399,6 @@ function LogSlash() {
   };
 
   const domainNameRegex = /^(?:https:\/\/).+[^\/]$/;
-  // const domainNameRegex = /^(?:https:\/\/).+\.com[^\/]*$/;
 
   function domainNameErrorHandler() {
     if (switchState === true) {
@@ -479,11 +456,11 @@ function LogSlash() {
           .unwrap()
           .then((res: any) => {
             toast.success("Updated Successfully !");
-            // setEnableDisable("Enable")
+
             setEditId("");
             setEditedName("");
             setProjectId("");
-            // handlePopoverClose();
+
             dispatch(GetIpDomainNames(instanceId?.instance_id))
               .unwrap()
               .then()
@@ -547,7 +524,6 @@ function LogSlash() {
 
   useEffect(() => {
     let requestData = {
-      //  let requestData = {
       wsid: wsidVal,
       sortByField: "name",
       sortByValue: searchInput,
@@ -555,7 +531,6 @@ function LogSlash() {
       startValue: 1,
       endValue: 10,
     };
-    // };
 
     dispatch(GetProjectByWorkspaceIdSolrOffset(requestData))
       .unwrap()
@@ -569,8 +544,6 @@ function LogSlash() {
 
   return (
     <div>
-      {/* {loading && <GlobalLoader />} */}
-      {/* <ApiManageHeaders logslash /> */}
       <OuterBoxContainer style={{ marginTop: "1rem", padding: "1rem 2rem" }}>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <div className="d-flex">
@@ -584,11 +557,6 @@ function LogSlash() {
               Import Logstash
             </SecondaryTypography>
 
-            {/* <Image
-              src={logstash}
-              alt=""
-              style={{ height: "40px", width: "40px", marginLeft: "1rem" }}
-            /> */}
             <Logstash
               style={{ height: "40px", width: "40px", marginLeft: "1rem" }}
             />
@@ -680,7 +648,6 @@ function LogSlash() {
                 {isOn ? (
                   <VisibilityIcon
                     style={{
-                      // marginLeft: "0.8rem",
                       color: "#110b18ad",
                       fontSize: "16px",
                     }}
@@ -688,7 +655,6 @@ function LogSlash() {
                 ) : (
                   <VisibilityOffIcon
                     style={{
-                      // marginLeft: "0.8rem",
                       color: "#110b18ad",
                       fontSize: "16px",
                     }}
@@ -821,7 +787,6 @@ function LogSlash() {
                                     height="10px"
                                     borderColor="#9CA3AF"
                                     onChangeHandler={handleInputChange}
-                                    // fontSize={"small"}
                                   />
                                 </div>
                               ) : (
@@ -836,7 +801,6 @@ function LogSlash() {
                             <TableCell>
                               <Stack spacing={3} sx={{ width: 150 }}>
                                 <Autocomplete
-                                  // multiple
                                   id="tags-standard"
                                   options={projectsListSolrOffset}
                                   getOptionLabel={(option) => option.name}
@@ -850,7 +814,6 @@ function LogSlash() {
                                     } else {
                                       setSelectedProjectId("");
                                       if (switchState === false) {
-                                        // Check if switchState is false
                                         setErrorProjectName({
                                           name: "Project Field is requiredsss",
                                         });
@@ -927,7 +890,7 @@ function LogSlash() {
                                   />
                                 </div>
                               ) : (
-                                <ModeEditIcon
+                                <Edit
                                   style={{
                                     color: "#6c757d",
                                     cursor: "pointer",

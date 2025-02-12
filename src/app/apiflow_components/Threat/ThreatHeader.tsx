@@ -2,15 +2,17 @@ import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import GSelect from "../sign/discovery/GSelect";
-import GsearchBar from "@/app/Components/Global/GsearchBar";
+import GsearchBar from "@/app/apiflow_components/global/GsearchBarV1";
 import { ExpandIcon } from "@/app/Assests/icons";
 import { useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
 import { environmentReducer } from "@/app/Redux/apiManagement/environmentReducer";
 import { projectApiReducer } from "@/app/Redux/apiManagement/projectApiReducer";
+import theme from "@/Theme/theme";
 
+// background: #1c1818a3;
 const BackgroundContainer = styled(Box)`
-  background: #1c1818a3;
+  background: ${theme.palette.threatTableHeaderBg.main};
   border-radius: 10px;
   padding: 10px 20px;
   width: 100%;
@@ -18,7 +20,7 @@ const BackgroundContainer = styled(Box)`
 
 const HeadingTypography = styled(Typography)`
   font-family: "FiraSans-Regular" !important;
-  color: #ffffff;
+  color: ${theme.palette.textPrimaryColor.main};
   font-size: 20px;
   font-weight: 600;
   margin-top: 5px;
@@ -85,13 +87,11 @@ function ThreatHeader() {
             justifyContent: "space-between",
           }}
         >
-          {/* width: { xs: "100%", sm: "80%", md: "50%" }, */}
           <HeadingTypography>Threat Summary</HeadingTypography>
           <GsearchBar placeholder={"Search"} marginLeft={"0rem"} />
 
-          <GSelect
+          {/* <GSelect
             options={options}
-            // size={"small"}
             width={{ xs: "100%", sm: "100%", md: "150px" }}
             value={selectedValue}
             color={"white"}
@@ -107,7 +107,6 @@ function ThreatHeader() {
 
           <GSelect
             options={behavior}
-            // size={"small"}
             width={{ xs: "100%", sm: "100%", md: "150px" }}
             value={selectedActivityValue}
             color={"white"}
@@ -122,7 +121,6 @@ function ThreatHeader() {
 
           <GSelect
             options={behavior}
-            // size={"small"}
             width={{ xs: "100%", sm: "100%", md: "150px" }}
             value={selectedBehaviourValue}
             color={"white"}
@@ -136,7 +134,7 @@ function ThreatHeader() {
           />
           <span>
             <ExpandIcon />
-          </span>
+          </span> */}
         </Box>
       </BackgroundContainer>
     </div>

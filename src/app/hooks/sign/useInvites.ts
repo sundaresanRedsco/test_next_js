@@ -86,7 +86,6 @@ export default function useInvites(userData?: any) {
           fetchMembers();
           // handleStep();
         } else {
-          console.log("Form has errors.");
           setIsLoading(false);
         }
       } catch (error: any) {

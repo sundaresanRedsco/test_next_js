@@ -18,19 +18,14 @@ export default function GatewayCard({ isActive, icon, label, onClick }: Props) {
       sx={{
         width: "100%",
         display: "flex",
-        // background: isActive
-        //   ? "linear-gradient(180deg, #3C1B8C 9.65%, #7A43FE 100%)"
-        //   : "linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.125) 100%)",
+
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
         padding: 3,
         borderRadius: "10px",
         transition: "background 3s, box-shadow 3s",
-        // "&:hover": {
-        //   background: "linear-gradient(180deg, #3C1B8C 9.65%, #7A43FE 100%)",
-        // },
-        // boxShadow: "0px 0 1px #FFFFFF40",
+
         cursor: "pointer",
         textTransform: "none",
         position: "relative",

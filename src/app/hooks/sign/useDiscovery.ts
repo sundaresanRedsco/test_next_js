@@ -301,7 +301,6 @@ export default function useDiscovery(userData?: any, fetchData?: any) {
           DataToSend = AllFormData[formDataStore?.gateway];
         }
         setFormDataStore("gatewayForm", discoveryFormDatas);
-        console.log(DataToSend, "DataToSend");
 
         try {
           const { data }: any = await axios.post(
@@ -315,7 +314,6 @@ export default function useDiscovery(userData?: any, fetchData?: any) {
             handleStep();
             setIsLoading(false);
           } else {
-            console.log("Form has errors.");
             setIsLoading(false);
           }
         } catch (error: any) {

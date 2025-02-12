@@ -62,8 +62,7 @@ export default function GDialogBox(props: any) {
           style: {
             background: "#121212", // Set background color
             borderRadius: "10px", // Set border-radius
-            // boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Add box shadow
-            // boxShadow: "0px 4px 8px #FFFFFF1A", // Add box shadow
+
             boxShadow: "10px 4px 15px 0px #FFFFFF1A", // Add box shadow
             color: "#FFFFFF",
             backdropFilter: "blur(10px)",
@@ -148,7 +147,6 @@ export default function GDialogBox(props: any) {
           {cancelVal?.trim() !== "" && (
             <Button
               style={{
-                // background: `${theme.palette.LGrayishBlue.main}`,
                 border: "1px solid #F3F3F340",
                 boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.5)",
                 padding: "5px 12px",
@@ -164,7 +162,6 @@ export default function GDialogBox(props: any) {
           )}
           <Button
             style={{
-              // background: "#DB424D",
               background: confirmBtnColor ? confirmBtnColor : `#7A43FE`,
               color: `${theme.palette.mainWhite.main}`,
               padding: "5px 12px",

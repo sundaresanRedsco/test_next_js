@@ -79,32 +79,7 @@ const ProgressTypography = styled(Typography)`
   margin-top: 1.5rem;
 `;
 
-const projectData: any = [
-  // {
-  //   title: "Risk Detected",
-  //   dataValue: 48,
-  //   percentageChange: 10,
-  //   dotColor: "red",
-  // },
-  // {
-  //   title: "Frequent Changes",
-  //   dataValue: 30,
-  //   percentageChange: 5,
-  //   dotColor: "#55FF46",
-  // },
-  // {
-  //   title: "Compliance Risk",
-  //   dataValue: 25,
-  //   percentageChange: 15,
-  //   dotColor: "red",
-  // },
-  // {
-  //   title: "Recent Messages",
-  //   dataValue: 40,
-  //   percentageChange: 8,
-  //   dotColor: "#55FF46",
-  // },
-];
+const projectData: any = [];
 
 const ProjectHomePage = () => {
   const { currentProject, currentProjectDetails } = useSelector<
@@ -140,48 +115,17 @@ const ProjectHomePage = () => {
               display: "flex",
               justifyContent: { xs: "center", sm: "flex-end", md: "flex-end" },
             }}
-
-            // flexDirection: { xs: "column", sm: "column", md: "row" },
           >
-            {/* <HeadingTypography>Button</HeadingTypography> */}
             <Box sx={{ display: "flex" }}>
-              {/* <Stack
-              sx={{
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-              
-              }}
-            > */}
-
               <Stack
                 direction={{ xs: "column", sm: "row" }}
                 spacing={{ xs: 1, sm: 2, md: 4 }}
               >
-                {/* <GlobalButton
-                  padding="6px 15px"
-                  label={"Project Integration"}
-                  iconPosition="start"
-                  fontWeight={500}
-                  // type={"submit"}
-                  // buttonType="primary"
-                  // width={"100%"}
-                  background="#7A43FE26"
-                  color="#FFFFFF"
-                  border="solid 1px #FFFFFF40"
-                  marginRight="5px"
-                  onClickHandler={() => {
-                    router?.push(`${baseUrl}/projectIntegration`);
-                  }}
-                /> */}
                 <GlobalButton
                   padding="6px 15px"
                   label={"New Environment"}
                   iconPosition="start"
                   fontWeight={500}
-                  // type={"submit"}
-                  // buttonType="primary"
-                  // width={"100%"}
                   background="#7A43FE26"
                   color="#FFFFFF"
                   border="solid 1px #FFFFFF40"
@@ -198,7 +142,6 @@ const ProjectHomePage = () => {
           </Grid2>
         </Grid2>
 
-        {/* <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem" }}> */}
         <Grid2 container spacing={2}>
           <Grid2 size={{ md: 4, sm: 4, xs: 12 }}>
             <GlobalGraphData
@@ -225,16 +168,6 @@ const ProjectHomePage = () => {
           Threat Activity By Category (Total : {projectData?.length})
         </ProgressTypography>
         <GlobalProgressBar />
-
-        {/* </div> */}
-        {/* {projectData?.length === 0 ? (
-          <div></div>
-        ) : (
-          <>
-          
-            <GlobalProgressBar />
-          </>
-        )} */}
       </BackgroundContainer>
       <div style={{ marginTop: "1.5rem" }}>
         <ThreatHeader />

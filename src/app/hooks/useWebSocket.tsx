@@ -20,25 +20,20 @@ export default function WebSocketProvider({ children }: Props) {
       setsocket(connection);
       connection.onopen = () => {
         connection.send(JSON.stringify({ secretKey }));
-        console.log("WebSocket connection established.");
       };
 
       // Handle incoming messages from WebSocket
       connection.onmessage = (event: any) => {
         const message = event.data;
-        console.log("Received message from serverssss:", message);
       };
 
       // Handle WebSocket errors
       connection.onerror = (error: any) => {
-        console.error("WebSocket Error:", error);
         // toast.error("Invalid JSON file");
       };
 
       // Handle WebSocket close
-      connection.onclose = () => {
-        console.log("WebSocket connection closed.");
-      };
+      connection.onclose = () => {};
     }
   }, []);
   const getWsProvider: any = (

@@ -71,7 +71,6 @@ const GMentionDropdown: React.FC<GMentionDropdownProps> = ({
         placeholder={placeholder}
         fullWidth
         InputLabelProps={{
-          // shrink: labelShrink,
           style: {
             fontFamily: "FiraSans-regular",
             color: color ? color : theme.palette.teritiaryColor.main,

@@ -22,9 +22,6 @@ import { styled } from "@mui/system";
 import { PrimaryTypography } from "@/app/Styles/signInUp";
 
 export interface GlobalIntegartionDataProps {
-  // title: string;
-  // secondaryTitle: string;
-  // type: any;
   data: any[];
 }
 
@@ -45,9 +42,6 @@ const TextTypography = styled(Typography)`
 `;
 
 const GlobalIntegartionData: React.FC<GlobalIntegartionDataProps> = ({
-  // title,
-  // secondaryTitle,
-  // type,
   data,
 }) => {
   return (
@@ -60,7 +54,6 @@ const GlobalIntegartionData: React.FC<GlobalIntegartionDataProps> = ({
               padding: "15px 20px",
               borderRadius: "10px", // Rounded corners
               width: "100%",
-              // height: "100px",
             }}
           >
             {data.map((item: any, index: number) => (
@@ -70,7 +63,6 @@ const GlobalIntegartionData: React.FC<GlobalIntegartionDataProps> = ({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    // height: "200px",
                   }}
                 >
                   <Box
@@ -134,52 +126,6 @@ const GlobalIntegartionData: React.FC<GlobalIntegartionDataProps> = ({
           </Card>
         </Grid2>
       </Grid2>
-
-      {/* <hr></hr> */}
-      {/* <Card
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          backgroundColor: "#241D35", // Dark background
-          padding: "5px",
-          borderRadius: "12px", // Rounded corners
-          width: "100%",
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          {type === "AWS" ? (
-            <AwsCardIcon />
-          ) : type === "GCP" ? (
-            <GcpCarIcon />
-          ) : type === "AZURE" ? (
-            <AzureCardIcon />
-          ) : type === "PROJET" ? (
-            <ProjectCardIcon />
-          ) : (
-            ""
-          )}
-
-
-          <Box sx={{ marginLeft: "1rem" }}>
-            <TextTypography>
-              {type} {title}
-            </TextTypography>
-            <HeadingTypography>{secondaryTitle}</HeadingTypography>
-
-          </Box>
-        </Box>
-
-
-        <Box>
-
-          <EditEnvironment />
-          <span style={{ marginLeft: "1rem" }}>
-            {" "}
-            <DeleteEnvironment />
-          </span>
-        </Box>
-      </Card> */}
     </div>
   );
 };

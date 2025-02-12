@@ -9,8 +9,8 @@ import {
   TeritaryTextTypography,
 } from "@/app/Styles/signInUp";
 import { useState } from "react";
-import GBadge from "@/app/ApiFlowComponents/Global/GBadge";
-import { InfoNew, SettingNew } from "@/app/Assests/icons";
+import GBadge from "@/app/apiflow_components/global/GBadgeV1";
+
 import WorkspaceSelection from "./workspaceSideComponents/workspaceSelection";
 import { RootStateType } from "@/app/Redux/store";
 import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
@@ -39,9 +39,8 @@ import Endpoints from "./workspaceSideComponents/endpoints";
 import { BottomBar } from "./BottomBar";
 import { usePathname, useRouter } from "next/navigation";
 import WorkspaceSettings from "./workspaceSideComponents/WorkspaceSettings";
-import GlobalCircularLoader from "@/app/ApiFlowComponents/Global/GlobalCircularLoader";
+
 import { getItems, removeItem, setItem } from "@/app/Services/localstorage";
-import GSkeletonLoader from "@/app/ApiFlowComponents/Global/GSkeletonLoader";
 import {
   clearFlowList,
   FlowReducer,
@@ -95,10 +94,6 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
     (state) => state.apiManagement.environment
   );
 
-  // const { getCollOperTreeLoading } = useSelector<
-  //   RootStateType,
-  //   endpointReducer
-  // >((state) => state.apiManagement.apiFlowDesign);
   const { currentProject } = useSelector<RootStateType, projectApiReducer>(
     (state) => state.apiManagement.apiProjects
   );
@@ -117,7 +112,6 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
 
   const [projectValues, setProjectValues] = useState<any[]>([]);
   const [searchVal, setSearchVal] = useState("");
-  // const [currentPage, setCurrentPage] = useState<number>(7);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [nestedExpandedIndexes, setNestedExpandedIndexes] = useState<any>({
@@ -136,12 +130,6 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
       .unwrap()
       .then((projectRes: any) => {
         if (projectRes?.length > 0) {
-          // setProjectValues((prevValues: any) => [...prevValues, ...projectRes?.projects]);
-          // setProjectValues((prevValues: any) => {
-          //   // Use a Set to avoid duplicates based on project_id
-          //   const uniqueProjects = new Set([...prevValues, ...projectRes?.projects]);
-          //   return Array.from(uniqueProjects)
-          // });
           setProjectValues((prevValues: any) => {
             const newProjects = projectRes || [];
             const updatedValues = [...prevValues];
@@ -187,18 +175,10 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
   ) => {
     if (expanded == projectId) {
       setExpanded("");
-      // setItem(`/first/${userProfile?.user?.user_id}`, "");
+
       return;
     }
-    // Set the WSID in cookies and session storage (if needed)
-    // if (tabs?.includes("pro_" + projectId)) {
-    //   return;
-    // }
 
-    // const filteredTabs = tabs.filter((tab: any) => {
-    //   // Check if the tab starts with "pro_"
-    //   return !tab.startsWith("pro_");
-    // });
     if (!loadData) {
       setNestedExpandedIndexes({
         flow: "",
@@ -213,35 +193,21 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
         .then((res: any) => {});
     }
 
-    // const projecTab = "pro_" + projectId;
-    // const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/projects/${projectId}?tabs=${projecTab}`;
-    // const newUrl = `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}?tabs=${projecTab}`;
-
-    //encrypt projectId
-
     setCookies(
       process.env.NEXT_PUBLIC_COOKIE_PROJECTID || "",
       projectId,
       userProfile?.user?.expiration_time
     );
 
-    // let tempArr = [projecTab, ...filteredTabs];
     dispatch(setCurrentTreeActive(projectId));
     dispatch(setCurrentEnvironment(projectId));
-    // dispatch(setTabs(tempArr));
+
     dispatch(GetAllStagesByProjectId(projectId));
 
-    // Update the browser's URL without reloading the page
-    // window.history.pushState({}, "", newUrl);
     setExpanded(projectId);
     setItem(`/first/${userProfile?.user?.user_id}`, projectId);
     // Optional: Trigger any additional side effects or state updates here
   };
-
-  // const handleAccordionChange =
-  //   (panel: number) => (event: any, isExpanded: boolean) => {
-  //     setExpanded(isExpanded ? panel : false); // Allow only one main accordion open
-  //   };
 
   const handleNestedAccordionChange = (accordionKey: any, parentId: any) => {
     if (nestedExpandedIndexes[accordionKey] == parentId) {
@@ -266,7 +232,6 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
   };
 
   React.useEffect(() => {
-    // const container = document.getElementById(maninContainer);
     const container = document.getElementById("scrollable-container");
     container?.addEventListener("scroll", handleScroll);
     setSearchVal("");
@@ -275,7 +240,6 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
       container?.removeEventListener("scroll", handleScroll);
       setSearchVal("");
     };
-    // }, [maninContainer]); // Include maninContainer as a dependency
   }, []);
 
   React.useEffect(() => {
@@ -440,7 +404,7 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                   >
                     {env.name}
                   </TeritaryTextTypography>
-                  {/* {nestedAccordion?.badge === "true" && ( */}
+
                   {/* //*Make the value zero */}
                   <GBadge
                     badgeContent={"0"}
@@ -468,7 +432,7 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                   background: theme.palette.sidebarMainBackground.main,
                   color: "white",
                   boxShadow: "none",
-                  // marginTop: "10px",
+
                   margin: "0px !important",
                 }}
                 expanded={workflowCollapse == env.project_id}
@@ -529,10 +493,6 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                       width: "100%",
                     }}
                   >
-                    {/* {getProjectWsidLoading && (
-                    <GlobalCircularLoader open={getProjectWsidLoading} />
-                  )} */}
-
                     <ExpandMoreIcon
                       sx={{
                         transform:
@@ -568,13 +528,12 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                       >
                         WorkFlows
                       </TeritaryTextTypography>
-                      {/* {nestedAccordion?.badge === "true" && ( */}
+
                       <GBadge
                         badgeContent={"0"}
                         color="#FD0101"
                         iconRight="15px"
                       />
-                      {/* )} */}
                     </div>
                   </Box>
                 </AccordionSummary>
@@ -587,7 +546,7 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                   background: theme.palette.sidebarMainBackground.main,
                   color: "white",
                   boxShadow: "none",
-                  // marginTop: "10px",
+
                   margin: "0px !important",
                 }}
                 expanded={endpointCollapse == env.project_id}
@@ -672,7 +631,7 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
                       >
                         Endpoints
                       </TeritaryTextTypography>
-                      {/* {nestedAccordion?.badge === "true" && ( */}
+
                       {/* //*Make the value zero */}
                       <GBadge
                         badgeContent={"0"}
@@ -702,12 +661,6 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
           </TeritaryTextTypography>
         </Box>
       )}
-
-      {/* {getProjectWsidLoading && (
-        <Box sx={{ position: "relative" }}>
-          <GlobalCircularLoader open={true} noBackDrop />
-        </Box>
-      )} */}
     </>
   );
 };
@@ -768,11 +721,8 @@ const ProjectTree = () => {
         if (groupRes?.length > 0) {
           // Handle success
         }
-        console.log(groupRes, "groupRes");
       })
-      .catch((error: any) => {
-        console.log("ErrorWorkspace: ", error);
-      });
+      .catch((error: any) => {});
   };
 
   React.useEffect(() => {
@@ -850,7 +800,6 @@ const ProjectTree = () => {
                   height: "45px",
                   "&.Mui-expanded": {
                     minHeight: "34px",
-                    // marginTop: "10px",
                   },
                   "& .MuiAccordionSummary-content": {
                     margin: "0",
@@ -936,11 +885,6 @@ const ProjectTree = () => {
           </div>
         ))
       )}
-      {/* {getProjectLoading && (
-        <Box sx={{ position: "relative" }}>
-          <GlobalCircularLoader open={true} noBackDrop />
-        </Box>
-      )} */}
     </>
   );
 };
@@ -1019,7 +963,7 @@ export default function ProjectsComponet() {
                 color: "#7A43FE",
                 fontSize: "0.8rem",
                 marginTop: "1rem",
-                // marginLeft: "10px",
+
                 cursor: "pointer",
                 padding: "0px 10px",
                 overflow: "hidden",

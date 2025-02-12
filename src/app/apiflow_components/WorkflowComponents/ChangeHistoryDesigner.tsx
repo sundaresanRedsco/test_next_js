@@ -13,7 +13,6 @@ import {
 import {
   calculateDaysAgo,
   dateTimeFormat,
-  getCookies,
 } from "@/app/Helpers/helpersFunctions";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Timeline from "@mui/lab/Timeline";
@@ -24,7 +23,6 @@ import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
 import { useEdgesState, useNodesState } from "reactflow";
 import toast from "react-hot-toast";
-import GLoader from "../global/GLoader";
 import ViewFlow from "./ViewFlow";
 import WorkFlowLayout from "./WorkFlowLayout";
 
@@ -45,12 +43,6 @@ function ChangeHistoryDesigner(props: any) {
     RootStateType,
     FlowReducer
   >((state) => state.apiManagement.apiFlowDesign);
-
-  // const versionId = sessionStorage.getItem("versionValue");
-  //   const versionId = getCookies(
-  //     process.env.NEXT_PUBLIC_COOKIE_VERSIONVALUE ?? ""
-  //   );
-  //   const flowId = getCookies(process.env.NEXT_PUBLIC_COOKIE_FLOWID ?? "");
 
   const [filterStatusVal, setFilterStatusVal] = useState("All");
   const [logsDates, setLogsDates] = useState<any[]>([]);
@@ -198,7 +190,7 @@ function ChangeHistoryDesigner(props: any) {
               } else {
                 parsedDetails["isDeleted"] = false;
               }
-              // parsedDetails.position.y = parsedDetails.position.y + 10;
+
               if (parsedPosition && pushedNodeCount[index]) {
                 parsedPosition.y =
                   (parsedPosition?.y || 0) +
@@ -213,9 +205,7 @@ function ChangeHistoryDesigner(props: any) {
               };
             }
           );
-          // if (parsedDetailsArray[1]) {
-          //   const nodeObj = parsedDetailsArray[1];
-          // }
+
           let nodeId_array: any = [];
           let changeNodeArray = parsedDetailsArray
             ?.filter(
@@ -238,10 +228,6 @@ function ChangeHistoryDesigner(props: any) {
                 revision_id: id,
               };
             });
-          // const deletedNodes = parsedDetailsArray.filter(
-          //   (elem: any) => elem.parsedDetails.isDeleted == true
-          // );
-          // console.log(deletedNodes, "testRevHistory2");
 
           setNodes((prevNodes: any) => {
             const updatedNodes = prevNodes?.map((node: any) => node);
@@ -397,13 +383,12 @@ function ChangeHistoryDesigner(props: any) {
         open={openChangeHistory}
         onClose={() => {
           onCloseChangeHistory();
-          //   setInputVisible(false);
         }}
         sx={{
           "& .MuiDrawer-paper": {
-            width: "100%", // Full width
-            maxWidth: "80vw", // Ensure it doesn't exceed viewport width
-            height: "100%", // Full height
+            width: "100%",
+            maxWidth: "80vw",
+            height: "100%",
             background: "#121212",
           },
         }}
@@ -487,10 +472,8 @@ function ChangeHistoryDesigner(props: any) {
                 ></div>
                 <div>
                   <Box
-                    // className='container'
                     ref={containerRef}
                     onScroll={handleScroll}
-                    // minHeight={"100px"}
                     height={"530px"}
                     sx={{
                       overflowY: "auto",

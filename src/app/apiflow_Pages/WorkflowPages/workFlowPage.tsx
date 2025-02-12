@@ -100,6 +100,9 @@ import { useLocation } from "react-router-dom";
 import GlobalContextMenu from "@/app/hooks/workflow/GlobalContextMenu";
 import useWorkflowPost from "@/app/hooks/posts/useWorkflowPost";
 import WorkflowPosts from "@/app/apiflow_components/WorkflowComponents/workflowPosts";
+import { usePostStore } from "@/app/store/usePostStore";
+import { useQuery } from "@tanstack/react-query";
+import { AdminServices } from "@/app/Services/services";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -107,7 +110,6 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: theme.palette.common.white,
     color: "rgba(0, 0, 0, 0.87)",
-    // boxShadow: theme.shadows[1],
     fontFamily: "Inter-Regular",
     fontSize: 8,
     fontWeight: 600,
@@ -137,12 +139,15 @@ const WorkflowDrawer = dynamic(
   }
 );
 
-const GDialogBox = dynamic(() => import("@/app/Components/Global/GDialogBox"), {
-  ssr: false,
-});
+const GDialogBox = dynamic(
+  () => import("@/app/apiflow_components/global/GDialogBox"),
+  {
+    ssr: false,
+  }
+);
 
 const DesignerImportPopup = dynamic(
-  () => import("@/app/ApiFlowComponents/ApiDesigner/DesignerImportPopup"),
+  () => import("@/app/apiflow_components/ApiDesigner/DesignerImportPopup"),
   { ssr: false }
 );
 
@@ -166,24 +171,8 @@ const WorkflowDesigner = (props: any) => {
 
   const [apiFlow_Id, setWorkflowId] = useState<any>(null);
 
-  // useEffect(() => {
-  //   // Extracting the workflowId from the pathname
-  //   const pathParts = pathname.split("/"); // Split the pathname by '/'
-
-  //   // Assuming the structure is /userId/{userId}/workspaceId/{workspaceId}/workflow/{workflowId}
-  //   const workflowIndex = pathParts.indexOf("workflow"); // Find the index of 'workflow'
-
-  //   if (workflowIndex !== -1 && workflowIndex + 1 < pathParts.length) {
-  //     setWorkflowId(pathParts[workflowIndex + 1]); // The next part will be the workflowId
-
-  //   }
-  // }, [pathname]);
-
-  // Add secretKey to the connection headers
-
   //---------------------------useSelector---------------------------------------------------------------
   const {
-    // loading,
     DesignFlowloading,
     compiling,
     globalKeys,
@@ -294,7 +283,6 @@ const WorkflowDesigner = (props: any) => {
     handleSavePopup,
   } = useWorkflow(customHookprops);
 
-  // useSelectNodes(customHookprops);
   const { handlePasteNodes } = useSelectNodes(customHookprops);
   //--------------------------------------constants---------------------------------------------------------
 
@@ -333,13 +321,13 @@ const WorkflowDesigner = (props: any) => {
   const handleClickOpen = () => {
     if (nodes.length === 1) {
       let updateData = {
-        action: "USER_ACTION", // Action to perform
-        flow_id: apiFlow_Id, // ID of the flow (ensure apiFlowId is defined and valid)
-        status: "START", // Initial status
+        action: "USER_ACTION",
+        flow_id: apiFlow_Id,
+        status: "START",
         type: "IMPORT",
-        next_node: [], // Array to hold the next nodes, initially empty
-        userAction: `${userProfile?.user?.email} initiated Import`, // User email initiating the run
-        errors: [], // Array to track errors, initially empty
+        next_node: [],
+        userAction: `${userProfile?.user?.email} initiated Import`,
+        errors: [],
       };
 
       const runMap = ydoc?.getMap<any>("run");
@@ -354,13 +342,13 @@ const WorkflowDesigner = (props: any) => {
 
   const handleImportClose = () => {
     let updateData = {
-      action: "USER_ACTION", // Action to perform
-      flow_id: apiFlow_Id, // ID of the flow (ensure apiFlowId is defined and valid)
-      status: "COMPLETED", // Initial status
+      action: "USER_ACTION",
+      flow_id: apiFlow_Id,
+      status: "COMPLETED",
       type: "IMPORT",
-      next_node: [], // Array to hold the next nodes, initially empty
-      userAction: ``, // User email initiating the run
-      errors: [], // Array to track errors, initially empty
+      next_node: [],
+      userAction: ``,
+      errors: [],
     };
     const runMap = ydoc?.getMap<any>("run");
     if (runMap) {
@@ -630,13 +618,8 @@ const WorkflowDesigner = (props: any) => {
 
               // Set color based on sourceHandle condition
               const edgeColor = edge.sourceHandle?.endsWith("_success")
-                ? // ? "#4CAF50"
-                  // "#4CAF50" // Color for success
-                  "#55CCFF" // Color for success
-                : // Color for success
-                  // : "#FF5722"; // Color for other cases
-                  // "#4CAF50";
-                  "#55CCFF";
+                ? "#55CCFF" // Color for success
+                : "#55CCFF";
 
               const source = edge.source?.endsWith("_start")
                 ? nodes[0]?.id // Color for success
@@ -737,9 +720,7 @@ const WorkflowDesigner = (props: any) => {
         })
       )
         .unwrap()
-        .then((operationRes: any) => {
-          // setFullUrl(operationRes?.[0]?.full_url);
-        })
+        .then((operationRes: any) => {})
         .catch((error: any) => {});
     }
   }, [dropItem?.id, currentFlowDetails?.project_id]);
@@ -889,8 +870,6 @@ const WorkflowDesigner = (props: any) => {
   };
 
   const onRun = async () => {
-    // localStorage.setItem(flowKey, JSON.stringify(flow));
-
     // Create update data with initial values
     let updateData = {
       action: "RUN", // Action to perform
@@ -921,7 +900,7 @@ const WorkflowDesigner = (props: any) => {
       if (errorMap) {
         errorMap.set("errors", errors);
       }
-      // setCompiling(false);
+
       dispatch(setCompiling(false));
     }
 
@@ -1028,15 +1007,6 @@ const WorkflowDesigner = (props: any) => {
   };
 
   const exportToJson = () => {
-    // Parse nodes data
-    // const parsedNodes = nodes.map((node) => ({
-    //   id: node.id,
-    //   type: node.type,
-    //   label: node.data.label,
-    //   position: node.position,
-    //   // Add more fields as needed
-    // }));
-
     const data = {
       nodes: nodes,
       edges: edges,
@@ -1074,7 +1044,6 @@ const WorkflowDesigner = (props: any) => {
       ariaLabel: "Publish Version",
       tooltipTitle: "Publish Version",
       IconComponent: PublishOutlinedIcon,
-      // sx: { marginLeft: "auto" }, // Add margin-left style here
       isActive: false,
       disabled: isEditable || actionProgress,
       dropDown: "false",
@@ -1105,8 +1074,6 @@ const WorkflowDesigner = (props: any) => {
       tooltipTitle: "Import",
       IconComponent: ImportExportIcon,
       isActive: false,
-      // isActive: false,
-      //  disabled: nodes?.length !== 1 || actionProgress,
       dropDown: "false",
     },
     {
@@ -1196,11 +1163,6 @@ const WorkflowDesigner = (props: any) => {
         versionValue,
         ydoc
       );
-      //   new WebsocketProvider(
-      //   websocketUrl,
-      //   `${userProfile.user.tenant_id}_${apiFlow_Id}_${versionValue}`,
-      //   ydoc
-      // );
 
       setYdoc(ydoc);
       dispatch(setFlowYdoc(ydoc));
@@ -1300,30 +1262,10 @@ const WorkflowDesigner = (props: any) => {
     };
   }, []);
 
-  // let lastFrameTime = performance.now();
-  // let frameCount = 0;
-
-  // function measureFPS() {
-  //   const now = performance.now();
-  //   const delta = now - lastFrameTime;
-  //   lastFrameTime = now;
-  //   frameCount++;
-
-  //   if (delta > 1000) {
-  //     // Log FPS every second
-  //     frameCount = 0;
-  //   }
-  //   requestAnimationFrame(measureFPS);
-  // }
-
   const onDragOver = useCallback((event: any) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
-
-  // useEffect(() => {
-  //   measureFPS();
-  // }, []);
 
   const [tooltipPosition, setTooltipPosition] = React.useState({ x: 0, y: 0 });
 
@@ -1405,7 +1347,7 @@ const WorkflowDesigner = (props: any) => {
     e.preventDefault();
     const wrapperBounds =
       reactFlowWrapperMenu?.current?.getBoundingClientRect();
-    // const position = screenToFlowPosition({ x: e.clientX, y: e.clientY });
+
     const position = {
       x: e.clientX - wrapperBounds?.left,
       y: e.clientY - wrapperBounds?.top,
@@ -1438,11 +1380,25 @@ const WorkflowDesigner = (props: any) => {
     };
   }, [contextMenu?.show]);
 
-  const { openPosts, setopenPostAnchorEl, openPostAnchorEl } =
-    useWorkflowPost();
+  const { setopenPostAnchorEl, openPostAnchorEl, channelId, setChannelId } =
+    usePostStore();
+  const openPosts = Boolean(openPostAnchorEl);
   const [currentNodePosition, setcurrentNodePosition] = useState<any>(null);
   const selectorRef = useRef<Selecto>(null);
-
+  const { data: channelIds } = useQuery({
+    queryKey: ["channelId"],
+    queryFn: async () => {
+      const data = await AdminServices(
+        "get",
+        `Api/Post/get_channel_by_flow_id_offset?flow_id=${apiFlow_Id}&start=1&end=5`
+      );
+      if (data) {
+        setChannelId(data[0].id);
+      }
+      return data;
+    },
+    enabled: !!apiFlow_Id,
+  });
   return (
     <Grid
       ref={boxRef}
@@ -1493,7 +1449,6 @@ const WorkflowDesigner = (props: any) => {
             ref={reactFlowWrapperMenu}
             onContextMenu={openContextMenuHandler}
             sx={{
-              // padding: "10px",
               position: "relative",
               display: "flex",
               justifyContent: "center",
@@ -1501,7 +1456,6 @@ const WorkflowDesigner = (props: any) => {
               height: "85vh",
             }}
             size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
-            // size={{ xs: 12, sm: 12, md: 7.7, lg: 8.7, xl: 8.6 }}
           >
             <div
               className="position-relative"
@@ -1544,35 +1498,17 @@ const WorkflowDesigner = (props: any) => {
                       width: "100%",
                       height: "100%",
                     }}
-                    // style={{
-                    //   width: "100%",
-                    //   height: recentlyModifiedProp === true ? "20vh" : "80vh",
-                    // }}
                     ref={dropContainer1}
                     onClick={handleCanvasClick}
                   >
                     {isEditable && multiSelectClicked && (
                       <Selecto
-                        // ref={selectorRef}
                         container={(document as any).getElementById(
                           "react-flow-container"
                         )}
-                        // dragContainer={".react-flow__node"}
-                        // container={document.body}
-                        // dragContainer={window}
                         selectableTargets={[".react-flow__node"]}
-                        // selectableTargets={["#react-flow-container"]}
                         selectByClick={false}
                         selectFromInside={false}
-                        // onDragStart={(e) => {
-                        //   if (e?.inputEvent.button !== 0) {
-                        //     return false;
-                        //   }
-                        //   if (e.inputEvent.target.nodeName === "BUTTON") {
-                        //     return false;
-                        //   }
-                        //   return true;
-                        // }}
                         continueSelect={false}
                         toggleContinueSelect={["shift"]}
                         hitRate={0}
@@ -1655,7 +1591,6 @@ const WorkflowDesigner = (props: any) => {
                           setcurrentNodePosition(null);
                         }
                         onDragEnd(event, dragNode);
-                        // currentNodePosition = null;
                       }}
                     >
                       {Array.from(cursors?.entries()).map(
@@ -1735,7 +1670,6 @@ const WorkflowDesigner = (props: any) => {
             <GlobalContextMenu
               x={contextMenu?.x}
               y={contextMenu?.y}
-              // onCloseContextMenu={closeContextMenuHandler}
               parentRef={reactFlowWrapperMenu}
             >
               <div className="flex flex-col gap-2">
@@ -1747,9 +1681,7 @@ const WorkflowDesigner = (props: any) => {
                       cursor: "pointer",
                     }}
                     onClick={(e?: any) => {
-                      // item.onclick();
                       handleContextMenuPaste(e);
-                      // closeContextMenuHandler();
                     }}
                   >
                     {item?.label}
@@ -1816,7 +1748,7 @@ const WorkflowDesigner = (props: any) => {
           errorBoole={errorBoole}
         />
       </WorkFlowLayout>
-      {/* <IconButton
+      <IconButton
         aria-owns={apiFlow_Id}
         aria-haspopup={true}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -1853,11 +1785,12 @@ const WorkflowDesigner = (props: any) => {
           zIndex: 9999,
           "& .MuiPaper-root": {
             padding: "10px",
+            background: "black",
           },
         }}
       >
-        <WorkflowPosts />
-      </Popover> */}
+        <WorkflowPosts channel_id={channelId} />
+      </Popover>
     </Grid>
   );
 };

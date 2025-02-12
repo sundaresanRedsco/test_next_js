@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import GlobalHeader from "@/app/ApiFlowComponents/Global/GlobalHeader";
+
 import { Box } from "@mui/material";
 import { styled } from "@mui/system";
 import ProjectSideBar from "@/app/apiflow_components/Integration/ProjectSidebar";
@@ -16,8 +16,6 @@ import GlobalCircularLoader from "@/app/apiflow_components/global/GCircularLoade
 import { dateFormat, formatToTitleCase } from "@/app/Helpers/helpersFunctions";
 
 const CardContainer = styled(Box)``;
-// background: ${({ theme }) => theme.palette.v2SectionColour.main};
-// // padding: 10px 25px;
 
 const sidebarData = [
   {
@@ -37,17 +35,6 @@ function IntegrationList(props: any) {
   const { id, onCloseHandler } = props;
   const dispatch = useDispatch<any>();
 
-  const type =
-    id === "integration_page_service_now"
-      ? "SERVICE_NOW"
-      : id === "integration_page_splunk_siem"
-      ? "SPLUNK_SIEM"
-      : id === "jira"
-      ? "JIRA"
-      : id === "pager_duty"
-      ? "PAGER_DUTY"
-      : "";
-
   const { integrationLoading } = useSelector<RootStateType, integrationReducer>(
     (state) => state.apiManagement.integration
   );
@@ -64,20 +51,20 @@ function IntegrationList(props: any) {
   };
 
   useEffect(() => {
-    // const type = id.toUpperCase();
     const data = {
       tenant_id: userProfile?.user.tenant_id,
-      type: type,
+      type: id,
       start: 1,
       end: 5,
     };
-    if (type) {
-      dispatch(GetIntegrationByTenantIdandType(data))
-        .unwrap()
-        .then((res: any) => {
-          setIntegrationList(res);
-        });
-    }
+
+    // if (type) {
+    dispatch(GetIntegrationByTenantIdandType(data))
+      .unwrap()
+      .then((res: any) => {
+        setIntegrationList(res);
+      });
+    // }
   }, [id]);
 
   return (
@@ -91,7 +78,6 @@ function IntegrationList(props: any) {
               <div style={{ marginTop: "10px" }} key={index}>
                 <GlobalIntegrationCard
                   title={data?.type}
-                  // secondaryTitle={`Added on ${data?.createdat}`}
                   secondaryTitle={`Added on ${dateFormat(data?.created_at)}`}
                   cardData={"SN"}
                 />
@@ -100,10 +86,8 @@ function IntegrationList(props: any) {
             <GlobalCircularLoader open={integrationLoading} />
           </Box>
         </>
-      ) : id === "jira" || id === "pager_duty" ? (
+      ) : id === "JIRA" || id === "PAGER_DUTY" ? (
         <>
-          {/* <GlobalHeader id={id} onCloseHandler={onCloseHandler} /> */}
-
           <CardContainer
             style={{
               padding: "10px 10px",
@@ -113,30 +97,16 @@ function IntegrationList(props: any) {
             }}
           >
             <div className="d-flex">
-              <Box
-                sx={{
-                  width: "7%",
-                  textAlign: "center",
-                  alignItems: "center",
-                }}
-              >
-                <ProjectSideBar
-                  sidebarData={sidebarData}
-                  onClickHandler={(id: string) => handleItemClick(id)}
-                  active={activeItem}
-                />
-              </Box>
               <Box>
                 {/* <p>{formatToTitleCase(id)}</p> */}
                 {integrationList?.map((data: any, index: any) => (
                   <div style={{ marginTop: "10px" }} key={index}>
                     <GlobalIntegrationCard
                       title={data?.type}
-                      // secondaryTitle={`Added on ${data?.createdat}`}
                       secondaryTitle={`Added on ${dateFormat(
                         data?.created_at
                       )}`}
-                      cardData={"SN"}
+                      cardData={id}
                     />
                   </div>
                 ))}
