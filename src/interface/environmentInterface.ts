@@ -10,6 +10,7 @@ interface Version {
 export interface environmentDataInterface {
   project_id: string;
   name?: string;
+  description?: string;
   tenant_id: string;
   project_name: string;
   summary: string;

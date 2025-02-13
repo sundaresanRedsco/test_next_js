@@ -7,21 +7,17 @@ import {
   setCookies,
 } from "../Helpers/helpersFunctions";
 export const environment = process.env.NODE_ENV;
-console.log(environment, "environment");
 
 export let adminUrl: any;
 export let googleClientId: any;
 adminUrl = process.env.NEXT_PUBLIC_BASE_URL;
 googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-console.log(adminUrl, "adminUrl");
-
 export const DATE_FORMAT = "YYYY-MM-DD hh:mm:ss A";
 
 // Fetch user profile from cookies or session
 export async function getUserProfile(): Promise<any | null> {
   const data: any = await getSession(); // Fetch session from NextAuth
-  console.log("Session Data:", data);
 
   const token: string | null =
     data?.user?.token || Cookies.get("token") || null;
@@ -70,7 +66,6 @@ export async function initSession({
 }) {
   // Fetch session again to ensure synchronization
   const data: any = await getSession();
-  console.log("Session Data:", data);
 
   // Set the token in a cookie
   // setCookies("token", token,expires_in);
@@ -104,18 +99,13 @@ export async function initSession({
       expires_in,
       user_profile,
     });
-    console.log("Session initialized successfully");
-  } catch (error) {
-    console.error("Error initializing session:", error);
-  }
+  } catch (error) {}
 }
 
 // Login function, followed by session initialization
 export async function login(values: any): Promise<any> {
   // Simulate API call or adjust based on real API response
   const data: any = await getSession(); // Fetch session data after login
-
-  console.log("Session Data:", data);
 
   if (data?.user_registered === "EXISTING_USER") {
     const access_token = data.user.token;

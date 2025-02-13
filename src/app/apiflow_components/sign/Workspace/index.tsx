@@ -60,12 +60,12 @@ export const gatewayList = [
     clickable: "SWAGGER",
   },
 
-  {
-    name: "HTTP, RESTful, SOAP and WSDL",
-    label: "HTTP",
-    icon: <RestAPISignUp height={"40px"} />,
-    clickable: "HTTP",
-  },
+  // {
+  //   name: "HTTP, RESTful, SOAP and WSDL",
+  //   label: "HTTP",
+  //   icon: <RestAPISignUp height={"40px"} />,
+  //   clickable: "HTTP",
+  // },
   {
     name: "API Discovery via traffic monitoring",
     label: "Load Balancer",

@@ -280,7 +280,6 @@ export default function CollectionPage() {
                     fileName.endsWith(".yaml") ||
                     fileName.endsWith(".yml")
                   ) {
-                    console.log("file", file);
                     setSelectedFile(file);
                   } else {
                   }

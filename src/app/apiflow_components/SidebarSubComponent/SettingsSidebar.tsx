@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { OverView, ProjectWork } from "@/app/Assests/icons";
+import { Integration, OverView, ProjectWork } from "@/app/Assests/icons";
 import { color, styled } from "@mui/system";
 import { useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
@@ -30,6 +30,13 @@ const workspaceData = [
     regex:
       /^\/userId\/[a-fA-F0-9]+\/workspaceId\/[a-fA-F0-9]+\/settings\/projects$/,
   },
+  {
+    id: "integrations",
+    icon: <Integration />,
+    text: "Integrations",
+    regex:
+      /^\/userId\/[a-fA-F0-9]+\/workspaceId\/[a-fA-F0-9]+\/settings\/projects$/,
+  },
 ];
 
 function SettingsSidebar() {
@@ -56,6 +63,12 @@ function SettingsSidebar() {
   useEffect(() => {
     if (isPageLoading) {
       setIsPageLoading(false);
+    }
+    const activePaths = pathname.split("/");
+    if (activePaths[4]) {
+      setSelectedLink(activePaths[4]);
+    } else {
+      setSelectedLink("profile");
     }
   }, [pathname, isPageLoading]);
 
@@ -113,7 +126,35 @@ function SettingsSidebar() {
 
       <Box style={{ margin: "1rem", marginRight: "0rem" }}>
         {workspaceData.map((workspace) => (
-          <div key={workspace.id} style={{ marginBottom: "1rem" }}>
+          <div
+            onClick={() => {
+              setSelectedLink(workspace.id);
+              if (workspace.id == "profile") {
+                if (
+                  pathname != `/userId/${userProfile?.user.user_id}/settings`
+                ) {
+                  setIsPageLoading(true);
+                } else {
+                  setIsPageLoading(false);
+                }
+                router.push(`/userId/${userProfile?.user.user_id}/settings`);
+              } else {
+                if (
+                  pathname !=
+                  `/userId/${userProfile?.user.user_id}/settings/${workspace.id}`
+                ) {
+                  setIsPageLoading(true);
+                } else {
+                  setIsPageLoading(false);
+                }
+                router.push(
+                  `/userId/${userProfile?.user.user_id}/settings/${workspace.id}`
+                );
+              }
+            }}
+            key={workspace.id}
+            style={{ marginBottom: "1rem" }}
+          >
             <div
               style={{
                 display: "flex",
@@ -127,26 +168,6 @@ function SettingsSidebar() {
                 borderTopLeftRadius: "8px",
                 borderBottomLeftRadius: "8px",
                 color: workspace?.id === selectedLink ? "#FFFFFF" : "#FFFFFF80",
-              }}
-              onClick={() => {
-                setIsPageLoading(true);
-                // Update selected link for active color
-                setSelectedLink(workspace.id);
-                switch (workspace.id) {
-                  case "profile":
-                    router.push(
-                      `/userId/${userProfile?.user.user_id}/settings`
-                    );
-                    break;
-                  case "accountSetting":
-                    router.push(
-                      `/userId/${userProfile?.user.user_id}/settings/accountSetting`
-                    );
-                    break;
-
-                  default:
-                    break;
-                }
               }}
             >
               <Box> {workspace.icon}</Box>

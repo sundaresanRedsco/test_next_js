@@ -48,7 +48,6 @@ import RadioCheckboxComponent from "@/app/apiflow_components/global/radioCheckbo
 import Grid from "@mui/material/Grid2";
 import GlobalLoader from "@/app/apiflow_components/global/GlobalLoaderV1";
 import ApiInsights from "@/app/apiflow_components/Operations/apiInsights";
-// import ApiInsights from "@/app/Components/ApiManagement/apiInsights";
 import GSelect from "@/app/apiflow_components/global/GSelect";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import GButton from "@/app/apiflow_components/global/GButton";
@@ -86,6 +85,8 @@ export default function OperationsPage(props: any) {
     RootStateType,
     CommonReducer
   >((state) => state.common);
+
+  console.log(userProfile, "userProfile");
 
   const { currentEnvironment, currentStage } = useSelector<
     RootStateType,
@@ -573,17 +574,6 @@ export default function OperationsPage(props: any) {
     const selectedNav = navLinks[newValue];
     navLinkHandler(selectedNav?.id, selectedNav?.label);
     setEnablePassThrough(false);
-  };
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-    setBackgroundUrlClicked(true);
-    handleBackgroundUrlList();
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-    setBackgroundUrlClicked(false);
   };
 
   const handleOperationDetails = (field: any, event: any) => {
@@ -1128,15 +1118,12 @@ export default function OperationsPage(props: any) {
   };
 
   const handleBackgroundUrlList = () => {
-    // dispatch(BackgroundUrlList("ccd743827c4f4f07be7ac6c54654abf0"))
     dispatch(BackgroundUrlList(operationId))
       .unwrap()
       .then((res: any) => {
         setBackgroundUrlData(res);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   };
 
   const handleBtnClick = (val: any) => {
@@ -1172,7 +1159,6 @@ export default function OperationsPage(props: any) {
           });
         })
         .catch((error: any) => {
-          console.log("collectionResponseError: ", error);
           if (error?.message === "UNAUTHORIZED") {
             dispatch(updateSessionPopup(true));
           }
@@ -1220,6 +1206,10 @@ export default function OperationsPage(props: any) {
           input_type: val?.input_type,
           raw_payload: val?.raw_payload,
           raw_output: val?.raw_output,
+          location_type: val?.location_type,
+          location: val?.location,
+          sector: val?.sector,
+          intent: val?.intent,
         });
 
         setRowsBody([...val?.operationInputs]);
@@ -1274,9 +1264,7 @@ export default function OperationsPage(props: any) {
       .then((res: any) => {
         setApiStageId(res?.[0]?.apistage_id);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   }, []);
 
   useEffect(() => {
@@ -1324,6 +1312,10 @@ export default function OperationsPage(props: any) {
               input_type: val?.input_type,
               raw_payload: val?.raw_payload,
               raw_output: val?.raw_output,
+              location_type: val?.location_type,
+              location: val?.location,
+              sector: val?.sector,
+              intent: val?.intent,
             });
             setRowsBody([...val?.operationInputs]);
             setRowsHeader([...val?.operationHeaders]);
@@ -1341,6 +1333,16 @@ export default function OperationsPage(props: any) {
           }
         });
     }
+  }, [operationIdVal]);
+
+  useEffect(() => {
+    dispatch(BackgroundUrlList(operationId))
+      .unwrap()
+      .then((res: any) => {
+        setBackgroundUrlData(res);
+        console.log(res, "OperPageBG");
+      })
+      .catch((error: any) => {});
   }, [operationIdVal]);
 
   if (operationSpellValidation) {
@@ -1418,7 +1420,10 @@ export default function OperationsPage(props: any) {
                   </SecondaryTypography>
                 </Box>
                 <>
-                  <ApiInsights />
+                  <ApiInsights
+                    currentOperation={operationDetails}
+                    backgroundUrlData={backgroundUrlData}
+                  />
                 </>
               </Box>
             </Stack>
@@ -1502,21 +1507,6 @@ export default function OperationsPage(props: any) {
               }}
             >
               {translate("apiManagement.API_OPERATION_URL")}
-              {/* <span> */}
-              <Tooltip arrow title="Click here to see the background url.">
-                <InfoIcon
-                  style={{
-                    fontSize: "20px",
-                    marginLeft: "10px",
-                    color: `#ACAAB3`,
-                    fontWeight: 900,
-                  }}
-                  onClick={(e: any) => {
-                    handleClick(e);
-                  }}
-                />
-              </Tooltip>
-              {/* </span> */}
             </PrimaryTypography>
             <div className="api_operation_url">
               <Box
@@ -1613,7 +1603,7 @@ export default function OperationsPage(props: any) {
               marginTop: "15px",
             }}
           >
-            <Grid size={{ xs: 12, sm: 12, md: 12, lg: 4, xl: 4 }}>
+            {/* <Grid size={{ xs: 12, sm: 12, md: 12, lg: 4, xl: 4 }}>
               <PrimaryTypography aria-required="true">
                 {translate("apiManagement.PASS_THROUGH_COOKIES")}
               </PrimaryTypography>
@@ -1772,7 +1762,7 @@ export default function OperationsPage(props: any) {
                   handleOperationDetails("generate_MockDate", generateMockDate);
                 }}
               />
-            </Grid>
+            </Grid> */}
           </Stack>
           <Grid
             size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
@@ -1993,132 +1983,7 @@ export default function OperationsPage(props: any) {
               </>
             )}
           </Grid>
-          <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
-            <div>
-              <Backdrop
-                sx={{
-                  zIndex: 9998,
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                }}
-                open={backgroundUrlClicked}
-              />
-              {backgroundUrlClicked === true && anchorEl && (
-                <div>
-                  <Popover
-                    open={open}
-                    anchorEl={anchorEl}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    sx={{
-                      zIndex: 9999,
-                      "& .MuiPaper-root": {
-                        backgroundColor: theme.palette.signInUpWhite.main,
-                        width: "500px",
-                        height: "400px",
-                        position: "absolute",
-                        marginLeft: "10px",
-                        top: "131px !important",
-                      },
-                    }}
-                  >
-                    <div
-                      style={{
-                        padding: "20px",
-                      }}
-                    >
-                      <CloseIcon
-                        style={{
-                          fontSize: "10px",
-                          position: "absolute",
-                          top: "18px",
-                          right: "18px",
-                          cursor: "pointer",
-                          zIndex: "1",
-                          color: `${theme.palette.primaryBlack.main}`,
-                          marginBottom: "10px",
-                        }}
-                        onClick={() => {
-                          handleClose();
-                        }}
-                      />
-                      <HeadingTypography
-                        style={{
-                          fontSize: "10px",
-                          fontFamily: "FiraSans-regular",
-                        }}
-                      >
-                        Background Url List
-                      </HeadingTypography>
-                      <SecondaryTypography
-                        style={{
-                          color: `${theme.palette.teritiaryColor.main}`,
-                          marginLeft: "10px",
-                        }}
-                      >
-                        Here is the list of background URLs for the operation{" "}
-                        <span style={{ fontWeight: 900 }}>
-                          {operationDetails?.name}
-                        </span>
-                      </SecondaryTypography>
-                      <div
-                        style={{
-                          padding: "10px",
-                        }}
-                      >
-                        {backgroundUrlData?.length === 0 ? (
-                          <>
-                            <PrimaryTypography
-                              style={{
-                                alignItems: "center",
-                                textAlign: "center",
-                                position: "absolute",
-                                top: "50%",
-                                left: "50%",
-                                transform: "translate(-50%, -50%)",
-                                color: `${theme.palette.teritiaryColor.main}`,
-                                fontWeight: 900,
-                                fontSize: "10px",
-                              }}
-                            >
-                              No data found
-                            </PrimaryTypography>
-                          </>
-                        ) : (
-                          <>
-                            {backgroundUrlData?.map(
-                              (val: any, index: number) => (
-                                <div
-                                  key={val?.id}
-                                  style={{
-                                    padding: "5px",
-                                  }}
-                                >
-                                  <pre
-                                    style={{
-                                      fontSize: "10px",
-                                      fontFamily: "FiraSans-regular",
-                                    }}
-                                  >
-                                    <SecondaryTypography>
-                                      {`${index + 1}. `}
-                                      {val?.background_url}
-                                    </SecondaryTypography>
-                                  </pre>
-                                </div>
-                              )
-                            )}
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </Popover>
-                </div>
-              )}
-            </div>
-          </Grid>
+
           <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
             <div>
               {!enablePassThrough &&

@@ -213,8 +213,6 @@ export default function GroupNode({ data }: Props) {
     setIsCopied(copyClicked[nodeData?.id]);
   }, [copyClicked]);
 
-  console.log(frameLockClicked, "frameLockClicked");
-
   return (
     <>
       <NodeResizer

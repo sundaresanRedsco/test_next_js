@@ -20,19 +20,21 @@ interface Store {
   message: string;
   openSignUp: boolean;
   setOpenSignUp: (state: boolean) => void;
-  handleOpenSignUp: () => void;
+  handleOpenSignUp: (value?: any) => void;
   isTotpEnabled: boolean;
   setIsTotpEnabled: (state: boolean) => void;
   authPage: number;
   setAuthPage: (state: number) => void;
   resetAllSignStoreData: () => void;
+  isImportAws: any;
+  setIsImportAws: (value?: any) => void;
 }
 const intialState: any = {
   isTotpEnabled: false,
   authPage: 0,
   userData: null,
   open: false,
-  isLoading: true,
+  isLoading: false,
   message: "",
   openSignUp: false,
   formDataStore: {
@@ -46,6 +48,7 @@ const intialState: any = {
   },
   apiDataStore: null,
   activeStep: -1,
+  isImportAws: "",
 };
 export const useSignUpStore = create<Store>((set, get) => ({
   ...intialState,
@@ -61,7 +64,7 @@ export const useSignUpStore = create<Store>((set, get) => ({
 
   //**SignUp POP Up */
   setOpenSignUp: (state: boolean) => set({ openSignUp: state }),
-  handleOpenSignUp: () => set({ openSignUp: true }),
+  handleOpenSignUp: (value) => set({ openSignUp: true }),
 
   //**Form Data Store */
   setFormDataStore: (key, value) =>
@@ -103,4 +106,5 @@ export const useSignUpStore = create<Store>((set, get) => ({
   //*SOS */
   setAuthPage: (state) => set({ authPage: state }),
   resetAllSignStoreData: () => set(intialState),
+  setIsImportAws: (value) => set({ isImportAws: value }),
 }));

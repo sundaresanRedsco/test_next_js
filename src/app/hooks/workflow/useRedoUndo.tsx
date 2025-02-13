@@ -125,7 +125,6 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
     const edgesMap = ydoc?.getMap<any>("edges");
 
     if (!nodesMap || !edgesMap) {
-      console.log("Yjs Maps 'nodes' or 'edges' are not available.");
       return;
     }
     const filteredNodeIds = currentNodes?.filter(
@@ -164,7 +163,6 @@ export default function useRedoUndo(ydoc: Y.Doc | null, data: any) {
         // Handle connected edges
         removeEdgesConnectedToNode(id, edgesMap);
       } else {
-        console.log(`Node ID ${id} does not exist in the Yjs Map.`);
       }
     });
 

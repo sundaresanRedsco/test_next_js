@@ -47,7 +47,6 @@ const fetchWorkspace = (
 ) => {
   const parts = pathname.split("/");
   const workspaceIdIndex = parts.indexOf("workspaceId") + 1;
-  console.log(pathname, "GetWorkspacesById");
   const workspace_id = parts[workspaceIdIndex] || "";
   if (workspace_id) {
     if (currentWorkspace?.id !== workspace_id) {
@@ -81,7 +80,6 @@ const DashboardLayout = ({ children }: any) => {
 
   const isMounted = useRef(true);
   const pathname = usePathname();
-  console.log("pathnameDashboard: ", pathname);
 
   const { loading, themeValue } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common

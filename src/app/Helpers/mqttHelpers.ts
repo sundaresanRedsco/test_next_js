@@ -15,14 +15,11 @@ export const connectToMqtt = (
   const mqttClient = mqtt.connect(brokerUrl, options);
 
   mqttClient.on("connect", () => {
-    console.log("Connected to MQTT broker");
     onConnectCallback();
 
     mqttClient.subscribe(topic, (err: any) => {
       if (err) {
-        console.error("Subscription error:", err);
       } else {
-        console.log(`Subscribed to topic: ${topic}`);
       }
     });
   });
@@ -47,8 +44,6 @@ export const sendMqttMessage = (
 ) => {
   if (client) {
     client.publish(topic, message);
-    console.log(`Message sent to ${topic}: ${message}`);
   } else {
-    console.error("MQTT client is not connected");
   }
 };

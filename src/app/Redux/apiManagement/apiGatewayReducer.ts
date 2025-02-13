@@ -59,7 +59,6 @@ export const GetApiGatewaySdkKeys = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -79,7 +78,6 @@ export const GetAuthkeyById = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -135,7 +133,6 @@ export const GetLogstashData = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -156,7 +153,6 @@ export const GetIpDomainNames = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -203,7 +199,6 @@ export const GetLogskeyBySdkId = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -225,7 +220,6 @@ export const CreateLogsKeys = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -284,7 +278,6 @@ export const GetApiGatewayByProjectId = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );

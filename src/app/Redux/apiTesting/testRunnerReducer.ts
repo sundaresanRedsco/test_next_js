@@ -9,12 +9,12 @@ export const GetTestRunnerList = createAsyncThunk(
         "get",
         "api/ApiTest/get_testrunner_list",
         null,
-        null,
+        null
       );
     } catch (err: any) {
       // throw new Error(errorHandling(err));
     }
-  },
+  }
 );
 
 export const CreateApiTestRunner = createAsyncThunk(
@@ -25,12 +25,10 @@ export const CreateApiTestRunner = createAsyncThunk(
         "post",
         "api/TestRunner/Create_apiTestRunner",
         value,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const CreateScannerWithOperation = createAsyncThunk(
@@ -41,12 +39,10 @@ export const CreateScannerWithOperation = createAsyncThunk(
         "post",
         "api/TestRunner/createScanerWithOperation",
         value,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const CreateApiPerformanceRunner = createAsyncThunk(
@@ -57,12 +53,10 @@ export const CreateApiPerformanceRunner = createAsyncThunk(
         "post",
         "api/TestRunner/create_api_performance_runner",
         value,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const GetManualResByWorkspaceId = createAsyncThunk(
@@ -73,12 +67,10 @@ export const GetManualResByWorkspaceId = createAsyncThunk(
         "get",
         `api/TestRunner/get_manualresponse_by_workspaceid?workspace_id=${value}`,
         value,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const CreateApiManualRunner = createAsyncThunk(
@@ -90,12 +82,10 @@ export const CreateApiManualRunner = createAsyncThunk(
         // "api/TestRunner/create_api_manual_runner?user_id=" + value?.user_id,
         `api/TestRunner/create_api_manual_runner`,
         value,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const GetManualResByManualRunnerId = createAsyncThunk(
@@ -106,12 +96,10 @@ export const GetManualResByManualRunnerId = createAsyncThunk(
         "get",
         `api/TestRunner/get_manualresponse_by_manualrunnerid?manual_test_runnerid=${value}`,
         null,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const GetFunctionalManRunIterationByManId = createAsyncThunk(
@@ -122,12 +110,10 @@ export const GetFunctionalManRunIterationByManId = createAsyncThunk(
         "get",
         `api/TestRunner/get_functionalManualRunnerIteration_by_manuld?manual_test_runnerid=${value}`,
         null,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const CreateApiScheduleRunner = createAsyncThunk(
@@ -138,12 +124,10 @@ export const CreateApiScheduleRunner = createAsyncThunk(
         "post",
         "api/TestRunner/create_schedulerunner",
         value,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const GetScheduleListByWorkspaceId = createAsyncThunk(
@@ -157,12 +141,10 @@ export const GetScheduleListByWorkspaceId = createAsyncThunk(
         `api/ScheduleTestRunner/get_scheduletestrunner_byWorkSpaceId?workspace_id=${value}`,
         // value,
         null,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const GetScheduleTestRunnerByScheduleId = createAsyncThunk(
@@ -173,12 +155,10 @@ export const GetScheduleTestRunnerByScheduleId = createAsyncThunk(
         "get",
         `api/ScheduleTestRunner/get_scheduletestrunner_byScheduleId?api_schedulerunner_id=${value}`,
         null,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const GetScanDetailsByScanRunnerId = createAsyncThunk(
@@ -189,12 +169,10 @@ export const GetScanDetailsByScanRunnerId = createAsyncThunk(
         "get",
         `api/ScheduleTestRunner/get_Scandetailsby_ScanRunnerid?api_schedulerunner_id=${value}`,
         null,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const GetFunScheduleRunnerIdByDetailsId = createAsyncThunk(
@@ -205,12 +183,10 @@ export const GetFunScheduleRunnerIdByDetailsId = createAsyncThunk(
         "get",
         `api/ScheduleTestRunner/get_functionalschedulelRunnerIteration_by_Schedule_testrunner_details_id?Schedule_testrunner_details_id=${value}`,
         null,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const GetScheduledRunNowByScheduledId = createAsyncThunk(
@@ -221,12 +197,10 @@ export const GetScheduledRunNowByScheduledId = createAsyncThunk(
         "get",
         `api/ScheduleTestRunner/ScheduleRunNow_byScheduleId?api_schedulerunner_id=${value}`,
         null,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const GetApiTestRunnerByTestRunnerId = createAsyncThunk(
@@ -237,12 +211,10 @@ export const GetApiTestRunnerByTestRunnerId = createAsyncThunk(
         "get",
         `api/TestRunner/get_apiTestRunnerBy_apitestrunnerid?apitestrunner_id=${value}`,
         null,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const UpdateScheduledRunnerByScheduledId = createAsyncThunk(
@@ -253,29 +225,11 @@ export const UpdateScheduledRunnerByScheduledId = createAsyncThunk(
         "put",
         `api/ScheduleTestRunner/UdpateScheduleRun_By_Schedulerun_id?api_schedulerunner_id=${value?.scheduledRunnerId}`,
         value,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
-
-// export const GetScheduleResByWorkspacePagination = createAsyncThunk(
-//   "testRunner/GetScheduleResByWorkspacePagination",
-//   async (value: any) => {
-//     try {
-//       return await AdminServices(
-//         "get",
-//         `api/ScheduleTestRunner/get_Scheduleresponse_byworkspace_paginations?workspace_id=${value?.workspace_id}&page=${value?.page}&pageSize=${value?.pageSize}&searchKeyword=${value?.searchKeyword}&sortBy=${value?.sortBy}&sortOrder=${value?.sortOrder}`,
-//         null,
-//         null,
-//       )
-//     } catch (error) {
-//       console.log("Error: ", error);
-//     }
-//   }
-// )
 
 export const GetScheduleResByWorkspacePagination = createAsyncThunk(
   "testRunner/GetScheduleResByWorkspacePagination",
@@ -285,12 +239,10 @@ export const GetScheduleResByWorkspacePagination = createAsyncThunk(
         "post",
         "api/ScheduleTestRunner/get_Scheduleresponse_byworkspace_paginations",
         value,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const GetManualResByWorkspacePagination = createAsyncThunk(
@@ -301,12 +253,10 @@ export const GetManualResByWorkspacePagination = createAsyncThunk(
         "post",
         "api/TestRunner/get_manualresponse_byworkspace_paginations",
         value,
-        null,
+        null
       );
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  },
+    } catch (error) {}
+  }
 );
 
 export const resetGatewayStateTestRunner = createAction("Gateway/resetState");
@@ -322,7 +272,7 @@ export const resetGatewayStateTestRunner = createAction("Gateway/resetState");
 //         null,
 //       )
 //     } catch (error) {
-//       console.log("Error: ", error);
+//
 //     }
 //   }
 // )
@@ -413,21 +363,21 @@ export const testRunnerSlice = createSlice({
       GetFunctionalManRunIterationByManId.pending,
       (state, action) => {
         state.loading = true;
-      },
+      }
     );
 
     builder.addCase(
       GetFunctionalManRunIterationByManId.fulfilled,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       GetFunctionalManRunIterationByManId.rejected,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(CreateApiManualRunner.pending, (state, action) => {
@@ -471,21 +421,21 @@ export const testRunnerSlice = createSlice({
       GetScheduleTestRunnerByScheduleId.pending,
       (state, action) => {
         state.loading = true;
-      },
+      }
     );
 
     builder.addCase(
       GetScheduleTestRunnerByScheduleId.fulfilled,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       GetScheduleTestRunnerByScheduleId.rejected,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(GetScanDetailsByScanRunnerId.pending, (state, action) => {
@@ -504,42 +454,42 @@ export const testRunnerSlice = createSlice({
       GetFunScheduleRunnerIdByDetailsId.pending,
       (state, action) => {
         state.loading = true;
-      },
+      }
     );
 
     builder.addCase(
       GetFunScheduleRunnerIdByDetailsId.fulfilled,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       GetFunScheduleRunnerIdByDetailsId.rejected,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       GetScheduledRunNowByScheduledId.pending,
       (state, action) => {
         state.loading = true;
-      },
+      }
     );
 
     builder.addCase(
       GetScheduledRunNowByScheduledId.fulfilled,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       GetScheduledRunNowByScheduledId.rejected,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(GetApiTestRunnerByTestRunnerId.pending, (state, action) => {
@@ -550,77 +500,77 @@ export const testRunnerSlice = createSlice({
       GetApiTestRunnerByTestRunnerId.fulfilled,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       GetApiTestRunnerByTestRunnerId.rejected,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       UpdateScheduledRunnerByScheduledId.pending,
       (state, action) => {
         state.loading = true;
-      },
+      }
     );
 
     builder.addCase(
       UpdateScheduledRunnerByScheduledId.fulfilled,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       UpdateScheduledRunnerByScheduledId.rejected,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       GetScheduleResByWorkspacePagination.pending,
       (state, action) => {
         state.loading = true;
-      },
+      }
     );
 
     builder.addCase(
       GetScheduleResByWorkspacePagination.fulfilled,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       GetScheduleResByWorkspacePagination.rejected,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       GetManualResByWorkspacePagination.pending,
       (state, action) => {
         state.loading = true;
-      },
+      }
     );
 
     builder.addCase(
       GetManualResByWorkspacePagination.fulfilled,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(
       GetManualResByWorkspacePagination.rejected,
       (state, action) => {
         state.loading = false;
-      },
+      }
     );
 
     builder.addCase(resetGatewayStateTestRunner, (state, action) => {

@@ -97,7 +97,7 @@ function ImportLogsSteps(props: any) {
         const base64EncodedAgain = Buffer.from(updatedDecodedData).toString('base64');
 
         const response = await axios.post(
-          'https://api.apiflow.pro/api/ImportFromApiGateWay/Aws_logs_import_publisher', 
+          'https://api.apiflow.pro/api/ImportFromApiGateWay/Aws_logs_import_publisher',
           base64EncodedAgain,
           { headers: { 'Content-Type': 'application/json' } }
         );
@@ -397,7 +397,6 @@ function ImportLogsSteps(props: any) {
   };
 
   const activeLogDatas = logsKey.filter((logs: any) => logs.isactive === true);
-  console.log("active", activeLogDatas);
 
   const handleCopyClick = (type: string, value: any) => {
     if (type === "Id") {
@@ -443,10 +442,8 @@ function ImportLogsSteps(props: any) {
               dispatch(updateSessionPopup(true));
             }
           });
-        console.log("UpdateResponse: ", res);
       })
       .catch((error: any) => {
-        console.log(error, "error Occurred");
         if (error.message == "UNAUTHORIZED") {
           dispatch(updateSessionPopup(true));
         } else {
@@ -483,10 +480,8 @@ function ImportLogsSteps(props: any) {
               dispatch(updateSessionPopup(true));
             }
           });
-        console.log("UpdateResponse: ", res);
       })
       .catch((error: any) => {
-        console.log(error, "error Occurred");
         if (error.message === "UNAUTHORIZED") {
           dispatch(updateSessionPopup(true));
         } else {
@@ -505,7 +500,6 @@ function ImportLogsSteps(props: any) {
   }, [enables]);
 
   const enableDisableLogs = () => {
-    console.log("test");
     const addGatewayDetails = {
       id: idData,
       log_enable: true,

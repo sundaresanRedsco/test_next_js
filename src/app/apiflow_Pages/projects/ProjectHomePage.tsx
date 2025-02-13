@@ -87,9 +87,6 @@ const ProjectHomePage = () => {
     projectApiReducer
   >((state) => state.apiManagement.apiProjects);
 
-  console.log(currentProject, "currentProjectsdsd");
-  console.log(currentProjectDetails, "currentProjectDetailsNew");
-
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
   );

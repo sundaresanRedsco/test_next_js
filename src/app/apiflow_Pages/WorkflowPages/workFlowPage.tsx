@@ -22,6 +22,7 @@ import {
   setNextNode,
   setUserLists,
   setWSprovider,
+  UpdateFlowVersionIsLockedByVersionId,
 } from "@/app/Redux/apiManagement/flowReducer";
 import { RxGroup } from "react-icons/rx";
 import PublishOutlinedIcon from "@mui/icons-material/PublishOutlined";
@@ -71,6 +72,7 @@ import WorkflowSidebarSkeleton from "@/app/apiflow_components/skeletons/Designer
 import _ from "lodash";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import {
+  Backdrop,
   Box,
   IconButton,
   Popover,
@@ -100,6 +102,11 @@ import { useLocation } from "react-router-dom";
 import GlobalContextMenu from "@/app/hooks/workflow/GlobalContextMenu";
 import useWorkflowPost from "@/app/hooks/posts/useWorkflowPost";
 import WorkflowPosts from "@/app/apiflow_components/WorkflowComponents/workflowPosts";
+import { usePostStore } from "@/app/store/usePostStore";
+import { useQuery } from "@tanstack/react-query";
+import { AdminServices } from "@/app/Services/services";
+import { BiLock } from "react-icons/bi";
+import WorkflowScheduleRuns from "@/app/apiflow_components/WorkflowComponents/WorkflowScheduleRuns";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -136,12 +143,15 @@ const WorkflowDrawer = dynamic(
   }
 );
 
-const GDialogBox = dynamic(() => import("@/app/Components/Global/GDialogBox"), {
-  ssr: false,
-});
+const GDialogBox = dynamic(
+  () => import("@/app/apiflow_components/global/GDialogBox"),
+  {
+    ssr: false,
+  }
+);
 
 const DesignerImportPopup = dynamic(
-  () => import("@/app/ApiFlowComponents/ApiDesigner/DesignerImportPopup"),
+  () => import("@/app/apiflow_components/ApiDesigner/DesignerImportPopup"),
   { ssr: false }
 );
 
@@ -214,6 +224,8 @@ const WorkflowDesigner = (props: any) => {
   const [rfInstance, setRfInstance] = useState<any>(null);
   const [lastCursorPosition, setLastCursorPosition] = useState({ x: 0, y: 0 });
 
+  const [scheduleRunsClicked, setScheduleRunsClicked] = useState(false);
+
   //--------------------------------------custom Hooks---------------------------------------------------------
 
   const {
@@ -238,6 +250,8 @@ const WorkflowDesigner = (props: any) => {
     copiedData,
     multiSelectClicked,
     setMultiSelectClicked,
+    versionLockClicked,
+    setVersionLockClicked,
   } = useWorkflowStore();
 
   const customHookprops = {
@@ -368,7 +382,6 @@ const WorkflowDesigner = (props: any) => {
           const jsonStringified = JSON.stringify(json, null, 2);
           toast.success("JSON file uploaded successfully");
         } catch (error) {
-          console.error("Invalid JSON file:", error);
           toast.error("Invalid JSON file");
         }
       };
@@ -653,16 +666,13 @@ const WorkflowDesigner = (props: any) => {
             setSuccessMessages("Valid JSON File");
             setErrorBoole(false);
             setErrors([]);
-          } catch (err) {
-            console.error("Error parsing JSON data:", err);
-          }
+          } catch (err) {}
         }
       })
       .catch((error: any) => {});
   };
 
   const handleSaveImportData = () => {
-    console.log(updatedNodesNew, "updatedNodesNew");
     updatedNodesNew.forEach((newNode: any) => {
       let updatedNode = {
         action: "ADD_NODE",
@@ -958,30 +968,7 @@ const WorkflowDesigner = (props: any) => {
             errors: [], // Added field for errors
           };
           runMap.set("run", updateData);
-          dispatch(
-            GetAllVerisons({
-              flow_id: apiFlow_Id,
-              project_id: currentFlowDetails?.project_id,
-            })
-          )
-            .unwrap()
-            .then((res: any) => {
-              const activeVersion = res.find(
-                (version: any) => version.is_active === true
-              );
-
-              if (activeVersion) {
-                setVersionValue(activeVersion.id);
-                sessionStorage.setItem("versionValue", activeVersion.id);
-                setCookies(
-                  process.env.NEXT_PUBLIC_COOKIE_VERSIONVALUE ?? "",
-                  activeVersion.id,
-                  userProfile?.user?.expiration_time
-                );
-              } else {
-                // Handle the case where no active version is found
-              }
-            });
+          handleApiGetAllVersions();
           toast.success("Published");
           handlePublishClosePopup();
         })
@@ -1031,6 +1018,54 @@ const WorkflowDesigner = (props: any) => {
     setHasNewEdited(!isEditable); // Store whether the current state was editable
   };
 
+  const handleApiGetAllVersions = () => {
+    dispatch(
+      GetAllVerisons({
+        flow_id: apiFlow_Id,
+        project_id: currentFlowDetails?.project_id,
+      })
+    )
+      .unwrap()
+      .then((res: any) => {
+        const activeVersion = res.find(
+          (version: any) => version.is_active === true
+        );
+
+        if (activeVersion) {
+          setVersionLockClicked(activeVersion?.is_locked);
+          setVersionValue(activeVersion.id);
+          sessionStorage.setItem("versionValue", activeVersion.id);
+          setCookies(
+            process.env.NEXT_PUBLIC_COOKIE_VERSIONVALUE ?? "",
+            activeVersion.id,
+            userProfile?.user?.expiration_time
+          );
+        } else {
+          // Handle the case where no active version is found
+        }
+      });
+  };
+
+  const handleVersionLockClicked = () => {
+    // setVersionLockClicked(!versionLockClicked);
+    let data = {
+      version_id: versionValue,
+      is_loged: true,
+    };
+
+    dispatch(UpdateFlowVersionIsLockedByVersionId(data))
+      .unwrap()
+      .then((res: any) => {
+        setVersionLockClicked(true);
+        handleApiGetAllVersions();
+      })
+      .catch((error: any) => {});
+  };
+
+  const handleScheduleRuns = () => {
+    setScheduleRunsClicked(true);
+  };
+
   //----------------------------------------buttonconfig----------------------------------------------
   const buttonConfig = [
     {
@@ -1053,7 +1088,7 @@ const WorkflowDesigner = (props: any) => {
     },
     {
       // onClick: () => navigate(`${pathname}/scheduleRuns`),
-      onClick: () => "",
+      onClick: handleScheduleRuns,
       ariaLabel: "Schedule Runs",
       tooltipTitle: "Schedule Runs",
       IconComponent: ScheduleSendIcon,
@@ -1124,6 +1159,15 @@ const WorkflowDesigner = (props: any) => {
       tooltipTitle: "Save",
       IconComponent: SaveAlt,
       isActive: false,
+      disabled: actionProgress,
+      dropDown: "true",
+    },
+    {
+      onClick: handleVersionLockClicked,
+      ariaLabel: "Lock",
+      tooltipTitle: "Lock",
+      IconComponent: BiLock,
+      isActive: versionLockClicked,
       disabled: actionProgress,
       dropDown: "true",
     },
@@ -1219,6 +1263,7 @@ const WorkflowDesigner = (props: any) => {
 
               if (activeVersion) {
                 setVersionValue(activeVersion.id);
+                setVersionLockClicked(activeVersion?.is_locked);
                 sessionStorage.setItem("versionValue", activeVersion.id);
                 setCookies(
                   process.env.NEXT_PUBLIC_COOKIE_VERSIONVALUE ?? "",
@@ -1232,7 +1277,6 @@ const WorkflowDesigner = (props: any) => {
         })
 
         .catch((error: any) => {
-          console.error("GetApiDesignFlowByDesignFlowId error:", error);
           if (error?.message === "UNAUTHORIZED") {
             dispatch(updateSessionPopup(true));
           }
@@ -1374,11 +1418,25 @@ const WorkflowDesigner = (props: any) => {
     };
   }, [contextMenu?.show]);
 
-  const { openPosts, setopenPostAnchorEl, openPostAnchorEl } =
-    useWorkflowPost();
+  const { setopenPostAnchorEl, openPostAnchorEl, channelId, setChannelId } =
+    usePostStore();
+  const openPosts = Boolean(openPostAnchorEl);
   const [currentNodePosition, setcurrentNodePosition] = useState<any>(null);
   const selectorRef = useRef<Selecto>(null);
-
+  const { data: channelIds } = useQuery({
+    queryKey: ["channelId"],
+    queryFn: async () => {
+      const data = await AdminServices(
+        "get",
+        `Api/Post/get_channel_by_flow_id_offset?flow_id=${apiFlow_Id}&start=1&end=5`
+      );
+      if (data) {
+        setChannelId(data[0].id);
+      }
+      return data;
+    },
+    enabled: !!apiFlow_Id,
+  });
   return (
     <Grid
       ref={boxRef}
@@ -1728,7 +1786,7 @@ const WorkflowDesigner = (props: any) => {
           errorBoole={errorBoole}
         />
       </WorkFlowLayout>
-      {/* <IconButton
+      <IconButton
         aria-owns={apiFlow_Id}
         aria-haspopup={true}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -1765,11 +1823,28 @@ const WorkflowDesigner = (props: any) => {
           zIndex: 9999,
           "& .MuiPaper-root": {
             padding: "10px",
+            background: "black",
           },
         }}
       >
-        <WorkflowPosts />
-      </Popover> */}
+        <WorkflowPosts channel_id={channelId} />
+      </Popover>
+
+      {/** Workflow ScheduleRuns */}
+      <Box>
+        {scheduleRunsClicked && (
+          <Box>
+            <Backdrop
+              sx={{ zIndex: 9998, backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+              open={scheduleRunsClicked}
+            />
+            <WorkflowScheduleRuns
+              open={scheduleRunsClicked}
+              setOpen={setScheduleRunsClicked}
+            />
+          </Box>
+        )}
+      </Box>
     </Grid>
   );
 };

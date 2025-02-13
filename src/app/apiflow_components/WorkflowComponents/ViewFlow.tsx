@@ -36,7 +36,6 @@ const ViewFlow = ({
 
   // Handler for node click
   const handleNodeClick = (event: React.MouseEvent, node: Node) => {
-    console.log("Node clicked:", node);
     // Add your node click logic here
   };
 

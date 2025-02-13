@@ -14,7 +14,10 @@ export const GetGroupsByWorkspaceIdSolrOffset = createAsyncThunk(
         null,
         null
       );
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
       throw new Error(errorHandling(error));
     }
   }
@@ -24,10 +27,6 @@ export const GetGroupsByWorkspaceIdOVerView = createAsyncThunk(
   "groups/GetGroupsByWorkspaceIdOVerView",
   async (value: any) => {
     try {
-      console.log(
-        `api/Project/get_groups_by_workspace_id?WorkspaceId=${value?.WorkspaceId}&start=${value?.start}&end=${value?.end}`,
-        "OVerViewCheck"
-      );
       return await AdminServices(
         "get",
         `api/Project/get_groups_by_workspace_id?WorkspaceId=${value?.WorkspaceId}&start=${value?.start}&end=${value?.end}`,

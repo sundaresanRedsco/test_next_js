@@ -65,7 +65,6 @@ export default function CustomEdge({
         obj: null,
       });
     } else {
-      console.log("Yjs Map 'edges' is not initialized.");
     }
   };
 

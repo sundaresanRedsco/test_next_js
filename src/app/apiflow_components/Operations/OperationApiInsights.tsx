@@ -19,6 +19,7 @@ import {
   TableRow,
   Tooltip,
   tableCellClasses,
+  useTheme,
 } from "@mui/material";
 import InsightsIcon from "@mui/icons-material/Insights";
 import theme from "../../../Theme/theme";
@@ -61,6 +62,7 @@ const OperationApiInsights = () => {
   const containerRef = useRef<any>(null);
 
   const dispatch = useDispatch<any>();
+  const theme = useTheme();
 
   const operIdVal = getCookies(process.env.NEXT_PUBLIC_COOKIE_OPERID ?? "");
 
@@ -181,7 +183,6 @@ const OperationApiInsights = () => {
   const contentStyles: React.CSSProperties = {
     width: "100%",
     height: "100%",
-    backgroundColor: "white",
     transition: "left 0.3s ease",
     padding: "0.1rem 2rem",
     overflow: "auto",
@@ -274,9 +275,7 @@ const OperationApiInsights = () => {
         );
         setLogsDates(filteringOnlyDates);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   };
 
   const fetchSensLogsData = async (page: number) => {
@@ -300,9 +299,7 @@ const OperationApiInsights = () => {
         );
         setSensLogDates(filteringSensLogDates);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   };
 
   const fetchOrphanLogsData = (page: number) => {
@@ -341,7 +338,7 @@ const OperationApiInsights = () => {
   const getValueOrDefault = (value: any) => {
     const checkValue =
       value === null || value === "null" || value === undefined ? "-" : value;
-    console.log("checkValue: ", checkValue);
+
     return checkValue; // Ensure the returned value is always a string
   };
 
@@ -434,9 +431,7 @@ const OperationApiInsights = () => {
       .then((apiStatus: any) => {
         setApiStatusCount(apiStatus?.count);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   }, []);
 
   return (
@@ -487,7 +482,20 @@ const OperationApiInsights = () => {
       {/* drawer code */}
       <Backdrop open={isPopupOpen} sx={{ zIndex: "99" }}>
         <div style={popupStyles} onClick={togglePopup}>
-          <div style={contentStyles} onClick={(e) => e.stopPropagation()}>
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              transition: "left 0.3s ease",
+              padding: "0.1rem 2rem",
+              overflow: "auto",
+              left: isPopupOpen ? 0 : "100%",
+              maxHeight: "auto",
+              overflowY: "auto",
+              background: theme.palette.apiInsightsBackgroundColor.main,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div onClick={closePopup}>
               <div style={{ margin: "1rem 0rem" }}>
                 <ArrowBackIosIcon

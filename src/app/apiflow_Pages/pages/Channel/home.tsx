@@ -17,6 +17,7 @@ import useWorkflowPost from "@/app/hooks/posts/useWorkflowPost";
 import { MqttClient } from "mqtt";
 import toast from "react-hot-toast";
 import { connectToMqtt, sendMqttMessage } from "@/app/Helpers/mqttHelpers";
+import { usePostStore } from "@/app/store/usePostStore";
 export default function HomeChannel(props: any) {
   const dispatch = useDispatch<any>();
   const router = useRouter();
@@ -35,9 +36,9 @@ export default function HomeChannel(props: any) {
   );
   // Use the custom hook to get the message
 
-  const { openPosts, setopenPostAnchorEl, openPostAnchorEl, setChannelId } =
-    useWorkflowPost();
-
+  const { setopenPostAnchorEl, openPostAnchorEl, setChannelId } =
+    usePostStore();
+  const openPosts = Boolean(openPostAnchorEl);
   useEffect(() => {
     dispatch(
       getChannels({
@@ -49,16 +50,12 @@ export default function HomeChannel(props: any) {
       .unwrap()
       .then((res: any) => {
         setCurrentChannel(res[0]);
-        // console.log("UpdateResponse: ", res);
-        // router.push(`/userId/${userProfile?.user?.user_id}/channel`);
-        // toast.success("channel Created");
       });
   }, []);
 
   useEffect(() => {
     if (currentChannel?.id) {
       setChannelId(currentChannel.id); // Ensure the channelId is set properly
-      console.log(currentChannel?.id, "currentChannel?.id");
     }
   }, [currentChannel, setChannelId]);
 
@@ -168,6 +165,7 @@ export default function HomeChannel(props: any) {
           zIndex: 9999,
           "& .MuiPaper-root": {
             padding: "10px",
+            background: "black",
           },
         }}
       >

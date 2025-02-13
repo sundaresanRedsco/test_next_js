@@ -51,8 +51,6 @@ export default function WorkflowHeader(props: DesignerHeaderProps) {
     setAnchorEl2(event.currentTarget);
   };
   const handleMenuClose = () => {
-    console.log("test");
-
     setAnchorEl2(null);
   };
 

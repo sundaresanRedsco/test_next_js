@@ -33,6 +33,7 @@ export interface GButtonProps {
   disabled?: boolean;
   customStyle?: object;
   className?: string;
+  variant?: any;
 }
 
 export default function GButton(props: GButtonProps) {
@@ -62,6 +63,7 @@ export default function GButton(props: GButtonProps) {
     onClickHandler = () => {},
     customStyle,
     className,
+    variant,
   } = props;
 
   const Color =
@@ -74,15 +76,16 @@ export default function GButton(props: GButtonProps) {
       ? theme.palette.cardInfoBody.main
       : theme.palette.teritiaryColor.main);
 
-  const backgroundColor =
-    background ||
-    (buttonType === "primary"
-      ? theme.palette.primaryPurple.main
-      : buttonType === "secondary"
-      ? theme.palette.btnCancelGrey.main
-      : buttonType === "tertiary"
-      ? theme.palette.teritiaryColor.main
-      : theme.palette.teritiaryColor.main);
+  const backgroundColor = variant
+    ? "transparent"
+    : background ||
+      (buttonType === "primary"
+        ? theme.palette.primaryPurple.main
+        : buttonType === "secondary"
+        ? theme.palette.btnCancelGrey.main
+        : buttonType === "tertiary"
+        ? theme.palette.teritiaryColor.main
+        : theme.palette.teritiaryColor.main);
 
   return (
     <StyledButton
@@ -126,6 +129,7 @@ export default function GButton(props: GButtonProps) {
       type={type ? type : ""}
       disabled={disabled}
       onClick={onClickHandler}
+      variant={variant}
     >
       {icon && iconPosition === "start" && (
         <Box className="p-0 me-1" sx={{ fill: Color, color: Color }}>

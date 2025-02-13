@@ -12,7 +12,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import { emailPattern, mobilePattern } from "../../Utilities/regex";
 import { translate } from "../../Helpers/helpersFunctions";
 
-
 import { useSelector } from "react-redux";
 import {
   CommonReducer,
@@ -23,10 +22,11 @@ import {
 import { RootStateType } from "../../Redux/store";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import GlobalLoader from "../../Components/Global/GlobalLoader";
 import GInput from "@/app/apiflow_components/global/GInput";
 import GButton from "@/app/apiflow_components/global/GlobalButtons";
-
+import GlobalLoader from "@/app/apiflow_components/global/GlobalLoaderV1";
+import { setItem } from "@/app/Services/localstorage";
+import useSessionUpdate from "@/app/hooks/useSessionUpdate";
 export default function Profile() {
   const dispatch = useDispatch<any>();
   const theme = useTheme();
@@ -34,6 +34,7 @@ export default function Profile() {
   const { userProfile, loading } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
   );
+  const { handleUpdateSessionData } = useSessionUpdate();
 
   const [companyId, setCompanyId] = useState("");
 
@@ -106,19 +107,16 @@ export default function Profile() {
   }
 
   const handleImageCoverHandler = (e: any) => {
-    console.log("E: ", e.target.files[0]);
     const file = e.target.files[0];
     if (file) {
       if (file?.type?.startsWith("image/")) {
         const maxSize = 2 * 1024 * 1024;
-        console.log("FileSize: ", file.size, maxSize);
 
         if (file?.size < maxSize) {
           const reader = new FileReader();
 
           reader.onload = function (e: any) {
             const base64Image = e.target.result;
-            console.log("Base64 Image:", base64Image);
 
             setFormData({
               ...formData,
@@ -137,7 +135,6 @@ export default function Profile() {
   };
 
   const handleProfilePictureHandler = (e: any) => {
-    console.log("E: ", e.target.files[0]);
     const file = e.target.files[0];
     if (file) {
       if (file?.type?.startsWith("image/")) {
@@ -145,14 +142,12 @@ export default function Profile() {
         // setProfilePicture(imageUrl);
 
         const maxSize = 2 * 1024 * 1024;
-        console.log("FileSize: ", file.size, maxSize);
 
         if (file?.size < maxSize) {
           const reader = new FileReader();
 
           reader.onload = function (e: any) {
             const base64Image = e.target.result;
-            console.log("Base64ProfileImage: ", base64Image);
 
             setFormData({
               ...formData,
@@ -172,7 +167,6 @@ export default function Profile() {
   };
 
   const handleUpdateProfile = () => {
-    console.log("Reach", formData?.first_name?.length);
     if (formData?.first_name === "" || formData?.last_name === "") {
       setError({
         first_name: formData?.first_name === "" ? "First Name is required" : "",
@@ -205,16 +199,28 @@ export default function Profile() {
         your_occupation: companyDetails?.occupation,
         company_website: companyDetails?.website,
       };
-
-      dispatch(UpdateUser(updateUserData))
-        .unwrap()
-        .then((res: any) => {
-          console.log("UpadateUserResponse: ", res);
-          toast.success("Profile updated successfully");
-        })
-        .catch((error: any) => {
-          console.log("error: ", error);
-        });
+      if (
+        userProfile?.user?.first_name != formData.first_name ||
+        userProfile?.user?.last_name != formData.last_name
+        // ||
+        // userProfile?.user?.imageCover != formData.imageCover ||
+        // userProfile?.user?.profilePicture != formData.profilePicture
+      ) {
+        dispatch(UpdateUser(updateUserData))
+          .unwrap()
+          .then((res: any) => {
+            if (res.status != 400) {
+              handleUpdateSessionData({
+                first_name: formData?.first_name,
+                last_name: formData?.last_name,
+                // profile_picture: formData?.profilePicture,
+                // cover_picture: formData?.imageCover,
+              });
+              toast.success("Profile updated successfully");
+            }
+          })
+          .catch((error: any) => {});
+      }
     }
   };
 
@@ -226,15 +232,15 @@ export default function Profile() {
       imageCover: userProfile?.user?.cover_picture,
       profilePicture: userProfile?.user?.profile_picture,
     });
+    setItem(`/sidebarMenuId/${userProfile?.user?.user_id}`, "settings");
   }, [userProfile]);
 
   useEffect(() => {
     dispatch(GetCompanyByTenantId(userProfile?.user?.tenant_id))
       .unwrap()
       .then((response: any) => {
-        console.log("Response: ", response);
         let values = response[0];
-        console.log("Values: ", values);
+
         setCompanyDetails({
           companyName: values.your_company_name,
           mobileNumber: values.your_mobile_number,
@@ -243,10 +249,7 @@ export default function Profile() {
         });
         setCompanyId(values.company_id);
       })
-      .catch((error: any) => {
-        console.log("error: ", error);
-      });
-    console.log("tenantId: ", userProfile?.user?.tenant_id);
+      .catch((error: any) => {});
   }, []);
 
   return (
@@ -383,7 +386,6 @@ export default function Profile() {
               {(formData.profilePicture ||
                 userProfile?.user?.profile_picture) && (
                 <img
-                  // src={profilePicture || SocialImage}
                   src={
                     formData.profilePicture ||
                     userProfile?.user?.profile_picture
@@ -398,7 +400,6 @@ export default function Profile() {
               )}
               <div
                 style={{
-                  // position: 'absolute',
                   position: "absolute",
                   top: 0,
                   right: 0,
@@ -421,7 +422,6 @@ export default function Profile() {
                       borderRadius: "3px",
                       cursor: "pointer",
                       marginTop: "50px",
-                      // marginLeft: "60px",
                       marginRight: "-10px",
                     }}
                   >
@@ -498,7 +498,6 @@ export default function Profile() {
                 fullWidth={true}
                 type="text"
                 placeholder={translate("signInUp.LAST_NAME_PLACEHOLDER")}
-                // fontSize="13px"
                 radius="5px"
                 labelShrink={true}
                 dataTest={"email-input"}
@@ -552,7 +551,6 @@ export default function Profile() {
               cursor="pointer"
               onClickHandler={() => {
                 settingsProfileHandler();
-                console.log("FormData: ", formData);
                 handleUpdateProfile();
               }}
             />

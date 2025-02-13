@@ -19,7 +19,7 @@ import {
   DialogTitle,
   InputAdornment,
 } from "@mui/material";
-import RadioCheckboxComponent from "../../Components/Global/radioCheckboxComponent";
+import RadioCheckboxComponent from "@/app/apiflow_components/global/radioCheckboxComponentV1";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import toast from "react-hot-toast";
@@ -32,10 +32,8 @@ import {
   updateUserProfile,
 } from "../../Redux/commonReducer";
 import { useSelector } from "react-redux";
-import GlobalLoader from "../../Components/Global/GlobalLoader";
+import GlobalLoader from "@/app/apiflow_components/global/GlobalLoaderV1";
 import { passwordPattern } from "../../Utilities/regex";
-import GSelect from "../../Components/Global/GSelect";
-// import QRCode from "qrcode.react";
 import {
   DisableTwoFactor,
   SendEmailOtp,
@@ -43,10 +41,16 @@ import {
   TwoFactorOtpVerification,
   accountReducer,
 } from "../../Redux/settings/accountReducer";
-import { apikeyReducer } from "../../Redux/settings/apikeyReducer";
+
 import { useTheme } from "@emotion/react";
 import GInput from "@/app/apiflow_components/global/GInput";
 import GOtpField from "@/app/apiflow_components/global/GOtpField";
+import GButton from "@/app/apiflow_components/global/GButtonV1";
+import QRCode from "react-qr-code"; // ✅ Correct import
+import { CopyAll } from "@mui/icons-material";
+import { setItem } from "@/app/Services/localstorage";
+import { signIn } from "next-auth/react";
+import useSessionUpdate from "@/app/hooks/useSessionUpdate";
 
 export default function AccountsSettings() {
   const dispatch = useDispatch<any>();
@@ -55,23 +59,18 @@ export default function AccountsSettings() {
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
   );
-
+  const { handleUpdateSessionData } = useSessionUpdate();
   const { twoFactorResponce, loading } = useSelector<
     RootStateType,
     accountReducer
   >((state) => state.settings.account);
 
-  const [isEnabled, setIsEnabled] = useState(userProfile?.user?.is_2fa_enable);
-  console.log(userProfile?.user?.email, "userProfile");
-
-  const [newUser, setNewUser] = useState(userProfile);
-  const [disableUser, setDisableUser] = useState(userProfile);
-  const [buttonText, setButtonText] = useState("Enable 2FA");
+  const [buttonText, setButtonText] = useState(
+    userProfile?.user?.is_2fa_enable == false ? "Enable 2FA" : "Disable 2FA"
+  );
+  const [twoFactorRes, setTwoFactorRes] = useState<any>({});
   const [open, setOpen] = React.useState(false);
-  const [userKey, setUserKey] = useState<string>("");
-  const [inputValue, setInputValue] = useState("");
   const [showTextPopup, setShowTextPopup] = useState(false);
-  const [email, setEmail] = useState("");
   const [changePasswordClicked, setChangePasswordClicked] = useState(false);
   const [passwordDetails, setPasswordDetails] = useState({
     currentPassword: "",
@@ -82,6 +81,7 @@ export default function AccountsSettings() {
   const [expiryTime, setExpiryTime] = useState<number>(expiryDurationSeconds);
   const [timer, setTimer] = useState<NodeJS.Timeout | undefined>();
   const [timerStarted, setTimerStarted] = useState<boolean>(false);
+  const [recoveryKeyEnabled, setRecoveryKeyEnabled] = useState<boolean>(false);
 
   const [OtpDetails, setOtpDetails] = useState({
     OTP: "",
@@ -208,7 +208,6 @@ export default function AccountsSettings() {
             dispatch(UpdatePassword(passwordValues))
               .unwrap()
               .then((res: any) => {
-                console.log("REs in UpdatePassword: ", res);
                 toast.success("Password updated successfully");
 
                 setPasswordDetails({
@@ -218,7 +217,6 @@ export default function AccountsSettings() {
                 });
               })
               .catch((error: any) => {
-                console.log("Error: ", error);
                 toast.error(error?.message);
               });
           }
@@ -228,12 +226,8 @@ export default function AccountsSettings() {
   };
 
   useEffect(() => {
-    // Load user data from local storage when the component mounts
-    const savedUser = localStorage.getItem("userData");
-    if (savedUser) {
-      setNewUser(JSON.parse(savedUser));
-    }
-  }, []);
+    setItem(`/sidebarMenuId/${userProfile?.user?.user_id}`, "settings");
+  }, [userProfile]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -258,12 +252,28 @@ export default function AccountsSettings() {
   };
 
   const popupClose = () => {
-    TwoFactorClose();
-    handleClose();
+    setShowTextPopup(false);
+    setOpen(false);
+    setOtpDetails({
+      OTP: "",
+    });
+
+    setErrorOtpdetails({
+      OTP: "",
+    });
+    setErrorQrCodedetails({
+      Code: "",
+    });
+
+    clearInterval(timer);
+    setTimerStarted(false);
+    setExpiryTime(expiryDurationSeconds);
+    setRecoveryKeyEnabled(false);
   };
 
   const handleSubmit = () => {
     setShowTextPopup(true);
+    setRecoveryKeyEnabled(true);
   };
 
   const TwoFactorClose = () => {
@@ -307,17 +317,11 @@ export default function AccountsSettings() {
     };
   }, [timer]);
 
-  const staticKey = twoFactorResponce?.secret_key;
-  console.log(staticKey, "staticKey");
-
-  const staticName = twoFactorResponce?.name;
-
-  const generateQRData = (key: string, name: string) => {
-    return `otpauth://totp/${name}?secret=${key}`;
+  const generateQRData = () => {
+    return `otpauth://totp/${twoFactorRes?.name}?secret=${twoFactorRes?.secret_key}`;
   };
 
   const handleSendOtp = () => {
-    console.log("test");
     let sendOtp = {
       email: userProfile?.user?.email,
       action: "enable",
@@ -326,11 +330,8 @@ export default function AccountsSettings() {
       .unwrap()
       .then((res: any) => {
         toast.success("OTP Sent");
-        console.log("UpadateResponse: ", res);
       })
       .catch((error: any) => {
-        console.log(error, "erro3");
-        console.log(error, "error Occured");
         if (error.message == "Try again later") {
           dispatch(updateSessionPopup(true));
         } else {
@@ -367,12 +368,10 @@ export default function AccountsSettings() {
       .unwrap()
       .then((res: any) => {
         toast.success("QR Generated");
+        setTwoFactorRes(res);
         handleSubmit();
-        console.log("Update Response: ", res);
       })
       .catch((error: any) => {
-        console.log(error, "error Occurred");
-
         if (error.message == "Try again later") {
           dispatch(updateSessionPopup(true));
         } else {
@@ -386,7 +385,6 @@ export default function AccountsSettings() {
 
   const handleEnableFactor = () => {
     const code = QrCodeDetails?.Code || "";
-
     if (!code) {
       setErrorQrCodedetails({
         QR: "Authentication Code is required",
@@ -411,30 +409,13 @@ export default function AccountsSettings() {
       .then((res: any) => {
         toast.success("2 Factor Enabled");
 
-        const updatedUser: any = {
-          ...newUser.user,
-          is_2fa_enable: true,
-        };
-
-        setNewUser(updatedUser);
-        console.log(newUser, "newwwwwwww");
-
-        dispatch(updateUserProfile(updatedUser));
-        // localStorage.setItem('userData', JSON.stringify(updatedUser));
-
-        console.log(updatedUser, "newwww");
-
-        console.log(updatedUser, "updated");
-        console.log(userProfile, "userrssss");
-
+        handleUpdateSessionData({ is_2fa_enable: true });
+        setRecoveryKeyEnabled(false);
         setButtonText("Disable 2FA");
 
-        popupClose();
-        console.log("Update Response: ", res);
+        // popupClose();
       })
       .catch((error: any) => {
-        console.log(error, "error Occurred");
-
         if (error.message == "Try again later") {
           dispatch(updateSessionPopup(true));
         } else {
@@ -447,8 +428,6 @@ export default function AccountsSettings() {
   };
 
   const handleDidableSendOtp = () => {
-    console.log("test");
-
     if (buttonText == "Disable 2FA") {
       let sendDisableOtp = {
         email: userProfile?.user?.email,
@@ -458,11 +437,8 @@ export default function AccountsSettings() {
         .unwrap()
         .then((res: any) => {
           toast.success(" Disable OTP Sent");
-
-          console.log("UpadateResponse: ", res);
         })
         .catch((error: any) => {
-          console.log(error, "error Occured");
           if (error.message == "Try again later") {
             dispatch(updateSessionPopup(true));
           } else {
@@ -473,7 +449,6 @@ export default function AccountsSettings() {
   };
 
   const handleDisableVerificationOtp = () => {
-    console.log("test");
     const otp = OtpDetails?.OTP || "";
 
     if (otp.trim() === "") {
@@ -488,27 +463,17 @@ export default function AccountsSettings() {
         DisableTwoFactor({
           email: userProfile?.user?.email,
           otp: OtpDetails?.OTP,
+          RecoveryKey: "",
         })
       )
         .unwrap()
         .then((res: any) => {
           toast.success("Disabled 2FA");
-          const updatedUser: any = {
-            ...disableUser.user,
-            is_2fa_enable: false,
-          };
-
-          setDisableUser(updatedUser);
-          console.log(newUser, "newwwwwwww");
-
-          dispatch(updateUserProfile(updatedUser));
+          handleUpdateSessionData({ is_2fa_enable: false });
           setButtonText("Enable 2FA");
           popupClose();
-          console.log("UpadateResponse: ", res);
         })
         .catch((error: any) => {
-          console.log(error, "error Occured");
-
           if (error.message == "Try again later") {
             dispatch(updateSessionPopup(true));
           } else {
@@ -533,7 +498,19 @@ export default function AccountsSettings() {
 
   const toggleButton = () => {
     handleClickOpen();
-    setIsEnabled(userProfile?.user?.is_2fa_enable == true);
+  };
+
+  const copyArrayToClipboard = (arr: any) => {
+    // Convert array into an object with dynamic key names
+    const formattedData = arr.reduce((acc: any, value: any, index: number) => {
+      acc[`key${index + 1}`] = value; // Naming keys dynamically
+      return acc;
+    }, {});
+
+    // Convert to JSON string and copy to clipboard
+    const textToCopy = JSON.stringify(formattedData, null, 2);
+    navigator.clipboard.writeText(textToCopy);
+    toast.success("Recovery keys Copied");
   };
 
   return (
@@ -570,10 +547,12 @@ export default function AccountsSettings() {
                           color: "white",
                         }}
                       >
-                        Enable 2FA
+                        {buttonText === "Disable 2FA"
+                          ? "Disable 2FA"
+                          : "Enable 2FA"}
                       </h6>
                       <h1
-                        onClick={TwoFactorClose}
+                        onClick={popupClose}
                         style={{
                           fontSize: "1rem",
                           cursor: "pointer",
@@ -596,114 +575,137 @@ export default function AccountsSettings() {
                       >
                         Set up with authenticator app
                       </h4>
-
-                      <p
-                        style={{
-                          fontFamily: "Firasans-Regular",
-                          fontSize: "0.8rem",
-                          marginBottom: "3px",
-                          color: "#9b9b9b",
-                        }}
-                      >
-                        Scan QR code on app
-                      </p>
-
-                      <p
-                        style={{
-                          fontFamily: "Firasans-Regular",
-                          fontSize: "0.6rem",
-                          color: "#9b9b9b",
-                        }}
-                      >
-                        Scan the QR code with your authenticator app to generate
-                        a unique code.
-                      </p>
-
-                      <div>
-                        {/* <QRCode value={generateQRData(staticKey, staticName)} /> */}
-                      </div>
-                      <p
-                        style={{
-                          fontFamily: "Firasans-Regular",
-                          fontSize: "0.6rem",
-                          color: "rgb(2, 101, 210)",
-                          marginTop: "0.6rem",
-                          cursor: "pointer",
-                        }}
-                      >
-                        Having trouble Scanning the QR code?
-                      </p>
                     </div>
 
                     <div>
-                      <p
-                        style={{
-                          fontFamily: "Firasans-Regular",
-                          fontSize: "0.9rem",
-                          marginBottom: "2px",
-                          color: "#9b9b9b",
-                        }}
-                      >
-                        Authentication code
-                      </p>
+                      {recoveryKeyEnabled ? (
+                        <>
+                          <p
+                            style={{
+                              fontFamily: "FiraSans-Regular",
+                              fontSize: "0.8rem",
+                              marginBottom: "3px",
+                              color: "#9b9b9b",
+                            }}
+                          >
+                            Scan QR code on app
+                          </p>
 
-                      <p
-                        style={{
-                          fontFamily: "Firasans-Regular",
-                          fontSize: "0.7rem",
-                          color: "#c6c6c6",
-                        }}
-                      >
-                        Enter the 6 digit authentication code generated by your
-                        app
-                      </p>
-                      <GOtpField
-                        value={QrCodeDetails?.Code}
-                        onChange={(value: any) => {
-                          setQrCodeDetails({
-                            ...QrCodeDetails,
-                            Code: value,
-                          });
-                        }}
-                        errMsg={errorQrCodeDetails?.QR}
-                      />
-                      {/* <GInput
-                        width={"27rem"}
-                        type="text"
-                        value={OtpDetails?.OTP}
-                        radius="5px"
-                        labelShrink={true}
-                        dataTest={"email-input"}
-                        variant="outlined"
-                        onChangeHandler={(e: any) => {
-                          setQrCodeDetails({
-                            ...QrCodeDetails,
-                            Code: e.target.value,
-                          });
-                        }}
-                        error={errorQrCodeDetails?.QR}
-                        helperText={errorQrCodeDetails?.QR}
-                      /> */}
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginTop: "1rem",
-                      }}
-                    >
-                      <div></div>
+                          <p
+                            style={{
+                              fontFamily: "FiraSans-Regular",
+                              fontSize: "0.6rem",
+                              color: "#9b9b9b",
+                            }}
+                          >
+                            Scan the QR code with your authenticator app to
+                            generate a unique code.
+                          </p>
 
-                      <GButton
-                        buttonType="primary"
-                        // dataTest={"sign-up-button"}
-                        label={"Next"}
-                        width="100px"
-                        padding={"5px"}
-                        margin="0px"
-                        // onClickHandler={QrcodeHandler}
-                        onClickHandler={handleEnableFactor}
-                      />
+                          <div>
+                            <QRCode value={generateQRData()} size={150} />
+                          </div>
+                          <p
+                            style={{
+                              fontFamily: "FiraSans-Regular",
+                              fontSize: "0.6rem",
+                              color: "rgb(2, 101, 210)",
+                              marginTop: "0.6rem",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Having trouble Scanning the QR code? Use Secret key{" "}
+                            <span style={{ fontWeight: "bold" }}>
+                              {" "}
+                              {twoFactorRes?.secret_key}
+                            </span>
+                          </p>
+                          <p
+                            style={{
+                              fontFamily: "FiraSans-Regular",
+                              fontSize: "0.9rem",
+                              marginBottom: "2px",
+                              color: "#9b9b9b",
+                            }}
+                          >
+                            Authentication code
+                          </p>
+
+                          <p
+                            style={{
+                              fontFamily: "Firasans-Regular",
+                              fontSize: "0.7rem",
+                              color: "#c6c6c6",
+                            }}
+                          >
+                            Enter the 6 digit authentication code generated by
+                            your app
+                          </p>
+                          <GOtpField
+                            value={QrCodeDetails?.Code}
+                            onChange={(value: any) => {
+                              setQrCodeDetails({
+                                ...QrCodeDetails,
+                                Code: value,
+                              });
+                            }}
+                            errMsg={errorQrCodeDetails?.QR}
+                          />
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              marginTop: "1rem",
+                            }}
+                          >
+                            <GButton
+                              buttonType="primary"
+                              label={"Next"}
+                              width="100px"
+                              padding={"5px"}
+                              margin="0px"
+                              onClickHandler={handleEnableFactor}
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <p
+                            style={{
+                              fontFamily: "FiraSans-Regular",
+                              fontSize: "0.9rem",
+                              marginBottom: "2px",
+                              color: "#9b9b9b",
+                            }}
+                          >
+                            Recovery Keys{" "}
+                            <CopyAll
+                              style={{
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                copyArrayToClipboard(
+                                  twoFactorRes?.recoveryKeys
+                                );
+                              }}
+                            />
+                          </p>
+                          {twoFactorRes?.recoveryKeys?.map((key: string) => (
+                            <p
+                              key={key}
+                              style={{
+                                fontFamily: "FiraSans-Regular",
+                                fontSize: "0.6rem",
+                                color: "rgb(2, 101, 210)",
+                                marginTop: "0.6rem",
+                                cursor: "pointer",
+                              }}
+                            >
+                              {key}
+                            </p>
+                          ))}
+                        </>
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -716,15 +718,17 @@ export default function AccountsSettings() {
                     >
                       <h6
                         style={{
-                          fontFamily: "Firasans-Regular",
+                          fontFamily: "FiraSans-Regular",
                           fontWeight: "600",
                           color: "white",
                         }}
                       >
-                        Enable 2FA
+                        {buttonText === "Disable 2FA"
+                          ? "Disable 2FA"
+                          : "Enable 2FA"}
                       </h6>
                       <h1
-                        onClick={handleClose}
+                        onClick={popupClose}
                         style={{
                           fontSize: "1rem",
                           cursor: "pointer",
@@ -762,7 +766,7 @@ export default function AccountsSettings() {
 
                       <h4
                         style={{
-                          fontFamily: "Firasans-Regular",
+                          fontFamily: "FiraSans-Regular",
                           fontWeight: "600",
                           color: "white",
                           fontSize: "0.8rem",
@@ -787,7 +791,6 @@ export default function AccountsSettings() {
                     <div>
                       <p
                         style={{
-                          // marginLeft: "2rem",
                           marginTop: "2rem",
                           fontFamily: "Firasans-Regular",
                           fontSize: "0.8rem",
@@ -815,27 +818,11 @@ export default function AccountsSettings() {
                           }}
                           errMsg={errorOtpDetails?.otp}
                         />
-                        {/* <GInput
-                          width={"20rem"}
-                          type="text"
-                          value={OtpDetails?.OTP}
-                          radius="5px"
-                          labelShrink={true}
-                          dataTest={"email-input"}
-                          variant="outlined"
-                          onChangeHandler={(e: any) => {
-                            setOtpDetails({
-                              ...OtpDetails,
-                              OTP: e.target.value,
-                            });
-                          }}
-                          error={errorOtpDetails?.otp}
-                          helperText={errorOtpDetails?.otp}
-                        /> */}
+
                         {timerStarted && (
                           <p
                             style={{
-                              fontFamily: "Firasans-Regular",
+                              fontFamily: "FiraSans-Regular",
                               fontSize: "0.8rem",
                               color: "white",
                               cursor: "pointer",
@@ -849,22 +836,6 @@ export default function AccountsSettings() {
                             </span>
                           </p>
                         )}
-                      </div>
-
-                      <div>
-                        {/* <GButton
-                          buttonType="secondary"
-                          // dataTest={"sign-up-button"}
-                          label={"Send OTP"}
-                          width="100px"
-                          padding={"5px"}
-                          margin="0px"
-                          onClickHandler={() => {
-                            handleButtonClick();
-                            handleStartTimer();
-                          }}
-                          // onClickHandler={buttonText === "Enable 2FA" ? handleSendOtp() : buttonText === "Disable 2FA" ? handleDidableSendOtp() : "" }
-                        /> */}
                       </div>
                     </div>
 
@@ -880,7 +851,6 @@ export default function AccountsSettings() {
                       <div></div>
                       <GButton
                         buttonType="secondary"
-                        // dataTest={"sign-up-button"}
                         label={"Send OTP"}
                         width="100px"
                         padding={"5px"}
@@ -889,11 +859,9 @@ export default function AccountsSettings() {
                           handleButtonClick();
                           handleStartTimer();
                         }}
-                        // onClickHandler={buttonText === "Enable 2FA" ? handleSendOtp() : buttonText === "Disable 2FA" ? handleDidableSendOtp() : "" }
                       />
                       <GButton
                         buttonType="primary"
-                        // dataTest={"sign-up-button"}
                         label={"Submit"}
                         width="100px"
                         padding={"5px"}
@@ -918,41 +886,7 @@ export default function AccountsSettings() {
         >
           Account Settings
         </HeadingTypography>
-        {/* <div className="col-6 p-0">
-          <SecondarySignInUPTypography
-            sx={{ fontSize: "0.8rem", fontWeight: "300" }}
-          >
-            {translate("signInUp.EMAIL")}
-          </SecondarySignInUPTypography>
 
-          <GInput
-            fullWidth={true}
-            type="email"
-            placeholder={translate("signInUp.EMAIL_PLACEHOLDER")}
-            fontWeight={700}
-            // fontSize="13px"
-            radius="5px"
-            labelShrink={true}
-            // dataTest={"email-input"}
-            variant="outlined"
-            value={email}
-            // errorHandler={(error: any) => setErrorMail(error)}
-            onChangeHandler={(e: any) => {
-              setEmail(e.target.value);
-            }}
-          />
-          <div className="mt-3" style={{ filter: "blur(1px)" }}>
-            <GButton
-              buttonType="primary"
-              dataTest={"sign-up-button"}
-              label={translate("settings.UPDATE_EMAIL_ADDRESS")}
-              padding={"8px"}
-              margin="0px"
-              cursor="not-allowed"
-              onClickHandler={() => {}}
-            />
-          </div>
-        </div> */}
         <hr />
         <div>
           <Accordion
@@ -1064,7 +998,6 @@ export default function AccountsSettings() {
                     fullWidth={true}
                     type={passwordNewVisibility === true ? "text" : "password"}
                     placeholder={"Enter your new password"}
-                    // fontSize="13px"
                     radius="5px"
                     labelShrink={true}
                     dataTest={"email-input"}
@@ -1114,7 +1047,6 @@ export default function AccountsSettings() {
                       passwordConfirmVisibility === true ? "text" : "password"
                     }
                     placeholder={"Enter your new password to confirm"}
-                    // fontSize="13px"
                     radius="5px"
                     labelShrink={true}
                     dataTest={"password-input"}

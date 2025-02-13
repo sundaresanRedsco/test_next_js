@@ -29,6 +29,7 @@ import { useParams } from "react-router-dom";
 import * as Y from "yjs";
 import html2canvas from "html2canvas";
 import useNodeErr from "./useNodeErr";
+import { usePostStore } from "@/app/store/usePostStore";
 
 type YDoc = Y.Doc;
 
@@ -72,6 +73,7 @@ export default function useWorkflow({
   //--------------------------------------Custom Hooks---------------------------------------------------------
 
   const { handleAddInitialErrors } = useNodeErr();
+  const { resetAllPostStoreData } = usePostStore();
 
   //--------------------------------------Stores---------------------------------------------------------
 
@@ -92,6 +94,7 @@ export default function useWorkflow({
 
   useEffect(() => {
     resetWorkFlowState("storedNodes");
+    resetAllPostStoreData();
   }, []);
 
   useEffect(() => {
@@ -885,7 +888,6 @@ export default function useWorkflow({
     // handleSavePopup()
     const nodeMap = flowYdoc?.getMap("nodes");
     const edgesMap = flowYdoc?.getMap("edges");
-    console.log("showErr-nodeArray", nodeMap);
 
     const { nodeArray, deleteNodeId } = prepareNodes(nodeMap);
     const { edgesArray, deleteEdgeId } = prepareEdges(edgesMap);
@@ -924,7 +926,6 @@ export default function useWorkflow({
       userAction: `${userProfile?.user?.email} initiated Save`,
       errors: [],
     };
-    // console.log("showErr-payload", updatedData);
 
     const runMap = flowYdoc?.getMap<any>("run");
     if (runMap) {

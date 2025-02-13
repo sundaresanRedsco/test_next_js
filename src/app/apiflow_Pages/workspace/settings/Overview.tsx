@@ -39,6 +39,9 @@ import {
 } from "@/app/Redux/apiInvitationReducer";
 
 import dynamic from "next/dynamic";
+import CreateWorkflowModal from "@/app/apiflow_components/workspace/CreateWorkflowModal";
+import { useSignUpStore } from "@/app/hooks/sign/signZustand";
+import { usePathname } from "next/navigation";
 
 const GSwitch = dynamic(
   () => import("@/app/apiflow_components/global/GSwitch"),
@@ -174,13 +177,11 @@ function OverView() {
               updatedValues.push(val);
             }
           });
-          console.log(invitationRes, "invitationRes", data, updatedValues);
+
           return updatedValues;
         });
       })
-      .catch((error: any) => {
-        console.log(error, "Error");
-      })
+      .catch((error: any) => {})
       .finally(() => setIsLoading(false));
   };
 
@@ -234,21 +235,16 @@ function OverView() {
           dispatch(GetWorkspacesById(workspaceId))
             .unwrap()
             .then((getRes: any) => {
-              console.log(getRes, "getRes");
               setInitialData({
                 name: currentWorkspace?.name,
                 description: currentWorkspace?.summary,
                 avatarImage: avatarImage,
               });
             })
-            .catch((error: any) => {
-              console.log("Error: ", error);
-            });
+            .catch((error: any) => {});
         }
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   };
 
   const hasChanges = () => {
@@ -312,6 +308,14 @@ function OverView() {
   useEffect(() => {
     setAvatarColor(getRandomColor());
   }, []);
+  const {
+    setApiDataStore,
+    handleOpenSignUp,
+    setIsImportAws,
+    setFormDataStore,
+  }: any = useSignUpStore();
+  const pathname = usePathname();
+  const workspaceId = pathname?.split("/")[4];
 
   return (
     <div>
@@ -708,7 +712,17 @@ function OverView() {
           marginTop: "1rem",
         }}
       >
-        <GButton background="#7A43FE" color="#FFFFFF" label={"Import"} />
+        <GButton
+          background="#7A43FE"
+          color="#FFFFFF"
+          label={"Import"}
+          onClickHandler={() => {
+            setApiDataStore("workspace", { id: workspaceId });
+            setFormDataStore("gateway", "AWS");
+            setIsImportAws(true);
+            handleOpenSignUp();
+          }}
+        />
 
         <GButton
           background="#7A43FE"
@@ -717,6 +731,7 @@ function OverView() {
           label={"Export"}
         />
       </div>
+      <CreateWorkflowModal />
     </div>
   );
 }

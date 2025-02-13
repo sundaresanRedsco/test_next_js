@@ -11,7 +11,10 @@ import {
   setCurrentWorkspace,
   workspaceReducer,
 } from "../../Redux/apiManagement/workspaceReducer";
-import { setCookies } from "../../Helpers/helpersFunctions";
+import {
+  formatWorkspaceDate,
+  setCookies,
+} from "../../Helpers/helpersFunctions";
 import Cookies from "js-cookie";
 import { resetEnvironmentState } from "../../Redux/apiManagement/environmentReducer";
 import { setTabs } from "../../Redux/tabReducer";
@@ -104,7 +107,6 @@ function WorkspacePage() {
         setisLoading(false);
       })
       .catch((error: any) => {
-        console.log("ErrorWorkspace: ", error);
         setisLoading(false);
       });
   };
@@ -179,7 +181,7 @@ function WorkspacePage() {
               <React.Suspense fallback={<WorkspacePageSkeleton />}>
                 <WorkspaceCard
                   membersCount={workspace?.members_count}
-                  syncTime={"2 mins ago"}
+                  syncTime={formatWorkspaceDate(workspace?.created_at)}
                   riskCount={2}
                   projectCount={workspace?.group_count}
                   title={workspace?.name}

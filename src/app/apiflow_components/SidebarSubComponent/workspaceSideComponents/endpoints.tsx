@@ -10,6 +10,7 @@ import {
   AccordionSummary,
   Box,
   Grid2,
+  Tooltip,
   useTheme,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
@@ -22,6 +23,7 @@ import {
 import { InfoNew } from "@/app/Assests/icons";
 import {
   endpointReducer,
+  GetCollectionDocsById,
   GetMinimalCollectionOperationTree,
 } from "@/app/Redux/apiManagement/endpointReducer";
 import { usePathname, useRouter } from "next/navigation";
@@ -33,6 +35,8 @@ import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import path from "path";
 import { ProjectTreeSkeleton } from "../SkeletonProjectContainer";
 import { useQuery } from "@tanstack/react-query";
+import { DocumentScannerOutlined } from "@mui/icons-material";
+import DoumentPopup from "../doumentations/doumentPopup";
 
 const accordionCollectionStyles = {
   elevation: 0,
@@ -95,6 +99,9 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
   };
   const [currentPage, setCurrentPage] = useState<any>({ start: 0, end: 5 });
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [doumentOpen, setDoumentOpen] = useState(false);
+  const [collection_id, setCollection_id] = useState("");
+  const [swaggerDocs, setSwaggerDocs] = useState({});
 
   const fetchPageData = async (page: any) => {
     if (currentEnvironment && currentStage) {
@@ -224,216 +231,237 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
     collectionCount > currentPage.start &&
     collectionCount > 4;
   return (
-    <AccordionDetails
-      id="envContainer"
-      sx={{
-        width: "100%",
-        "& .MuiButtonBase-root": {
-          paddingLeft: 6,
-        },
-        "&.MuiAccordionDetails-root": {
-          padding: "0px !important",
-        },
-        maxHeight: "160px",
-        overflowY: "auto",
-      }}
-    >
-      {getMinimalCollOperTreeLoading && !isLoading ? (
-        <ProjectTreeSkeleton isEndpoint={true} />
-      ) : (
-        getCollOperTreeData.map((col, index) => (
-          <div key={col.id}>
-            <Accordion
-              sx={accordionCollectionStyles}
-              expanded={expandedIndexes.includes(col.id)}
-              onChange={() => {
-                handleAccordionChange(index, col?.id);
-              }}
-            >
-              <AccordionSummary
-                sx={{
-                  background:
-                    currentTreeActive === col?.id
-                      ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
-                      : theme.palette.sidebarMainBackground.main,
-                  color:
-                    currentTreeActive === col?.id ? "#FFFFFF" : "#FFFFFF80",
-                  minHeight: "34px",
-                  overflowY: "auto",
-                  overflowX: "hidden",
-
-                  "&.Mui-expanded": {
-                    minHeight: "34px",
-                  },
-                  "& .MuiAccordionSummary-content": {
-                    margin: "0",
-                    display: "flex",
-                    alignItems: "center",
-                  },
-                  "& .MuiAccordionSummary-content.Mui-expanded": {
-                    margin: "0px",
-                  },
-                  "&:hover": {
-                    background:
-                      "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
-                    color: "#FFFFFF", // Change text color on hover
-                  },
-                }}
-                onClick={() => {
-                  if (
-                    pathname !=
-                    `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/collections/${col?.id}`
-                  ) {
-                    setIsPageLoading(true);
-                  }
-
-                  router.push(
-                    `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/collections/${col?.id}`
-                  );
+    <>
+      <DoumentPopup
+        open={doumentOpen}
+        setOpen={setDoumentOpen}
+        swaggerDocs={swaggerDocs}
+        setSwaggerDocs={setSwaggerDocs}
+        collection_id={collection_id}
+      />
+      <AccordionDetails
+        id="envContainer"
+        sx={{
+          width: "100%",
+          "& .MuiButtonBase-root": {
+            paddingLeft: 6,
+          },
+          "&.MuiAccordionDetails-root": {
+            padding: "0px !important",
+          },
+          maxHeight: "160px",
+          overflowY: "auto",
+        }}
+      >
+        {getMinimalCollOperTreeLoading && !isLoading ? (
+          <ProjectTreeSkeleton isEndpoint={true} />
+        ) : (
+          getCollOperTreeData.map((col, index) => (
+            <div key={col.id}>
+              <Accordion
+                sx={accordionCollectionStyles}
+                expanded={expandedIndexes.includes(col.id)}
+                onChange={() => {
+                  handleAccordionChange(index, col?.id);
                 }}
               >
-                <Box
+                <AccordionSummary
+                  key={col.id}
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    margin: "0px 0px",
-                    position: "relative",
+                    background:
+                      currentTreeActive === col?.id
+                        ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
+                        : theme.palette.sidebarMainBackground.main,
+                    color:
+                      currentTreeActive === col?.id ? "#FFFFFF" : "#FFFFFF80",
+                    minHeight: "34px",
+                    overflowY: "auto",
+                    overflowX: "hidden",
+
+                    "&.Mui-expanded": {
+                      minHeight: "34px",
+                    },
+                    "& .MuiAccordionSummary-content": {
+                      margin: "0",
+                      display: "flex",
+                      alignItems: "center",
+                    },
+                    "& .MuiAccordionSummary-content.Mui-expanded": {
+                      margin: "0px",
+                    },
+                    "&:hover": {
+                      background:
+                        "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)", // Same for selected
+                      color: "#FFFFFF", // Change text color on hover
+                    },
                   }}
                 >
-                  <ExpandMoreIcon
-                    sx={{
-                      transform: expandedIndexes.includes(col.id)
-                        ? "rotate(0deg)"
-                        : "rotate(-90deg)",
-                      transition: "transform 0.3s",
-                      color: expandedIndexes.includes(col.id)
-                        ? "#FFFFFF"
-                        : "#FFFFFF80",
-                      fontSize: "18px",
-                    }}
-                  />
-                  <TeritaryTextTypography
-                    style={{
-                      color: expandedIndexes.includes(col.id)
-                        ? "#FFFFFF"
-                        : "#FFFFFF80",
-                      fontSize: "12px",
-                      maxWidth: "170px",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {col.name}
-                  </TeritaryTextTypography>
-                </Box>
-              </AccordionSummary>
-              <AccordionDetails
-                sx={{
-                  background: theme.palette.sidebarMainBackground.main,
-
-                  width: "100%",
-                  "&.MuiAccordionDetails-root": {
-                    padding: "0px !important",
-                    display: "flex",
-                    flexDirection: "column",
-                  },
-                }}
-              >
-                {col.operations.map((op: any) => (
                   <Box
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      padding: "7px",
-                      paddingLeft: 8,
+                      cursor: "pointer",
+                      margin: "0px 0px",
                       position: "relative",
-                      gap: "5px",
-
-                      background:
-                        currentTreeActive === op?.id
-                          ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
-                          : theme.palette.sidebarMainBackground.main,
-                      color:
-                        currentTreeActive === op?.id ? "#FFFFFF" : "#FFFFFF80",
-                    }}
-                    onClick={() => {
-                      if (
-                        pathname !=
-                        `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/operations/${op?.id}`
-                      ) {
-                        setIsPageLoading(true);
-                      }
-                      dispatch(setCurrentTreeActive(op?.id));
-                      router.push(
-                        `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/operations/${op?.id}`
-                      );
                     }}
                   >
+                    <ExpandMoreIcon
+                      sx={{
+                        transform: expandedIndexes.includes(col.id)
+                          ? "rotate(0deg)"
+                          : "rotate(-90deg)",
+                        transition: "transform 0.3s",
+                        color: expandedIndexes.includes(col.id)
+                          ? "#FFFFFF"
+                          : "#FFFFFF80",
+                        fontSize: "18px",
+                      }}
+                    />
+                    <TeritaryTextTypography
+                      style={{
+                        color: expandedIndexes.includes(col.id)
+                          ? "#FFFFFF"
+                          : "#FFFFFF80",
+                        fontSize: "12px",
+                        maxWidth: "170px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {col.name}
+                    </TeritaryTextTypography>
+                    <Tooltip title="Documentation here">
+                      <DocumentScannerOutlined
+                        onClick={() => {
+                          let data = {
+                            project_id: currentEnvironment,
+                            collection_id: col.id,
+                          };
+                          dispatch(GetCollectionDocsById(data))
+                            .unwrap()
+                            .then((res: any) => {
+                              setSwaggerDocs(res);
+                            });
+                          setDoumentOpen(true);
+                          setCollection_id(col.id);
+                        }}
+                        sx={{
+                          marginLeft: "5px",
+                          fontSize: "14px",
+                        }}
+                      />
+                    </Tooltip>
+                  </Box>
+                </AccordionSummary>
+                <AccordionDetails
+                  key={col?.id}
+                  sx={{
+                    background: theme.palette.sidebarMainBackground.main,
+                    width: "100%",
+                    "&.MuiAccordionDetails-root": {
+                      padding: "0px !important",
+                      display: "flex",
+                      flexDirection: "column",
+                    },
+                  }}
+                >
+                  {col.operations.map((op: any) => (
                     <Box
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
+                        padding: "7px",
+                        paddingLeft: 8,
+                        position: "relative",
+                        gap: "5px",
+
+                        background:
+                          currentTreeActive === op?.id
+                            ? "linear-gradient(90deg, #9B53B0 0%, #7A43FE 100%)"
+                            : theme.palette.sidebarMainBackground.main,
                         color:
                           currentTreeActive === op?.id
                             ? "#FFFFFF"
                             : "#FFFFFF80",
                       }}
+                      onClick={() => {
+                        if (
+                          pathname !=
+                          `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/operations/${op?.id}`
+                        ) {
+                          setIsPageLoading(true);
+                        }
+                        dispatch(setCurrentTreeActive(op?.id));
+                        router.push(
+                          `/userId/${userProfile?.user.user_id}/workspaceId/${currentWorkspace?.id}/operations/${op?.id}`
+                        );
+                      }}
                     >
-                      <InfoNew />
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color:
+                            currentTreeActive === op?.id
+                              ? "#FFFFFF"
+                              : "#FFFFFF80",
+                        }}
+                      >
+                        <InfoNew />
+                      </Box>
+
+                      <TeritaryTextTypography
+                        key={op.id}
+                        style={{
+                          color:
+                            currentTreeActive === op?.id
+                              ? "#FFFFFF"
+                              : "#FFFFFF80",
+                          fontSize: "10px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {op.name}
+                      </TeritaryTextTypography>
                     </Box>
-
-                    <TeritaryTextTypography
-                      key={op.id}
-                      style={{
-                        color:
-                          currentTreeActive === op?.id
-                            ? "#FFFFFF"
-                            : "#FFFFFF80",
-                        fontSize: "10px",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {op.name}
-                    </TeritaryTextTypography>
-                  </Box>
-                ))}
-              </AccordionDetails>
-            </Accordion>
-          </div>
-        ))
-      )}
-
-      {isLoading &&
-        [1, 2, 3, 4].map((elem, index) => {
-          return (
-            <div
-              key={index}
-              style={{
-                padding: "10px 0 10px 50px",
-                position: "relative",
-                marginBottom: 2,
-              }}
-            >
-              <GSkeletonLoader
-                secondary={true}
-                open={true}
-                width="60%"
-                height="15px"
-              />
+                  ))}
+                </AccordionDetails>
+              </Accordion>
             </div>
-          );
-        })}
-      <div
-        ref={containerRef}
-        style={{ height: isHeightIncrease ? "50px" : 0 }}
-      ></div>
-    </AccordionDetails>
+          ))
+        )}
+
+        {isLoading &&
+          [1, 2, 3, 4].map((elem, index) => {
+            return (
+              <div
+                key={index}
+                style={{
+                  padding: "10px 0 10px 50px",
+                  position: "relative",
+                  marginBottom: 2,
+                }}
+              >
+                <GSkeletonLoader
+                  secondary={true}
+                  open={true}
+                  width="60%"
+                  height="15px"
+                />
+              </div>
+            );
+          })}
+        <div
+          ref={containerRef}
+          style={{ height: isHeightIncrease ? "50px" : 0 }}
+        ></div>
+      </AccordionDetails>
+    </>
   );
 };
 

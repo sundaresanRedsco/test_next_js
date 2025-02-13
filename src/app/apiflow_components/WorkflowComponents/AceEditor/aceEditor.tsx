@@ -159,16 +159,12 @@ const AceEditorComponent = (props: any) => {
 
   const { onInputVal, defaultInputVal, disabled = false, nodeId } = props;
   const { handleErrors } = useNodeErr();
-  console.log(defaultInputVal, "defaultInputValdkkd");
-
-  console.log(onInputVal, "onInputValsdsd");
 
   const editorRef = useRef<any>(null);
 
   const suggestions = globalResponse
     ? getNestedKeys({ response: globalResponse })
     : [];
-  console.log(suggestions, "newsdusuggestions");
 
   const formatJSON = (input: string) => {
     try {
@@ -180,7 +176,6 @@ const AceEditorComponent = (props: any) => {
   };
 
   const [input, setInput] = useState<string>(defaultInputVal);
-  console.log(input, "inputsdsd");
 
   // const [annotationsArray, setAnnotationsArray] = useState([]);
 
@@ -253,11 +248,6 @@ const AceEditorComponent = (props: any) => {
       const lastQuote = newValue.lastIndexOf('"', cursorPosition);
       const lastKey = newValue.lastIndexOf(":", cursorPosition);
 
-      console.log("Cursor Position:", cursorPosition);
-      console.log("Last Open Brace:", lastOpenBrace);
-      console.log("Last Open And:", lastOpenAnd);
-      console.log("Last Quote:", lastQuote);
-
       let precedingText: string = "";
 
       // Handle suggestions when '&' is present
@@ -268,17 +258,15 @@ const AceEditorComponent = (props: any) => {
         precedingText = newValue
           .substring(lastOpenAnd + 1, cursorPosition)
           .trim();
-        console.log("Preceding Text for Functions:", precedingText);
 
         // const match = precedingText.match(/(\w+)$/);
         const match = precedingText.match(/([&\w]+)$/); // Match the last word including '&'
         if (match) {
           const searchTerm = match[0];
-          console.log("Search Term for Functions:", searchTerm);
 
           if (searchTerm == "&") {
             // When the search term is empty, show all suggestions
-            console.log("No search term provided. Showing all suggestions.");
+
             setSuggestedKeys(FQL_FUNCTIONS.map((func) => func.name));
             updatePopoverPosition(lastOpenAnd + searchTerm.length); // Assuming FQL_FUNCTIONS holds all your function suggestions
             return; // Exit the function after setting all suggestions
@@ -288,16 +276,11 @@ const AceEditorComponent = (props: any) => {
             func.name.startsWith(searchTerm)
           ).map((func) => func.name);
 
-          console.log(
-            "Filtered Suggestions for Functions:",
-            filteredFqlFunctions
-          );
           setSuggestedKeys(
             filteredFqlFunctions.filter((item) => item.trim() !== "")
           );
           updatePopoverPosition(lastOpenAnd + searchTerm.length);
         } else {
-          console.log("No match found for preceding text in function context.");
           setSuggestedKeys([]);
           setPopoverPosition(null);
         }
@@ -310,34 +293,28 @@ const AceEditorComponent = (props: any) => {
         precedingText = newValue
           .substring(lastQuote + 1, cursorPosition)
           .trim();
-        console.log("Preceding Text for Keys:", precedingText);
 
         const match = precedingText.match(/(\w+(\[\d+\])?(\.\w+)*)$/);
         if (match) {
           const searchTerm = match[0];
-          console.log("Search Term for Keys:", searchTerm);
 
           const filteredSuggestions: string[] = Object.values(suggestions)
             .filter((value) => value.startsWith(searchTerm))
             .map((value) => value);
 
-          console.log("Filtered Suggestions for Keys:", filteredSuggestions);
           setSuggestedKeys(
             filteredSuggestions.filter((item) => item.trim() !== "")
           );
           updatePopoverPosition(lastQuote + searchTerm.length);
         } else {
-          console.log("No match found for preceding text in key context.");
           setSuggestedKeys([]);
           setPopoverPosition(null);
         }
       } else {
-        console.log("No relevant context for suggestions.");
         setSuggestedKeys([]);
         setPopoverPosition(null);
       }
     } else {
-      console.log("Editor reference is not available.");
     }
 
     handleJsonValidation();

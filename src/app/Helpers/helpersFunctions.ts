@@ -88,7 +88,7 @@ export const EncrouptionLogic = (val: any): string => {
 export const decryptData = (val: string | null): any => {
   if (!val) {
     // Handle case when val is null
-    console.error("No data to decrypt");
+
     return null;
   }
 
@@ -100,7 +100,6 @@ export const decryptData = (val: string | null): any => {
     const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
     return decryptedData;
   } catch (error) {
-    console.error("Error decrypting data:", error);
     return null;
   }
 };
@@ -138,10 +137,7 @@ export function replacePlaceholders(
     (template.includes("{") || template.includes("&"))
   ) {
     if (hasFilterCondition(template)) {
-      console.log("template", template);
-      console.log("template", hasFilterCondition(template));
       template = dynamicFilter(data, template);
-      console.log("template3", template);
       return template;
     }
     const placeholders = template.match(/{(.*?)}/g); // Find all placeholders
@@ -150,21 +146,17 @@ export function replacePlaceholders(
         let keys;
         let replacementValue;
         // Check if the placeholder starts with 'global.'
-        console.log("place", place, typeof place);
         if (globalArrayKeys?.length > 0 && place.includes("{global.")) {
           const startIndex = place.indexOf("{global.") + 8; // 8 is the length of '{global.'
           const endIndex = place.indexOf("}", startIndex); // Find the closing '}'
           let globalKey: any;
           if (endIndex > startIndex) {
             globalKey = place.slice(startIndex, endIndex);
-            console.log(globalKey, "globalKey");
           } else {
-            console.error("Closing brace '}' not found for '{global.'");
           }
           const globalObject = globalArrayKeys
             ? globalArrayKeys.find((obj: any) => obj.key_name === globalKey)
             : null;
-          console.log(globalObject, "globalObject");
           replacementValue = globalObject?.value
             ? globalObject?.value
             : undefined;
@@ -704,7 +696,6 @@ export const stringToJsonFunc = (value: any) => {
     }
     return value;
   } catch (error) {
-    console.error("Error parsing JSON:", error);
     return value;
   }
 };

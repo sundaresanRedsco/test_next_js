@@ -1,5 +1,5 @@
 import { AddReaction, ArrowDropDown, Send } from "@mui/icons-material";
-import { Box, IconButton, Popover } from "@mui/material";
+import { Box, IconButton, Popover, Skeleton, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import GInput from "../../global/GInput";
 import CommentBubble from "./CommentBubble";
@@ -8,22 +8,39 @@ import { RootStateType } from "@/app/Redux/store";
 import { CommonReducer } from "@/app/Redux/commonReducer";
 import EmojiPicker from "emoji-picker-react";
 import useComments from "@/app/hooks/posts/useComments";
+import EmptyData from "./EmptyData";
+import theme from "@/Theme/theme";
+import { usePostStore } from "@/app/store/usePostStore";
+import {
+  PrimaryTextTypography,
+  TeritaryTextTypography,
+} from "@/app/Styles/signInUp";
+import GButton from "../../global/GlobalButtons";
+import { CommentSkeleton } from "./skeletons";
 
-type Props = { type: any; postId: any };
-
-export default function CommentsContainer({ type, postId }: Props) {
+export default function CommentsContainer() {
+  const { openComment, comment, setComment, mention, resetData } =
+    usePostStore();
   const [emojiAnchorEl, setEmojiAnchorEl] = useState<any>(null);
-  const [comment_id, setComment_id] = useState("");
-  const [isReply, setIsReplay] = useState(false);
-  const [isReplies, setIsReplies] = useState(false);
-
+  const [isSendEnabled, setisSendEnabled] = useState(false);
   const openEmoji = Boolean(emojiAnchorEl);
-  const [comment, setComment] = useState("");
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
   );
-  const { createComment, comments, replies, createReplies, getReplies } =
-    useComments(postId, userProfile?.user?.user_id);
+
+  const {
+    createComment,
+    comments,
+    createReplies,
+    commentsLoading,
+    commentCreationLoading,
+    createRepliesLoading,
+    commentReplyDeleting,
+    deleteCommentReply,
+    commentDeleting,
+    deleteComment,
+    commentsErr,
+  } = useComments();
   const emojiPopOverId = openEmoji ? "CommentEmoji-popover" : undefined;
   const handleOpenEmojiPopUp = (event: any) => {
     setEmojiAnchorEl(event.currentTarget);
@@ -31,17 +48,35 @@ export default function CommentsContainer({ type, postId }: Props) {
   const handleCloseEmojiPopUp = (event: any) => {
     setEmojiAnchorEl(null);
   };
-
+  const handleSubmit = () => {
+    if (comment) {
+      if (mention.email) {
+        createReplies({
+          comment_id: mention.id,
+          reply_text: comment,
+        });
+      } else {
+        createComment({
+          post_id: openComment,
+          comment_text: comment,
+        });
+      }
+    }
+  };
   useEffect(() => {
-    getReplies(comment_id);
-  }, [comment_id]);
+    if (comment.length > 0) {
+      setisSendEnabled(true);
+    } else {
+      setisSendEnabled(false);
+    }
+  }, [comment]);
+
   return (
     <>
       <Box
         sx={{
           width: "100%",
-          height: "100%",
-          background: "white",
+          background: theme.palette.secondaryChatBg.main,
           boxShadow:
             "0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px -6px 14px 0px rgba(0,0,0,0.12)",
           position: "relative",
@@ -49,51 +84,99 @@ export default function CommentsContainer({ type, postId }: Props) {
           padding: 1,
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-          gap: 1,
           zIndex: "99999",
+          height: "70vh",
+          overflowY: "auto",
+          paddingBottom: 3,
+          flexDirection: "column-reverse",
+          gap: 3,
         }}
       >
-        {comments?.map((x: any) => (
-          <div>
+        {commentsLoading ? (
+          <Stack gap={1} sx={{ width: "95%" }}>
+            {[1, 2, 3].map((elem) => {
+              return <CommentSkeleton key={elem} />;
+            })}
+          </Stack>
+        ) : comments?.length > 0 && !commentsErr ? (
+          comments?.map((x: any) => (
             <CommentBubble
               key={x.id}
-              id={1}
               data={x}
-              setIsReplay={setIsReplay}
-              setComment={setComment_id}
-              setIsReplies={setIsReplies}
               repliesCount={x?.repliesCount}
+              reply_comments={x?.reply_comments}
+              message={x?.comment_text}
+              email={x?.commented_by}
+              commented_at={x?.commented_at}
+              handleDelete={deleteComment}
+              handleDeleteReply={deleteCommentReply}
             />
-            {comment_id === x.id && (
-              <>
-                {x?.reply_comments?.map((comment: any) => (
-                  <CommentBubble
-                    key={comment.id}
-                    id={2}
-                    data={comment}
-                    isReplay
-                    nestedSize={2}
-                  />
-                ))}
-              </>
-            )}
-          </div>
-        ))}
-
-        {/* <CommentBubble id={2} nestedSize={1} />
-        <CommentBubble id={3} nestedSize={2} /> */}
-        {isReply && (
-          <button
-            onClick={() => {
-              setIsReplay(false);
-              setIsReplies(false);
-              setComment_id("");
+          ))
+        ) : (
+          <EmptyData text="No Comments Yet" />
+        )}
+        {(commentDeleting ||
+          commentReplyDeleting ||
+          commentCreationLoading ||
+          createRepliesLoading) && (
+          <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
+            <CommentSkeleton />
+          </Box>
+        )}
+      </Box>
+      <Stack
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 1,
+          position: "relative",
+        }}
+      >
+        {mention?.email && (
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              gap: "3px",
+              alignItems: "center",
             }}
           >
-            comment
-          </button>
+            <TeritaryTextTypography
+              sx={{
+                fontSize: "11px",
+                color: theme.palette.textTertiaryColor.main,
+              }}
+            >
+              Replying to
+            </TeritaryTextTypography>
+            <PrimaryTextTypography
+              sx={{
+                fontSize: "11px",
+                color: theme.palette.textPrimaryColor.main,
+                textTransform: "capitalize",
+              }}
+            >
+              {mention.email}
+            </PrimaryTextTypography>
+            <GButton
+              onClickHandler={() => {
+                resetData("mention");
+              }}
+              customStyle={{
+                "&.MuiButtonBase-root": {
+                  padding: "0px !important",
+                  margin: "0px !important",
+                  minWidth: "auto",
+                  marginLeft: 1,
+                },
+                color: `${theme.palette.textTertiaryColor.main} !important`,
+                fontWeight: "bold !important",
+              }}
+              variant="text"
+              label={"Cancel"}
+            />
+          </Box>
         )}
         <GInput
           WebkitBoxShadow={"0 0 0 30px #9891a7 inset !important"}
@@ -125,7 +208,7 @@ export default function CommentsContainer({ type, postId }: Props) {
               <AddReaction
                 sx={{
                   fontSize: "15px",
-                  color: "white",
+                  color: theme.palette.textTertiaryColor.main,
                 }}
               />
             </IconButton>
@@ -133,34 +216,18 @@ export default function CommentsContainer({ type, postId }: Props) {
           endIcon={
             <Send
               fontSize="small"
-              sx={{ cursor: "pointer", color: "white" }}
-              onClick={() => {
-                if (isReply) {
-                  createReplies({
-                    comment_id: comment_id,
-                    reply_text: comment,
-                  });
-                } else {
-                  createComment({
-                    post_id: postId,
-                    comment_text: comment,
-                  });
-                }
+              sx={{
+                cursor: "pointer",
+                color: isSendEnabled
+                  ? theme.palette.textPrimaryColor.main
+                  : theme.palette.textTertiaryColor.main,
+                transition: ".3s",
               }}
+              onClick={handleSubmit}
             />
           }
         />
-        <ArrowDropDown
-          sx={{
-            color: "white",
-            position: "absolute",
-            bottom: "-28px",
-            height: "2em",
-            width: "2em",
-            right: type == "me" ? "10px" : "auto",
-          }}
-        />
-      </Box>
+      </Stack>
       <Popover
         open={openEmoji}
         onClose={handleCloseEmojiPopUp}
@@ -177,7 +244,8 @@ export default function CommentsContainer({ type, postId }: Props) {
       >
         <EmojiPicker
           onEmojiClick={(e) => {
-            console.log("showErr-comment", e);
+            setComment(comment + e.emoji);
+            setEmojiAnchorEl(null);
           }}
         />
       </Popover>

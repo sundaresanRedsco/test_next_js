@@ -407,9 +407,7 @@ function IntegrationPage(props: any) {
   const handleGetIntergrationByTenantId = () => {
     dispatch(GetIntegrationByTenantId(userProfile?.user?.tenant_id))
       .unwrap()
-      .then((getRes: any) => {
-        console.log("getRes: ", getRes);
-      })
+      .then((getRes: any) => {})
       .catch((error: any) => {
         if (error?.message === "No data found for the provided tenant_id ") {
         }

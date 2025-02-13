@@ -376,14 +376,14 @@ export default function WorkflowSidebar(props: any) {
 
       {/* Collections and Operations */}
       <Box sx={{ margin: recentlyModifiedProp === true ? "" : "10px 0px" }}>
-        <DraggableCard
+        {/* <DraggableCard
           id={123}
           name={"Frame"}
           http_method={"GET"}
           type={"groupNode"}
           collection_id={123}
           recentlyModifiedProp={recentlyModifiedProp}
-        />
+        /> */}
         {collOperDetails?.map((item: any, index: number) => (
           <Accordion
             key={index}

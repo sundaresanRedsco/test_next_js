@@ -19,14 +19,12 @@ export default function useMqttClient(userId: any) {
     );
 
     client.on("connect", () => {
-      console.log("Connected to MQTT broker");
       // Subscribe to the topic after connection
       const topic = `users/${userId}/notifications`;
       client.subscribe(topic, (err) => {
         if (err) {
           console.error("Failed to subscribe:", err);
         } else {
-          console.log(`Subscribed to topic: ${topic}`);
         }
       });
     });

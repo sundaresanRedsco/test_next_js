@@ -143,7 +143,7 @@ export default function WorkflowDrawer(props: any) {
 
     const runFlow = () => {
       let runData = runMap?.toJSON();
-      console.log(runData, "runData");
+
       if (runData.run.status === "RUNNING") {
         let updateRun = runData?.run?.run_result;
         setRunResult(updateRun);

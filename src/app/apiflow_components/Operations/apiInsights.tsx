@@ -19,9 +19,9 @@ import {
   TableRow,
   Tooltip,
   tableCellClasses,
+  useTheme,
 } from "@mui/material";
 import InsightsIcon from "@mui/icons-material/Insights";
-import theme from "../../../Theme/theme";
 import {
   HeadingTypography,
   PrimaryTypography,
@@ -33,7 +33,9 @@ import ArrowCircleRightOutlinedIcon from "@mui/icons-material/ArrowCircleRightOu
 import { useDispatch, useSelector } from "react-redux";
 import styled from "@emotion/styled";
 import {
+  BackgroundUrlList,
   GetAllSenseDataKeyInOperByOperId,
+  GetAllStandardsKeyInOperByOperId,
   GetApiStatus,
   GetApiStatusByOpperationId,
   GetOperationById,
@@ -47,18 +49,30 @@ import InsightsOutlinedIcon from "@mui/icons-material/InsightsOutlined";
 import GlobalCircularLoader from "@/app/apiflow_components/global/GCircularLoader";
 import InfoIcon from "@mui/icons-material/Info";
 import { paginator } from "../global/paginator";
+import BackgroundUrlsAccordion from "./BackgroundTable";
+
+import GSelect from "../sign/discovery/GSelect";
+import { environmentReducer } from "@/app/Redux/apiManagement/environmentReducer";
+import SensitiveTable from "./SensitiveTable";
+import StandardsTable from "./StandardsTable";
+import JsonComparisonList from "./changeHistoryBackground";
+import { GetBackgroundChangeTracking } from "@/app/Redux/apiManagement/endpointReducer";
+
 const StyledTableCell = styled(TableCell)(({ theme: any }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.btnGrey.main,
-    color: theme.palette.mainWhite.main,
+    backgroundColor: "#E8E8E8",
+    color: "#ffffff",
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 18,
   },
 }));
 
-const ApiInsights = () => {
+const ApiInsights = (props: any) => {
+  const { currentOperation, backgroundUrlData } = props;
+
   const containerRef = useRef<any>(null);
+  const theme = useTheme();
 
   const dispatch = useDispatch<any>();
 
@@ -68,12 +82,18 @@ const ApiInsights = () => {
     (state) => state.apiManagement.projects
   );
 
+  const { currentEnvironment } = useSelector<RootStateType, environmentReducer>(
+    (state) => state.apiManagement.environment
+  );
+
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
 
   const [keyOperationData, setKeyOperationData] = useState<any[]>([]);
   const countTableVal = Math.ceil(keyOperationData?.length / 5);
   const [page2, setPage2] = React.useState<number>(1);
   const [openRows, setOpenRows] = useState<any>({});
+  const [backgroundDetails, setBackgroundDetails] = useState<any>({});
+  const [drawerHistory, setDrawerHistory] = useState(false);
 
   const [publicPrivateClicked, setPublicPrivateClicked] = useState(false);
   const [sensLogsClicked, setSensLogsClicked] = useState(false);
@@ -98,6 +118,7 @@ const ApiInsights = () => {
 
   const [orphanLogDates, setOrphanLogDates] = useState<any[]>([]);
   const [orphanLogResult, setOrphanLogResult] = useState<any[]>([]);
+  const [standardsData, setStandardsData] = useState<any[]>([]);
 
   const [statusValues, setStatusValues] = useState(["PUBLIC", "PRIVATE"]);
   const [operationTypes, setOperationTypes] = useState([
@@ -175,12 +196,13 @@ const ApiInsights = () => {
     transition: "left 0.3s ease",
     zIndex: 999,
     marginLeft: "14rem",
+    background: "1px 0 6px 0px #333232",
   };
 
   const contentStyles: React.CSSProperties = {
     width: "100%",
     height: "100%",
-    backgroundColor: "white",
+    backgroundColor: "black",
     transition: "left 0.3s ease",
     padding: "0.1rem 2rem",
     overflow: "auto",
@@ -273,9 +295,7 @@ const ApiInsights = () => {
         );
         setLogsDates(filteringOnlyDates);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   };
 
   const fetchSensLogsData = async (page: number) => {
@@ -299,9 +319,7 @@ const ApiInsights = () => {
         );
         setSensLogDates(filteringSensLogDates);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   };
 
   const fetchOrphanLogsData = (page: number) => {
@@ -316,8 +334,6 @@ const ApiInsights = () => {
       sortField: "",
     };
 
-    console.log("requestOrphanData: ", requestOrphanData, currentPage);
-
     dispatch(LogStashOffsetFromClickhouse(requestOrphanData))
       .unwrap()
       .then((orphanRes: any) => {
@@ -328,9 +344,7 @@ const ApiInsights = () => {
         );
         setOrphanLogDates(filteringOrphanLogDates);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   };
 
   const handleScroll = () => {
@@ -346,9 +360,35 @@ const ApiInsights = () => {
     // Check if value is null, "null", or undefined
     const checkValue =
       value === null || value === "null" || value === undefined ? "-" : value;
-    console.log("checkValue: ", checkValue);
+
     return checkValue; // Ensure the returned value is always a string
   };
+
+  function getInsights(operation_id: string) {
+    dispatch(
+      GetAllSenseDataKeyInOperByOperId({
+        project_id: currentEnvironment,
+        operation_id: operation_id,
+      })
+    )
+      .unwrap()
+      .then((sensitiveDataRes: any) => {
+        setKeyOperationData(sensitiveDataRes);
+      })
+      .catch((error: any) => {});
+
+    dispatch(
+      GetAllStandardsKeyInOperByOperId({
+        project_id: currentEnvironment,
+        operation_id: operation_id,
+      })
+    )
+      .unwrap()
+      .then((sensitiveDataRes: any) => {
+        setStandardsData(sensitiveDataRes);
+      })
+      .catch((error: any) => {});
+  }
 
   useEffect(() => {
     setFilteredSensVal(
@@ -407,33 +447,8 @@ const ApiInsights = () => {
   }, []);
 
   useEffect(() => {
-    if (operIdVal) {
-      dispatch(GetOperationById(operIdVal))
-        .unwrap()
-        .then((operRes: any) => {
-          setOperationDetails(operRes);
-        })
-        .catch((error: any) => {
-          console.log("Error: ", error);
-        });
-    }
-  }, [operIdVal]);
-
-  useEffect(() => {
-    dispatch(GetAllSenseDataKeyInOperByOperId(operIdVal))
-      .unwrap()
-      .then((sensitiveDataRes: any) => {
-        setKeyOperationData(sensitiveDataRes);
-      })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
-  }, [dispatch, operIdVal]);
-
-  useEffect(() => {
     let requestData = {
       operation_id: operIdVal,
-
       offsetStart: startVal,
       offsetEnd: endVal,
       fieldName: "",
@@ -445,13 +460,11 @@ const ApiInsights = () => {
       .then((apiStatus: any) => {
         setApiStatusCount(apiStatus?.count);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   }, []);
 
   return (
-    <div>
+    <Box>
       <div>
         <Button
           variant="contained"
@@ -459,7 +472,7 @@ const ApiInsights = () => {
             <InfoIcon
               style={{
                 fontSize: "16px",
-                color: `#ACAAB3`,
+                color: `${theme.palette.textTertiaryColor.main}`,
                 fontWeight: 900,
               }}
             />
@@ -475,14 +488,17 @@ const ApiInsights = () => {
             width: "100%",
             height: "40px",
             background: "rgba(121, 70, 253, 0.1)",
-            border: "1.5px solid #7946FD",
+            border: `1.5px solid ${theme.palette.navigationTabColor.main}`,
             borderRadius: "10px",
             flex: "none",
             order: 1,
             flexGrow: 0,
             marginLeft: "30px",
           }}
-          onClick={togglePopup}
+          onClick={() => {
+            togglePopup();
+            getInsights(currentOperation?.operationId);
+          }}
         >
           <SecondaryTypography
             style={{
@@ -498,13 +514,19 @@ const ApiInsights = () => {
       {/* drawer code */}
       <Backdrop open={isPopupOpen} sx={{ zIndex: "99" }}>
         <div style={popupStyles} onClick={togglePopup}>
-          <div style={contentStyles} onClick={(e) => e.stopPropagation()}>
+          <div
+            style={{
+              ...contentStyles,
+              background: theme.palette.apiInsightsBackgroundColor.main,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div onClick={closePopup}>
               <div style={{ margin: "1rem 0rem" }}>
                 <ArrowBackIosIcon
                   sx={{
-                    fontSize: "8px",
-                    color: "#64748B",
+                    fontSize: "12px",
+                    color: `${theme.palette.teritiaryColor.main}`,
                     cursor: "pointer",
                     marginTop: "2px",
                   }}
@@ -512,9 +534,10 @@ const ApiInsights = () => {
                 <span
                   style={{
                     cursor: "pointer",
-                    color: "#64748B",
-                    fontSize: "8px",
-                    fontFamily: "Inter-regular",
+
+                    color: `${theme.palette.teritiaryColor.main}`,
+                    fontSize: "12px",
+                    fontFamily: "FiraSans-regular",
                   }}
                 >
                   Back
@@ -524,30 +547,34 @@ const ApiInsights = () => {
             <div>
               <HeadingTypography
                 style={{
-                  fontSize: "10px",
-                  fontWeight: 600,
+                  fontSize: "14px",
                 }}
               >
                 Insights Operation
               </HeadingTypography>
-              <SecondaryTypography>
+              <SecondaryTypography
+                style={{
+                  fontSize: "12px",
+                  color: `${theme.palette.textSecondaryColor.main}`,
+                }}
+              >
                 Insights from the{" "}
                 <span
                   style={{
                     color:
-                      operationDetails?.[0]?.http_method === "GET"
+                      currentOperation?.http_method === "GET"
                         ? "green"
-                        : operationDetails?.[0]?.http_method === "POST"
+                        : currentOperation?.http_method === "POST"
                         ? "#FDA556"
-                        : operationDetails?.[0]?.http_method === "PUT"
+                        : currentOperation?.http_method === "PUT"
                         ? `${theme.palette.primaryBlue.main}`
-                        : operationDetails?.[0]?.http_method === "DELETE"
+                        : currentOperation?.http_method === "DELETE"
                         ? `${theme.palette.mainRed.main}`
                         : "",
                     fontWeight: 900,
                   }}
                 >
-                  {operationDetails?.[0]?.http_method}
+                  {currentOperation?.http_method}
                 </span>{" "}
                 method of operation{" "}
                 <span
@@ -555,7 +582,7 @@ const ApiInsights = () => {
                     fontWeight: 900,
                   }}
                 >
-                  {operationDetails?.[0]?.name}
+                  {currentOperation?.name}
                 </span>
               </SecondaryTypography>
             </div>
@@ -581,23 +608,23 @@ const ApiInsights = () => {
                         elevation={8}
                         sx={{
                           padding: "8px",
-
-                          background: `${theme.palette.v2PrimaryColor.main}`,
-                          width: "160px",
-                          height: "60px",
+                          background: `${theme.palette.primaryPurple.main}`,
+                          width: "180px",
+                          height: "80px",
                         }}
                       >
                         <div>
                           <SecondaryTypography
                             style={{
-                              color: `${theme.palette.mainWhite.main}`,
+                              color: `${theme.palette.textPrimaryColor.main}`,
+                              fontSize: "12px",
                             }}
                           >
                             {/* Operation Type */}
                             <span>
                               <InsightsOutlinedIcon
                                 style={{
-                                  fontSize: "13px",
+                                  fontSize: "15px",
                                   marginRight: "5px",
                                   marginBottom: "3px",
                                 }}
@@ -621,30 +648,92 @@ const ApiInsights = () => {
                             <div>
                               <SecondaryTypography
                                 style={{
-                                  color: `${theme.palette.mainWhite.main}`,
+                                  color: `${theme.palette.textPrimaryColor.main}`,
+                                  fontSize: "12px",
                                   fontWeight: 600,
                                 }}
                               >
-                                {operationDetails?.[0]?.private_or_public?.trim() ===
+                                {currentOperation?.private_or_public?.trim() ===
                                 ""
                                   ? "NIL"
-                                  : operationDetails?.[0]?.private_or_public}
+                                  : currentOperation?.private_or_public}
                               </SecondaryTypography>
                             </div>
                             <div>
-                              <Tooltip
+                              {/* <Tooltip
                                 arrow
                                 title={`Click here to see the Public Logs`}
                               >
                                 <ArrowCircleRightOutlinedIcon
                                   style={{
-                                    color: `${theme.palette.mainWhite.main}`,
+                                    color: `${theme.palette.textPrimaryColor.main}`,
                                     cursor: "pointer",
                                     fontSize: "15px",
                                   }}
                                   onClick={handlePublicLogs}
                                 />
-                              </Tooltip>
+                              </Tooltip> */}
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    </Box>
+                  </div>
+
+                  <div>
+                    <Box>
+                      <Card
+                        square={false}
+                        elevation={8}
+                        sx={{
+                          padding: "8px",
+                          background: `${theme.palette.primaryPurple.main}`,
+                          width: "180px",
+                          height: "80px",
+                        }}
+                      >
+                        <div>
+                          <SecondaryTypography
+                            style={{
+                              color: `${theme.palette.textPrimaryColor.main}`,
+                              fontSize: "12px",
+                            }}
+                          >
+                            {/* Operation Type */}
+                            <span>
+                              <InsightsOutlinedIcon
+                                style={{
+                                  fontSize: "15px",
+                                  marginRight: "5px",
+                                  marginBottom: "3px",
+                                }}
+                              />
+                            </span>
+                            Location Type -{currentOperation?.location_type}
+                          </SecondaryTypography>
+                        </div>
+                        <div
+                          style={{
+                            marginTop: "5px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <div>
+                              <SecondaryTypography
+                                style={{
+                                  color: `${theme.palette.textPrimaryColor.main}`,
+                                  fontSize: "12px",
+                                  fontWeight: 600,
+                                }}
+                              >
+                                Location -{currentOperation?.location}
+                              </SecondaryTypography>
                             </div>
                           </div>
                         </div>
@@ -658,21 +747,21 @@ const ApiInsights = () => {
                         elevation={8}
                         sx={{
                           padding: "8px",
-                          background: `${theme.palette.v2PrimaryColor.main}`,
-                          width: "160px",
-                          height: "60px",
+                          background: `${theme.palette.primaryPurple.main}`,
+                          width: "180px",
+                          height: "80px",
                         }}
                       >
                         <div>
                           <SecondaryTypography
                             style={{
-                              color: `${theme.palette.mainWhite.main}`,
+                              color: `${theme.palette.textPrimaryColor.main}`,
                             }}
                           >
                             <span>
                               <InsightsOutlinedIcon
                                 style={{
-                                  fontSize: "13px",
+                                  fontSize: "15px",
                                   marginRight: "5px",
                                   marginBottom: "3px",
                                 }}
@@ -688,15 +777,14 @@ const ApiInsights = () => {
                         >
                           <SecondaryTypography
                             style={{
-                              color: `${theme.palette.mainWhite.main}`,
+                              color: `${theme.palette.textPrimaryColor.main}`,
+                              fontSize: "12px",
                               fontWeight: 600,
                             }}
                           >
-                            {operationDetails?.[0]?.sector?.trim() === ""
+                            {currentOperation?.sector?.trim() === ""
                               ? "NIL"
-                              : capitalizeFirstLetter(
-                                  operationDetails?.[0]?.sector
-                                )}
+                              : capitalizeFirstLetter(currentOperation?.sector)}
                           </SecondaryTypography>
                         </div>
                       </Card>
@@ -709,21 +797,22 @@ const ApiInsights = () => {
                         elevation={8}
                         sx={{
                           padding: "8px",
-                          background: `${theme.palette.v2PrimaryColor.main}`,
-                          width: "160px",
-                          height: "60px",
+                          background: `${theme.palette.primaryPurple.main}`,
+                          width: "180px",
+                          height: "80px",
                         }}
                       >
                         <div>
                           <SecondaryTypography
                             style={{
-                              color: `${theme.palette.mainWhite.main}`,
+                              color: `${theme.palette.textPrimaryColor.main}`,
+                              fontSize: "12px",
                             }}
                           >
                             <span>
                               <InsightsOutlinedIcon
                                 style={{
-                                  fontSize: "13px",
+                                  fontSize: "15px",
                                   marginRight: "5px",
                                   marginBottom: "3px",
                                 }}
@@ -747,18 +836,19 @@ const ApiInsights = () => {
                             <div>
                               <SecondaryTypography
                                 style={{
-                                  color: `${theme.palette.mainWhite.main}`,
+                                  color: `${theme.palette.textPrimaryColor.main}`,
+                                  fontSize: "12px",
                                   fontWeight: 600,
                                 }}
                               >
-                                {operationDetails?.[0]?.orphan_status?.trim() ===
-                                  "" || !operationDetails?.[0]?.orphan_status
+                                {currentOperation?.orphan_status?.trim() ===
+                                  "" || !currentOperation?.orphan_status
                                   ? "NIL"
-                                  : operationDetails?.[0]?.orphan_status}
+                                  : currentOperation?.orphan_status}
                               </SecondaryTypography>
                             </div>
                             <div>
-                              <Tooltip
+                              {/* <Tooltip
                                 arrow
                                 title={`Click here to see the Api Logs`}
                               >
@@ -770,7 +860,7 @@ const ApiInsights = () => {
                                   }}
                                   onClick={handleOprphanLogs}
                                 />
-                              </Tooltip>
+                              </Tooltip> */}
                             </div>
                           </div>
                         </div>
@@ -786,197 +876,85 @@ const ApiInsights = () => {
                 >
                   <HeadingTypography
                     style={{
-                      color: `${theme.palette.teritiaryColor.main}`,
-                      fontSize: "10px",
+                      fontSize: "14px",
                     }}
                   >
                     Intent
                   </HeadingTypography>
                   <div>
-                    <SecondaryTypography>
-                      {operationDetails?.[0]?.intent?.trim() === ""
+                    <SecondaryTypography
+                      style={{
+                        fontSize: "12px",
+                        color: `${theme.palette.textSecondaryColor.main}`,
+                      }}
+                    >
+                      {currentOperation?.intent?.trim() === ""
                         ? "NIL"
-                        : operationDetails?.[0]?.intent}
+                        : currentOperation?.intent}
                     </SecondaryTypography>
+                  </div>
+                </div>
+
+                <div>
+                  <HeadingTypography
+                    style={{
+                      marginTop: "40px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Background Urls
+                  </HeadingTypography>
+                  <div
+                    style={{
+                      margin: "30px",
+                    }}
+                  >
+                    <BackgroundUrlsAccordion
+                      backgroundUrlData={backgroundUrlData}
+                      setBackgroundDetails={(value: any) => {
+                        dispatch(
+                          GetBackgroundChangeTracking({
+                            back_id: value?.id,
+                            operation_id: currentOperation?.operationId,
+                            offset: 1,
+                            limit: 10,
+                          })
+                        );
+
+                        setBackgroundDetails(value);
+                        setDrawerHistory(true);
+
+                      }}
+                    />
+                    <JsonComparisonList
+                      openDrawer={drawerHistory}
+                      setOpenDrawer={setDrawerHistory}
+                      backgroundDetails={backgroundDetails}
+                    />
                   </div>
                 </div>
                 <div>
                   <HeadingTypography
                     style={{
                       marginTop: "40px",
-                      color: `${theme.palette.teritiaryColor.main}`,
-                      fontSize: "10px",
+                      fontSize: "14px",
                     }}
                   >
                     Sensitive Insights
                   </HeadingTypography>
-                  {keyOperationData?.length === 0 ? (
-                    <>
-                      <PrimaryTypography
-                        style={{
-                          position: "absolute",
-                          top: "70%",
-                          left: "40%",
-                          transform: "translate(-50%, -50%)",
-                          textAlign: "center",
-                          color: `${theme.palette.teritiaryColor.main}`,
-                          fontWeight: 900,
-                          fontSize: "10px",
-                        }}
-                      >
-                        No Data Found
-                      </PrimaryTypography>
-                    </>
-                  ) : (
-                    <div
-                      style={{
-                        margin: "30px",
-                      }}
-                    >
-                      <TableContainer
-                        sx={{ width: "100%" }}
-                        component={Paper}
-                        elevation={4}
-                      >
-                        <Table stickyHeader>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>
-                                <PrimaryTypography style={{ fontSize: "10px" }}>
-                                  Sensitive Insights for{" "}
-                                  <span>
-                                    {operationDetails?.[0]?.name} operation
-                                  </span>
-                                </PrimaryTypography>
-                              </TableCell>
-                              <TableCell></TableCell>
+                  <SensitiveTable data={keyOperationData} />
+                </div>
 
-                              <TableCell align="right">
-                                <Tooltip
-                                  arrow
-                                  title={`Click here to see the Sensitive Logs`}
-                                >
-                                  <ArrowCircleRightOutlinedIcon
-                                    style={{
-                                      cursor: "pointer",
-                                      fontSize: "18px",
-                                    }}
-                                    onClick={handleSensitivityLogs}
-                                  />
-                                </Tooltip>
-                              </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <StyledTableCell align="left">
-                                <PrimaryTypography
-                                  style={{
-                                    fontWeight: 900,
-                                    fontSize: "10px",
-                                  }}
-                                >
-                                  Name
-                                </PrimaryTypography>
-                              </StyledTableCell>
-                              <StyledTableCell align="left">
-                                <PrimaryTypography
-                                  style={{
-                                    fontWeight: 900,
-                                    fontSize: "10px",
-                                  }}
-                                >
-                                  Type
-                                </PrimaryTypography>
-                              </StyledTableCell>
-                              <StyledTableCell align="left">
-                                <PrimaryTypography
-                                  style={{
-                                    fontWeight: 900,
-                                    fontSize: "10px",
-                                  }}
-                                >
-                                  Sensitivity Level
-                                </PrimaryTypography>
-                              </StyledTableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {paginator(keyOperationData, page2, 5)?.data?.map(
-                              (tableVal: any, rowIndex: any) => (
-                                <React.Fragment key={rowIndex}>
-                                  <TableRow
-                                    sx={{
-                                      height: "20px",
-                                    }}
-                                    onClick={() => {
-                                      toggleRow(rowIndex);
-                                    }}
-                                  >
-                                    <TableCell align="left">
-                                      <PrimaryTypography
-                                        style={{ fontSize: "10px" }}
-                                      >
-                                        {capitalizeFirstLetter(tableVal?.name)}
-                                      </PrimaryTypography>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                      <PrimaryTypography
-                                        style={{ fontSize: "10px" }}
-                                      >
-                                        {capitalizeFirstLetter(tableVal?.type)}
-                                      </PrimaryTypography>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                      {!tableVal?.sensitivity_level ? (
-                                        "-"
-                                      ) : (
-                                        <button
-                                          style={{
-                                            border: "none",
-                                            backgroundColor:
-                                              tableVal?.sensitivity_level ===
-                                              "HIGH_SENSITIVITY"
-                                                ? // ? `#dc0000`
-                                                  `#ff4d4d`
-                                                : tableVal?.sensitivity_level ===
-                                                  "MEDIUM_SENSITIVITY"
-                                                ? `#fdc500`
-                                                : tableVal?.sensitivity_level ===
-                                                  "LOW_SENSITIVITY"
-                                                ? `#00ac46`
-                                                : "",
-                                            padding: "4px 7px",
-                                            borderRadius: "5px",
-                                          }}
-                                        >
-                                          <PrimaryTypography
-                                            style={{
-                                              fontSize: "10px",
-                                            }}
-                                          >
-                                            {tableVal?.sensitivity_level}
-                                          </PrimaryTypography>
-                                        </button>
-                                      )}
-                                    </TableCell>
-                                  </TableRow>
-                                </React.Fragment>
-                              )
-                            )}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                      <Pagination
-                        sx={{
-                          marginLeft: "300px",
-                          marginTop: "20px",
-                        }}
-                        count={countTableVal}
-                        page={page2}
-                        onChange={handleChangeTable}
-                        color="secondary"
-                      />
-                    </div>
-                  )}
+                <div>
+                  <HeadingTypography
+                    style={{
+                      marginTop: "40px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Compliance Checks
+                  </HeadingTypography>
+                  <StandardsTable data={standardsData} />
                 </div>
               </Box>
             </div>
@@ -988,6 +966,11 @@ const ApiInsights = () => {
                     open={publicPrivateClicked}
                     onClose={() => {
                       setPublicPrivateClicked(false);
+                    }}
+                    sx={{
+                      "& .MuiPaper-root": {
+                        backgroundColor: "#211c27",
+                      },
                     }}
                   >
                     <div>
@@ -1021,7 +1004,7 @@ const ApiInsights = () => {
                           <ArrowBackIosIcon
                             sx={{
                               fontSize: "8px",
-                              color: "#64748B",
+                              color: "white",
                               cursor: "pointer",
                               marginTop: "2px",
                             }}
@@ -1029,9 +1012,9 @@ const ApiInsights = () => {
                           <span
                             style={{
                               cursor: "pointer",
-                              color: "#64748B",
+                              color: "white",
                               fontSize: "8px",
-                              fontFamily: "Inter-regular",
+                              fontFamily: "FiraSans-regular",
                             }}
                           >
                             Back to Insights
@@ -1076,38 +1059,28 @@ const ApiInsights = () => {
                                 sx={{ minWidth: 130 }}
                                 size="small"
                               >
-                                <Select
-                                  labelId="demo-simple-select-label"
-                                  id="demo-simple-select"
+                                <GSelect
+                                  width="100%"
+                                  size={"small"}
+                                  options={[
+                                    {
+                                      label: "All",
+                                      value: "All",
+                                    },
+                                    {
+                                      label: "Api Status",
+                                      value: "ApiStatus",
+                                    },
+                                    {
+                                      label: "Date and Time",
+                                      value: "DateTime",
+                                    },
+                                  ]}
                                   value={filterStatusVal}
-                                  onChange={(e: SelectChangeEvent) => {
-                                    setFilterStatusVal(
-                                      e.target.value as string
-                                    );
+                                  onChange={(value: any) => {
+                                    setFilterStatusVal(value);
                                   }}
-                                >
-                                  <MenuItem value="All">
-                                    <PrimaryTypography
-                                      style={{ fontSize: "10px" }}
-                                    >
-                                      All
-                                    </PrimaryTypography>
-                                  </MenuItem>
-                                  <MenuItem value="ApiStatus">
-                                    <PrimaryTypography
-                                      style={{ fontSize: "10px" }}
-                                    >
-                                      Api Status
-                                    </PrimaryTypography>
-                                  </MenuItem>
-                                  <MenuItem value="DateTime">
-                                    <PrimaryTypography
-                                      style={{ fontSize: "10px" }}
-                                    >
-                                      Date and Time
-                                    </PrimaryTypography>
-                                  </MenuItem>
-                                </Select>
+                                />
                               </FormControl>
                             </span>
                             <>
@@ -1118,40 +1091,30 @@ const ApiInsights = () => {
                                     sx={{ minWidth: 130 }}
                                     size="small"
                                   >
-                                    <Select
-                                      labelId="demo-simple-select-label"
-                                      id="demo-simple-select"
+                                    <GSelect
+                                      width="100%"
+                                      size={"small"}
                                       value={filteredVal}
-                                      onChange={(e: SelectChangeEvent) => {
-                                        setFilteredVal(
-                                          e.target.value as string
-                                        );
+                                      onChange={(value: any) => {
+                                        setFilteredVal(value);
                                       }}
-                                    >
-                                      {filterStatusVal === "ApiStatus"
-                                        ? statusValues?.map(
-                                            (val: any, index: number) => (
-                                              <MenuItem key={index} value={val}>
-                                                <PrimaryTypography
-                                                  style={{ fontSize: "10px" }}
-                                                >
-                                                  {capitalizeFirstLetter(val)}
-                                                </PrimaryTypography>
-                                              </MenuItem>
+                                      options={
+                                        filterStatusVal === "ApiStatus"
+                                          ? statusValues?.map(
+                                              (val: any, index: number) => ({
+                                                label:
+                                                  capitalizeFirstLetter(val),
+                                                value: val,
+                                              })
                                             )
-                                          )
-                                        : logsDates?.map(
-                                            (val: any, index: number) => (
-                                              <MenuItem key={index} value={val}>
-                                                <PrimaryTypography
-                                                  style={{ fontSize: "10px" }}
-                                                >
-                                                  {dateFormat(val)}
-                                                </PrimaryTypography>
-                                              </MenuItem>
+                                          : logsDates?.map(
+                                              (val: any, index: number) => ({
+                                                label: dateFormat(val),
+                                                value: val,
+                                              })
                                             )
-                                          )}
-                                    </Select>
+                                      }
+                                    />
                                   </FormControl>
                                 </span>
                               )}
@@ -1299,7 +1262,7 @@ const ApiInsights = () => {
                               cursor: "pointer",
                               color: "#64748B",
                               fontSize: "8px",
-                              fontFamily: "Inter-regular",
+                              fontFamily: "FiraSans-regular",
                             }}
                           >
                             Back to Sensitive Insights
@@ -1620,7 +1583,7 @@ const ApiInsights = () => {
                               cursor: "pointer",
                               color: "#64748B",
                               fontSize: "8px",
-                              fontFamily: "Inter-regular",
+                              fontFamily: "FiraSans-regular",
                             }}
                           >
                             Back to Insights
@@ -1872,7 +1835,7 @@ const ApiInsights = () => {
           </div>
         </div>
       </Backdrop>
-    </div>
+    </Box>
   );
 };
 

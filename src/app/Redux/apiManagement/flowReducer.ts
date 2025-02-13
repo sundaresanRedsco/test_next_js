@@ -20,7 +20,6 @@ export const GetDesignflowMinamlInfoFlowoffset = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -39,7 +38,6 @@ export const GetApiDesignFlowByWorkspaceId = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -59,7 +57,6 @@ export const GetApiDesignFlowByProjectIdStageId = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -80,7 +77,6 @@ export const CreateApiDesignFlow = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -100,7 +96,6 @@ export const UpdateApiDesignFlow = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -120,7 +115,6 @@ export const DeleteApiDesignFlow = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -141,7 +135,6 @@ export const DesignApiFlow = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -168,7 +161,6 @@ export const GetDesignApiFlow = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -188,7 +180,6 @@ export const DeleteNodeEdges = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -208,7 +199,6 @@ export const RunDesignFlow = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -235,7 +225,6 @@ export const RunSingleNode = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -255,18 +244,18 @@ export const GetApiDesignFlowByDesignFlowId = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
 
 export const GetRunScheduleDetailsByFlowId = createAsyncThunk(
   "apiFlowDesign/GetRunScheduleDetailsByFlowId",
-  async (flowId: any) => {
+  async (data: any) => {
     try {
       return await AdminServices(
         "get",
-        `Api/Api_design_flow_service/get_run_schedule_details_by_flow_id?flow_id=${flowId}`,
+        // `Api/Api_design_flow_service/get_run_schedule_details_by_flow_id?flow_id=${flowId}`,
+        `Api/Api_design_flow_service/get_run_schedule_details_by_flow_id?project_id=${data?.project_id}&flow_id=${data?.flow_id}`,
         null,
         null
       );
@@ -342,8 +331,9 @@ export const CreateScheduleRunDesignApi = createAsyncThunk(
     try {
       return await AdminServices(
         "post",
-        "Api/Api_design_flow_service/create_schedule_run_design_api",
-        data,
+        // "Api/Api_design_flow_service/create_schedule_run_design_api",
+        `Api/Api_design_flow_service/create_schedule_run_design_api?project_id=${data?.project_id}`,
+        data?.requestBody,
         null
       );
     } catch (error: any) {
@@ -361,8 +351,9 @@ export const UpdateScheduleRunDesignApi = createAsyncThunk(
     try {
       return await AdminServices(
         "post",
-        "Api/Api_design_flow_service/update_schedule_run_design_api",
-        data,
+        // "Api/Api_design_flow_service/update_schedule_run_design_api",
+        `Api/Api_design_flow_service/update_schedule_run_design_api?project_id=${data?.project_id}`,
+        data?.requestBody,
         null
       );
     } catch (error: any) {
@@ -680,6 +671,25 @@ export const PostRecentModification = createAsyncThunk(
   }
 );
 
+export const UpdateFlowVersionIsLockedByVersionId = createAsyncThunk(
+  "apiFlowDesign/UpdateFlowVersionIsLockedByVersionId",
+  async (data: any) => {
+    try {
+      return await AdminServices(
+        "post",
+        `Api/Api_design_flow_service/update_flowversions_islocked_by_version_id?version_id=${data?.version_id}&is_loged=${data?.is_loged}`,
+        null,
+        null
+      );
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
+      throw new Error(errorHandling(error));
+    }
+  }
+);
+
 export const resetGatewayStateFlow = createAction("Gateway/resetState");
 
 type InitialStateType = {
@@ -717,6 +727,7 @@ type InitialStateType = {
   recentModifications: any[];
   getRecentModificationsLoading: boolean;
   totalCount: number;
+  getFlowVersionLockLoading: boolean;
 };
 
 const initialState: InitialStateType = {
@@ -765,6 +776,7 @@ const initialState: InitialStateType = {
   getDesignFlowOffsetLoading: false,
   recentModifications: [],
   getRecentModificationsLoading: false,
+  getFlowVersionLockLoading: false,
 };
 
 export const flowSlice = createSlice({
@@ -797,17 +809,14 @@ export const flowSlice = createSlice({
       state.wsProvider = action.payload;
     },
     setNextNode: (state, action) => {
-      console.log(action.payload, "setNextNode");
       // Update the state with the selected container value
       state.nextNode = action.payload;
     },
     setFlowYdoc: (state, action) => {
-      console.log(action.payload, "setFlowYdoc");
       // Update the state with the selected container value
       state.flowYdoc = action.payload;
     },
     setUserLists: (state, action) => {
-      // console.log(action.payload, "setFlowYdoc");
       // Update the state with the selected container value
       state.userLists = action.payload;
     },
@@ -821,30 +830,25 @@ export const flowSlice = createSlice({
     },
 
     setGlobalKeys: (state, action) => {
-      console.log(action.payload, "setNextNode");
       // Update the state with the selected container value
       state.globalKeys = action.payload;
     },
 
     setGlobalResponse: (state, action) => {
-      // console.log(action.payload, "setNextNode");
       // Update the state with the selected container value
       state.globalResponse = action.payload;
     },
 
     setCurrentUserFlowColor: (state, action) => {
-      // console.log(action.payload, "setNextNode");
       // Update the state with the selected container value
       state.currentUserColor = action.payload;
     },
 
     setChangeHistroy: (state, action) => {
-      // console.log(action.payload, "setNextNode");
       // Update the state with the selected container value
       state.changeHistoryNodes = action.payload;
     },
     clearChangeHistroy: (state, action) => {
-      // console.log(action.payload, "setNextNode");
       // Update the state with the selected container value
       state.changeHistoryNodes = {
         nodes: [],
@@ -1312,6 +1316,27 @@ export const flowSlice = createSlice({
     builder.addCase(PostRecentModification.rejected, (state, action) => {
       state.DesignFlowloading = false;
     });
+
+    builder.addCase(
+      UpdateFlowVersionIsLockedByVersionId.pending,
+      (state, action) => {
+        state.getFlowVersionLockLoading = true;
+      }
+    );
+
+    builder.addCase(
+      UpdateFlowVersionIsLockedByVersionId.fulfilled,
+      (state, action) => {
+        state.getFlowVersionLockLoading = false;
+      }
+    );
+
+    builder.addCase(
+      UpdateFlowVersionIsLockedByVersionId.rejected,
+      (state, action) => {
+        state.getFlowVersionLockLoading = false;
+      }
+    );
   },
 });
 

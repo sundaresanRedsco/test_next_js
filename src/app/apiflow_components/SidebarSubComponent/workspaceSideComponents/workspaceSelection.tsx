@@ -79,7 +79,6 @@ const WorkspaceSelection = () => {
         setLoading(false);
       })
       .catch((error: any) => {
-        console.log("ErrorWorkspace: ", error);
         setLoading(false);
       });
   };

@@ -70,6 +70,9 @@ import { useGlobalStore } from "../hooks/useGlobalStore";
 import { resetProjectList } from "../Redux/apiManagement/projectApiReducer";
 import { resetCollOperTreeData } from "../Redux/apiManagement/endpointReducer";
 import SettingsSidebar from "./SidebarSubComponent/SettingsSidebar";
+import { usePostStore } from "../store/usePostStore";
+import toast from "react-hot-toast";
+import { connectToMqtt } from "../Helpers/mqttHelpers";
 
 interface SidebarContainerProps {
   expanded?: boolean;
@@ -156,7 +159,7 @@ const SubMenuItem = styled(Box)<SubMenuItemProps>`
       svg {
 
            fill: white;
-           
+
       }
     `}
 `;
@@ -173,6 +176,7 @@ const SidebarMenu = styled(Box)<SidebarMenuProps>`
 function SidebarComponent(props: any) {
   const { isCollapsed, setIsSidebarCollapsed, onClick } = props;
   const { setactiveStep, setFormDataStore } = useSignUpStore();
+  const { resetAllPostStoreData } = usePostStore();
   const dispatch = useDispatch<any>();
   const pathname = usePathname();
 
@@ -189,8 +193,36 @@ function SidebarComponent(props: any) {
   );
 
   const [selectedLink, setSelectedLink] = useState<any>("apiMan");
-  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+
   const router = useRouter();
+
+  useEffect(() => {
+    if (!userProfile?.user?.user_id) return;
+
+    const topic = `users/${userProfile.user.user_id}/notifications`;
+
+    const mqttClient = connectToMqtt(
+      process.env.NEXT_PUBLIC_APP_MQTT_URL as string, // Broker URL
+      topic,
+      (receivedTopic: any, message: any) => {
+        // Handle incoming messages
+
+        let mess = JSON.parse(message);
+
+        toast.success(mess?.message, {
+          position: "top-left", // Options: "top-left", "top-right", "top-center", "bottom-left", "bottom-right", "bottom-center"
+        });
+      },
+      (error: any) => {},
+      () => {}
+    );
+
+    return () => {
+      if (mqttClient) {
+        mqttClient.end();
+      }
+    };
+  }, [userProfile]);
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isCollapsed); // Toggle the sidebar state
@@ -256,31 +288,7 @@ function SidebarComponent(props: any) {
         removeItem(`/sidebarMenuId/${userProfile?.user?.user_id}`);
       },
     },
-    {
-      label: "Integration",
 
-      id: "integration",
-      icon: <MenuSearch style={{ height: "60%", width: "60%" }} />,
-      onClickHandler: (id: any, index?: number) => {
-        router?.push(`${baseUrl}/integration`);
-        setSelectedLink(id);
-        setIsSidebarCollapsed(true);
-        removeItem(`/sidebarMenuId/${userProfile?.user?.user_id}`);
-      },
-    },
-
-    {
-      label: "Messages",
-      path: "",
-      id: "messages",
-      icon: <MenuMessage style={{ height: "60%", width: "60%" }} />,
-      onClickHandler: (id: any, index?: number) => {
-        commonFunctions(id, index);
-        setSelectedLink(id);
-        setIsSidebarCollapsed(true);
-        router.push(`/userId/${userProfile?.user?.user_id}/channel`);
-      },
-    },
     {
       label: "Settings",
       path: "",
@@ -295,15 +303,6 @@ function SidebarComponent(props: any) {
         router.push(`/userId/${userProfile?.user?.user_id}/settings`);
       },
     },
-    {
-      label: "Account",
-      path: "",
-      id: "account",
-      icon: <MenuAccount style={{ height: "60%", width: "60%" }} />,
-      onClickHandler: (id: any, index?: number) => {
-        commonFunctions(id, index);
-      },
-    },
 
     {
       label: "Logout",
@@ -316,6 +315,7 @@ function SidebarComponent(props: any) {
         setFormDataStore("currentPage", "Login");
         handleLogout();
         setIsSidebarCollapsed(true);
+        resetAllPostStoreData();
       },
     },
   ];
@@ -357,7 +357,10 @@ function SidebarComponent(props: any) {
     `/sidebarMenuId/${userProfile?.user?.user_id}`
   );
   useEffect(() => {
-    if (cachedSidebarMenuIdCookie && pathname.includes("/workspaceId")) {
+    if (
+      cachedSidebarMenuIdCookie &&
+      (pathname.includes("/workspaceId") || pathname.includes("/settings"))
+    ) {
       setIsSidebarCollapsed(false);
       setSelectedLink(cachedSidebarMenuIdCookie);
     }
@@ -391,7 +394,6 @@ function SidebarComponent(props: any) {
     dispatch(resetGatewayStateApiAnalytics());
     dispatch(resetGatewayStateApiEndpoint());
     dispatch(logout()).then((res: any) => {
-      console.log("LOgoutRes: ", res);
       Cookies.remove(process.env.NEXT_PUBLIC_COOKIE_STAGEID ?? "");
 
       if (store) {

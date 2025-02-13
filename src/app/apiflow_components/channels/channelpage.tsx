@@ -59,7 +59,6 @@ function Channel() {
   const [selectedImageBase64, setSelectedImageBase64] = useState<string | null>(
     null
   );
-  console.log(selectedImageBase64, "selectedImageBase64sdlsdl");
 
   const [participantName, setParticipantName] = useState("");
   const [participants, setParticipants] = useState<any[]>([]);
@@ -75,8 +74,6 @@ function Channel() {
     channel_name: "",
     description: "",
   });
-
-  console.log(channelData?.description, "ssdchannel_name");
 
   const members = ["John", "Jane", "Jack", "Jill", "Michael", "Emily"];
 
@@ -175,16 +172,12 @@ function Channel() {
           )
             .unwrap()
             .then(() => {
-              console.log("UpdateResponse: ", res);
               router.push(`/userId/${userProfile?.user?.user_id}/channel`);
               toast.success("channel Created");
             });
         })
-        .catch((error: any) => {
-          console.log(error, "error OccurredWork");
-        });
+        .catch((error: any) => {});
     } else {
-      console.log("Form has errors.");
     }
   };
 
@@ -322,7 +315,7 @@ function Channel() {
                       ...channelData,
                       channel_name: name,
                     });
-                    console.log(name); // This will log the updated channel name
+                    // This will log the updated channel name
                   }}
                   error={formErrors?.channel_name}
                   helperText={formErrors?.channel_name}

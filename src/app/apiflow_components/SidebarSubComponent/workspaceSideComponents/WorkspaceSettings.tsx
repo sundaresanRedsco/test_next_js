@@ -162,9 +162,6 @@ function WorkspaceSettings() {
                 ) {
                   handleActive(workspace.id);
                 } else {
-                  console.log(
-                    `${workspace.text} clicked, but navigation is disabled.`
-                  );
                 }
               }}
             >

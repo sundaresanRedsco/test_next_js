@@ -150,9 +150,7 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
           });
         }
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      })
+      .catch((error: any) => {})
       .finally(() => setIsLoading(false));
   };
 

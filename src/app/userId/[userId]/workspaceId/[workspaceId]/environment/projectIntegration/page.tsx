@@ -31,8 +31,8 @@ function ProjectIntegrations() {
   >((state) => state.apiManagement.environment);
 
   const [activeButton, setActiveButton] = useState({
-    section: "API_MANAGEMENT",
-    label: "GCP",
+    section: "INCIDENT_TASK_MANAGEMENT",
+    label: "JIRA",
   });
 
   const [crudType, setcrudType] = useState("VIEW");

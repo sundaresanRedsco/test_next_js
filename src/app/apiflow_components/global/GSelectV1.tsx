@@ -36,7 +36,6 @@ export default function GSelect(props: any) {
 
   const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const selectedValue = event.target.value;
-    console.log("Selected Value:", selectedValue);
 
     // If an external onChange function is provided, call it
     if (onChange) {

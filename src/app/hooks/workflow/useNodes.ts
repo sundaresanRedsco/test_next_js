@@ -57,7 +57,6 @@ export default function useNodes({ nodeData }: any) {
           edgeMap.set(edge.id, updatedEdge); // Assuming edge.id is the key
         });
       } else {
-        console.log("Yjs Map 'edges' is not initialized.");
       }
 
       const nodesMap = flowYdoc?.getMap<any>("nodes");
@@ -70,7 +69,6 @@ export default function useNodes({ nodeData }: any) {
           obj: null,
         });
       } else {
-        console.log("Yjs Map 'run' is not initialized.");
       }
     },
     [nodeData?.id, deleteElements, getEdges]
@@ -126,8 +124,6 @@ export default function useNodes({ nodeData }: any) {
       ? inputErr["edge"]?.some((err: any) => err.isErr == true)
       : false;
 
-  // const showErr = isHeaderErr || isParamsErr || isInputErr;
-  // console.log(isHeaderErr, isParamsErr, isInputErr, nodeData?.id, "showErr");
   const [showErr, setshowErr] = useState(false);
   useEffect(() => {
     if (isHeaderErr || isParamsErr || isInputErr || isEdgeErr) {

@@ -22,8 +22,6 @@ export default function useReusableFunctions() {
         nodes?.filter((item: any) => item?.id === val)
       );
 
-      console.log(copiedNodesValue, "copiedNodesValue");
-
       const copiedEdgesValue = edges?.filter(
         (edge: any) =>
           selectedFlowIds.includes(edge.source) ||

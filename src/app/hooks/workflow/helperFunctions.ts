@@ -36,7 +36,6 @@ export async function runHandler(
   project_id: string,
   workspace_id: string
 ) {
-  console.log(nodes, "RHNodes");
   const runMap = doc.getMap("run");
   const runData = runMap?.toJSON()?.run;
 
@@ -208,9 +207,7 @@ export async function processNode(
       globalKeysArray,
       globalResponse
     );
-    console.log(globalKeysArray, "PNglobalKeysArray");
-    console.log(globalResponse, "PNglobalResponse");
-    console.log(requestBody, "PNrequestBody");
+
     const operationSuccess = await performOperation(
       doc,
       currentEdge.target,
@@ -772,6 +769,5 @@ export const addEdges_new = (
   if (edgeMap) {
     edgeMap.set(updatedEdge.id, updatedEdge);
   } else {
-    console.log("Yjs Map 'edgeMap' is not initialized.");
   }
 };

@@ -84,7 +84,7 @@ function LogSlash() {
     paths: Paths\\logs\\LogFiles\\Logs\\*.log
     fields:
       instance_id: "put Your instance id"
-  
+
   output.logstash:
     hosts: ["localhost:5044"]
 `;
@@ -288,7 +288,7 @@ function LogSlash() {
       enabled: true
       paths: Paths\\logs\\LogFiles\\Logs\\*.log
       fields:
-        
+
         instance_id: "put Your instance id"
 
 
@@ -534,12 +534,8 @@ function LogSlash() {
 
     dispatch(GetProjectByWorkspaceIdSolrOffset(requestData))
       .unwrap()
-      .then((res: any) => {
-        console.log("PaginationData: ", res);
-      })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .then((res: any) => {})
+      .catch((error: any) => {});
   }, []);
 
   return (

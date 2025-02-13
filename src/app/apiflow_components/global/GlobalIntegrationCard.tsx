@@ -6,6 +6,7 @@ import {
   PrimaryTypography,
   SecondaryTypography,
 } from "@/app/hooks/operations/useOperationHelpers";
+import theme from "@/Theme/theme";
 
 const CardContainer = styled(Box)`
   padding: 10px 15px;
@@ -24,6 +25,10 @@ const GlobalIntegrationCard: React.FC<GlobalInfoCardProps> = ({
   secondaryTitle,
   cardData,
 }) => {
+  const arrOfTitle = cardData.split("_");
+  const firstName = arrOfTitle[0] || "";
+  const secondName = arrOfTitle[1] || "";
+  const avatarTitle: any = firstName[0] || "" + secondName[0] || "";
   return (
     <CardContainer>
       <div className="d-flex justify-content-between">
@@ -35,14 +40,17 @@ const GlobalIntegrationCard: React.FC<GlobalInfoCardProps> = ({
             width="3rem"
             height="3rem"
             borderRadius="20%"
-            bgcolor="#FFFFFF"
+            bgcolor={`${theme.palette.LGrayishBlue.main}`}
             color="#FB7802"
             marginRight="1rem"
           >
             <PrimaryTypography
-              style={{ fontSize: "0.7rem", fontWeight: "600" }}
+              style={{
+                fontSize: "1rem",
+                fontWeight: "600",
+              }}
             >
-              {cardData}
+              {avatarTitle}
             </PrimaryTypography>
           </Box>
           <Box>

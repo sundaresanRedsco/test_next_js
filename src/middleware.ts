@@ -40,7 +40,7 @@ export async function middleware(req: NextRequest) {
   //   }
   // }
 
-  console.log("middleWare", pathname);
+
 
   const tokenExpiresAt: any = tokenData?.expiration_time?.toString();
   const expirationDate = new Date(parseInt(tokenExpiresAt) * 1000);

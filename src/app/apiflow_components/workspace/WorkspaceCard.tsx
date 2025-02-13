@@ -99,15 +99,15 @@ function WorkspaceCard({
           {projectCount + " Projects"}
         </SubHeadingTypography>
 
-        <BodyTextTypography>
+        {/* <BodyTextTypography>
           <RiskTextTypography sx={{ display: "inline" }}>
             {riskCount}
           </RiskTextTypography>{" "}
           <span>Security Risks</span>
-        </BodyTextTypography>
+        </BodyTextTypography> */}
 
         <BodyTextTypography>
-          <span>Last Successful sync</span>{" "}
+          <span>Last Created At</span>{" "}
           <SuccessTextTypography sx={{ display: "inline" }}>
             {syncTime}
           </SuccessTextTypography>

@@ -4,7 +4,6 @@ export default function Home(context: { searchParams: { tabs?: string } }) {
   return (
     <div>
       <Profile />
-      {/* <AccountsSettings /> */}
     </div>
   );
 }

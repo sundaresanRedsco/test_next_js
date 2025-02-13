@@ -59,12 +59,6 @@ export default function useSelectNodes({
     nodeIdMapping: any,
     newGrpNodes: any
   ) => {
-    console.log(
-      copiedData?.nodes,
-      selectedFlowIds,
-      "copiedNodesValue123CopiedData"
-    );
-
     const filteredNodes = copiedData?.nodes?.filter(
       (node: any) => node?.type !== "startButtonNode"
     );
@@ -77,18 +71,6 @@ export default function useSelectNodes({
         const prevX = copiedData?.nodes[index - 1].position.x;
         const diffOfX = tempData.position.x - prevX;
         customPosition.x = diffOfX + position.x;
-        console.log(
-          {
-            prevX: prevX,
-            index: index,
-            tempDataPos: tempData?.position.x,
-            diffOfX: diffOfX,
-            cusPos: customPosition.x,
-            position: position,
-            copiedData: copiedData?.nodes,
-          },
-          "POSITIONISSUE"
-        );
       }
 
       const node_name = isGroupNode
@@ -112,8 +94,6 @@ export default function useSelectNodes({
           newGrpNodes,
           isGroupNode
         );
-
-        console.log(newNode, "copiedNodesValue123NewNode");
 
         const parsedData = JSON?.parse(newNode?.data);
 

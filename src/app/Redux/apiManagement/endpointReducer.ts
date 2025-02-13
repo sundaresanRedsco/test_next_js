@@ -187,7 +187,7 @@ export const GetCollectionDocsById = createAsyncThunk(
     try {
       return await AdminServices(
         "get",
-        `api/Import_/Get_Swagger_doc_import_by_collection_id_project_id?project_id=${value.project_id}&collection_id=cx${value.collection_id}`,
+        `api/Import_/Get_Swagger_doc_import_by_collection_id_project_id?project_id=${value.project_id}&collection_id=${value.collection_id}`,
         null,
         null
       );
@@ -220,6 +220,63 @@ export const ImportSwaggerDocument = createAsyncThunk(
   }
 );
 
+export const GetEndpointCounts = createAsyncThunk(
+  "enpoints/GetEndpointCounts",
+  async (data: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        `api/Operations/get_endpoint_counts?project_id=${data?.project_id}&workspace_id=${data?.workspace_id}&group_id=${data?.group_id}`,
+        null,
+        null
+      );
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
+      throw new Error(errorHandling(error));
+    }
+  }
+);
+
+export const GetEndpointCountIdentity = createAsyncThunk(
+  "enpoints/GetEndpointCountIdentity",
+  async (data: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        `api/Operations/get_endpoint_counts_identity?project_id=${data?.project_id}&workspace_id=${data?.workspace_id}&group_id=${data?.group_id}`,
+        null,
+        null
+      );
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
+      throw new Error(errorHandling(error));
+    }
+  }
+);
+
+export const GetBackgroundChangeTracking = createAsyncThunk(
+  "enpoints/GetBackgroundChangeTracking",
+  async (data: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        `api/ChangesTracking/getChangeTracking_offset?entityId=${data?.back_id}&parentEntityId=${data?.operation_id}&offset=${data?.offset}&limit=${data?.limit}`,
+        null,
+        null
+      );
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
+      throw new Error(errorHandling(error));
+    }
+  }
+);
+
 export const resetGatewayStateSwaggerDoc = createAction("Gateway/resetState");
 
 export const resetSwaggerState = createAction("swaggerDoc/resetState");
@@ -239,6 +296,9 @@ type InitialStateType = {
   getCollOperTreeFlowData: GetCollecOperTreeInterface;
   workflowSidebarStart: number;
   workflowSidebarEnd: number;
+  getEndpointsCountLoading: boolean;
+  getEndpointCountIdentityLoading: boolean;
+  changeHistoryBackground: any;
 };
 
 const initialState: InitialStateType = {
@@ -255,6 +315,9 @@ const initialState: InitialStateType = {
   },
   workflowSidebarStart: 0,
   workflowSidebarEnd: 8,
+  getEndpointsCountLoading: false,
+  getEndpointCountIdentityLoading: false,
+  changeHistoryBackground: [],
 };
 
 export const endpointSlice = createSlice({
@@ -272,6 +335,19 @@ export const endpointSlice = createSlice({
     },
   },
   extraReducers(builder) {
+    builder.addCase(GetBackgroundChangeTracking.pending, (state, action) => {
+      state.changeHistoryBackground = true;
+    });
+
+    builder.addCase(GetBackgroundChangeTracking.fulfilled, (state, action) => {
+      state.getOperationLoading = false;
+      state.changeHistoryBackground = action.payload;
+    });
+
+    builder.addCase(GetBackgroundChangeTracking.rejected, (state, action) => {
+      state.getOperationLoading = false;
+    });
+
     builder.addCase(GetOperations.pending, (state, action) => {
       state.getOperationLoading = true;
     });
@@ -445,6 +521,26 @@ export const endpointSlice = createSlice({
     });
     builder.addCase(ImportSwaggerDocument.rejected, (state, action) => {
       state.getOperationLoading = false;
+    });
+
+    builder.addCase(GetEndpointCounts.pending, (state, action) => {
+      state.getEndpointsCountLoading = true;
+    });
+    builder.addCase(GetEndpointCounts.fulfilled, (state, action) => {
+      state.getEndpointsCountLoading = false;
+    });
+    builder.addCase(GetEndpointCounts.rejected, (state, action) => {
+      state.getEndpointsCountLoading = false;
+    });
+
+    builder.addCase(GetEndpointCountIdentity.pending, (state, action) => {
+      state.getEndpointCountIdentityLoading = true;
+    });
+    builder.addCase(GetEndpointCountIdentity.fulfilled, (state, action) => {
+      state.getEndpointCountIdentityLoading = false;
+    });
+    builder.addCase(GetEndpointCountIdentity.rejected, (state, action) => {
+      state.getEndpointCountIdentityLoading = false;
     });
   },
 });

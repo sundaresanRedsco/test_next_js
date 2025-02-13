@@ -727,9 +727,7 @@ export default function Integrations() {
     dispatch(GetIntegrationByTenantId(userProfile?.user?.tenant_id))
       // dispatch(GetIntegrationByTenantId("db567d96817040ce90286387dd4b7d2e"))
       .unwrap()
-      .then((getRes: any) => {
-        console.log("getRes: ", getRes);
-      })
+      .then((getRes: any) => {})
       .catch((error: any) => {
         if (error?.message === "No data found for the provided tenant_id ") {
           setSplunkCount(0);
@@ -1024,7 +1022,6 @@ export default function Integrations() {
 
   //based on the validation result, the api is called
   const handleSplunkSiem = () => {
-    console.log("REACH1");
     const validationCheck = handleApplicationInValidation();
 
     if (validationCheck === true) {
@@ -1095,7 +1092,6 @@ export default function Integrations() {
           });
       }
     } else {
-      console.log("Error occurred");
     }
   };
 
@@ -1173,7 +1169,6 @@ export default function Integrations() {
           });
       }
     } else {
-      console.log("Error occurred");
     }
   };
 
@@ -1251,7 +1246,6 @@ export default function Integrations() {
           });
       }
     } else {
-      console.log("Error occurred");
     }
   };
 
@@ -1345,7 +1339,6 @@ export default function Integrations() {
           });
       }
     } else {
-      console.log("Error occured");
     }
   };
 
@@ -1375,17 +1368,13 @@ export default function Integrations() {
         });
     }
 
-    return () => {
-      console.log("Component is unmounting");
-    };
+    return () => {};
   }, [wsid]);
 
   //calling the GetIntegrationByTenantId api
   useEffect(() => {
     handleGetIntergrationByTenantId();
-    return () => {
-      console.log("Component is unmounting");
-    };
+    return () => {};
   }, [userProfile?.user?.tenant_id, selectedVal, applicationInBtn]);
 
   // based on the response from GetIntegrationByTenantId api,
@@ -1488,9 +1477,7 @@ export default function Integrations() {
         });
       }
     }
-    return () => {
-      console.log("Component is unmounting");
-    };
+    return () => {};
   }, [integrationResponse, selectedVal, applicationInBtn]);
 
   const extractBaseUrl = (url: any) => {
@@ -2134,13 +2121,6 @@ export default function Integrations() {
                     </div>
                     {types === "enable" && <div>test</div>}
                   </Dialog>
-
-                  <AwsImportPopup
-                    open={anchorElDrop}
-                    handleClose={handleClose}
-                    edits
-                    gatewayData={apiEditData}
-                  />
 
                   {filteredData.length === 0 ? (
                     <div></div>

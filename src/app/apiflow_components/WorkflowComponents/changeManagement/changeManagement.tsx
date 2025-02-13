@@ -115,19 +115,15 @@ export const ChangeNodeManage = (props: any) => {
     dispatch(GetNodeChangesTrackingOffset(requestData))
       .unwrap()
       .then((revisionRes: any) => {
-        console.log("revisionRes: ", revisionRes);
         setTrackingRes(revisionRes);
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   };
 
   function revisionHandler(id: string) {
-    console.log("REvisionId:", id);
     let currentResponse = trackingRes?.find((x) => x.created_date == id);
     let changeJson = JSON.parse(currentResponse?.properties || "{}");
-    console.log("trackJson:", changeJson);
+
     const parsedInputCom =
       typeof changeJson?.service_input === "string"
         ? JSON.parse(changeJson?.service_input)
@@ -144,7 +140,6 @@ export const ChangeNodeManage = (props: any) => {
       status_code: changeManResponse?.statusCode,
     };
 
-    console.log("trackJson:", trackJson);
     setCompareResponse(trackJson);
     setCurrentId(id);
   }
@@ -153,7 +148,7 @@ export const ChangeNodeManage = (props: any) => {
     // Check if value is null, "null", or undefined
     const checkValue =
       value === null || value === "null" || value === undefined ? "-" : value;
-    console.log("checkValue: ", checkValue);
+
     return checkValue; // Ensure the returned value is always a string
   };
 

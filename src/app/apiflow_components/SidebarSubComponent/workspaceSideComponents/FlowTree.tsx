@@ -124,7 +124,6 @@ export const FlowTree = ({ nestedExpandedIndexes }: any) => {
     if (containerRef.current) {
       const bottom = containerRef.current.getBoundingClientRect().bottom;
       if (bottom <= window.innerHeight) {
-        console.log("testScroll1", offsetVal?.start, totalCount);
         setoffsetVal((prev: any) => ({
           start: prev.start + 5,
           end: prev.end + 5,

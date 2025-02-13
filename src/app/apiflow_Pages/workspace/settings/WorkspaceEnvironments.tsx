@@ -96,9 +96,7 @@ function WorkspaceEnvironments() {
           return updatedValues;
         });
       })
-      .catch((error: any) => {
-        console.log("ErrorWorkspace: ", error);
-      })
+      .catch((error: any) => {})
       .finally(() => setIsLoading(false));
   };
 

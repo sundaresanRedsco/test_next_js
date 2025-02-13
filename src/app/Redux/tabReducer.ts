@@ -15,7 +15,6 @@ export const tabsSlice = createSlice({
   initialState,
   reducers: {
     setTabs(state, action) {
-      console.log(action.payload, "state.tabs");
       //   const newTabs = action.payload;
 
       //   // Remove existing tabs that match the new tabs
@@ -38,14 +37,12 @@ export const tabsSlice = createSlice({
         : [];
 
       // Check if the tabId is already in the list of existing tabs
-      console.log("TABSELECT!1", existingTabs);
+
       if (!existingTabs.includes(action.payload)) {
         if (existingTabs.some((x) => x.includes("designflow_"))) {
-          console.log("TABSELECT!2");
           // Add the new tabId if it's not already in the list
           existingTabs.push(action.payload);
         } else {
-          console.log("TABSELECT!3");
           existingTabs.unshift(action.payload);
         }
 
@@ -55,13 +52,11 @@ export const tabsSlice = createSlice({
       // Update the `tabs` query parameter with the updated list of tabs
       searchParams.set("tabs", existingTabs.join(","));
       let tempArr = [];
-      console.log("TABSELECT!1", state.tabs);
+
       if (state.tabs.some((x) => x.includes("designflow_"))) {
-        console.log("TABSELECT!2");
         // Add the new tabId if it's not already in the list
         tempArr = [...state.tabs, action.payload];
       } else {
-        console.log("TABSELECT!3");
         tempArr = [action.payload, ...state.tabs];
       }
 

@@ -354,7 +354,6 @@ export const GetOpertionTest = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -407,7 +406,6 @@ export const PublishProject = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -427,7 +425,6 @@ export const GetProjectPublishLogByProjectId = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -447,7 +444,6 @@ export const GetChangeHistoryByProjectPublishLogId = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -468,7 +464,6 @@ get_project_by_id?project_id=${value}`,
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -488,7 +483,6 @@ export const ImportFromPostman = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -508,7 +502,6 @@ export const UpdateApiScanResponse = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -528,7 +521,6 @@ export const ImportFromUrl = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -551,7 +543,6 @@ export const CloneCollection = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -574,7 +565,6 @@ export const CloneOperation = createAsyncThunk(
         throw new Error("UNAUTHORIZED");
       }
       throw new Error(errorHandling(error));
-      // console.log("Error Occured: ", error)
     }
   }
 );
@@ -746,8 +736,23 @@ export const GetAllSenseDataKeyInOperByOperId = createAsyncThunk(
     try {
       return await AdminServices(
         "get",
-        `Api/Api_operation_sensitivity/get_all_sensitivedata_key_in_operations_by_operation_id?operation_id=${value}`,
-        // `Api/Api_operation_sensitivity/get_all_sensitivedata_key_in_operations_by_operation_id_in_ai?operation_id=${value}`,
+        `Api/Api_operation_sensitivity/get_all_sensitivedata_key_in_operations_by_operation_id_in_ai?operation_id=${value.operation_id}&project_id=${value.project_id} `,
+        null,
+        null
+      );
+    } catch (error) {
+      throw new Error(errorHandling(error));
+    }
+  }
+);
+
+export const GetAllStandardsKeyInOperByOperId = createAsyncThunk(
+  "projects/GetAllStandardsKeyInOperByOperId",
+  async (value: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        `api/Standards/operation_standard_voilations_by_operation_id?operation_id=${value.operation_id}&project_id=${value.project_id} `,
         null,
         null
       );
@@ -1803,7 +1808,6 @@ export const projectSlice = createSlice({
         state.loadingProjectsListSolrPagination = false;
         state.projectsListSolrPagination = action.payload.projects;
         state.projectsListSolrCount = action.payload.total_count;
-        console.log("PaginationData: ", action.payload.projects);
       }
     );
 

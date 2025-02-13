@@ -31,35 +31,61 @@ export default function CreateWorkflowModal({ height, width }: Props) {
     resetForm,
     setactiveStep,
     isLoading,
+    isImportAws,
   } = useSignUpStore();
 
   const [completed, setCompleted] = React.useState({});
-  const steps = [
-    {
-      id: 0,
-      label: "Workspace",
-      icon: <WorkspaceSvg color={activeStep == 0 ? "white" : "#9A9A9A"} />,
-      description: "Create workspace",
-    },
-    {
-      id: 1,
-      label: "Discovery",
-      icon: <DiscoverySvg color={activeStep == 1 ? "white" : "#9A9A9A"} />,
-      description: "Discover your API",
-    },
-    {
-      id: 2,
-      label: "Resources Catalog",
-      icon: <CatalogSvg color={activeStep == 2 ? "white" : "#9A9A9A"} />,
-      description: "Catalog API",
-    },
-    {
-      id: 3,
-      label: "Invite Users",
-      icon: <InvitedUsersSvg color={activeStep == 3 ? "white" : "#9A9A9A"} />,
-      description: "Manage your team",
-    },
-  ];
+  const steps = isImportAws
+    ? [
+        {
+          id: 1,
+          label: "Discovery",
+          icon: <DiscoverySvg color={activeStep == 1 ? "white" : "#9A9A9A"} />,
+          description: "Discover your API",
+        },
+        {
+          id: 2,
+          label: "Resources Catalog",
+          icon: <CatalogSvg color={activeStep == 2 ? "white" : "#9A9A9A"} />,
+          description: "Catalog API",
+        },
+        {
+          id: 3,
+          label: "Invite Users",
+          icon: (
+            <InvitedUsersSvg color={activeStep == 3 ? "white" : "#9A9A9A"} />
+          ),
+          description: "Manage your team",
+        },
+      ]
+    : [
+        {
+          id: 0,
+          label: "Workspace",
+          icon: <WorkspaceSvg color={activeStep == 0 ? "white" : "#9A9A9A"} />,
+          description: "Create workspace",
+        },
+        {
+          id: 1,
+          label: "Discovery",
+          icon: <DiscoverySvg color={activeStep == 1 ? "white" : "#9A9A9A"} />,
+          description: "Discover your API",
+        },
+        {
+          id: 2,
+          label: "Resources Catalog",
+          icon: <CatalogSvg color={activeStep == 2 ? "white" : "#9A9A9A"} />,
+          description: "Catalog API",
+        },
+        {
+          id: 3,
+          label: "Invite Users",
+          icon: (
+            <InvitedUsersSvg color={activeStep == 3 ? "white" : "#9A9A9A"} />
+          ),
+          description: "Manage your team",
+        },
+      ];
   const handleFormDatas = (key: string, value: any) => {
     setFormDataStore(key, value);
   };
@@ -85,7 +111,25 @@ export default function CreateWorkflowModal({ height, width }: Props) {
     isWorkflowModal: true,
   };
   const renderComponent = () => {
-    {
+    if (isImportAws) {
+      switch (activeStep) {
+        case 0:
+          return (
+            <Discovery clientSession={clientSession} isWorkflowModal={true} />
+          );
+        case 1:
+          return (
+            <Resources clientSession={clientSession} isWorkflowModal={true} />
+          );
+        case 2:
+          return (
+            <InvitedUsers
+              clientSession={clientSession}
+              isWorkflowModal={true}
+            />
+          );
+      }
+    } else {
       switch (activeStep) {
         case 0:
           return (

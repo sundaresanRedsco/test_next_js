@@ -35,17 +35,6 @@ function IntegrationList(props: any) {
   const { id, onCloseHandler } = props;
   const dispatch = useDispatch<any>();
 
-  const type =
-    id === "integration_page_service_now"
-      ? "SERVICE_NOW"
-      : id === "integration_page_splunk_siem"
-      ? "SPLUNK_SIEM"
-      : id === "jira"
-      ? "JIRA"
-      : id === "pager_duty"
-      ? "PAGER_DUTY"
-      : "";
-
   const { integrationLoading } = useSelector<RootStateType, integrationReducer>(
     (state) => state.apiManagement.integration
   );
@@ -64,17 +53,18 @@ function IntegrationList(props: any) {
   useEffect(() => {
     const data = {
       tenant_id: userProfile?.user.tenant_id,
-      type: type,
+      type: id,
       start: 1,
       end: 5,
     };
-    if (type) {
-      dispatch(GetIntegrationByTenantIdandType(data))
-        .unwrap()
-        .then((res: any) => {
-          setIntegrationList(res);
-        });
-    }
+
+    // if (type) {
+    dispatch(GetIntegrationByTenantIdandType(data))
+      .unwrap()
+      .then((res: any) => {
+        setIntegrationList(res);
+      });
+    // }
   }, [id]);
 
   return (
@@ -96,7 +86,7 @@ function IntegrationList(props: any) {
             <GlobalCircularLoader open={integrationLoading} />
           </Box>
         </>
-      ) : id === "jira" || id === "pager_duty" ? (
+      ) : id === "JIRA" || id === "PAGER_DUTY" ? (
         <>
           <CardContainer
             style={{
@@ -107,19 +97,6 @@ function IntegrationList(props: any) {
             }}
           >
             <div className="d-flex">
-              <Box
-                sx={{
-                  width: "7%",
-                  textAlign: "center",
-                  alignItems: "center",
-                }}
-              >
-                <ProjectSideBar
-                  sidebarData={sidebarData}
-                  onClickHandler={(id: string) => handleItemClick(id)}
-                  active={activeItem}
-                />
-              </Box>
               <Box>
                 {/* <p>{formatToTitleCase(id)}</p> */}
                 {integrationList?.map((data: any, index: any) => (
@@ -129,7 +106,7 @@ function IntegrationList(props: any) {
                       secondaryTitle={`Added on ${dateFormat(
                         data?.created_at
                       )}`}
-                      cardData={"SN"}
+                      cardData={id}
                     />
                   </div>
                 ))}

@@ -273,94 +273,6 @@ export async function processNode(
   };
 }
 
-// Function to compute similarity score between two arrays
-// function arraySimilarity(arr1: any[], arr2: any[]): number {
-//   const intersection = arr1.filter(value => arr2.includes(value));
-//   return (intersection.length / Math.max(arr1.length, arr2.length)) * 100; // Returns percentage of similarity
-// }
-
-// // Function to compare two nodes (objects)
-// function compareNodes(node1: any, node2: any) {
-//   let similarityScore = 0;
-//   let totalKeys = 0;
-
-//   // Check for key similarity
-//   const node1Keys = Object.keys(node1);
-//   const node2Keys = Object.keys(node2);
-
-//   // Compare keys
-//   const commonKeys = node1Keys.filter(key => node2Keys.includes(key));
-//   const keySimilarity = (commonKeys.length / Math.max(node1Keys.length, node2Keys.length)) * 100;
-
-//   // Loop through common keys and compare their content
-//   commonKeys.forEach(key => {
-//     totalKeys++;
-
-//     if (Array.isArray(node1[key]) && Array.isArray(node2[key])) {
-//       // If both values are arrays, calculate array similarity
-//       const arrayScore = arraySimilarity(node1[key], node2[key]);
-//       similarityScore += arrayScore;
-//     } else if (typeof node1[key] === 'object' && typeof node2[key] === 'object') {
-//       // If both values are objects, recursively compare them
-//       const nestedSimilarity = compareNodes(node1[key], node2[key]);
-//       similarityScore += nestedSimilarity.contentSimilarity;
-//     } else if (node1[key] === node2[key]) {
-//       // If the values are identical, full score for this key
-//       similarityScore += 100;
-//     } else {
-//       // No match
-//       similarityScore += 0;
-//     }
-//   });
-
-//   // Final score
-//   return {
-//     keySimilarity,
-//     contentSimilarity: totalKeys > 0 ? similarityScore / totalKeys : 0,
-//   };
-// }
-
-// // Function to compare all nodes in globalResponse
-// function compareAllNodes(globalResponse: any) {
-//   const nodeKeys = Object.keys(globalResponse);
-//   const results = [];
-
-//   // Compare each node with every other node
-//   for (let i = 0; i < nodeKeys.length; i++) {
-//     for (let j = i + 1; j < nodeKeys.length; j++) {
-//       const node1 = globalResponse[nodeKeys[i]];
-//       const node2 = globalResponse[nodeKeys[j]];
-
-//       const similarityResult = compareNodes(node1, node2);
-//       results.push({
-//         node1: nodeKeys[i],
-//         node2: nodeKeys[j],
-//         keySimilarity: similarityResult.keySimilarity,
-//         contentSimilarity: similarityResult.contentSimilarity,
-//       });
-//     }
-//   }
-
-//   return results;
-// }
-
-// Example globalResponse
-// const globalResponse = {
-//   node_77bkndfj: { products: Array(30), total: 194, skip: 0, limit: 30 },
-//   node_7bxs0lys: { users: Array(30), total: 208, skip: 0, limit: 30 },
-//   node_xx1234yy: { products: Array(10), total: 50, skip: 0, limit: 10 },
-// };
-
-// Compare all nodes and get similarity results
-// const similarityResults = compareAllNodes(setGlobalResponse);
-
-// Log results
-// similarityResults.forEach(result => {
-//   console.log(`Node ${result.node1} vs Node ${result.node2}`);
-//   console.log(`Key Similarity: ${result.keySimilarity}%`);
-//   console.log(`Content Similarity: ${result.contentSimilarity}%\n`);
-// });
-
 export function updateRunStatus(runMap: any, target: any) {
   // Logging to indicate the function execution
 
@@ -756,13 +668,7 @@ export function compareGlobalResponse(globalResponse: any) {
   }
 
   // Log the similarity results
-  results.forEach((result) => {
-    console.log(
-      `Similarity between ${result.nodes[0]} and ${
-        result.nodes[1]
-      }: ${result.score.toFixed(2)}%`
-    );
-  });
+  results.forEach((result) => {});
 }
 
 // Example usage with your globalResponse
@@ -783,124 +689,40 @@ function hasFilterCondition(query: any) {
   return /\[([^\]]*=\s*[^]]*)\]/.test(query);
 }
 
-// replace holders in apiflow designer
-// export function replacePlaceholders(
-//   template: any,
-//   data: any,
-//   globalArrayKeys: any
-// ) {
-
-//   if (typeof template === "string" && template.includes("{")) {
-//     if (hasFilterCondition(template)) {
-
-//       template = dynamicFilter(data, template);
-
-//       return template;
-//     }
-//     const placeholders = template.match(/{(.*?)}/g); // Find all placeholders
-//     if (placeholders) {
-//       placeholders.forEach((place) => {
-//         let keys;
-//         let replacementValue;
-//         // Check if the placeholder starts with 'global.'
-
-//         if (globalArrayKeys?.length > 0 && place.includes("{global.")) {
-//           const startIndex = place.indexOf("{global.") + 8; // 8 is the length of '{global.'
-//           const endIndex = place.indexOf("}", startIndex); // Find the closing '}'
-//           let globalKey: any;
-//           if (endIndex > startIndex) {
-//             globalKey = place.slice(startIndex, endIndex);
-
-//           } else {
-//             console.error("Closing brace '}' not found for '{global.'");
-//           }
-//           const globalObject = globalArrayKeys
-//             ? globalArrayKeys.find((obj: any) => obj.key_name === globalKey)
-//             : null;
-//           console.log(globalObject, "globalObject");
-//           replacementValue = globalObject?.value
-//             ? globalObject?.value
-//             : undefined;
-//         } else {
-//           keys = place
-//             .slice(1, -1)
-//             .split(/\.|\[|\]/)
-//             .filter(Boolean); // Split by . or [ or ]
-//           replacementValue = data;
-//         }
-
-//         // Navigate through the structure if not a global key
-//         if (keys) {
-//           for (const k of keys) {
-//             if (Array.isArray(replacementValue)) {
-//               replacementValue = replacementValue[parseInt(k)] || undefined;
-//             } else {
-//               replacementValue = replacementValue
-//                 ? replacementValue[k]
-//                 : undefined;
-//             }
-//           }
-//         }
-
-//         template = template.replace(
-//           place,
-//           replacementValue ? replacementValue : place
-//         );
-//       });
-//     }
-//     return template;
-//   } else if (typeof template === "object" && template !== null) {
-//     const result: any = Array.isArray(template) ? [] : {};
-//     for (const key in template) {
-//       result[key] = replacePlaceholders(template[key], data, globalArrayKeys);
-//     }
-//     return result;
-//   } else {
-//     return template; // Return the value if it's not a placeholder
-//   }
-// }
-
 export function replacePlaceholders(
   template: any,
   data: any,
   globalArrayKeys: any
 ) {
-  console.log(template, "rphTEMPLATE");
   if (
     typeof template === "string" &&
     (template.includes("{") || template.includes("&"))
   ) {
     if (hasFilterCondition(template)) {
-      console.log("template", template);
-      console.log("template", hasFilterCondition(template));
       template = dynamicFilter(data, template);
-      console.log("template3", template);
+
       return template;
     }
     const placeholders = template.match(/{(.*?)}/g); // Find all placeholders
-    console.log(placeholders, "rphPLACEHOLDERS");
 
     if (placeholders) {
       placeholders.forEach((place) => {
         let keys;
         let replacementValue;
         // Check if the placeholder starts with 'global.'
-        console.log("place", place, typeof place);
-        console.log(place, typeof place, "rphPLACE");
+
         if (globalArrayKeys?.length > 0 && place.includes("{global.")) {
           const startIndex = place.indexOf("{global.") + 8; // 8 is the length of '{global.'
           const endIndex = place.indexOf("}", startIndex); // Find the closing '}'
           let globalKey: any;
           if (endIndex > startIndex) {
             globalKey = place.slice(startIndex, endIndex);
-            console.log(globalKey, "globalKey");
           } else {
-            console.error("Closing brace '}' not found for '{global.'");
           }
           const globalObject = globalArrayKeys
             ? globalArrayKeys.find((obj: any) => obj.key_name === globalKey)
             : null;
-          console.log(globalObject, "globalObject");
+
           replacementValue = globalObject?.value
             ? globalObject?.value
             : undefined;
@@ -911,29 +733,20 @@ export function replacePlaceholders(
             .filter(Boolean); // Split by . or [ or ]
           replacementValue = data;
         }
-        console.log(keys, "rphPLACEKEYS");
-        console.log(replacementValue, "rphREPLACEMENTVALUE");
+
         // Navigate through the structure if not a global key
         if (keys) {
           for (const k of keys) {
             if (Array.isArray(replacementValue)) {
               replacementValue = replacementValue[parseInt(k)] || undefined;
-              console.log(k, typeof k, replacementValue, "rphARRAY");
             } else {
               replacementValue = replacementValue
                 ? replacementValue[k]
                 : undefined;
-              console.log(k, typeof k, replacementValue, "rphOBJECT");
             }
           }
         }
 
-        console.log(
-          place,
-          replacementValue,
-          JSON.stringify(replacementValue),
-          "rphREPLACEMENTFINAL"
-        );
         template = template.replace(
           place,
           // JSON.stringify(replacementValue) || place
@@ -945,7 +758,6 @@ export function replacePlaceholders(
     //----------------------multiple condition-----------------------------------------
 
     const multipleCondition = splitAndExtractPatterns(template);
-    console.log(multipleCondition, "rphMULTIPLECONDITION");
 
     let multipleConditionResult = multipleFqlConditions(multipleCondition);
 
@@ -955,11 +767,9 @@ export function replacePlaceholders(
   } else if (typeof template === "object" && template !== null) {
     const result: any = Array.isArray(template) ? [] : {};
     for (const key in template) {
-      console.log(key, "rphKEY");
-      console.log(template[key], "rphVALUE");
       result[key] = replacePlaceholders(template[key], data, globalArrayKeys);
     }
-    console.log(result, "rphRESULT");
+
     return result;
   } else {
     return template; // Return the value if it's not a placeholder

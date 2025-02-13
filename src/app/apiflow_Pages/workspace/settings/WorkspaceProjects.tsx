@@ -53,7 +53,6 @@ function WorkspaceProjects() {
   const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
     (state) => state.apiManagement.workspace
   );
-  console.log(currentWorkspace?.id, "currentWorkspace?.id");
 
   const {
     groupOverViewEnd,
