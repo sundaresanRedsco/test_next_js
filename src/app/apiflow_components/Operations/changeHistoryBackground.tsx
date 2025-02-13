@@ -53,7 +53,7 @@ const dummyData = [
   },
 ];
 
-const JsonComparisonList: React.FC = (props: any) => {
+const JsonComparisonList = (props: any) => {
   const { openDrawer, setOpenDrawer, backgroundDetails } = props;
   const { changeHistoryBackground } = useSelector<
     RootStateType,
