@@ -96,8 +96,8 @@ const JsonComparisonList = (props: any) => {
         <List>
           {changeHistoryBackground?.map((item: any) => (
             <ListItem
+              component="div"
               key={item?.changes_tracking_id}
-              button
               onClick={() => handleItemClick(JSON.parse(item?.new_json))}
             >
               <Info style={{ marginRight: "5px" }} />
@@ -119,7 +119,7 @@ const JsonComparisonList = (props: any) => {
         <DialogContent>
           <Grid2 container spacing={2}>
             {/* Left Column - Old JSON */}
-            <Grid2 item xs={6}>
+            <Grid2 size={6}>
               <Typography variant="h6">Original JSON</Typography>
               <pre
                 style={{
@@ -134,7 +134,7 @@ const JsonComparisonList = (props: any) => {
             </Grid2>
 
             {/* Right Column - Updated JSON */}
-            <Grid2 item xs={6}>
+            <Grid2 size={6}>
               <Typography variant="h6">Updated JSON</Typography>
               <pre
                 style={{
