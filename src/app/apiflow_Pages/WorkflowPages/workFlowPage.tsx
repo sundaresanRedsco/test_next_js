@@ -1047,19 +1047,28 @@ const WorkflowDesigner = (props: any) => {
   };
 
   const handleVersionLockClicked = () => {
-    // setVersionLockClicked(!versionLockClicked);
-    let data = {
-      version_id: versionValue,
-      is_loged: true,
-    };
+    if (!versionLockClicked) {
+      let data = {
+        version_id: versionValue,
+        is_loged: true,
+      };
 
-    dispatch(UpdateFlowVersionIsLockedByVersionId(data))
-      .unwrap()
-      .then((res: any) => {
-        setVersionLockClicked(true);
-        handleApiGetAllVersions();
-      })
-      .catch((error: any) => {});
+      dispatch(UpdateFlowVersionIsLockedByVersionId(data))
+        .unwrap()
+        .then((res: any) => {
+          setVersionLockClicked(true);
+          handleApiGetAllVersions();
+          toast?.success("Version Locked successfully!", {
+            position: "top-center",
+          });
+        })
+        .catch((error: any) => {});
+    } else {
+      setVersionLockClicked(false);
+      toast?.success("Version Unlocked successfully!", {
+        position: "top-center",
+      });
+    }
   };
 
   const handleScheduleRuns = () => {
@@ -1115,7 +1124,7 @@ const WorkflowDesigner = (props: any) => {
       dropDown: "false",
     },
 
-    {
+    !versionLockClicked && {
       onClick: handleEditClick,
       ariaLabel: "Edit",
       tooltipTitle: "Edit",
