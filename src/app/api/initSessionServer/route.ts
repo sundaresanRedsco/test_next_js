@@ -15,6 +15,15 @@ export async function POST(req: Request) {
   // Create the response object
   const res = NextResponse.json({ success: true });
 
+  // Set cookies
+  // setCookie({ res }, "tokenExpiresAt", expires_in.toString(), {
+  //   maxAge,
+  //   path: "/",
+  //   secure: true,
+  //   sameSite: "strict",
+  //   // httpOnly: true, // Uncomment if you want the cookie to be HTTP-only
+  // });
+
   setCookie({ res }, "token", token, {
     maxAge,
     path: "/",
@@ -23,6 +32,10 @@ export async function POST(req: Request) {
     // httpOnly: true,
   });
 
+  console.log(
+    process?.env.NEXT_PUBLIC_COOKIE_USERPROFILE,
+    "process?.env.NEXT_PUBLIC_COOKIE_USERPROFILE1"
+  );
   setCookie(
     { res },
     process.env.NEXT_PUBLIC_COOKIE_USERPROFILE || "",

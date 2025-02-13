@@ -2135,6 +2135,13 @@ export default function Integrations() {
                     {types === "enable" && <div>test</div>}
                   </Dialog>
 
+                  <AwsImportPopup
+                    open={anchorElDrop}
+                    handleClose={handleClose}
+                    edits
+                    gatewayData={apiEditData}
+                  />
+
                   {filteredData.length === 0 ? (
                     <div></div>
                   ) : (

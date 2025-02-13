@@ -17,7 +17,6 @@ import useWorkflowPost from "@/app/hooks/posts/useWorkflowPost";
 import { MqttClient } from "mqtt";
 import toast from "react-hot-toast";
 import { connectToMqtt, sendMqttMessage } from "@/app/Helpers/mqttHelpers";
-import { usePostStore } from "@/app/store/usePostStore";
 export default function HomeChannel(props: any) {
   const dispatch = useDispatch<any>();
   const router = useRouter();
@@ -36,9 +35,9 @@ export default function HomeChannel(props: any) {
   );
   // Use the custom hook to get the message
 
-  const { setopenPostAnchorEl, openPostAnchorEl, setChannelId } =
-    usePostStore();
-  const openPosts = Boolean(openPostAnchorEl);
+  const { openPosts, setopenPostAnchorEl, openPostAnchorEl, setChannelId } =
+    useWorkflowPost();
+
   useEffect(() => {
     dispatch(
       getChannels({
@@ -169,7 +168,6 @@ export default function HomeChannel(props: any) {
           zIndex: 9999,
           "& .MuiPaper-root": {
             padding: "10px",
-            background: "black",
           },
         }}
       >

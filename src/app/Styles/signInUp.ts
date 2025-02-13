@@ -58,7 +58,7 @@ export const LinkSignInUPTypography = styled(Link)`
 `;
 
 export const HeadingTypography = styled(Typography)`
-  font-family: FiraSans-Regular !important;
+  font-family: FiraSans !important;
   color: #fff;
   font-weight: 600;
 `;

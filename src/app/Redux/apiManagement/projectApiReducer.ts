@@ -14,10 +14,7 @@ export const GetGroupsByWorkspaceIdSolrOffset = createAsyncThunk(
         null,
         null
       );
-    } catch (error: any) {
-      if (error?.response && error?.response?.status === 401) {
-        throw new Error("UNAUTHORIZED");
-      }
+    } catch (error) {
       throw new Error(errorHandling(error));
     }
   }

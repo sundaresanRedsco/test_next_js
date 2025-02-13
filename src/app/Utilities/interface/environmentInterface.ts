@@ -8,5 +8,4 @@ export interface environmentProjectSolrOffsetInterface {
   is_pinned: boolean;
   version: string;
   workspace_id: string;
-  description?: string;
 }

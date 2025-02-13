@@ -207,9 +207,6 @@ export default function GInput(props: Props) {
           },
           "& .MuiInputBase-input": {
             fontFamily: "FiraSans-medium !important",
-            "&.Mui-disabled": {
-              WebkitTextFillColor: "#c9c9c961",
-            },
           },
           "& .MuiInputBase-input::placeholder": {
             fontFamily: "Firasans-light",

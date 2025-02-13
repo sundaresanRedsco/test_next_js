@@ -220,44 +220,6 @@ export const ImportSwaggerDocument = createAsyncThunk(
   }
 );
 
-export const GetEndpointCounts = createAsyncThunk(
-  "enpoints/GetEndpointCounts",
-  async (data: any) => {
-    try {
-      return await AdminServices(
-        "get",
-        `api/Operations/get_endpoint_counts?project_id=${data?.project_id}&workspace_id=${data?.workspace_id}&group_id=${data?.group_id}`,
-        null,
-        null
-      );
-    } catch (error: any) {
-      if (error?.response && error?.response?.status === 401) {
-        throw new Error("UNAUTHORIZED");
-      }
-      throw new Error(errorHandling(error));
-    }
-  }
-);
-
-export const GetEndpointCountIdentity = createAsyncThunk(
-  "enpoints/GetEndpointCountIdentity",
-  async (data: any) => {
-    try {
-      return await AdminServices(
-        "get",
-        `api/Operations/get_endpoint_counts_identity?project_id=${data?.project_id}&workspace_id=${data?.workspace_id}&group_id=${data?.group_id}`,
-        null,
-        null
-      );
-    } catch (error: any) {
-      if (error?.response && error?.response?.status === 401) {
-        throw new Error("UNAUTHORIZED");
-      }
-      throw new Error(errorHandling(error));
-    }
-  }
-);
-
 export const resetGatewayStateSwaggerDoc = createAction("Gateway/resetState");
 
 export const resetSwaggerState = createAction("swaggerDoc/resetState");
@@ -277,8 +239,6 @@ type InitialStateType = {
   getCollOperTreeFlowData: GetCollecOperTreeInterface;
   workflowSidebarStart: number;
   workflowSidebarEnd: number;
-  getEndpointsCountLoading: boolean;
-  getEndpointCountIdentityLoading: boolean;
 };
 
 const initialState: InitialStateType = {
@@ -295,8 +255,6 @@ const initialState: InitialStateType = {
   },
   workflowSidebarStart: 0,
   workflowSidebarEnd: 8,
-  getEndpointsCountLoading: false,
-  getEndpointCountIdentityLoading: false,
 };
 
 export const endpointSlice = createSlice({
@@ -487,26 +445,6 @@ export const endpointSlice = createSlice({
     });
     builder.addCase(ImportSwaggerDocument.rejected, (state, action) => {
       state.getOperationLoading = false;
-    });
-
-    builder.addCase(GetEndpointCounts.pending, (state, action) => {
-      state.getEndpointsCountLoading = true;
-    });
-    builder.addCase(GetEndpointCounts.fulfilled, (state, action) => {
-      state.getEndpointsCountLoading = false;
-    });
-    builder.addCase(GetEndpointCounts.rejected, (state, action) => {
-      state.getEndpointsCountLoading = false;
-    });
-
-    builder.addCase(GetEndpointCountIdentity.pending, (state, action) => {
-      state.getEndpointCountIdentityLoading = true;
-    });
-    builder.addCase(GetEndpointCountIdentity.fulfilled, (state, action) => {
-      state.getEndpointCountIdentityLoading = false;
-    });
-    builder.addCase(GetEndpointCountIdentity.rejected, (state, action) => {
-      state.getEndpointCountIdentityLoading = false;
     });
   },
 });

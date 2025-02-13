@@ -89,7 +89,9 @@ export const UpdateUser = createAsyncThunk(
   async (value: any) => {
     try {
       return await AdminServices("post", "api/auth/update_user", value, null);
-    } catch (error) {}
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
   }
 );
 
@@ -261,6 +263,11 @@ export const commonSlice = createSlice({
         state.userProfile = action.payload;
         state.sessionExpireTime = action.payload.session_expire_time;
         state.isLoggedIn = true;
+        console.log(action.payload, "initialUser");
+
+        // action.payload.session
+
+        // state.isTrialActive = !action.payload.isTrialPeriod;
       }
     });
 
@@ -270,6 +277,7 @@ export const commonSlice = createSlice({
       }
     });
     builder.addCase(logout.fulfilled, (state, action) => {
+      console.log(action.payload, "logout");
       state.userProfile = userInitialState;
       state.isLoggedIn = false;
       // state.sessionExpireTime = action.payload.session_expire_time;
@@ -308,7 +316,11 @@ export const commonSlice = createSlice({
         );
 
         let tenant_id = userDetails ? userDetails?.tenant_id : null;
-
+        // console.log(
+        //   "Reach: ",
+        //   userDetails ? JSON.parse(userDetails)?.tenant_id : null,
+        //   action.payload
+        // );
         let updatedData = { ...action.payload, tenant_id: tenant_id };
         state.loading = false;
         state.userProfile.user = updatedData;
@@ -378,6 +390,7 @@ export const commonSlice = createSlice({
         );
         let access_token: any = action.payload?.access_Token;
         let sessionExpireTime: any = action.payload?.expire_Time;
+        console.log(access_token, "access");
 
         // let userInfo = JSON.parse(userDetails);
         let userInfo = userDetails;

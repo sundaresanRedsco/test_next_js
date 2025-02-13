@@ -746,23 +746,8 @@ export const GetAllSenseDataKeyInOperByOperId = createAsyncThunk(
     try {
       return await AdminServices(
         "get",
-        `Api/Api_operation_sensitivity/get_all_sensitivedata_key_in_operations_by_operation_id_in_ai?operation_id=${value.operation_id}&project_id=${value.project_id} `,
-        null,
-        null
-      );
-    } catch (error) {
-      throw new Error(errorHandling(error));
-    }
-  }
-);
-
-export const GetAllStandardsKeyInOperByOperId = createAsyncThunk(
-  "projects/GetAllStandardsKeyInOperByOperId",
-  async (value: any) => {
-    try {
-      return await AdminServices(
-        "get",
-        `api/Standards/operation_standard_voilations_by_operation_id?operation_id=${value.operation_id}&project_id=${value.project_id} `,
+        `Api/Api_operation_sensitivity/get_all_sensitivedata_key_in_operations_by_operation_id?operation_id=${value}`,
+        // `Api/Api_operation_sensitivity/get_all_sensitivedata_key_in_operations_by_operation_id_in_ai?operation_id=${value}`,
         null,
         null
       );

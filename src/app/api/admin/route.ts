@@ -10,9 +10,10 @@ export async function POST(req: NextRequest) {
   try {
     const response = await axios({
       method,
-
+      // url: `https://api.apiflow.pro/${endpoint}`,
       url: `${process.env.NEXT_PUBLIC_BASE_URL}/${endpoint}`,
       data,
+      // headers: req?.headers,
     });
 
     return NextResponse.json(response.data);

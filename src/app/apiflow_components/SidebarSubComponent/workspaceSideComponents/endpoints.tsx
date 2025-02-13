@@ -251,7 +251,6 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
               }}
             >
               <AccordionSummary
-                key={col.id}
                 sx={{
                   background:
                     currentTreeActive === col?.id
@@ -331,9 +330,9 @@ const Endpoints = ({ nestedExpandedIndexes }: any) => {
                 </Box>
               </AccordionSummary>
               <AccordionDetails
-                key={col?.id}
                 sx={{
                   background: theme.palette.sidebarMainBackground.main,
+
                   width: "100%",
                   "&.MuiAccordionDetails-root": {
                     padding: "0px !important",

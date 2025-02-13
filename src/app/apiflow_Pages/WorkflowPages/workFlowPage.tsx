@@ -100,9 +100,6 @@ import { useLocation } from "react-router-dom";
 import GlobalContextMenu from "@/app/hooks/workflow/GlobalContextMenu";
 import useWorkflowPost from "@/app/hooks/posts/useWorkflowPost";
 import WorkflowPosts from "@/app/apiflow_components/WorkflowComponents/workflowPosts";
-import { usePostStore } from "@/app/store/usePostStore";
-import { useQuery } from "@tanstack/react-query";
-import { AdminServices } from "@/app/Services/services";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -139,15 +136,12 @@ const WorkflowDrawer = dynamic(
   }
 );
 
-const GDialogBox = dynamic(
-  () => import("@/app/apiflow_components/global/GDialogBox"),
-  {
-    ssr: false,
-  }
-);
+const GDialogBox = dynamic(() => import("@/app/Components/Global/GDialogBox"), {
+  ssr: false,
+});
 
 const DesignerImportPopup = dynamic(
-  () => import("@/app/apiflow_components/ApiDesigner/DesignerImportPopup"),
+  () => import("@/app/ApiFlowComponents/ApiDesigner/DesignerImportPopup"),
   { ssr: false }
 );
 
@@ -1380,25 +1374,11 @@ const WorkflowDesigner = (props: any) => {
     };
   }, [contextMenu?.show]);
 
-  const { setopenPostAnchorEl, openPostAnchorEl, channelId, setChannelId } =
-    usePostStore();
-  const openPosts = Boolean(openPostAnchorEl);
+  const { openPosts, setopenPostAnchorEl, openPostAnchorEl } =
+    useWorkflowPost();
   const [currentNodePosition, setcurrentNodePosition] = useState<any>(null);
   const selectorRef = useRef<Selecto>(null);
-  const { data: channelIds } = useQuery({
-    queryKey: ["channelId"],
-    queryFn: async () => {
-      const data = await AdminServices(
-        "get",
-        `Api/Post/get_channel_by_flow_id_offset?flow_id=${apiFlow_Id}&start=1&end=5`
-      );
-      if (data) {
-        setChannelId(data[0].id);
-      }
-      return data;
-    },
-    enabled: !!apiFlow_Id,
-  });
+
   return (
     <Grid
       ref={boxRef}
@@ -1748,7 +1728,7 @@ const WorkflowDesigner = (props: any) => {
           errorBoole={errorBoole}
         />
       </WorkFlowLayout>
-      <IconButton
+      {/* <IconButton
         aria-owns={apiFlow_Id}
         aria-haspopup={true}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -1785,12 +1765,11 @@ const WorkflowDesigner = (props: any) => {
           zIndex: 9999,
           "& .MuiPaper-root": {
             padding: "10px",
-            background: "black",
           },
         }}
       >
-        <WorkflowPosts channel_id={channelId} />
-      </Popover>
+        <WorkflowPosts />
+      </Popover> */}
     </Grid>
   );
 };

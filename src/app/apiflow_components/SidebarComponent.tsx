@@ -70,7 +70,6 @@ import { useGlobalStore } from "../hooks/useGlobalStore";
 import { resetProjectList } from "../Redux/apiManagement/projectApiReducer";
 import { resetCollOperTreeData } from "../Redux/apiManagement/endpointReducer";
 import SettingsSidebar from "./SidebarSubComponent/SettingsSidebar";
-import { usePostStore } from "../store/usePostStore";
 
 interface SidebarContainerProps {
   expanded?: boolean;
@@ -157,7 +156,7 @@ const SubMenuItem = styled(Box)<SubMenuItemProps>`
       svg {
 
            fill: white;
-
+           
       }
     `}
 `;
@@ -174,7 +173,6 @@ const SidebarMenu = styled(Box)<SidebarMenuProps>`
 function SidebarComponent(props: any) {
   const { isCollapsed, setIsSidebarCollapsed, onClick } = props;
   const { setactiveStep, setFormDataStore } = useSignUpStore();
-  const { resetAllPostStoreData } = usePostStore();
   const dispatch = useDispatch<any>();
   const pathname = usePathname();
 
@@ -191,7 +189,7 @@ function SidebarComponent(props: any) {
   );
 
   const [selectedLink, setSelectedLink] = useState<any>("apiMan");
-
+  const [isExpanded, setIsExpanded] = useState<boolean>(true);
   const router = useRouter();
 
   const toggleSidebar = () => {
@@ -318,7 +316,6 @@ function SidebarComponent(props: any) {
         setFormDataStore("currentPage", "Login");
         handleLogout();
         setIsSidebarCollapsed(true);
-        resetAllPostStoreData();
       },
     },
   ];
@@ -360,10 +357,7 @@ function SidebarComponent(props: any) {
     `/sidebarMenuId/${userProfile?.user?.user_id}`
   );
   useEffect(() => {
-    if (
-      cachedSidebarMenuIdCookie &&
-      (pathname.includes("/workspaceId") || pathname.includes("/settings"))
-    ) {
+    if (cachedSidebarMenuIdCookie && pathname.includes("/workspaceId")) {
       setIsSidebarCollapsed(false);
       setSelectedLink(cachedSidebarMenuIdCookie);
     }
@@ -397,6 +391,7 @@ function SidebarComponent(props: any) {
     dispatch(resetGatewayStateApiAnalytics());
     dispatch(resetGatewayStateApiEndpoint());
     dispatch(logout()).then((res: any) => {
+      console.log("LOgoutRes: ", res);
       Cookies.remove(process.env.NEXT_PUBLIC_COOKIE_STAGEID ?? "");
 
       if (store) {

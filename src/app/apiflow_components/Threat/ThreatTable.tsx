@@ -17,11 +17,10 @@ import {
   ProgressIconTable,
   SqlIconTable,
 } from "@/app/Assests/icons";
-import theme from "@/Theme/theme";
 
 const HeadingTypography = styled(Typography)`
   font-family: "FiraSans-Regular" !important;
-  color: ${theme.palette.textPrimaryColor.main};
+  color: #ffffff;
   font-size: 14px;
   font-weight: 600;
 `;
@@ -35,18 +34,25 @@ const ServerityText = styled(Box)`
 
 const TableTextTypography = styled(Typography)`
   font-family: "FiraSans-Regular" !important;
-  color: ${theme.palette.textPrimaryColor.main};
+  color: #ffffff;
   font-size: 12px;
 `;
 
 const TableTypography = styled("span")`
   font-family: "FiraSans-Regular" !important;
-  color: ${theme.palette.textPrimaryColor.main};
+  color: #ffffff;
   font-size: 12px;
 `;
 
 // Define the column headers
-const tableHeaders = ["Private", "Public", "Orphan", "Zombie", "Shadow"];
+const tableHeaders = [
+  "Threat Activity",
+  "Resource",
+  "Node",
+  "Threat Details",
+  "Severity",
+  "Timestamp",
+];
 
 const tableBodyCellCommonStyle = {
   color: "white",
@@ -60,36 +66,20 @@ const tableBodyCellCommonStyle = {
   borderBottom: "none",
 };
 
-function ThreatTable(props: any) {
-  const { endpointIdentityCountData } = props;
+// Sample data for four rows
+const tableData: any = [];
 
-  let tableData = [
-    endpointIdentityCountData.private_count,
-    endpointIdentityCountData.public_count,
-    endpointIdentityCountData.orphan_count,
-    endpointIdentityCountData.zombie_count,
-    endpointIdentityCountData.shadow_count,
-  ];
-
+function ThreatTable() {
   return (
     <TableContainer>
-      <Table sx={{ tableLayout: "fixed", width: "100%" }}>
+      <Table>
         {/* Table Header */}
-        <TableHead
-          style={{
-            background: `${theme.palette.summaryCardColor.main}`,
-            borderBottom: "none",
-          }}
-        >
+        <TableHead style={{ background: "#362F47", borderBottom: "none" }}>
           <TableRow>
             {tableHeaders.map((header, index) => (
               <TableCell
                 key={index}
-                align={header === "Private" ? "left" : "center"}
-                sx={{
-                  color: `${theme.palette.textPrimaryColor.main}`,
-                  borderBottom: "none",
-                }}
+                sx={{ color: "#FFFFFF", borderBottom: "none" }}
               >
                 <HeadingTypography> {header}</HeadingTypography>
               </TableCell>
@@ -98,7 +88,7 @@ function ThreatTable(props: any) {
         </TableHead>
 
         {/* Table Body */}
-        <TableBody sx={{ background: `${theme.palette.summaryBgColor.main}` }}>
+        <TableBody sx={{ background: "#241D35" }}>
           {tableData?.length === 0 ? (
             <TableRow style={{ height: "22rem" }}>
               <TableCell colSpan={12} sx={tableBodyCellCommonStyle}>
@@ -108,32 +98,81 @@ function ThreatTable(props: any) {
                   justifyContent="center"
                   height="100%"
                 >
-                  <p
-                    style={{
-                      textAlign: "center",
-                      color: `${theme.palette.textPrimaryColor.main}`,
-                    }}
-                  >
+                  <p style={{ textAlign: "center", color: "#FFFFFF" }}>
                     There is no data available to display in the table.
                   </p>
                 </Box>
               </TableCell>
             </TableRow>
           ) : (
-            <TableRow>
-              {tableData?.map((value: any, index: any) => (
+            tableData.map((row: any) => (
+              <TableRow key={row.id}>
                 <TableCell
-                  key={index}
-                  align={index === 0 ? "left" : "center"}
                   sx={{
-                    color: theme.palette.textPrimaryColor.main,
-                    borderBottom: `solid 1px ${theme.palette.threatTableBodyBorderColor.main}`,
+                    color: "#FFFFFF",
+                    borderBottom: "solid 1px #FFFFFF26",
                   }}
                 >
-                  <TableTypography>{value}</TableTypography>
+                  {row?.type === "sql" ? (
+                    <SqlIconTable />
+                  ) : (
+                    <ProgressIconTable />
+                  )}
+                  <TableTypography style={{ marginLeft: "10px" }}>
+                    {row?.col1}
+                  </TableTypography>
                 </TableCell>
-              ))}
-            </TableRow>
+                <TableCell
+                  sx={{
+                    color: "#FFFFFF",
+                    borderBottom: "solid 1px #FFFFFF26",
+                  }}
+                >
+                  <TableTextTypography>{row?.col2}</TableTextTypography>
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "#FFFFFF",
+                    borderBottom: "solid 1px #FFFFFF26",
+                  }}
+                >
+                  {/* <NodeIconTable />{" "} */}
+                  <TableTypography>{row?.col3}</TableTypography>{" "}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "#FFFFFF",
+                    borderBottom: "solid 1px #FFFFFF26",
+                  }}
+                >
+                  <TableTextTypography>{row?.col4}</TableTextTypography>
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "#FFFFFF",
+                    borderBottom: "solid 1px #FFFFFF26",
+                  }}
+                >
+                  <GButton
+                    background="#FD0101"
+                    label={row?.col5}
+                    color="#FFFFFF"
+                    minWidth="25px"
+                    padding="0px"
+                    border="none"
+                    fontSize="0.8rem"
+                  />
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "#FFFFFF",
+                    borderBottom: "solid 1px #FFFFFF26",
+                  }}
+                >
+                  <TableTextTypography>{row?.col6}</TableTextTypography>
+                </TableCell>
+              </TableRow>
+            ))
           )}
         </TableBody>
       </Table>

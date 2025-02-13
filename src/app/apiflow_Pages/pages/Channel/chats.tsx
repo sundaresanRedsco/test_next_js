@@ -15,7 +15,6 @@ import WorkflowPosts from "@/app/apiflow_components/WorkflowComponents/workflowP
 import { IconButton, Popover } from "@mui/material";
 import { ChatBubble } from "@mui/icons-material";
 import useWorkflowPost from "@/app/hooks/posts/useWorkflowPost";
-import { usePostStore } from "@/app/store/usePostStore";
 export default function Chats(props: any) {
   const dispatch = useDispatch<any>();
   const router = useRouter();
@@ -33,8 +32,9 @@ export default function Chats(props: any) {
     (state) => state.common
   );
 
-  const { setopenPostAnchorEl, openPostAnchorEl } = usePostStore();
-  const openPosts = Boolean(openPostAnchorEl);
+  const { openPosts, setopenPostAnchorEl, openPostAnchorEl } =
+    useWorkflowPost();
+
   useEffect(() => {
     dispatch(
       getChannels({

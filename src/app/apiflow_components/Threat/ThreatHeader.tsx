@@ -8,11 +8,9 @@ import { useSelector } from "react-redux";
 import { RootStateType } from "@/app/Redux/store";
 import { environmentReducer } from "@/app/Redux/apiManagement/environmentReducer";
 import { projectApiReducer } from "@/app/Redux/apiManagement/projectApiReducer";
-import theme from "@/Theme/theme";
 
-// background: #1c1818a3;
 const BackgroundContainer = styled(Box)`
-  background: ${theme.palette.threatTableHeaderBg.main};
+  background: #1c1818a3;
   border-radius: 10px;
   padding: 10px 20px;
   width: 100%;
@@ -20,7 +18,7 @@ const BackgroundContainer = styled(Box)`
 
 const HeadingTypography = styled(Typography)`
   font-family: "FiraSans-Regular" !important;
-  color: ${theme.palette.textPrimaryColor.main};
+  color: #ffffff;
   font-size: 20px;
   font-weight: 600;
   margin-top: 5px;
@@ -90,7 +88,7 @@ function ThreatHeader() {
           <HeadingTypography>Threat Summary</HeadingTypography>
           <GsearchBar placeholder={"Search"} marginLeft={"0rem"} />
 
-          {/* <GSelect
+          <GSelect
             options={options}
             width={{ xs: "100%", sm: "100%", md: "150px" }}
             value={selectedValue}
@@ -134,7 +132,7 @@ function ThreatHeader() {
           />
           <span>
             <ExpandIcon />
-          </span> */}
+          </span>
         </Box>
       </BackgroundContainer>
     </div>

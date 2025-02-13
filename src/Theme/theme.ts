@@ -107,16 +107,6 @@ interface DashboardPalette {
   textPrimaryColor: Palette["primary"];
   textSecondaryColor: Palette["primary"];
   textTertiaryColor: Palette["primary"];
-  navigationTabColor: Palette["primary"];
-  summaryBgColor: Palette["primary"];
-  summaryCardColor: Palette["primary"];
-  threatTableHeaderBg: Palette["primary"];
-  threatTableBodyBorderColor: Palette["primary"];
-  threatTableBodyBtnColor: Palette["primary"];
-  apiInsightsBackgroundColor: Palette["primary"];
-  apiBackgroundUrlCardColor: Palette["primary"];
-  apiBackgroundTextCardColor: Palette["primary"];
-  modalBoxShadow: Palette["primary"];
 }
 
 interface DashboardPaletteOptions {
@@ -197,16 +187,6 @@ interface DashboardPaletteOptions {
   textPrimaryColor: PaletteOptions["primary"];
   textSecondaryColor: PaletteOptions["primary"];
   textTertiaryColor: PaletteOptions["primary"];
-  navigationTabColor: PaletteOptions["primary"];
-  summaryBgColor: PaletteOptions["primary"];
-  summaryCardColor: PaletteOptions["primary"];
-  threatTableHeaderBg: PaletteOptions["primary"];
-  threatTableBodyBorderColor: PaletteOptions["primary"];
-  threatTableBodyBtnColor: PaletteOptions["primary"];
-  apiInsightsBackgroundColor: PaletteOptions["primary"];
-  apiBackgroundUrlCardColor: PaletteOptions["primary"];
-  apiBackgroundTextCardColor: PaletteOptions["primary"];
-  modalBoxShadow: PaletteOptions["primary"];
 }
 
 const lightTheme = createTheme({
@@ -245,13 +225,13 @@ const lightTheme = createTheme({
       main: "#2563EB",
     },
     primaryPurple: {
-      main: "#7A43FE",
+      main: "#6B21A8",
     },
     grayishBlue: {
       main: "#111827",
     },
     LGrayishBlue: {
-      main: "#211c27",
+      main: "#F7F9FC",
     },
     silverGrey: {
       main: "#D4D4D4",
@@ -469,36 +449,6 @@ const lightTheme = createTheme({
     },
     textTertiaryColor: {
       main: "#ACAAB3",
-    },
-    navigationTabColor: {
-      main: "#7946FD",
-    },
-    summaryBgColor: {
-      main: "#241D35",
-    },
-    summaryCardColor: {
-      main: "#362F47",
-    },
-    threatTableHeaderBg: {
-      main: "#1c1818a3",
-    },
-    threatTableBodyBorderColor: {
-      main: "#FFFFFF26",
-    },
-    threatTableBodyBtnColor: {
-      main: "#FFFFFF26",
-    },
-    apiInsightsBackgroundColor: {
-      main: "#12121280",
-    },
-    apiBackgroundUrlCardColor: {
-      main: "#362F47",
-    },
-    apiBackgroundTextCardColor: {
-      main: "#ffffff",
-    },
-    modalBoxShadow: {
-      main: "#333232",
     },
   },
 });
@@ -767,36 +717,6 @@ const darkTheme = createTheme({
     },
     textTertiaryColor: {
       main: "#ACAAB3",
-    },
-    navigationTabColor: {
-      main: "#7946FD",
-    },
-    summaryBgColor: {
-      main: "#241D35",
-    },
-    summaryCardColor: {
-      main: "#362F47",
-    },
-    threatTableHeaderBg: {
-      main: "#1c1818a3",
-    },
-    threatTableBodyBorderColor: {
-      main: "#FFFFFF26",
-    },
-    threatTableBodyBtnColor: {
-      main: "#FD0101",
-    },
-    apiInsightsBackgroundColor: {
-      main: "#12121280",
-    },
-    apiBackgroundUrlCardColor: {
-      main: "#362F47",
-    },
-    apiBackgroundTextCardColor: {
-      main: "#ffffff",
-    },
-    modalBoxShadow: {
-      main: "#333232",
     },
   },
 });

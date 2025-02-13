@@ -25,15 +25,21 @@ import GOtpField from "../../global/GOtpField";
 
 export default function SignIn({ clientSession }: any) {
   const {
+    checkBoxVal,
     handleSuccess,
     handleAuthentication,
     handleInputChange,
     loginHandler,
     handleRememberMe,
+    pathName,
+    accounts,
+    loading,
+    passwordVisibility,
     errorPassword,
     errorEmail,
     setErrorMail,
     formData,
+    CLIENT_ID,
     handleSubmitOtp,
     otp,
     setOtp,
@@ -44,6 +50,7 @@ export default function SignIn({ clientSession }: any) {
     enableRecovery,
     setenableRecovery,
     handleEnableRecoveyCode,
+    totpLoading,
   } = useSignIn();
   const { isTotpEnabled } = useSignUpStore();
 
@@ -292,8 +299,7 @@ export default function SignIn({ clientSession }: any) {
                               <SecondarySignInUPTypography
                                 sx={{
                                   color: "gray",
-                                  fontSize: "12px",
-                                  textAlign: "left",
+                                  fontSize: "14px",
                                 }}
                               >
                                 If you are unable to access the authenticator
@@ -303,7 +309,7 @@ export default function SignIn({ clientSession }: any) {
                             <SecondarySignInUPTypography
                               sx={{
                                 color: "#327fb9",
-                                fontSize: "12px",
+                                fontSize: "14px",
                                 cursor: "pointer",
                               }}
                               onClick={handleEnableRecoveyCode}

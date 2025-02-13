@@ -39,6 +39,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Connection, Handle, Position, useReactFlow } from "reactflow";
 import * as Y from "yjs";
 import { v4 as uuidv4 } from "uuid";
+import CustomHandle from "@/app/ApiFlowComponents/ApiDesigner/customHandle";
 import ChangeCircleOutlinedIcon from "@mui/icons-material/ChangeCircleOutlined";
 import { PrimaryTypography } from "@/app/Styles/signInUp";
 import {
@@ -47,8 +48,15 @@ import {
   TotalNewProjectIcon,
   CloseIcon,
 } from "@/app/Assests/icons";
-import { Close, PriorityHighRounded } from "@mui/icons-material";
-
+import {
+  Close,
+  ManageAccounts,
+  PriorityHighRounded,
+} from "@mui/icons-material";
+import {
+  BackgroundUrlList,
+  GetOperationById,
+} from "@/app/Redux/apiManagement/projectReducer";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { RenderNoDataFound } from "@/app/apiflow_components/WorkflowComponents/RenderNoDataFound";
 import GButton from "@/app/apiflow_components/global/GButton";
@@ -172,6 +180,9 @@ export default function WorkflowOperationNode({ data }: any) {
     nodeData?.operations_query_param ? [...nodeData.operations_query_param] : []
   );
 
+  const [backgroundUrlClicked, setbackgroundUrlClicked] =
+    useState<HTMLButtonElement | null>(null);
+  const openManageAccount = Boolean(backgroundUrlClicked);
   const [operationDetails, setOperationDetails] = useState<any>(false);
   const [backgroundUrlData, setBackgroundUrlData] = useState<any>([]);
   const [sizeAccClicked, setSizeAccClicked] = useState(false);
@@ -1225,6 +1236,174 @@ export default function WorkflowOperationNode({ data }: any) {
               {nodeData?.dragger}
             </div>
           )}
+        <Popover
+          id={"ManageAccounts" + nodeData?.id}
+          open={openManageAccount}
+          anchorEl={backgroundUrlClicked}
+          onClose={() => {
+            setbackgroundUrlClicked(null);
+          }}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          sx={{
+            zIndex: 9999,
+            "& .MuiPaper-root": {
+              backgroundColor: theme.palette.signInUpWhite.main,
+              width: "450px",
+              height: "350px",
+            },
+          }}
+        >
+          <div
+            style={{
+              padding: "20px",
+              position: "relative",
+            }}
+          >
+            <Close
+              sx={{
+                position: "absolute",
+                top: "18px",
+                right: "18px",
+                cursor: "pointer",
+                zIndex: 1,
+                color: `${theme.palette.primaryBlack.main}`,
+              }}
+              onClick={() => {
+                setbackgroundUrlClicked(null);
+              }}
+            />
+            <HeadingTypography
+              style={{ color: `${theme.palette.DarkBlack.main}` }}
+            >
+              Operation Details
+            </HeadingTypography>
+
+            <div
+              style={{
+                padding: "10px",
+              }}
+            >
+              <pre>
+                <TextTypography>
+                  {`. Location: ${operationDetails?.location}\n
+     URL Type: 
+     ${
+       !operationDetails?.private_or_public ||
+       operationDetails?.private_or_public === "null"
+         ? "PUBLIC"
+         : operationDetails?.private_or_public
+     }\n
+    Orphan: ${
+      operationDetails?.orphan_status &&
+      operationDetails?.orphan_status !== "null"
+        ? operationDetails?.orphan_status
+        : "-"
+    }\n
+    Endpoint Status: ${
+      operationDetails?.endpoint_status &&
+      operationDetails?.endpoint_status !== "null"
+        ? operationDetails?.endpoint_status
+        : "-"
+    }\n`}
+                </TextTypography>
+              </pre>
+
+              <TextTypography
+                style={{
+                  color: `${theme.palette.teritiaryColor.main}`,
+                  marginLeft: "10px",
+                }}
+              >
+                Here is the list of background url for the operation{" "}
+              </TextTypography>
+              {backgroundUrlData?.length === 0 ? (
+                <>
+                  <PrimaryTypography
+                    style={{
+                      alignItems: "center",
+                      textAlign: "center",
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      color: `${theme.palette.teritiaryColor.main}`,
+                      fontWeight: 900,
+                    }}
+                  >
+                    No data found
+                  </PrimaryTypography>
+                </>
+              ) : (
+                <>
+                  <div
+                    style={{
+                      padding: "5px",
+                    }}
+                  ></div>
+                  {backgroundUrlData?.map((val: any, index: number) => (
+                    <div
+                      key={val?.id}
+                      style={{
+                        padding: "5px",
+                      }}
+                    >
+                      <pre>
+                        <TextTypography>
+                          {`${index + 1}. Type: ${val?.type}\n
+    Background URL: ${
+      !val?.background_url ||
+      (val?.background_url === "null" && val?.background_url === "NULL")
+        ? "-"
+        : val?.background_url
+    }\n
+    Method: ${
+      val?.method && val?.method !== "null" && val?.method === "NULL"
+        ? val?.method
+        : "-"
+    }\n
+    Region: ${
+      val?.region && val?.region !== "null" && val?.region === "NULL"
+        ? val?.region
+        : "-"
+    }\n
+    Api Type: ${
+      val?.api_type && val?.api_type !== "null" && val?.api_type !== "NULL"
+        ? val?.api_type
+        : "-"
+    }\n
+    Function name: ${
+      val?.function_name &&
+      val?.function_name !== "null" &&
+      val?.function_name !== "NULL"
+        ? val?.function_name
+        : "-"
+    }\n
+
+        Connection Type: ${
+          val?.connection_type &&
+          val?.connection_type !== "null" &&
+          val?.connection_type !== "NULL"
+            ? val?.connection_type
+            : "-"
+        }\n
+    Updated at: ${val?.updated_at ?? "-"}\n
+    Created at: ${val?.created_at ?? "-"}`}
+                        </TextTypography>
+                      </pre>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+        </Popover>
 
         {changeManClicked === true && (
           <ChangeNodeManage
@@ -1339,7 +1518,46 @@ export default function WorkflowOperationNode({ data }: any) {
                 />
               )}
             </Button>
-
+            <IconButton
+              sx={{ padding: 0 }}
+              aria-haspopup="true"
+              aria-owns={
+                openManageAccount ? "ManageAccounts" + nodeData?.id : ""
+              }
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                event.stopPropagation();
+                setbackgroundUrlClicked(event.currentTarget);
+                dispatch(
+                  GetOperationById({
+                    operation_id: nodeData?.operation_id,
+                    project_id: currentFlowDetails?.project_id,
+                  })
+                )
+                  .unwrap()
+                  .then((operRes: any) => {
+                    setOperationDetails(operRes[0]);
+                  })
+                  .catch((error: any) => {
+                    console.log("Error: ", error);
+                  });
+                dispatch(BackgroundUrlList(nodeData?.operation_id))
+                  .unwrap()
+                  .then((changeRes: any) => {
+                    console.log("ChangeRes: ", changeRes);
+                    setBackgroundUrlData(changeRes);
+                  })
+                  .catch((error: any) => {
+                    console.log("Error: ", error);
+                  });
+              }}
+            >
+              <ManageAccounts
+                style={{
+                  color: `${theme.palette.v2PrimaryColor.main}`,
+                  fontSize: "18px",
+                }}
+              />
+            </IconButton>
             <IconButton
               sx={{
                 height: "18px",

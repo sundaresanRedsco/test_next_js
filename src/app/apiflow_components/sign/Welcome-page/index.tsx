@@ -1,4 +1,3 @@
-"use client";
 import GButton from "@/app/apiflow_components/global/GlobalButtons";
 import {
   PrimarySignInUPTypography,
@@ -88,8 +87,8 @@ export default function WelcomePage() {
         fontWeight={600}
         onClickHandler={() => {
           setIsLoading(true);
-          router.push("/sign/signup");
           handleStep();
+          router.push("/sign/signup");
         }}
         radius="10px"
       />

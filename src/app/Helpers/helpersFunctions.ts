@@ -138,7 +138,10 @@ export function replacePlaceholders(
     (template.includes("{") || template.includes("&"))
   ) {
     if (hasFilterCondition(template)) {
+      console.log("template", template);
+      console.log("template", hasFilterCondition(template));
       template = dynamicFilter(data, template);
+      console.log("template3", template);
       return template;
     }
     const placeholders = template.match(/{(.*?)}/g); // Find all placeholders
@@ -147,18 +150,21 @@ export function replacePlaceholders(
         let keys;
         let replacementValue;
         // Check if the placeholder starts with 'global.'
+        console.log("place", place, typeof place);
         if (globalArrayKeys?.length > 0 && place.includes("{global.")) {
           const startIndex = place.indexOf("{global.") + 8; // 8 is the length of '{global.'
           const endIndex = place.indexOf("}", startIndex); // Find the closing '}'
           let globalKey: any;
           if (endIndex > startIndex) {
             globalKey = place.slice(startIndex, endIndex);
+            console.log(globalKey, "globalKey");
           } else {
             console.error("Closing brace '}' not found for '{global.'");
           }
           const globalObject = globalArrayKeys
             ? globalArrayKeys.find((obj: any) => obj.key_name === globalKey)
             : null;
+          console.log(globalObject, "globalObject");
           replacementValue = globalObject?.value
             ? globalObject?.value
             : undefined;
