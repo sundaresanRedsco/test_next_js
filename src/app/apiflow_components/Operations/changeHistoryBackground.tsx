@@ -20,8 +20,6 @@ import { endpointReducer } from "@/app/Redux/apiManagement/endpointReducer";
 import GButton from "../global/GlobalButtons";
 import { Info } from "@mui/icons-material";
 
-const diffpatch = create({ textDiff: { minLength: 60 } });
-
 const initialData = [
   { id: 1, name: "Item 1", value: "A", createdAt: new Date().toISOString() },
   { id: 2, name: "Item 2", value: "B", createdAt: new Date().toISOString() },
