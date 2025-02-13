@@ -1210,6 +1210,7 @@ export default function OperationsPage(props: any) {
           location: val?.location,
           sector: val?.sector,
           intent: val?.intent,
+          orphan_status: val?.orphan_status,
         });
 
         setRowsBody([...val?.operationInputs]);
@@ -1316,6 +1317,7 @@ export default function OperationsPage(props: any) {
               location: val?.location,
               sector: val?.sector,
               intent: val?.intent,
+              orphan_status: val?.orphan_status,
             });
             setRowsBody([...val?.operationInputs]);
             setRowsHeader([...val?.operationHeaders]);

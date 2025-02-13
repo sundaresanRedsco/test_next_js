@@ -1061,6 +1061,7 @@ const WorkflowDesigner = (props: any) => {
           toast?.success("Version Locked successfully!", {
             position: "top-center",
           });
+          dispatch(setIsEditable(false));
         })
         .catch((error: any) => {});
     } else {

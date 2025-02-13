@@ -923,7 +923,6 @@ const ApiInsights = (props: any) => {
 
                         setBackgroundDetails(value);
                         setDrawerHistory(true);
-
                       }}
                     />
                     <JsonComparisonList

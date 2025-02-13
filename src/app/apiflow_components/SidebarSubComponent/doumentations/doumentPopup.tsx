@@ -141,7 +141,7 @@ export default function DoumentPopup(props: any) {
               setSwaggerDocs(res);
             });
         } else {
-          toast.success("File Imported" + collection_id);
+          toast.success("File Imported");
           let data = {
             project_id: currentEnvironmentDetails?.project_id,
             collection_id: collection_id,

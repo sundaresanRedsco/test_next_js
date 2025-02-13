@@ -129,7 +129,7 @@ const JsonComparisonList = (props: any) => {
                   overflowX: "auto",
                 }}
               >
-                {JSON.stringify(selectedJson, null, 2)}
+                {selectedJson && JSON.stringify(selectedJson, null, 2)}
               </pre>
             </Grid2>
 
@@ -144,7 +144,8 @@ const JsonComparisonList = (props: any) => {
                   overflowX: "auto",
                 }}
               >
-                {JSON.stringify(backgroundDetails, null, 2)}
+                {backgroundDetails &&
+                  JSON.stringify(backgroundDetails, null, 2)}
               </pre>
             </Grid2>
           </Grid2>

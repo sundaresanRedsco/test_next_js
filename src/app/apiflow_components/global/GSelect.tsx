@@ -111,6 +111,9 @@ export default function GSelect(props: any) {
         disabled={disabled}
         value={value}
         error={error}
+        MenuProps={{
+          style: { zIndex: 1500 }, // Increase z-index
+        }}
         helperText={
           helperText && (
             <FormHelperText sx={{ fontSize: "0.6rem", margin: "4px" }}>
