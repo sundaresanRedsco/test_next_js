@@ -68,17 +68,18 @@ const HeadingTypography = styled(Typography)({
 });
 
 // Styled Accordion for Violations
-const StyledAccordion = styled(Accordion)({
-  boxShadow: "none",
-  "&::before": {
-    display: "none",
-  },
+const StyledAccordion = styled(Accordion)`
+  box-shadow: none;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  background: #362f47;
+  text-align: left;
 
-  borderRadius: "4px",
-  marginBottom: "4px",
-  background: "#362F47",
-  textAlign: "left !important",
-});
+  &::before {
+    display: none;
+  }
+`;
+
 const TableTextTypography = styled(Typography)`
   font-family: "FiraSans-Regular" !important;
   color: #ffffff;
