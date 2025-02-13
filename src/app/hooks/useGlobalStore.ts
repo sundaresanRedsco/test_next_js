@@ -9,6 +9,8 @@ interface Store {
 
   height: any;
   setHeight: (state: any) => void;
+  selectedLink: any;
+  setSelectedLink: (state: any) => void;
 }
 
 export const useGlobalStore = create<Store>((set, get) => ({
@@ -20,4 +22,6 @@ export const useGlobalStore = create<Store>((set, get) => ({
   setArr: (newItem: any) => set(() => ({ arr: newItem })),
   height: 250,
   setHeight: (newItem: any) => set(() => ({ height: newItem })),
+  selectedLink: "dashboard",
+  setSelectedLink: (newItem: any) => set(() => ({ selectedLink: newItem })),
 }));

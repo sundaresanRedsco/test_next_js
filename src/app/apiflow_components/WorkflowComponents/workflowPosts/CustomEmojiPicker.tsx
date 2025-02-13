@@ -117,7 +117,6 @@ export default function CustomEmojiPicker({
               post_id: id,
               emoji: e.unified,
             });
-            handleClosePopUp();
           }}
         />
       </Popover>

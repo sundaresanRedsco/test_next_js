@@ -10,7 +10,7 @@ export const useWebSocket = () => {
 export default function WebSocketProvider({ children }: Props) {
   const [socket, setsocket] = useState(null);
   const isProduction = false;
-  const secretKey = process.env.SECRET_KEY;
+  const secretKey = process.env.NEXT_PUBLIC_APIFLOW_KEY;
   const websocketUrl = isProduction
     ? process.env.NEXT_PUBLIC_WSS_URL || "default_websocket_url"
     : "wss://afnode.iprotecs.net/";

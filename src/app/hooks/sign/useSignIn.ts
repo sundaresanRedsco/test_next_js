@@ -247,7 +247,7 @@ export default function useSignIn() {
                   });
                   setItem(`userId/${res?.user?.user_id}`, "onboarding");
                   setactiveStep(1);
-                  setFormDataStore("currentPage", "Sign Up");
+                  setFormDataStore("currentPage", "SignUp");
                 } else {
                   removeItem(`userId/${res?.user?.user_id}`);
                   router.push(`/userId/${res?.user?.user_id}`);

@@ -183,11 +183,7 @@ const DashboardLayout = ({ children }: any) => {
                     }}
                   >
                     <SidebarContainer isCollapsed={isSidebarCollapsed}>
-                      <SidebarComponent
-                        isCollapsed={isSidebarCollapsed}
-                        setIsSidebarCollapsed={setIsSidebarCollapsed}
-                        onClick={toggleSidebar}
-                      />
+                      <SidebarComponent />
                     </SidebarContainer>
                   </Grid>
                   <Grid

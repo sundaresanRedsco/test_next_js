@@ -89,7 +89,6 @@ export default function WelcomePage() {
         onClickHandler={() => {
           setIsLoading(true);
           router.push("/sign/signup");
-          handleStep();
         }}
         radius="10px"
       />

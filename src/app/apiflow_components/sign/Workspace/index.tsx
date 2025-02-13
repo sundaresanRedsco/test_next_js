@@ -66,12 +66,12 @@ export const gatewayList = [
   //   icon: <RestAPISignUp height={"40px"} />,
   //   clickable: "HTTP",
   // },
-  {
-    name: "API Discovery via traffic monitoring",
-    label: "Load Balancer",
-    icon: <LoadBalancerSignUp height={"40px"} />,
-    clickable: "APISIX",
-  },
+  // {
+  //   name: "API Discovery via traffic monitoring",
+  //   label: "Load Balancer",
+  //   icon: <LoadBalancerSignUp height={"40px"} />,
+  //   clickable: "APISIX",
+  // },
 ];
 export default function Workspace({ clientSession, isWorkflowModal }: Props) {
   const { userData, setFormDataStore, formDataStore, setactiveStep } =

@@ -322,9 +322,9 @@ const EnvironmentTree = ({ expanded, setExpanded }: any) => {
           >
             <AccordionSummary
               onClick={() => {
-                if (!pathname.includes("/environment")) {
-                  setIsPageLoading(true);
-                }
+                // if (!pathname.includes("/environment")) {
+                //   setIsPageLoading(true);
+                // }
 
                 onSelectCurrentProject(env.project_id, env.workspace_id);
                 router.push(

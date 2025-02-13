@@ -34,6 +34,7 @@ export default function CreateWorkflowModal({ height, width }: Props) {
     setOpenSignUp,
     openSignUp,
     setIsLoading,
+    resetAllSignStoreData,
   } = useSignUpStore();
 
   const [completed, setCompleted] = React.useState({});
@@ -93,7 +94,7 @@ export default function CreateWorkflowModal({ height, width }: Props) {
   };
   useEffect(() => {
     setactiveStep(0);
-    handleFormDatas("currentPage", "Sign Up");
+    handleFormDatas("currentPage", "SignUp");
     setIsLoading(false);
   }, [openSignUp]);
   useEffect(() => {
@@ -164,6 +165,7 @@ export default function CreateWorkflowModal({ height, width }: Props) {
           ? undefined
           : () => {
               setOpenSignUp(false);
+              resetAllSignStoreData();
             }
       }
       open={openSignUp}

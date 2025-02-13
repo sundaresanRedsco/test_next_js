@@ -73,6 +73,7 @@ import SettingsSidebar from "./SidebarSubComponent/SettingsSidebar";
 import { usePostStore } from "../store/usePostStore";
 import toast from "react-hot-toast";
 import { connectToMqtt } from "../Helpers/mqttHelpers";
+import { useSideBarStore } from "../hooks/sideBarStore";
 
 interface SidebarContainerProps {
   expanded?: boolean;
@@ -86,7 +87,7 @@ interface SubMenuItemProps {
 
 interface SidebarMenuProps {
   children?: ReactNode;
-  isCollapsed: boolean; // Control collapse state
+  isSidebarCollapsed: boolean; // Control collapse state
 }
 
 const SidebarCon = styled(Box)<SidebarContainerProps>`
@@ -165,7 +166,7 @@ const SubMenuItem = styled(Box)<SubMenuItemProps>`
 `;
 
 const SidebarMenu = styled(Box)<SidebarMenuProps>`
-  width: ${({ isCollapsed }) => (isCollapsed ? "0px" : "220px")};
+  width: ${({ isSidebarCollapsed }) => (isSidebarCollapsed ? "0px" : "220px")};
   background: ${({ theme }) => theme.palette.sidebarMainBackground.main};
   height: 100vh;
   padding: 0px;
@@ -174,15 +175,18 @@ const SidebarMenu = styled(Box)<SidebarMenuProps>`
 `;
 
 function SidebarComponent(props: any) {
-  const { isCollapsed, setIsSidebarCollapsed, onClick } = props;
   const { setactiveStep, setFormDataStore } = useSignUpStore();
   const { resetAllPostStoreData } = usePostStore();
+  const { ismd, issm, islg } = useMuiBreakpoints();
+  const { isSidebarCollapsed, setIsSidebarCollapsed } = useSideBarStore();
+  const { setIsPageLoading, isPageLoading, selectedLink, setSelectedLink } =
+    useGlobalStore();
   const dispatch = useDispatch<any>();
   const pathname = usePathname();
 
   useEffect(() => {
     dispatch(resetProjectList([]));
-  }, [isCollapsed]);
+  }, [isSidebarCollapsed]);
 
   const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
     (state) => state.apiManagement.workspace
@@ -191,8 +195,6 @@ function SidebarComponent(props: any) {
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
   );
-
-  const [selectedLink, setSelectedLink] = useState<any>("apiMan");
 
   const router = useRouter();
 
@@ -225,23 +227,18 @@ function SidebarComponent(props: any) {
   }, [userProfile]);
 
   const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isCollapsed); // Toggle the sidebar state
+    setIsSidebarCollapsed(!isSidebarCollapsed); // Toggle the sidebar state
   };
 
   useEffect(() => {
-    if (
-      selectedLink === "trace" ||
-      selectedLink === "dashboard" ||
-      selectedLink === "apiMan"
-    ) {
+    if (selectedLink === "trace" || selectedLink === "dashboard") {
       setIsSidebarCollapsed(true);
     } else {
       setIsSidebarCollapsed(false);
     }
   }, [selectedLink]);
   const baseUrl = `/userId/${userProfile.user.user_id}`;
-  const { ismd, issm, islg } = useMuiBreakpoints();
-  const { setIsPageLoading, isPageLoading } = useGlobalStore();
+
   const paths = [
     {
       label: `${translate("apiManagementSidebar.API_MANAGEMENT")}`,
@@ -264,11 +261,11 @@ function SidebarComponent(props: any) {
       label: "dashboard",
       id: "dashboard",
       icon: <MenuImage style={{ height: "60%", width: "60%" }} />,
-      onClickHandler: (id: any) => {
-        if (!pathname.includes("/dashboard")) {
+      onClickHandler: (id: any, index?: number) => {
+        if (pathname != baseUrl) {
           setIsPageLoading(true);
         }
-        router.push(`${baseUrl}/dashboard`);
+        router.push(`${baseUrl}`);
         setSelectedLink(id);
         setIsSidebarCollapsed(true);
         removeItem(`/sidebarMenuId/${userProfile?.user?.user_id}`);
@@ -279,13 +276,13 @@ function SidebarComponent(props: any) {
       id: "apiMan",
       icon: <MenuMaximize style={{ height: "60%", width: "60%" }} />,
       onClickHandler: (id: any) => {
-        if (pathname != baseUrl) {
-          setIsPageLoading(true);
-        }
-        router.push(`${baseUrl}`);
-        setSelectedLink(id);
-        setIsSidebarCollapsed(true);
-        removeItem(`/sidebarMenuId/${userProfile?.user?.user_id}`);
+        // if (pathname != baseUrl) {
+        //   setIsPageLoading(true);
+        // }
+        // router.push(`${baseUrl}`);
+        // setSelectedLink(id);
+        // setIsSidebarCollapsed(false);
+        // removeItem(`/sidebarMenuId/${userProfile?.user?.user_id}`);
       },
     },
 
@@ -356,9 +353,10 @@ function SidebarComponent(props: any) {
   const cachedSidebarMenuIdCookie = getItems(
     `/sidebarMenuId/${userProfile?.user?.user_id}`
   );
+
   useEffect(() => {
     if (
-      cachedSidebarMenuIdCookie &&
+      !!cachedSidebarMenuIdCookie &&
       (pathname.includes("/workspaceId") || pathname.includes("/settings"))
     ) {
       setIsSidebarCollapsed(false);
@@ -419,23 +417,23 @@ function SidebarComponent(props: any) {
       if (link.id === "messages") {
         return pathname.match(/^\/userId\/[a-fA-F0-9]+\/channel\/$/);
       } else if (link.id === "ApiIn") {
+      } else if (link.id === "dashboard") {
+        return pathname.match(/^\/userId\/[a-fA-F0-9]+$/); // Regex for paths like /userId/[id]
+        // return pathname.match(/^\/userId\/[a-fA-F0-9]\/dashboard\/+$/); // Regex for paths like /userId/[id]
+      } else if (link.id === "apiMan") {
         return pathname.match(
           /^\/userId\/[a-fA-F0-9]+\/workspaceId\/[a-fA-F0-9]+(\/.*)?$/
         );
-      } else if (link.id === "apiMan") {
-        return pathname.match(/^\/userId\/[a-fA-F0-9]+$/); // Regex for paths like /userId/[id]
-      } else if (link.id === "dashboard") {
-        return pathname.match(/^\/userId\/[a-fA-F0-9]\/dashboard\/+$/); // Regex for paths like /userId/[id]
+        // return pathname.match(/^\/userId\/[a-fA-F0-9]+$/); // Regex for paths like /userId/[id]
       }
 
       return null;
     });
-    if (pathname.includes("dashboard")) {
-      setSelectedLink("dashboard");
-    } else if (activePath) {
+    if (activePath) {
       setSelectedLink(activePath.id);
     }
   }, [pathname]);
+
   return (
     <Box sx={{ display: "flex" }}>
       <SidebarCon
@@ -577,7 +575,7 @@ function SidebarComponent(props: any) {
         sx={{
           position: "relative",
         }}
-        isCollapsed={isCollapsed}
+        isSidebarCollapsed={isSidebarCollapsed}
       >
         <HeaderTextTypography
           style={{ fontSize: "13px", fontFamily: "Inter-Medium" }}
@@ -598,18 +596,18 @@ function SidebarComponent(props: any) {
             justifyContent: "space-between",
           }}
         >
-          {isCollapsed === false && selectedLink == "apiMan" ? (
+          {isSidebarCollapsed === false && selectedLink == "apiMan" ? (
             <ProjectsComponet />
-          ) : selectedLink === "messages" && isCollapsed === false ? (
+          ) : selectedLink === "messages" && isSidebarCollapsed === false ? (
             <ChannelComponent />
-          ) : selectedLink === "settings" && isCollapsed === false ? (
+          ) : selectedLink === "settings" && isSidebarCollapsed === false ? (
             <SettingsSidebar />
           ) : (
             ""
           )}
         </Box>
         <SidebarIconWithRotation
-          isOpen={isCollapsed} // Controls rotation
+          isOpen={isSidebarCollapsed} // Controls rotation
           showIcon={
             cachedSidebarMenuIdCookie ||
             (selectedLink != "trace" &&

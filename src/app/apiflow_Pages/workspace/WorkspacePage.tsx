@@ -65,10 +65,11 @@ function WorkspacePage() {
     (state) => state.common
   );
   const { setIsSidebarCollapsed } = useSideBarStore();
-  const { setIsPageLoading } = useGlobalStore();
+  const { setIsPageLoading, setSelectedLink } = useGlobalStore();
 
   const handleSelectedTeam = (wsidVal: string) => {
     //encrypt wsid
+    // setSelectedLink("apiMan");
     setIsPageLoading(true);
     setCookies(
       process.env.NEXT_PUBLIC_COOKIE_WSID || "",
