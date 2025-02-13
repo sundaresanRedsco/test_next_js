@@ -335,9 +335,7 @@ export const endpointSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(GetBackgroundChangeTracking.pending, (state, action) => {
-      state.changeHistoryBackground = true;
-    });
+    builder.addCase(GetBackgroundChangeTracking.pending, (state, action) => {});
 
     builder.addCase(GetBackgroundChangeTracking.fulfilled, (state, action) => {
       state.getOperationLoading = false;
