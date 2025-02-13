@@ -97,7 +97,7 @@ const WorkflowScheduleRuns = (props: any) => {
         repeat_schedule_w_m_d: scheduleRunValues?.repeat_schedule_w_m_d,
         schedule_name: scheduleRunValues?.schedule_name,
         schedule_description: scheduleRunValues?.schedule_description,
-        frequency_type: scheduleRunValues?.frequency_type,
+        frequency_type: "MINUTE_TIMER",
       },
     };
 
@@ -231,7 +231,7 @@ const WorkflowScheduleRuns = (props: any) => {
             </Box>
 
             <Box>
-              <PrimaryTypography
+              {/* <PrimaryTypography
                 style={{
                   fontSize: "14px",
                   fontFamily: "FiraSans-regular",
@@ -240,9 +240,9 @@ const WorkflowScheduleRuns = (props: any) => {
               >
                 {" "}
                 Run Frequency Type
-              </PrimaryTypography>
+              </PrimaryTypography> */}
               <Box>
-                <GSelect
+                {/* <GSelect
                   fullWidth={true}
                   size={"small"}
                   radius="4px"
@@ -259,7 +259,7 @@ const WorkflowScheduleRuns = (props: any) => {
                     setRunFrequencyValue(val);
                     handleScheduleRunState("frequency_type", val);
                   }}
-                />
+                /> */}
               </Box>
             </Box>
 
