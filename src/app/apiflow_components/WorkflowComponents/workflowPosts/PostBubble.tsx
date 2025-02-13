@@ -70,6 +70,7 @@ export default function PostBubble({
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common
   );
+
   const { createLike, likeCreating } = useLikes({ postid: id });
 
   const { openComment, setopenComment, setselectedData, selectedData } =

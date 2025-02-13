@@ -22,7 +22,6 @@ type Props = {
 };
 
 export default function CreateWorkflowModal({ height, width }: Props) {
-  const { setOpenSignUp, openSignUp }: any = useSignUpStore();
   const clientSession = useSession();
   const {
     activeStep,
@@ -32,6 +31,9 @@ export default function CreateWorkflowModal({ height, width }: Props) {
     setactiveStep,
     isLoading,
     isImportAws,
+    setOpenSignUp,
+    openSignUp,
+    setIsLoading,
   } = useSignUpStore();
 
   const [completed, setCompleted] = React.useState({});
@@ -92,6 +94,7 @@ export default function CreateWorkflowModal({ height, width }: Props) {
   useEffect(() => {
     setactiveStep(0);
     handleFormDatas("currentPage", "Sign Up");
+    setIsLoading(false);
   }, [openSignUp]);
   useEffect(() => {
     if (activeStep > 3) {

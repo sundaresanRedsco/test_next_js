@@ -67,7 +67,6 @@ const HeadingTypography = styled(Typography)({
   textAlign: "center",
 });
 
-// Styled Accordion for Violations
 const StyledAccordion = styled(Accordion)`
   box-shadow: none;
   border-radius: 4px;

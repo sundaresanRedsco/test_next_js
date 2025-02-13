@@ -36,15 +36,21 @@ export default function useComments() {
   } = useQuery({
     queryKey: ["comments"],
     queryFn: async () => {
-      const data = await AdminServices(
-        "get",
-        "Api/Post/getpost_commentslist_by_postid?post_id=" +
-          openComment +
-          "&start=0&end=10"
-      );
-      return data;
+      try {
+        const data = await AdminServices(
+          "get",
+          "Api/Post/getpost_commentslist_by_postid?post_id=" +
+            openComment +
+            "&start=0&end=10"
+        );
+        return data;
+      } catch (error) {
+        return [];
+      }
     },
     enabled: !!openComment,
+    staleTime: 0,
+    retry: false,
   });
 
   const { mutate: createComment, isPending: commentCreationLoading } =

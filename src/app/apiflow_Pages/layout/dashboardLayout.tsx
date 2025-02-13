@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { ThemeProvider } from "@mui/material";
+import { Stack, ThemeProvider } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "../../Redux/store";
@@ -75,6 +75,7 @@ const SidebarIconWithRotation = styled(SidebarIcon)<{ isOpen: boolean }>`
 `;
 export const queryClient = new QueryClient();
 const DashboardLayout = ({ children }: any) => {
+  const [isClient, setisClient] = useState(false);
   const { data: session, status } = useSession(); // Get session data and status
   useSecuredRoutes();
 
@@ -157,55 +158,68 @@ const DashboardLayout = ({ children }: any) => {
 
   const { resetAllSignStoreData } = useSignUpStore();
   useEffect(() => {
+    setisClient(true);
     dispatch(initializeSession());
     resetAllSignStoreData();
   }, []);
   const { isPageLoading } = useGlobalStore();
-
-  if (pathname.includes("/userId")) {
-    return (
-      <ThemeProvider theme={theme}>
+  if (isClient) {
+    if (pathname.includes("/userId")) {
+      return (
+        <ThemeProvider theme={theme}>
+          <QueryClientProvider client={queryClient}>
+            <WebSocketProvider>
+              <AlertProvider>
+                <Grid
+                  container
+                  sx={{ height: "100%", position: "relative" }}
+                  spacing={2}
+                >
+                  {isPageLoading && <GLoader />}
+                  <Grid
+                    sx={{
+                      width: "max-content",
+                      transition: "width 0.3s linear",
+                    }}
+                  >
+                    <SidebarContainer isCollapsed={isSidebarCollapsed}>
+                      <SidebarComponent
+                        isCollapsed={isSidebarCollapsed}
+                        setIsSidebarCollapsed={setIsSidebarCollapsed}
+                        onClick={toggleSidebar}
+                      />
+                    </SidebarContainer>
+                  </Grid>
+                  <Grid
+                    sx={{
+                      overflowY: "auto",
+                      height: "100vh",
+                      flex: 1,
+                      transition: "width 0.3s linear",
+                      padding: { lg: "10px", md: "0px" },
+                    }}
+                    id="mainContainer"
+                  >
+                    {children}
+                  </Grid>
+                </Grid>
+              </AlertProvider>
+            </WebSocketProvider>
+          </QueryClientProvider>
+        </ThemeProvider>
+      );
+    } else {
+      return (
         <QueryClientProvider client={queryClient}>
-          <WebSocketProvider>
-            <AlertProvider>
-              <Grid
-                container
-                sx={{ height: "100%", position: "relative" }}
-                spacing={2}
-              >
-                {isPageLoading && <GLoader />}
-                <Grid
-                  sx={{ width: "max-content", transition: "width 0.3s linear" }}
-                >
-                  <SidebarContainer isCollapsed={isSidebarCollapsed}>
-                    <SidebarComponent
-                      isCollapsed={isSidebarCollapsed}
-                      setIsSidebarCollapsed={setIsSidebarCollapsed}
-                      onClick={toggleSidebar}
-                    />
-                  </SidebarContainer>
-                </Grid>
-                <Grid
-                  sx={{
-                    overflowY: "auto",
-                    height: "100vh",
-                    flex: 1,
-                    transition: "width 0.3s linear",
-                    padding: { lg: "10px", md: "0px" },
-                  }}
-                  id="mainContainer"
-                >
-                  {children}
-                </Grid>
-              </Grid>
-            </AlertProvider>
-          </WebSocketProvider>
+          {children}
         </QueryClientProvider>
-      </ThemeProvider>
-    );
+      );
+    }
   } else {
     return (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <Stack>
+        <GLoader />
+      </Stack>
     );
   }
 };

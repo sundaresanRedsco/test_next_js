@@ -115,8 +115,9 @@ export default function CustomEmojiPicker({
           onEmojiClick={(e) => {
             createLike({
               post_id: id,
-              emoji: e,
+              emoji: e.unified,
             });
+            handleClosePopUp();
           }}
         />
       </Popover>
