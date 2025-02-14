@@ -1,21 +1,16 @@
 "use client";
-import GButton from "@/app/apiflow_components/global/GlobalButtons";
-import {
-  PrimarySignInUPTypography,
-  PrimaryTypography,
-  SecondarySignInUPTypography,
-  TertiarySignInUPTypography,
-} from "@/app/Styles/signInUp";
-import { Box, Stack } from "@mui/material";
+import Surfacelayout from "@/app/website_components/layout/Surfacelayout";
+import AboutSection from "@/app/website_components/page/aboutsection";
+import HeroSection from "@/app/website_components/page/heroSection";
 import Image from "next/image";
-import React, { useEffect } from "react";
-import { ArrowForwardRounded } from "@mui/icons-material";
+import { Box, Stack } from "@mui/material";
+import ManageIdentities from "@/app/website_components/page/homepage/ManageIdentities";
+import FooterDetails from "@/app/website_components/page/homepage/FooterDetails";
+import Footer from "@/app/website_components/page/homepage/Footer";
+import { useEffect } from "react";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
-import { useRouter } from "next/navigation";
 
-export default function WelcomePage() {
-  const router = useRouter();
-  const { setIsLoading } = useSignUpStore();
+export default function Home() {
   const { handleStep, activeStep, setFormDataStore } = useSignUpStore();
   useEffect(() => {
     if (activeStep == -1) {
@@ -23,75 +18,31 @@ export default function WelcomePage() {
     }
     setFormDataStore("currentPage", "SignUp");
   }, []);
-
   return (
-    <Stack
-      sx={{
-        height: "100vh",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative",
-      }}
-    >
+    <Surfacelayout>
       <Box
-        component={"img"}
-        src={"/sign/StyledLayerImg.webp"}
-        alt="Apiflow-logo"
-        style={{
-          bottom: 0,
-          left: 0,
+        sx={{
+          height: {
+            lg: "auto",
+            sm: "calc(100% + 300px)",
+            xs: "calc(100% + 400px)",
+          },
+          width: "100%",
           position: "absolute",
-          width: "300px",
+          left: 0,
+          top: "-65px",
+          objectFit: "cover",
+          overflow: "clip",
         }}
+        component={"img"}
+        src="/page/heroSection/background.jpg"
       />
+      <HeroSection />
+      <AboutSection />
 
-      <Image
-        height={50}
-        width={50}
-        src={"/global/logo.webp"}
-        alt="Apiflow-logo"
-      />
-      <PrimarySignInUPTypography
-        sx={{
-          color: "white",
-          fontSize: { xs: "30px", md: "50px" },
-          textAlign: "center",
-          "@media (min-width: 2120px)": {
-            fontSize: "70px",
-          },
-        }}
-      >
-        Welcome to API Flows
-      </PrimarySignInUPTypography>
-      <TertiarySignInUPTypography
-        sx={{
-          color: "#F3F3F3BF",
-          marginTop: 1,
-          "@media (min-width: 2120px)": {
-            fontSize: "25px",
-          },
-        }}
-      >
-        Better API Visibility, Lesser Complexity
-      </TertiarySignInUPTypography>
-      <GButton
-        className="bigButton"
-        padding="12px 40px"
-        label={"Let’s Get Started"}
-        iconPosition="end"
-        icon={<ArrowForwardRounded />}
-        background={"#7A43FE"}
-        color="white"
-        fontSize="15px"
-        margin="70px 0 0 0"
-        fontWeight={600}
-        onClickHandler={() => {
-          setIsLoading(true);
-          router.push("/sign/signup");
-        }}
-        radius="10px"
-      />
-    </Stack>
+      <ManageIdentities />
+      <FooterDetails />
+      <Footer />
+    </Surfacelayout>
   );
 }

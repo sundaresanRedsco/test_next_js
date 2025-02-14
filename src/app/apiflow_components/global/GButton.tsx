@@ -77,7 +77,7 @@ export default function GlobalButton(props: GlobalButtonProps) {
   const Color =
     color ||
     (buttonType === "primary"
-      ? "#FFFFFF"
+      ? theme.palette.signInUpPrimary.main
       : buttonType === "secondary"
       ? theme.palette.primaryBlack.main
       : buttonType === "tertiary"
@@ -87,7 +87,7 @@ export default function GlobalButton(props: GlobalButtonProps) {
   const backgroundColor =
     background ||
     (buttonType === "primary"
-      ? "#7A43FE"
+      ? theme.palette.sigInUpStepperIconActive.main
       : buttonType === "secondary"
       ? theme.palette.btnCancelGrey.main
       : buttonType === "tertiary"
@@ -130,7 +130,7 @@ export default function GlobalButton(props: GlobalButtonProps) {
           },
         },
         "&.MuiButton-root.Mui-disabled": {
-          color: "gray",
+          color: theme.palette.gray.main,
           border: background != "none" ? "1.5px solid gray" : "",
         },
         ...sx,

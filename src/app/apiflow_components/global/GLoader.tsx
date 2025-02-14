@@ -3,6 +3,7 @@
 import React from "react";
 import { styled, keyframes } from "@mui/system";
 import { Box, Typography } from "@mui/material";
+import theme from "@/Theme/theme";
 
 const loaderAnimation = keyframes({
   "0%": { left: "-100px" },
@@ -35,7 +36,7 @@ const LoaderContainer = styled("div")({
 const BoxContainer = styled("div")({
   width: "50px",
   height: "50px",
-  background: "#fff",
+  background: theme.palette.signInUpPrimary.main,
   animation: `${animateAnimation} 0.5s linear infinite`,
   position: "absolute",
   top: 0,
@@ -46,7 +47,7 @@ const BoxContainer = styled("div")({
 const Shadow = styled("div")({
   width: "50px",
   height: "5px",
-  background: "#000",
+  background: theme.palette.primaryBlack.main,
   opacity: 0.1,
   position: "absolute",
   top: "59px",
@@ -57,7 +58,7 @@ const Shadow = styled("div")({
 
 const HeadingTypography = styled(Typography)`
   font-family: Firasans-regular !important;
-  color: white;
+  color: ${theme.palette.signInUpPrimary.main};
   position: absolute;
   top: 55%;
 `;
@@ -80,7 +81,7 @@ const GLoader = ({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        background: isBackdrop ? "#0c070f78" : "transparent",
+        background: isBackdrop ? theme.palette.backdrop.main : "transparent",
         borderRadius: borderRadius || "unset",
       }}
     >

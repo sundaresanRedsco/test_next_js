@@ -1,5 +1,6 @@
 import GButton from "@/app/apiflow_components/global/GlobalButtons";
 import { SecondarySignInUPTypography } from "@/app/Styles/signInUp";
+import theme from "@/Theme/theme";
 import { Close, FileUpload } from "@mui/icons-material";
 import { Box, FormHelperText, IconButton, Stack } from "@mui/material";
 import React, { useRef, useState } from "react";
@@ -39,13 +40,13 @@ export default function GUploadButton({
             justifyContent: "center",
             alignItems: "center",
             padding: "10px",
-            border: "1.5px solid gray",
+            border: `1.5px solid ${theme.palette.gray.main}`,
             borderRadius: "10px",
           }}
         >
           <SecondarySignInUPTypography
             sx={{
-              color: "gray",
+              color: theme.palette.gray.main,
             }}
           >
             {file?.name}
@@ -53,7 +54,7 @@ export default function GUploadButton({
           <IconButton
             onClick={handleClearFile}
             size="small"
-            sx={{ color: "red" }}
+            sx={{ color: theme.palette.red.main }}
           >
             <Close />
           </IconButton>
@@ -61,10 +62,10 @@ export default function GUploadButton({
       ) : (
         <GButton
           label={label || "Select File"}
-          background="#F3F3F31A"
+          background={theme.palette.sigInUpButtonSecondary.main}
           margin="0"
           padding="10px"
-          color="white"
+          color={theme.palette.signInUpPrimary.main}
           type="button"
           icon={<FileUpload />}
           iconPosition="start"
@@ -77,7 +78,7 @@ export default function GUploadButton({
             fontSize: "10px",
             margin: "0px",
             fontFamily: "Firasans-regular",
-            color: "#d32f2f",
+            color: theme.palette.helperText.main,
           }}
         >
           {helperText}

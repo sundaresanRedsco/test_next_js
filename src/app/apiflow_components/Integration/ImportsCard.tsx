@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import React, { useEffect, useState } from "react";

@@ -5,7 +5,8 @@ import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import GInput from "@/app/apiflow_components/global/GInput";
-import GSelect from "../global/GSelect";
+// import GSelect from "../global/GSelect";
+import GSelect from "@/app/apiflow_components/sign/discovery/GSelect";
 import GButton from "../global/GlobalButtons";
 import { TextOutlinedInput } from "@/app/hooks/operations/useOperationHelpers";
 import { usePathname } from "next/navigation";
@@ -205,18 +206,11 @@ const WorkflowScheduleRuns = (props: any) => {
                   value={scheduleRunValues?.schedule_name}
                   fullWidth={true}
                   height="40px"
-                  // width="500px"
-                  //   margin="10px 0px"
-                  padding="7px 0px"
+                  padding="7px 10px"
                   size="normal"
                   onChangeHandler={(e: any) => {
                     handleScheduleRunState("schedule_name", e.target.value);
                   }}
-                  // onKeyDown={(event: any) => {
-                  //   if (event?.key === "Enter") {
-                  //     handleCreateApiFlowValidation();
-                  //   }
-                  // }}
                   error={error?.schedule_name ? error?.schedule_name : ""}
                   helperText={error?.schedule_name ? error?.schedule_name : ""}
                 />
@@ -283,7 +277,7 @@ const WorkflowScheduleRuns = (props: any) => {
                   <GSelect
                     fullWidth={true}
                     size={"small"}
-                    radius="4px"
+                    radius="7px"
                     options={[
                       {
                         label: "Every_5_MINUTES",
@@ -507,11 +501,9 @@ const WorkflowScheduleRuns = (props: any) => {
                     value={scheduleRunValues?.schedule_description}
                     data-test={"project-description"}
                     style={{
-                      width: "500px",
+                      width: "547px",
                       height: "50px",
-                      // borderColor: "#9CA3AF",
-                      borderColor: "0 0 0 1.3px #F3F3F340",
-                      borderRadius: "4px",
+                      borderRadius: "7px",
                       fontWeight: 700,
                     }}
                     onChange={(e: any) => {

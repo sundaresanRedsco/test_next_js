@@ -9,7 +9,6 @@ import {
 import { KeyboardArrowDownRounded } from "@mui/icons-material";
 import theme from "@/Theme/theme";
 import GSkeletonLoader from "@/app/apiflow_components/global/GSkeletonLoader";
-import useScrollRef from "@/app/hooks/useScrollRef";
 type Props = {
   fullWidth?: boolean;
   width?: any;
@@ -158,7 +157,9 @@ export default function GSelect(props: Props) {
             display: "flex",
             alignItems: "center",
             paddingLeft: "10px",
-            boxShadow: border ? border : "0 0 0 1.3px #F3F3F340",
+            boxShadow: border
+              ? border
+              : `0 0 0 1.3px ${theme.palette.sigInUpButtonBorder.main}`,
             "@media (min-width: 2120px)": {
               height: "80px",
             },
@@ -166,14 +167,14 @@ export default function GSelect(props: Props) {
           "& .MuiOutlinedInput-notchedOutline": {
             border: "none",
           },
-          borderColor: borderColor || "#F3F3F340",
+          borderColor: borderColor || theme.palette.sigInUpButtonBorder.main,
           borderRadius: borderRadius || "7px",
           "& .MuiOutlinedInput-notchedOutline:hover": {
-            borderColor: borderColor || "#F3F3F340",
+            borderColor: borderColor || theme.palette.sigInUpButtonBorder.main,
           },
           "& .MuiSelect-select.MuiSelect-select": {
             fontFamily: "FiraSans-medium",
-            color: color || "white",
+            color: color || theme.palette.signInUpPrimary.main,
             fontSize: fontSize || "0.8rem",
             fontWeight: fontWeight,
             height: "100%",
@@ -187,12 +188,12 @@ export default function GSelect(props: Props) {
           },
           "& .MuiInputLabel-root": {
             fontFamily: "FiraSans-regular",
-            color: color || "white",
+            color: color || theme.palette.signInUpPrimary.main,
             fontSize: fontSize || "0.8rem",
             fontWeight: fontWeight,
           },
           "& .MuiSvgIcon-root": {
-            color: color || "white",
+            color: color || theme.palette.signInUpPrimary.main,
           },
           "& .MuiSelect-icon": {
             display: "none",
@@ -202,7 +203,6 @@ export default function GSelect(props: Props) {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              {/* <GBadge badgeContent={teamsCount} color="#FE6565" position="left"> */}
               <KeyboardArrowDownRounded
                 style={{
                   fontSize: "20px",
@@ -210,7 +210,6 @@ export default function GSelect(props: Props) {
                   fill: theme.palette.sidebarWorkspaceColor.main,
                 }}
               />
-              {/* </GBadge> */}
             </InputAdornment>
           ),
           sx: {
@@ -236,7 +235,7 @@ export default function GSelect(props: Props) {
                   fontFamily: "FiraSans-Regular ! important",
                   backgroundColor: "#211c27",
 
-                  color: "white",
+                  color: theme.palette.signInUpPrimary.main,
                   ...additionalMenuItemsStyle,
                 },
                 ref: selectMenuRef,
@@ -287,7 +286,11 @@ export default function GSelect(props: Props) {
       </TextField>
       {helperText && (
         <FormHelperText
-          sx={{ fontSize: "0.6rem", margin: "4px", color: "#d32f2f" }}
+          sx={{
+            fontSize: "0.6rem",
+            margin: "4px",
+            color: theme.palette.helperText.main,
+          }}
         >
           {helperText}
         </FormHelperText>

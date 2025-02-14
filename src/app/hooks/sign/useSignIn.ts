@@ -10,9 +10,6 @@ import { login, LoginReducer, TwoFactorLogin } from "@/app/Redux/loginReducer";
 import { EncrouptionLogic } from "@/app/Helpers/helpersFunctions";
 import { loginRequest } from "@/app/Services/azureServices";
 import { useSignUpStore } from "./signZustand";
-import { removeItem, setItem } from "@/app/Services/localstorage";
-import { useMutation } from "@tanstack/react-query";
-import { AdminServices } from "@/app/Services/services";
 
 interface loginInfoType {
   email: string;
@@ -150,11 +147,12 @@ export default function useSignIn() {
     dispatch(login({ email, password, token, token_type, invitations_token }))
       .unwrap()
       .then((res: any) => {
+        const userId: any = res?.user?.user_id;
         if (res && res?.user?.user_registered != "EXISTING_USER") {
           if (pathName != "/sign/signup") {
             router.push("/sign/signup");
           }
-          setItem(`userId/${res?.user?.user_id}`, "onboarding");
+          Cookies.set(userId, "onboarding");
           setactiveStep(1);
           setFormDataStore("currentPage", "SignUp");
           setFormDataStore("authType", "google");
@@ -171,7 +169,7 @@ export default function useSignIn() {
           if (res == "TWO FACTOR:Enable") {
             setIsTotpEnabled(true);
           } else {
-            removeItem(`userId/${res?.user?.user_id}`);
+            Cookies.remove(userId);
             Cookies.remove("MID");
             Cookies.set("ttid", res?.user?.tenant, {
               expires: 1,
@@ -189,6 +187,7 @@ export default function useSignIn() {
               secure: true,
             });
             setFormDataStore("token", res?.user?.token);
+            router.push(`/userId/${res?.user?.user_id}`);
           }
         }
         setIsLoading(false);
@@ -228,6 +227,7 @@ export default function useSignIn() {
             )
               .unwrap()
               .then((res: any) => {
+                const userId: any = res?.user?.user_id;
                 if (res?.user?.user_registered !== "EXISTING_USER") {
                   Cookies.remove("MID");
                   Cookies.set("ttid", res?.user?.tenant, {
@@ -245,11 +245,11 @@ export default function useSignIn() {
                     sameSite: "Strict",
                     secure: true,
                   });
-                  setItem(`userId/${res?.user?.user_id}`, "onboarding");
+                  Cookies.set(userId, "onboarding");
                   setactiveStep(1);
                   setFormDataStore("currentPage", "SignUp");
                 } else {
-                  removeItem(`userId/${res?.user?.user_id}`);
+                  Cookies.remove(userId);
                   router.push(`/userId/${res?.user?.user_id}`);
                   //encrypt wsid
                   const encryptedWsidId = EncrouptionLogic(
@@ -316,9 +316,10 @@ export default function useSignIn() {
       )
         .unwrap()
         .then((res: any) => {
+          const userId: any = res?.user?.user_id;
           setuserData(res);
           setFormDataStore("user_id", res?.user?.user_id);
-          setItem(`userId/${res?.user?.user_id}`, "onboarding");
+          Cookies.set(userId, "onboarding");
           setIsLoading(false);
           if (!formDataStore?.invite_token) {
             setactiveStep(1);
@@ -360,6 +361,7 @@ export default function useSignIn() {
             } else {
               setIsLoading(false);
               resetAllSignStoreData();
+              router.push(`/userId/${res?.user?.user_id}`);
             }
           })
           .catch((err: any) => {
@@ -420,6 +422,7 @@ export default function useSignIn() {
             setIsTotpEnabled(true);
           } else {
             resetAllSignStoreData();
+            router.push(`/userId/${res?.user?.user_id}`);
           }
         })
         .catch((err: any) => {

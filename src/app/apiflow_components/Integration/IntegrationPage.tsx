@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import {
   Accordion,
@@ -693,7 +695,7 @@ function IntegrationPage(props: any) {
           });
       } else {
         //create api
-        console.log(pagerDataCreate, currentEnvironment, "pagerDataCreate");
+
         dispatch(CreateIntegration(pagerDataCreate))
           .unwrap()
           .then((createRes: any) => {
@@ -705,7 +707,6 @@ function IntegrationPage(props: any) {
           });
       }
     } else {
-      console.log("Error occurred");
     }
   };
 
@@ -738,12 +739,9 @@ function IntegrationPage(props: any) {
     dispatch(IntegrationsTest(values))
       .unwrap()
       .then((testRes: any) => {
-        console.log(testRes, "testRestestRes");
         toast.success("Test Successful");
       })
-      .catch((error: any) => {
-        console.log("Error: ", error);
-      });
+      .catch((error: any) => {});
   };
 
   useEffect(() => {
@@ -1696,8 +1694,8 @@ function IntegrationPage(props: any) {
         >
           <div style={{ marginTop: "6rem" }}>
             <GlobalButton
-              background="#282F79"
-              color="#FFFFFF"
+              background={`${theme.palette.globalBtnBg.main}`}
+              color={`${theme.palette.textPrimaryColor.main}`}
               fontSize="0.6rem"
               // width={"100%"}
               padding="10px"

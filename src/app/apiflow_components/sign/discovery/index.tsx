@@ -15,7 +15,7 @@ import useDiscovery from "@/app/hooks/sign/useDiscovery";
 import useCatalogue from "@/app/hooks/sign/useCatalogue";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import GRadioGroup from "../../global/GRadioGroup";
-import { fontSize } from "@mui/system";
+import theme from "@/Theme/theme";
 
 type Props = {
   clientSession: any;
@@ -280,7 +280,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
         >
           <PrimarySignInUPTypography
             sx={{
-              color: "white",
+              color: theme.palette.signInUpPrimary.main,
               fontSize: "18px",
               "@media (min-width: 2120px)": {
                 fontSize: "25px",
@@ -298,7 +298,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
               setFormDataStore("gateway", value);
             }}
             name={"gateway"}
-            background="#7946FD40"
+            background={theme.palette.inputBg.main}
             radius={"7px"}
             sx={{
               "@media (min-width: 2120px)": {
@@ -319,7 +319,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                 <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                   <Box
                     sx={{
-                      color: "#FFFFFF80",
+                      color: theme.palette.iconSidebarIconColor.main,
                       display: "flex",
                       alignItems: "center",
                       gap: "3px",
@@ -327,7 +327,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                   >
                     <SecondarySignInUPTypography
                       sx={{
-                        color: "white",
+                        color: theme.palette.signInUpPrimary.main,
                         fontSize: "13px",
                         "@media (min-width: 2120px)": {
                           fontSize: "20px",
@@ -365,7 +365,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                 <Stack sx={{ gap: 1 }}>
                   <Box
                     sx={{
-                      color: "#FFFFFF80",
+                      color: theme.palette.iconSidebarIconColor.main,
                       display: "flex",
                       alignItems: "center",
                       gap: "3px",
@@ -373,7 +373,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                   >
                     <SecondarySignInUPTypography
                       sx={{
-                        color: "white",
+                        color: theme.palette.signInUpPrimary.main,
                         fontSize: "13px",
                         "@media (min-width: 2120px)": {
                           fontSize: "20px",
@@ -403,7 +403,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                       sm: "flex-start",
                       md: "center",
                     },
-                    borderBottom: "1px solid #FFFFFF80",
+                    borderBottom: `1px solid ${theme.palette.iconSidebarIconColor.main}`,
                     position: "relative",
                     justifyContent: "center",
                     marginBottom: 2,
@@ -412,7 +412,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                 >
                   <PrimarySignInUPTypography
                     sx={{
-                      color: "white",
+                      color: theme.palette.signInUpPrimary.main,
                       fontSize: "15px",
                       position: { xs: "static", sm: "static", md: "absolute" },
                       left: 0,
@@ -454,7 +454,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                 <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                   <Box
                     sx={{
-                      color: "#FFFFFF80",
+                      color: theme.palette.iconSidebarIconColor.main,
                       display: "flex",
                       alignItems: "center",
                       gap: "3px",
@@ -462,7 +462,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                   >
                     <SecondarySignInUPTypography
                       sx={{
-                        color: "white",
+                        color: theme.palette.signInUpPrimary.main,
                         fontSize: "13px",
                         "@media (min-width: 2120px)": {
                           fontSize: "20px",

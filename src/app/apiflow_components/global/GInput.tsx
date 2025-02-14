@@ -136,7 +136,7 @@ export default function GInput(props: Props) {
         }}
         size="small"
         sx={{
-          color: "#F3F3F380",
+          color: theme.palette.sigInUpStepperTextPrimary.main,
         }}
       >
         {isHide ? (
@@ -184,20 +184,22 @@ export default function GInput(props: Props) {
             WebkitBoxShadow: WebkitBoxShadow
               ? WebkitBoxShadow
               : background
-              ? `0 0 0 30px #291e3b  inset !important`
+              ? `0 0 0 30px ${theme.palette.inputBg1.main} inset !important`
               : secondarybackground
-              ? `0 0 0 30px #241D35 inset !important`
-              : "0 0 0 30px #18151c inset !important",
-            WebkitTextFillColor: color || "white",
+              ? `0 0 0 30px ${theme.palette.summaryBgColor.main} inset !important`
+              : `0 0 0 30px ${theme.palette.inputBg2.main} inset !important`,
+            WebkitTextFillColor: color || theme.palette.signInUpPrimary.main,
             borderRadius: "unset !important",
-            caretColor: color || "white",
+            caretColor: color || theme.palette.signInUpPrimary.main,
           },
           "& .MuiInputBase-root": {
             paddingRight: type == "password" ? "3px" : "auto",
             paddingLeft: smallInput ? 0 : "auto",
             padding: padding,
             height: height,
-            boxShadow: border ? border : "0 0 0 1.3px #F3F3F340",
+            boxShadow: border
+              ? border
+              : `0 0 0 1.3px ${theme.palette.sigInUpButtonBorder.main}`,
             "@media (min-width: 2120px)": {
               height: "80px",
             },
@@ -208,7 +210,7 @@ export default function GInput(props: Props) {
           "& .MuiInputBase-input": {
             fontFamily: "FiraSans-medium !important",
             "&.Mui-disabled": {
-              WebkitTextFillColor: "#c9c9c961",
+              WebkitTextFillColor: theme.palette.inputBg3.main,
             },
           },
           "& .MuiInputBase-input::placeholder": {
@@ -218,7 +220,9 @@ export default function GInput(props: Props) {
           margin: margin,
           width: width,
           height: height,
-          borderColor: borderColor ? borderColor : "#F3F3F340",
+          borderColor: borderColor
+            ? borderColor
+            : theme.palette.sigInUpButtonBorder.main,
           borderRadius: "7px",
           "@media (min-width: 2120px)": {
             height: "80px",
@@ -244,7 +248,7 @@ export default function GInput(props: Props) {
                 fontSize: "10px",
                 margin: "0px",
                 fontFamily: "Firasans-regular",
-                color: "#d32f2f",
+                color: theme.palette.helperText.main,
               }}
             >
               {helperText}
@@ -273,7 +277,7 @@ export default function GInput(props: Props) {
         InputProps={{
           sx: {
             background: background,
-            color: color ? color : "white",
+            color: color ? color : theme.palette.signInUpPrimary.main,
 
             fontFamily: "FiraSans-regular",
             fontSize: fontSize || "0.7rem",

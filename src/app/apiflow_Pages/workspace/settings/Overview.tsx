@@ -42,6 +42,8 @@ import dynamic from "next/dynamic";
 import CreateWorkflowModal from "@/app/apiflow_components/workspace/CreateWorkflowModal";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import { usePathname } from "next/navigation";
+import { CommonReducer } from "@/app/Redux/commonReducer";
+import theme from "@/Theme/theme";
 
 const GSwitch = dynamic(
   () => import("@/app/apiflow_components/global/GSwitch"),
@@ -84,7 +86,7 @@ const HeadingTypography = styled(Typography)`
 
 const TableTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
-  color: #ffffff;
+  color: ${theme.palette.textPrimaryColor.main};
   font-size: 0.8rem;
 `;
 
@@ -113,6 +115,10 @@ function OverView() {
 
   const { currentWorkspace } = useSelector<RootStateType, workspaceReducer>(
     (state) => state.apiManagement.workspace
+  );
+
+  const { userProfile } = useSelector<RootStateType, CommonReducer>(
+    (state) => state.common
   );
 
   const {
@@ -622,7 +628,7 @@ function OverView() {
                         key={index}
                         align={header === "E-Mail ID" ? "left" : "center"}
                         sx={{
-                          color: "white",
+                          color: `${theme.palette.textPrimaryColor.main}`,
                           fontFamily: "FiraSans-Regular",
                           fontWeight: "500",
                         }}
@@ -651,7 +657,7 @@ function OverView() {
                           <Avatar
                             sx={{
                               background: getRandomColor(),
-                              color: "white",
+                              color: `${theme.palette.textPrimaryColor.main}`,
                               width: 30,
                               height: 30,
                             }}

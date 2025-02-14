@@ -24,6 +24,7 @@ import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import { DeleteTableIcon } from "@/app/Assests/icons";
+import theme from "@/Theme/theme";
 
 // ** Custom CSS
 
@@ -41,8 +42,8 @@ const MenuProps = {
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "& .MuiTableCell-root": {
     fontFamily: "Firasans-light",
-    color: "#FFFFFF",
-    backgroundColor: "#241D35",
+    color: theme.palette.signInUpPrimary.main,
+    backgroundColor: theme.palette.summaryBgColor.main,
   },
 }));
 type Props = {
@@ -66,7 +67,7 @@ type Props = {
 };
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#362F47",
+    backgroundColor: theme.palette.summaryCardColor.main,
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -87,7 +88,7 @@ const defaultTableBodyStyles = {
   },
   //**Every TableCell */
   "& .MuiTableRow-root .MuiTableCell-root": {
-    borderBottom: "1.5px solid #FFFFFF26",
+    borderBottom: `1.5px solid ${theme.palette.threatTableBodyBorderColor.main}`,
     textAlign: "center",
   },
   //**Last tableRow */
@@ -144,8 +145,8 @@ function stringAvatar(name: string) {
 }
 const tableHeadCellCommonStyle = {
   fontSize: "12px",
-  color: "white",
-  background: "#362F47",
+  color: theme.palette.signInUpPrimary.main,
+  background: theme.palette.summaryCardColor.main,
   maxWidth: "100px",
   overflow: "hidden",
   textOverflow: "ellipsis",
@@ -158,7 +159,7 @@ const tableHeadCellCommonStyle = {
 };
 const tableBodyCellCommonStyle = (notMaxWidth?: boolean) => {
   return {
-    color: "white",
+    color: theme.palette.signInUpPrimary.main,
     maxWidth: notMaxWidth ? "unset" : "100px",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -237,12 +238,15 @@ const GDataTable = ({
       return (
         <StyledTableRow selected={isRowSelected(row)} key={index}>
           {showCheckBox && (
-            <TableCell padding="checkbox" sx={{ background: "#362F47" }}>
+            <TableCell
+              padding="checkbox"
+              sx={{ background: theme.palette.summaryCardColor.main }}
+            >
               <Checkbox
                 checked={isRowSelected(row)}
                 onChange={handleSelectAllRows}
                 sx={{
-                  color: "#6b6f82",
+                  color: theme.palette.summaryCardColor.main,
                   "&.Mui-checked": { color: "#6DCCDD" },
                 }}
               />
@@ -306,7 +310,7 @@ const GDataTable = ({
           container
           sx={{
             width: "100%",
-            background: "#12121280",
+            background: theme.palette.apiInsightsBackgroundColor.main,
             borderRadius: "10px 10px 0 0",
             padding: "10px",
           }}
@@ -330,7 +334,10 @@ const GDataTable = ({
                 {showCheckBox && (
                   <TableCell
                     padding="checkbox"
-                    sx={{ background: "#362F47", borderBottom: "none" }}
+                    sx={{
+                      background: theme.palette.summaryCardColor.main,
+                      borderBottom: "none",
+                    }}
                   >
                     <Checkbox
                       checked={selectedRows?.length === data.length}

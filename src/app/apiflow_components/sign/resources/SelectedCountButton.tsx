@@ -2,6 +2,7 @@ import {
   PrimarySignInUPTypography,
   TertiarySignInUPTypography,
 } from "@/app/Styles/signInUp";
+import theme from "@/Theme/theme";
 import { Box } from "@mui/material";
 import React from "react";
 
@@ -11,12 +12,12 @@ export default function SelectedCountButton({ count }: Props) {
   return (
     <Box
       sx={{
-        background: "#37265C",
-        border: "1.5px solid #F3F3F340",
+        background: theme.palette.sigInUpButtonPrimary.main,
+        border: `1.5px solid ${theme.palette.sigInUpButtonBorder.main} `,
         borderRadius: "7px",
         minWidth: "100px",
         height: "30px",
-        color: "white",
+        color: theme.palette.signInUpPrimary.main,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -30,7 +31,7 @@ export default function SelectedCountButton({ count }: Props) {
     >
       <PrimarySignInUPTypography
         sx={{
-          color: "white",
+          color: theme.palette.signInUpPrimary.main,
           fontSize: "13px",
           "@media (min-width: 2120px)": {
             fontSize: "20px",
@@ -41,7 +42,7 @@ export default function SelectedCountButton({ count }: Props) {
       </PrimarySignInUPTypography>
       <TertiarySignInUPTypography
         sx={{
-          color: "white",
+          color: theme.palette.signInUpPrimary.main,
           fontSize: "10px",
           "@media (min-width: 2120px)": {
             fontSize: "18px",

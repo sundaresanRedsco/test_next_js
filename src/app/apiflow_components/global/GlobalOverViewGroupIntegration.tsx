@@ -96,10 +96,10 @@ const GlobalOverViewGroupIntegration: React.FC<
                     }}
                   >
                     <Box>
-                      <EditEnvironment />
+                      {/* <EditEnvironment /> */}
                       <span style={{ marginLeft: "1rem" }}>
                         {" "}
-                        <DeleteEnvironment />
+                        {/* <DeleteEnvironment /> */}
                       </span>
                     </Box>
                   </Box>

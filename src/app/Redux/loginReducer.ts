@@ -3,7 +3,7 @@ import * as authService from "../Services/auth";
 import { AdminServices } from "../Services/services";
 import { errorHandling } from "../Services/errorHandling";
 import { getSession, signIn } from "next-auth/react";
-
+import Cookies from "js-cookie";
 // import errorHandling from "../services/errorHandling";
 
 export const login = createAsyncThunk(
@@ -18,6 +18,10 @@ export const login = createAsyncThunk(
       if (response && response.error) {
         throw response.error;
         // return rejectWithValue(errorHandling(response));
+      }
+      const userId: any = session?.user?.user_id;
+      if (userId) {
+        Cookies.set(userId, "onboarding");
       }
       return session;
     } catch (err: any) {

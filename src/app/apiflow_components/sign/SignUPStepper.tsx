@@ -6,8 +6,8 @@ import StepButton from "@mui/material/StepButton";
 import { DoneRounded } from "@mui/icons-material";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { ActiveStepperBar, StepperBar } from "@/app/Assests/icons";
-import { minHeight } from "@mui/system";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
+import theme from "@/Theme/theme";
 
 type Props = {
   steps: any;
@@ -26,7 +26,7 @@ const defaultStyle = (isActive: boolean) => {
     },
     "& .MuiStepConnector-line": {
       borderWidth: "1px",
-      borderColor: "#4F4F4F80",
+      borderColor: theme.palette.sigInUpStepperConnector.main,
       marginRight: { lg: 0, md: 0, sm: 0, xs: "30px" },
       minHeight: "17px",
       "@media (min-width: 2120px)": {
@@ -35,11 +35,13 @@ const defaultStyle = (isActive: boolean) => {
       },
     },
     "& .MuiStepConnector-root.Mui-active .MuiStepConnector-line": {
-      borderColor: "#4F4F4F80",
+      borderColor: theme.palette.sigInUpStepperConnector.main,
     },
 
     "& .MuiStepLabel-label.Mui-active": {
-      color: isActive ? "white" : "#FFFFFF80",
+      color: isActive
+        ? theme.palette.signInUpPrimary.main
+        : theme.palette.iconSidebarIconColor.main,
     },
     marginTop: { sm: 7, md: 0, lg: 5 },
   };
@@ -52,13 +54,13 @@ const smallScreenStyle = (isSlider: boolean) => {
     },
     "& .MuiStepConnector-line": {
       borderWidth: isSlider ? 0 : "3px",
-      borderColor: "#4F4F4F80",
+      borderColor: theme.palette.sigInUpStepperConnector.main,
       width: "100%",
 
       marginRight: isSlider ? 0 : "30px",
     },
     "& .MuiStepConnector-root.Mui-active .MuiStepConnector-line": {
-      borderColor: "#4F4F4F80",
+      borderColor: theme.palette.sigInUpStepperConnector.main,
     },
     "& .Mui-active": {
       fontWeight: "bold",
@@ -66,14 +68,17 @@ const smallScreenStyle = (isSlider: boolean) => {
     },
 
     "& .MuiStepLabel-label.Mui-active": {
-      color: "white",
+      color: theme.palette.signInUpPrimary.main,
     },
   };
 };
 const defaultButtonStyle = (activeStep: number, index: number) => {
   return {
     "& .MuiStepLabel-label": {
-      color: activeStep >= index ? "white" : "#FFFFFF80",
+      color:
+        activeStep >= index
+          ? theme.palette.signInUpPrimary.main
+          : theme.palette.iconSidebarIconColor.main,
       fontFamily: activeStep == index ? "FiraSans-medium" : "FiraSans-regular",
       fontSize: "12px",
       "@media (min-width: 2120px)": {
@@ -88,7 +93,10 @@ const defaultButtonStyle = (activeStep: number, index: number) => {
 const smallScreenButtonStyle = (activeStep: number, index: number) => {
   return {
     "& .MuiStepLabel-label": {
-      color: activeStep == index ? "white" : "#FFFFFF80",
+      color:
+        activeStep == index
+          ? theme.palette.signInUpPrimary.main
+          : theme.palette.iconSidebarIconColor.main,
       fontFamily: "FiraSans !important",
       fontSize: "12px",
     },
@@ -117,12 +125,15 @@ export const StepperIcon = ({
       ) : (
         <Box
           sx={{
-            color: isActive || isCompleted ? "white" : "#9A9A9A",
+            color:
+              isActive || isCompleted
+                ? theme.palette.signInUpPrimary.main
+                : theme.palette.signInUpPrimary.main,
             background: isCompleted
-              ? "#287444"
+              ? theme.palette.sigInUpStepperIconComplete.main
               : isActive
-              ? "#7A43FE"
-              : "#343434",
+              ? theme.palette.sigInUpStepperIconActive.main
+              : theme.palette.sigInUpStepperIconDefault.main,
             padding: "5px",
             height: "20px",
             width: "20px",
@@ -217,7 +228,9 @@ export default function SignUPStepper({ steps, variant }: Props) {
                     bottom: -15,
                     width: "100%",
                     color:
-                      activeStep == index && isActive ? "#F3F3F3" : "#F3F3F380",
+                      activeStep == index && isActive
+                        ? theme.palette.sigInUpStepperTextActive.main
+                        : theme.palette.sigInUpStepperTextPrimary.main,
                     fontWeight: 400,
                     fontFamily: "FiraSans-regular",
                     "@media (min-width: 2120px)": {

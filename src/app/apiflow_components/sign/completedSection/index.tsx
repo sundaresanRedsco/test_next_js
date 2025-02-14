@@ -8,17 +8,18 @@ import { Box, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React from "react";
 import GlobalButton from "../../global/GButton";
-import { removeItem } from "@/app/Services/localstorage";
-import toast from "react-hot-toast";
+import Cookies from "js-cookie";
+import theme from "@/Theme/theme";
 
 export default function CompletedSection({ clientSession }: any) {
   const router = useRouter();
-  const { resetApiData, resetForm, setactiveStep, resetAllSignStoreData } =
-    useSignUpStore();
+  const { resetAllSignStoreData } = useSignUpStore();
   const handleSubmit = () => {
-    router.push("/userId/" + clientSession?.user?.workspace_id);
-    resetAllSignStoreData();
-    removeItem(`userId/${clientSession?.user?.user_id}`);
+    if (clientSession) {
+      Cookies.remove(clientSession?.user?.user_id);
+      resetAllSignStoreData();
+      router.push("/userId/" + clientSession?.user?.user_id);
+    }
   };
   return (
     <Stack
@@ -33,7 +34,7 @@ export default function CompletedSection({ clientSession }: any) {
       <SuccessSignUp />
       <PrimarySignInUPTypography
         sx={{
-          color: "white",
+          color: theme.palette.signInUpPrimary.main,
           fontSize: { xs: "20px", md: "20px" },
           textAlign: "center",
           "@media (min-width: 2120px)": {
@@ -45,7 +46,7 @@ export default function CompletedSection({ clientSession }: any) {
       </PrimarySignInUPTypography>
       <SecondarySignInUPTypography
         sx={{
-          color: "#F3F3F3BF",
+          color: theme.palette.sigInUpStepperTextSecondary.main,
           marginTop: 1,
           textAlign: "center",
           "@media (min-width: 2120px)": {
@@ -60,8 +61,8 @@ export default function CompletedSection({ clientSession }: any) {
         padding="10px 40px"
         label={"Go to Dashboard"}
         iconPosition="end"
-        background={"#7A43FE"}
-        color="white"
+        background={theme.palette.sigInUpStepperIconActive.main}
+        color={theme.palette.signInUpPrimary.main}
         fontSize={"15px"}
         margin="30px 0 0 0"
         fontWeight={500}

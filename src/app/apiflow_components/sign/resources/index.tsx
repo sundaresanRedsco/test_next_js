@@ -12,10 +12,9 @@ import {
 import { gatewayList } from "../Workspace";
 import ResourceCard from "./ResourceCard";
 import SelectedCountButton from "./SelectedCountButton";
-import GRadioGroup from "../../global/GRadioGroup";
-import GUploadButton from "../../global/GUploadButton";
 import useCatalogue from "@/app/hooks/sign/useCatalogue";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
+import theme from "@/Theme/theme";
 
 type Props = {
   clientSession?: any;
@@ -137,7 +136,7 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
           >
             <PrimarySignInUPTypography
               sx={{
-                color: "white",
+                color: theme.palette.signInUpPrimary.main,
                 fontSize: "18px",
                 "@media (min-width: 2120px)": {
                   fontSize: "25px",
@@ -186,7 +185,7 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
           //         >
           //           <PrimarySignInUPTypography
           //             sx={{
-          //               color: "white",
+          //               color: theme.palette.signInUpPrimary.main,
           //               fontSize: "15px",
           //             }}
           //           >
@@ -212,7 +211,7 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
           //                 >
           //                   <SecondarySignInUPTypography
           //                     sx={{
-          //                       color: "white",
+          //                       color: theme.palette.signInUpPrimary.main,
           //                       fontSize: "12px",
           //                     }}
           //                   >
@@ -254,7 +253,7 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
           //       >
           //         <PrimarySignInUPTypography
           //           sx={{
-          //             color: "white",
+          //             color: theme.palette.signInUpPrimary.main,
           //             fontSize: "15px",
           //             position: { xs: "static", sm: "static", md: "absolute" },
           //             left: 0,
@@ -306,7 +305,7 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
           //         >
           //           <SecondarySignInUPTypography
           //             sx={{
-          //               color: "white",
+          //               color: theme.palette.signInUpPrimary.main,
           //               fontSize: "12px",
           //             }}
           //           >
@@ -337,7 +336,7 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
             paddingTop: 5,
           }}
         >
-          <SecondarySignInUPTypography sx={{ color: "gray" }}>
+          <SecondarySignInUPTypography sx={{ color: theme.palette.gray.main }}>
             No data available
           </SecondarySignInUPTypography>
         </Box>

@@ -157,8 +157,9 @@ function WorkspaceSettings() {
                 setSelectedLink(workspace.id);
 
                 if (
-                  workspace.id !== "collaborators" &&
-                  workspace.id !== "integration"
+                  workspace.id !== "collaborators"
+                  // &&
+                  // workspace.id !== "integration"
                 ) {
                   handleActive(workspace.id);
                 } else {

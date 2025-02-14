@@ -5,6 +5,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
+import theme from "@/Theme/theme";
 
 const BpIcon = styled("span")(({ theme }) => ({
   borderRadius: "50%",
@@ -12,43 +13,42 @@ const BpIcon = styled("span")(({ theme }) => ({
   height: 16,
   boxShadow:
     "inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)",
-  backgroundColor: "#D9D9D980",
+  backgroundColor: theme.palette.radioBg1.main,
   ".Mui-focusVisible &": {
-    outline: "2px auto #D9D9D9",
+    outline: `2px auto ${theme.palette.radioBg.main}`,
     outlineOffset: 2,
   },
   "input:hover ~ &": {
-    backgroundColor: "#D9D9D980",
+    backgroundColor: theme.palette.radioBg1.main,
     ...theme.applyStyles("dark", {
-      backgroundColor: "#30404d",
+      backgroundColor: theme.palette.radioBg3.main,
     }),
   },
   "input:disabled ~ &": {
     boxShadow: "none",
-    background: "rgba(206,217,224,.5)",
+    background: theme.palette.radioBg2.main,
     ...theme.applyStyles("dark", {
-      background: "rgba(57,75,89,.5)",
+      background: theme.palette.radioBg4.main,
     }),
   },
   ...theme.applyStyles("dark", {
-    boxShadow: "0 0 0 1px rgb(16 22 26 / 40%)",
-    backgroundColor: "#394b59",
-    backgroundImage:
-      "linear-gradient(180deg,hsla(0,0%,100%,.05),hsla(0,0%,100%,0))",
+    boxShadow: `0 0 0 1px ${theme.palette.radioBg6.main}`,
+    backgroundColor: theme.palette.radioBg5.main,
+    backgroundImage: `linear-gradient(180deg,${theme.palette.radioBg7.main},${theme.palette.radioBg8.main})`,
   }),
 }));
 
 const BpCheckedIcon = styled(BpIcon)({
-  backgroundColor: "#D9D9D9",
+  backgroundColor: theme.palette.radioBg.main,
   "&::before": {
     display: "flex",
     width: 16,
     height: 16,
-    background: "radial-gradient(#7A43FE,#7A43FE 28%,transparent 0%)",
+    background: `radial-gradient(${theme.palette.sigInUpStepperIconActive.main},${theme.palette.sigInUpStepperIconActive.main} 28%,transparent 0%)`,
     content: '""',
   },
   "input:hover ~ &": {
-    backgroundColor: "#D9D9D9",
+    backgroundColor: theme.palette.radioBg.main,
   },
 });
 
@@ -81,7 +81,7 @@ export default function GRadioGroup({ inputs, onChange, value, name }: Props) {
         value={value}
         onChange={onChange}
         sx={{
-          color: "white",
+          color: theme.palette.signInUpPrimary.main,
           "& .MuiTypography-root": {
             fontFamily: "Firasans-regular",
             fontSize: "13px",

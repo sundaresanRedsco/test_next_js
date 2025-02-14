@@ -113,8 +113,8 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: theme.palette.common.white,
-    color: "rgba(0, 0, 0, 0.87)",
-    fontFamily: "Inter-Regular",
+    color: theme.palette.lightTooltipColor.main,
+    fontFamily: "FirFiraSans-Regular",
     fontSize: 8,
     fontWeight: 600,
     marginTop: "0px",
@@ -625,8 +625,9 @@ const WorkflowDesigner = (props: any) => {
 
               // Set color based on sourceHandle condition
               const edgeColor = edge.sourceHandle?.endsWith("_success")
-                ? "#55CCFF" // Color for success
-                : "#55CCFF";
+                ? `${theme.palette.edgeColor.main}` // Color for success
+                : `${theme.palette.edgeColor.main}`;
+              // : "#55CCFF";
 
               const source = edge.source?.endsWith("_start")
                 ? nodes[0]?.id // Color for success
@@ -1845,7 +1846,10 @@ const WorkflowDesigner = (props: any) => {
         {scheduleRunsClicked && (
           <Box>
             <Backdrop
-              sx={{ zIndex: 9998, backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+              sx={{
+                zIndex: 9998,
+                backgroundColor: `${theme.palette.backdropBg.main}`,
+              }}
               open={scheduleRunsClicked}
             />
             <WorkflowScheduleRuns

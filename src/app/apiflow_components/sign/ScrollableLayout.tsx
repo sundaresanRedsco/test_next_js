@@ -10,7 +10,7 @@ import GlobalButton from "../global/GButton";
 import useMuiBreakpoints from "@/app/hooks/useMuiBreakpoints";
 import useGPopup from "@/app/hooks/useGPopup";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
-import { height } from "@mui/system";
+import theme from "@/Theme/theme";
 
 type Props = {
   children: any;
@@ -78,7 +78,7 @@ export default function ScrollableLayout({
       >
         <PrimarySignInUPTypography
           sx={{
-            color: "white",
+            color: theme.palette.signInUpPrimary.main,
             fontSize: {
               xs: "18px", // small screens
               sm: "20px", // medium screens
@@ -94,12 +94,12 @@ export default function ScrollableLayout({
             ? title
             : isWorkflowModal
             ? "Create Workspace"
-            : " API Flow Onboarding"}
+            : " API Trail Onboarding"}
         </PrimarySignInUPTypography>
         {description && (
           <SecondarySignInUPTypography
             sx={{
-              color: "#F3F3F3BF",
+              color: theme.palette.sigInUpStepperTextSecondary.main,
               marginTop: 1,
               fontSize: "14px",
               "@media (min-width: 2120px)": {
@@ -119,7 +119,7 @@ export default function ScrollableLayout({
           height: isxs ? "auto" : description ? "65vh" : "70vh",
 
           overflowY: isxs ? "hidden" : "auto",
-          background: "#12121280",
+          background: theme.palette.signInUpBackground.main,
           borderRadius: "10px",
           scrollBehavior: "smooth",
           position: "relative",
@@ -194,12 +194,16 @@ export default function ScrollableLayout({
                     label={elem?.name}
                     iconPosition="end"
                     background={
-                      elem?.name == "Back" ? "transparent" : "#7A43FE"
+                      elem?.name == "Back"
+                        ? "transparent"
+                        : theme.palette.sigInUpStepperIconActive.main
                     }
                     border={
-                      elem?.name == "Back" ? "1.5px solid #FFFFFF80" : "none"
+                      elem?.name == "Back"
+                        ? `1.5px solid ${theme.palette.sigInUpStepperTextPrimary.main}`
+                        : "none"
                     }
-                    color="white"
+                    color={theme.palette.signInUpPrimary.main}
                     fontWeight={500}
                     type={"button"}
                     onClickHandler={elem?.onClick}
@@ -215,9 +219,9 @@ export default function ScrollableLayout({
                 padding="5px 15px"
                 label={additionalButtonLabel}
                 iconPosition="end"
-                background={"#37265C"}
-                border={"1px solid #F3F3F340"}
-                color="white"
+                background={theme.palette.sigInUpButtonPrimary.main}
+                border={`1px solid ${theme.palette.sigInUpButtonBorder.main}`}
+                color={theme.palette.signInUpPrimary.main}
                 fontWeight={500}
                 type={"button"}
                 onClickHandler={additionalButtonOnClick}

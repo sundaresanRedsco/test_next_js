@@ -3,10 +3,9 @@ import {
   PrimarySignInUPTypography,
   SecondarySignInUPTypography,
 } from "@/app/Styles/signInUp";
-import { Box, Stack, styled, TableCell, TableRow } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import React, { useEffect, useState } from "react";
-import GatewayCard from "../../global/GatewayCard";
 import ScrollableLayout from "../ScrollableLayout";
 import useMuiBreakpoints from "@/app/hooks/useMuiBreakpoints";
 import GSelect from "../discovery/GSelect";
@@ -14,6 +13,7 @@ import GButton from "../../global/GButton";
 import GDataTable from "../../global/GDataTable";
 import useInvites from "@/app/hooks/sign/useInvites";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
+import theme from "@/Theme/theme";
 
 type Props = {
   clientSession: any;
@@ -123,7 +123,7 @@ export default function InvitedUsers({
               >
                 <PrimarySignInUPTypography
                   sx={{
-                    color: "white",
+                    color: theme.palette.signInUpPrimary.main,
                     fontSize: "18px",
                     "@media (min-width: 2120px)": {
                       fontSize: "25px",
@@ -134,7 +134,7 @@ export default function InvitedUsers({
                 </PrimarySignInUPTypography>
                 <SecondarySignInUPTypography
                   sx={{
-                    color: "#F3F3F3BF",
+                    color: theme.palette.sigInUpStepperTextSecondary.main,
                     fontSize: "10px",
                     "@media (min-width: 2120px)": {
                       fontSize: "15px",
@@ -149,7 +149,7 @@ export default function InvitedUsers({
             {elem.title != "Invited Users" ? (
               <Grid
                 sx={{
-                  background: "#241D35",
+                  background: theme.palette.summaryBgColor.main,
                   padding: "20px 10px",
                   borderRadius: "10px",
                 }}
@@ -171,7 +171,7 @@ export default function InvitedUsers({
                           <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                             <Box
                               sx={{
-                                color: "#FFFFFF80",
+                                color: theme.palette.iconSidebarIconColor.main,
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "3px",
@@ -179,7 +179,7 @@ export default function InvitedUsers({
                             >
                               <SecondarySignInUPTypography
                                 sx={{
-                                  color: "white",
+                                  color: theme.palette.signInUpPrimary.main,
                                   fontSize: "13px",
                                   "@media (min-width: 2120px)": {
                                     fontSize: "20px",
@@ -218,7 +218,7 @@ export default function InvitedUsers({
                           <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                             <Box
                               sx={{
-                                color: "#FFFFFF80",
+                                color: theme.palette.iconSidebarIconColor.main,
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "3px",
@@ -227,7 +227,7 @@ export default function InvitedUsers({
                               {input?.icon}
                               <SecondarySignInUPTypography
                                 sx={{
-                                  color: "white",
+                                  color: theme.palette.signInUpPrimary.main,
                                   fontSize: "13px",
                                   "@media (min-width: 2120px)": {
                                     fontSize: "20px",
@@ -238,7 +238,9 @@ export default function InvitedUsers({
                               </SecondarySignInUPTypography>
                             </Box>
                             <GInput
-                              secondarybackground="#241D35"
+                              secondarybackground={
+                                theme.palette.summaryBgColor.main
+                              }
                               name={input.name}
                               type={input.type}
                               fullWidth={true}

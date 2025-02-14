@@ -8,6 +8,7 @@ import React, { useEffect, useRef, useState } from "react";
 import GIconButton from "../../global/GIconButton";
 import { Edit } from "@mui/icons-material";
 import GInput from "../../global/GInput";
+import theme from "@/Theme/theme";
 
 type Props = {
   name: string | undefined;
@@ -86,7 +87,7 @@ const ItemCard = ({ title, about, handleSaveEnv, data }: any) => {
           height: "16px",
           width: "16px",
           borderRadius: "3px",
-          background: "#D9D9D9",
+          background: theme.palette.radioBg.main,
           marginTop: "5px",
         }}
       />
@@ -112,7 +113,7 @@ const ItemCard = ({ title, about, handleSaveEnv, data }: any) => {
           ) : (
             <SecondarySignInUPTypography
               sx={{
-                color: "white",
+                color: theme.palette.signInUpPrimary.main,
                 marginTop: "4px",
               }}
             >
@@ -127,7 +128,12 @@ const ItemCard = ({ title, about, handleSaveEnv, data }: any) => {
               onClick={handleEdit}
               size="small"
             >
-              <Edit sx={{ fontSize: "11px", color: "white" }} />
+              <Edit
+                sx={{
+                  fontSize: "11px",
+                  color: theme.palette.signInUpPrimary.main,
+                }}
+              />
             </IconButton>
           )}
         </Box>
@@ -144,7 +150,7 @@ const ItemCard = ({ title, about, handleSaveEnv, data }: any) => {
         ) : (
           <TertiarySignInUPTypography
             sx={{
-              color: "white",
+              color: theme.palette.signInUpPrimary.main,
               fontSize: "10px",
             }}
           >
@@ -224,7 +230,7 @@ export default function ResourceCard({
       sx={{
         width: "100%",
         borderRadius: "10px",
-        background: "#241D35",
+        background: theme.palette.summaryBgColor.main,
       }}
     >
       <Box
@@ -232,7 +238,7 @@ export default function ResourceCard({
           display: "flex",
           gap: 1,
           height: "60px",
-          border: "1px solid #FFFFFF80",
+          border: `1px solid ${theme.palette.iconSidebarIconColor.main}`,
           borderRadius: "10px",
           position: "relative",
           alignItems: "center",
@@ -244,15 +250,15 @@ export default function ResourceCard({
             justifyContent: "center",
             alignItems: "center",
             padding: "15px",
-            background: "#362F47",
-            borderRight: "1px solid #FFFFFF80",
+            background: theme.palette.summaryCardColor.main,
+            borderRight: `1px solid ${theme.palette.iconSidebarIconColor.main}`,
             borderRadius: "10px 0 0 10px",
             height: "100%",
           }}
         >
           <PrimarySignInUPTypography
             sx={{
-              color: "white",
+              color: theme.palette.signInUpPrimary.main,
               fontSize: "15px",
             }}
           >
@@ -275,7 +281,7 @@ export default function ResourceCard({
           ) : (
             <PrimarySignInUPTypography
               sx={{
-                color: "white",
+                color: theme.palette.signInUpPrimary.main,
                 fontSize: "15px",
               }}
             >
@@ -294,7 +300,7 @@ export default function ResourceCard({
           ) : (
             <TertiarySignInUPTypography
               sx={{
-                color: "white",
+                color: theme.palette.signInUpPrimary.main,
                 fontSize: "10px",
               }}
             >
@@ -314,7 +320,7 @@ export default function ResourceCard({
       <Stack sx={{ padding: "15px", gap: 2 }}>
         <PrimarySignInUPTypography
           sx={{
-            color: "white",
+            color: theme.palette.signInUpPrimary.main,
             fontSize: "15px",
           }}
         >
@@ -342,7 +348,9 @@ export default function ResourceCard({
                 alignItems: "center",
               }}
             >
-              <SecondarySignInUPTypography sx={{ color: "gray" }}>
+              <SecondarySignInUPTypography
+                sx={{ color: theme.palette.gray.main }}
+              >
                 No environments available
               </SecondarySignInUPTypography>
             </Box>

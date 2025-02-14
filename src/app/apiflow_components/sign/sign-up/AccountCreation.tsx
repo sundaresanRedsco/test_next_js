@@ -15,6 +15,7 @@ import { GitHub } from "@mui/icons-material";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import useSignIn from "@/app/hooks/sign/useSignIn";
 import { set } from "lodash";
+import theme from "@/Theme/theme";
 
 type Props = {
   handleAuthentication?: any;
@@ -95,7 +96,7 @@ export default function AccountCreation({
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                color: "#F3F3F340",
+                color: theme.palette.sigInUpButtonBorder.main,
                 width: "100%",
                 gap: { xs: 0, sm: 0, md: 2 },
                 flexDirection: { xs: "column", sm: "column", md: "row" },
@@ -136,12 +137,12 @@ export default function AccountCreation({
                     padding="13px 40px"
                     label={btn.label}
                     iconPosition="start"
-                    background="#7946FD40"
+                    background={theme.palette.inputBg.main}
                     color="white"
                     icon={<IconLayout>{btn.icon}</IconLayout>}
                     type={"button"}
                     sx={{
-                      boxShadow: "0px 0px 0px .3px #F3F3F340 inset",
+                      boxShadow: `0px 0px 0px .3px ${theme.palette.sigInUpButtonBorder.main} inset`,
                       width: "auto",
                       opacity: isDisabled ? 0.5 : 1,
                       "&.MuiButton-root.Mui-disabled": {
@@ -167,7 +168,7 @@ export default function AccountCreation({
               <Divider
                 variant="middle"
                 sx={{
-                  borderColor: "#FFFFFF40",
+                  borderColor: theme.palette.sigInUpButtonBorder.main,
                   borderWidth: {
                     md: "1px 200px 0px 200px",
                     sm: "1px 100px 0px 100px",
@@ -183,7 +184,7 @@ export default function AccountCreation({
               >
                 <TertiarySignInUPTypography
                   sx={{
-                    color: "#FFFFFFBF",
+                    color: theme.palette.sigInUpStepperTextTertary.main,
                     fontSize: "12px",
                     top: 0,
                     "@media (min-width: 2120px)": {
@@ -201,7 +202,7 @@ export default function AccountCreation({
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                color: "#F3F3F340",
+                color: theme.palette.sigInUpButtonBorder.main,
                 width: "100%",
                 gap: { xs: 0, sm: 0, md: 2 },
                 flexDirection: { xs: "column", sm: "column", md: "row" },
@@ -228,12 +229,12 @@ export default function AccountCreation({
                     padding="13px 40px"
                     label={btn.label}
                     iconPosition="start"
-                    background="#7946FD40"
+                    background={theme.palette.inputBg.main}
                     color="white"
                     icon={<IconLayout>{btn.icon}</IconLayout>}
                     type={"button"}
                     sx={{
-                      boxShadow: "0px 0px 0px .3px #F3F3F340 inset",
+                      boxShadow: `0px 0px 0px .3px ${theme.palette.sigInUpButtonBorder.main} inset`,
                       width: "auto",
                       opacity: isDisabled ? 0.5 : 1,
                       "&.MuiButton-root.Mui-disabled": {

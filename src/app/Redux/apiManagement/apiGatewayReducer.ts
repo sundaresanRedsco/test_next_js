@@ -24,6 +24,25 @@ export const ImportApiGateway = createAsyncThunk(
   }
 );
 
+export const GetAllImportConfigurationWorkspaceId = createAsyncThunk(
+  "gateway/GetAllImportConfigurationWorkspaceId",
+  async (value: any) => {
+    try {
+      return await AdminServices(
+        "get",
+        `api/ImportFromApiGateWay/get_all_import_configuration_workspace_id?workspace_id=${value}`,
+        null,
+        null
+      );
+    } catch (error: any) {
+      if (error?.response && error?.response?.status === 401) {
+        throw new Error("UNAUTHORIZED");
+      }
+      throw new Error(errorHandling(error));
+    }
+  }
+);
+
 export const ImportFromSwagerGateway = createAsyncThunk(
   "gateway/ImportFromSwagerGateway",
   async (value: any) => {
@@ -291,6 +310,7 @@ type InitialStateType = {
   instanceId: any;
   ipDetails: any;
   logsKey: any;
+  getAllImportConfigWsIdLoading: boolean;
 };
 
 const initialState: InitialStateType = {
@@ -302,6 +322,7 @@ const initialState: InitialStateType = {
   instanceId: {},
   ipDetails: [],
   logsKey: [],
+  getAllImportConfigWsIdLoading: false,
 
   // apiGatewayKeys: null || [],
 };
@@ -503,6 +524,27 @@ export const gatewaySlice = createSlice({
     builder.addCase(EnableDisableLogs.rejected, (state, action) => {
       state.loading = false;
     });
+
+    builder.addCase(
+      GetAllImportConfigurationWorkspaceId.pending,
+      (state, action) => {
+        state.getAllImportConfigWsIdLoading = true;
+      }
+    );
+
+    builder.addCase(
+      GetAllImportConfigurationWorkspaceId.fulfilled,
+      (state, action) => {
+        state.getAllImportConfigWsIdLoading = false;
+      }
+    );
+
+    builder.addCase(
+      GetAllImportConfigurationWorkspaceId.rejected,
+      (state, action) => {
+        state.getAllImportConfigWsIdLoading = false;
+      }
+    );
   },
 });
 export type apiGatewayReducer = ReturnType<typeof gatewaySlice.reducer>;

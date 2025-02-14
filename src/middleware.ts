@@ -4,12 +4,7 @@ import type { NextRequest } from "next/server";
 // import { cookies } from "next/headers";
 
 export const config = {
-  matcher: [
-    "/",
-    "/sign/signup",
-    "/userId/:userId/workspaceId/:workspaceId",
-    "/userId/:userId",
-  ], // Only trigger on these paths
+  matcher: ["/", "/sign", "/sign/signup", "/userId/:userId*"], // Only trigger on these paths
 };
 export async function middleware(req: NextRequest) {
   const { nextUrl } = req;
@@ -20,32 +15,51 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
   const token = tokenData?.token;
-  const isOnboarding = req.cookies.get("onboarding")?.value;
-  if (
-    !token &&
-    pathname != "/sign" &&
-    pathname != "/sign/signup" &&
-    pathname != "/"
-  ) {
-    url.pathname = "/";
-    return NextResponse.redirect(url);
+  const userId = tokenData?.user_id;
+  const isOnboarding = userId && req.cookies.get(userId)?.value ? true : false;
+  const publicRoutes: any = ["/", "/sign", "/sign/signup"];
+
+  if (pathname) {
+    if (token) {
+      if (isOnboarding && !publicRoutes.includes(pathname)) {
+        url.pathname = "/sign/signup";
+        return NextResponse.redirect(url);
+      }
+      if (!isOnboarding && !pathname.includes("/userId")) {
+        url.pathname = "/userId/" + tokenData?.user_id;
+        return NextResponse.redirect(url);
+      }
+    } else {
+      if (!publicRoutes.includes(pathname)) {
+        url.pathname = "/";
+        return NextResponse.redirect(url);
+      }
+    }
   }
-  // if (token) {
-  //   if (isOnboarding && pathname != "/sign") {
-  //     url.pathname = "/sign";
+
+  // if (
+  //   !token &&
+  //   pathname != "/sign" &&
+  //   pathname != "/sign/signup" &&
+  //   pathname != "/"
+  // ) {
+  //   url.pathname = "/";
+  //   return NextResponse.redirect(url);
+  // }
+  // if (token && pathname) {
+  //   if (isOnboarding && pathname != "/sign/signup") {
+  //     url.pathname = "/sign/signup";
   //     return NextResponse.redirect(url);
-  //   } else if (!pathname.includes("/userId")) {
+  //   } else if (!isOnboarding && !pathname.includes("/userId")) {
   //     url.pathname = "/userId/" + tokenData?.user_id;
   //     return NextResponse.redirect(url);
   //   }
   // }
 
-
-
   const tokenExpiresAt: any = tokenData?.expiration_time?.toString();
   const expirationDate = new Date(parseInt(tokenExpiresAt) * 1000);
   const currentDate = new Date();
-  if (token && currentDate > expirationDate) {
+  if (expirationDate && currentDate > expirationDate) {
     url.pathname = "/sign";
     return NextResponse.redirect(url);
   }

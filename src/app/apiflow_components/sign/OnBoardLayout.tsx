@@ -9,6 +9,7 @@ import GlobalButton from "../global/GButton";
 import { AlertProvider } from "@/context/alertContext";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import useMuiBreakpoints from "@/app/hooks/useMuiBreakpoints";
+import theme from "@/Theme/theme";
 
 type Props = {
   children: any;
@@ -55,7 +56,9 @@ export default function OnBoardLayout({
           position: "relative",
           overflowY: "auto",
           background: {
-            xs: isWorkflowModal ? "#19181f" : "none",
+            xs: isWorkflowModal
+              ? theme.palette.signInUpSecondaryBackground.main
+              : "none",
           },
         }}
       >
@@ -83,7 +86,9 @@ export default function OnBoardLayout({
             sx={{
               background: {
                 xs: "none",
-                sm: isWorkflowModal ? "#19181f" : "#12121280",
+                sm: isWorkflowModal
+                  ? theme.palette.signInUpSecondaryBackground.main
+                  : theme.palette.signInUpBackground.main,
               },
               borderRadius: "20px",
               height: activeStep == 0 && !isWorkflowModal ? "100%" : "auto",
@@ -121,7 +126,10 @@ export default function OnBoardLayout({
                   xs: "24px 24px 0 24px",
                   sm: 3,
                 },
-                background: { xs: "none", sm: "#121212BF" },
+                background: {
+                  xs: "none",
+                  sm: theme.palette.signInUpStepperContainerBg.main,
+                },
                 borderRadius: "20px 0 0 20px",
                 flexDirection: "column",
                 transition: ".5s ease",

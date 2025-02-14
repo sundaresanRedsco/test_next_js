@@ -40,7 +40,7 @@ export default function Logo({}: Props) {
           },
         }}
       >
-        API Flow
+        API Trail
       </PrimarySignInUPTypography>
     </Box>
   );

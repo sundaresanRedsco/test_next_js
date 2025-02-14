@@ -1,6 +1,7 @@
 import * as React from "react";
 import Backdrop from "@mui/material/Backdrop";
 import { Skeleton } from "@mui/material";
+import theme from "@/Theme/theme";
 
 export default function GSkeletonLoader({
   backdrop,
@@ -14,10 +15,12 @@ export default function GSkeletonLoader({
     <div>
       <Backdrop
         sx={{
-          color: "#fff",
+          color: theme.palette.signInUpPrimary.main,
           zIndex: (theme) => theme.zIndex.drawer + 1,
           position: "absolute",
-          backgroundColor: !backdrop ? "transparent" : "#0c070f78",
+          backgroundColor: !backdrop
+            ? "transparent"
+            : theme.palette.backdrop.main,
         }}
         open={open}
       >
@@ -27,7 +30,9 @@ export default function GSkeletonLoader({
             width: width ? width : secondary ? "100%" : "90%",
             height: height || "25px",
             borderRadius: "5px",
-            background: secondary ? "#2f2935" : "#473d51",
+            background: secondary
+              ? theme.palette.skeletonPrimary.main
+              : theme.palette.skeletonDefault.main,
           }}
           animation={animation ? animation : "wave"}
         ></Skeleton>

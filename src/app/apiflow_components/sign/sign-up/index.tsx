@@ -14,6 +14,7 @@ import { emailPattern, passwordPattern } from "@/app/Utilities/regex";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import AccountCreation from "./AccountCreation";
 import ScrollableLayout from "../ScrollableLayout";
+import theme from "@/Theme/theme";
 
 export default function SignUp() {
   const {
@@ -61,7 +62,7 @@ export default function SignUp() {
         <Email
           sx={{
             fontSize: "18px",
-            color: "#FFFFFF80",
+            color: theme.palette.iconSidebarIconColor.main,
             "@media (min-width: 2120px)": {
               fontSize: "25px",
             },
@@ -82,7 +83,7 @@ export default function SignUp() {
     // {
     //   id: 2,
     //   label: "Mobile Number *",
-    //   icon: <Phone sx={{ fontSize: "14px", color: "#FFFFFF80" }} />,
+    //   icon: <Phone sx={{ fontSize: "14px", color: theme.palette.iconSidebarIconColor.main }} />,
     //   type: "number",
     //   onChange: handleChange,
 
@@ -96,7 +97,7 @@ export default function SignUp() {
         <PersonRounded
           sx={{
             fontSize: "18px",
-            color: "#FFFFFF80",
+            color: theme.palette.iconSidebarIconColor.main,
             "@media (min-width: 2120px)": {
               fontSize: "25px",
             },
@@ -122,7 +123,7 @@ export default function SignUp() {
         <PersonRounded
           sx={{
             fontSize: "18px",
-            color: "#FFFFFF80",
+            color: theme.palette.iconSidebarIconColor.main,
             "@media (min-width: 2120px)": {
               fontSize: "25px",
             },
@@ -162,7 +163,7 @@ export default function SignUp() {
         <Lock
           sx={{
             fontSize: "18px",
-            color: "#FFFFFF80",
+            color: theme.palette.iconSidebarIconColor.main,
             "@media (min-width: 2120px)": {
               fontSize: "25px",
             },
@@ -262,7 +263,7 @@ export default function SignUp() {
                   <Stack sx={{ gap: 1.5, marginBottom: "15px" }}>
                     <Box
                       sx={{
-                        color: "#FFFFFF80",
+                        color: theme.palette.iconSidebarIconColor.main,
                         display: "flex",
                         alignItems: "center",
                         gap: "3px",
@@ -271,7 +272,7 @@ export default function SignUp() {
                       {elem?.icon}
                       <SecondarySignInUPTypography
                         sx={{
-                          color: "white",
+                          color: theme.palette.signInUpPrimary.main,
                           fontSize: "13px",
                           "@media (min-width: 2120px)": {
                             fontSize: "20px",
@@ -287,7 +288,7 @@ export default function SignUp() {
                         elem.name != "last_name" &&
                         formDataStore?.isRegisterd
                       }
-                      background={"#31244F80"}
+                      background={theme.palette.inputBg4.main}
                       name={elem.name}
                       type={elem.type}
                       fullWidth={true}

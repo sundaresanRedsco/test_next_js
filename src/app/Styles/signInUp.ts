@@ -29,7 +29,7 @@ export const SecondarySignInUPTypography = styled(Typography)`
 `;
 
 export const TertiarySignInUPTypography = styled(Typography)`
-  color: ${({ theme }) => theme.palette.signInUpDimGray.main};
+  color: ${({ theme }) => theme.palette.signInUpPrimary.main};
   font-family: FiraSans-light;
   font-style: normal;
   font-weight: 300;
@@ -37,7 +37,7 @@ export const TertiarySignInUPTypography = styled(Typography)`
 `;
 
 export const QuarternarySignInUPTypography = styled(Typography)`
-  color: ${({ theme }) => theme.palette.signInUpLightGray.main};
+  color: ${({ theme }) => theme.palette.signInUpPrimary.main};
   font-family: FiraSans-light;
   font-style: normal;
   font-weight: 300;
@@ -45,7 +45,7 @@ export const QuarternarySignInUPTypography = styled(Typography)`
 `;
 
 export const LinkSignInUPTypography = styled(Link)`
-  color: ${({ theme }) => theme.palette.signInUpPurple.main};
+  color: ${({ theme }) => theme.palette.signInUpPrimary.main};
   font-family: FiraSans-light;
   font-style: normal;
   font-weight: 300;
@@ -53,7 +53,7 @@ export const LinkSignInUPTypography = styled(Link)`
   text-decoration: none;
 
   &:hover {
-    color: ${({ theme }) => theme.palette.signInUpPurple.main};
+    color: ${({ theme }) => theme.palette.signInUpPrimary.main};
   }
 `;
 
@@ -70,7 +70,7 @@ export const FormHeadingTypography = styled(Typography)`
 `;
 
 export const SignupMicrosoft = styled(Typography)`
-  color: ${({ theme }) => theme.palette.signInUpPurple.main};
+  color: ${({ theme }) => theme.palette.signInUpPrimary.main};
   font-family: FiraSans-light;
   font-style: normal;
   font-weight: 300;

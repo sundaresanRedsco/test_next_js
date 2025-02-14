@@ -9,22 +9,84 @@ declare module "@mui/material/styles" {
 
 interface signInUpPalette {
   signInUpBackground: Palette["primary"];
-  signInUpBlack: Palette["primary"];
-  signInUpWhite: Palette["primary"];
+  signInUpSecondaryBackground: Palette["primary"];
   signInUpPrimary: Palette["primary"];
-  signInUpDimGray: Palette["primary"];
-  signInUpLightGray: Palette["primary"];
-  signInUpPurple: Palette["primary"];
+  signInUpStepperContainerBg: Palette["primary"];
+  backdrop: Palette["primary"];
+  sigInUpStepperConnector: Palette["primary"];
+  sigInUpStepperTextDefault: Palette["primary"];
+  sigInUpStepperIconComplete: Palette["primary"];
+  sigInUpStepperIconActive: Palette["primary"];
+  sigInUpStepperIconDefault: Palette["primary"];
+  sigInUpStepperTextActive: Palette["primary"];
+  sigInUpStepperTextPrimary: Palette["primary"];
+  sigInUpStepperTextSecondary: Palette["primary"];
+  sigInUpButtonPrimary: Palette["primary"];
+  sigInUpButtonBorder: Palette["primary"];
+  skeletonDefault: Palette["primary"];
+  skeletonPrimary: Palette["primary"];
+  helperText: Palette["primary"];
+  inputBg: Palette["primary"];
+  inputBg1: Palette["primary"];
+  inputBg2: Palette["primary"];
+  inputBg3: Palette["primary"];
+  inputBg4: Palette["primary"];
+  sigInUpButtonSecondary: Palette["primary"];
+  red: Palette["primary"];
+  gray: Palette["primary"];
+  radioBg: Palette["primary"];
+  radioBg1: Palette["primary"];
+  radioBg2: Palette["primary"];
+  radioBg3: Palette["primary"];
+  radioBg4: Palette["primary"];
+  radioBg5: Palette["primary"];
+  radioBg6: Palette["primary"];
+  radioBg7: Palette["primary"];
+  radioBg8: Palette["primary"];
+  sigInUpButtonBorderSecondary: Palette["primary"];
+  sigInUpStepperTextTertary: Palette["primary"];
+  link: Palette["primary"];
 }
 
 interface signInUpPaletteOptions {
   signInUpBackground: PaletteOptions["primary"];
-  signInUpBlack: PaletteOptions["primary"];
-  signInUpWhite: PaletteOptions["primary"];
+  signInUpSecondaryBackground: PaletteOptions["primary"];
   signInUpPrimary: PaletteOptions["primary"];
-  signInUpDimGray: PaletteOptions["primary"];
-  signInUpLightGray: PaletteOptions["primary"];
-  signInUpPurple: PaletteOptions["primary"];
+  signInUpStepperContainerBg: PaletteOptions["primary"];
+  backdrop: PaletteOptions["primary"];
+  sigInUpStepperConnector: PaletteOptions["primary"];
+  sigInUpStepperTextDefault: PaletteOptions["primary"];
+  sigInUpStepperIconComplete: PaletteOptions["primary"];
+  sigInUpStepperIconActive: PaletteOptions["primary"];
+  sigInUpStepperIconDefault: PaletteOptions["primary"];
+  sigInUpStepperTextActive: PaletteOptions["primary"];
+  sigInUpStepperTextPrimary: PaletteOptions["primary"];
+  sigInUpStepperTextSecondary: PaletteOptions["primary"];
+  sigInUpButtonBorder: PaletteOptions["primary"];
+  sigInUpButtonPrimary: PaletteOptions["primary"];
+  skeletonPrimary: PaletteOptions["primary"];
+  skeletonDefault: PaletteOptions["primary"];
+  helperText: PaletteOptions["primary"];
+  inputBg: PaletteOptions["primary"];
+  inputBg1: PaletteOptions["primary"];
+  inputBg2: PaletteOptions["primary"];
+  inputBg3: PaletteOptions["primary"];
+  inputBg4: PaletteOptions["primary"];
+  red: PaletteOptions["primary"];
+  sigInUpButtonSecondary: PaletteOptions["primary"];
+  gray: PaletteOptions["primary"];
+  radioBg: PaletteOptions["primary"];
+  radioBg1: PaletteOptions["primary"];
+  radioBg2: PaletteOptions["primary"];
+  radioBg3: PaletteOptions["primary"];
+  radioBg4: PaletteOptions["primary"];
+  radioBg5: PaletteOptions["primary"];
+  radioBg6: PaletteOptions["primary"];
+  radioBg7: PaletteOptions["primary"];
+  radioBg8: PaletteOptions["primary"];
+  sigInUpButtonBorderSecondary: PaletteOptions["primary"];
+  sigInUpStepperTextTertary: PaletteOptions["primary"];
+  link: PaletteOptions["primary"];
 }
 
 interface DashboardPalette {
@@ -118,6 +180,14 @@ interface DashboardPalette {
   apiBackgroundTextCardColor: Palette["primary"];
   modalBoxShadow: Palette["primary"];
   secondaryChatBg: Palette["primary"];
+  textOutlinedBorderColor: Palette["primary"];
+  operationPageBorderColor: Palette["primary"];
+  edgeColor: Palette["primary"];
+  backdropBg: Palette["primary"];
+  lightTooltipColor: Palette["primary"];
+  globalBtnBg: Palette["primary"];
+  createWorkflowBtnBg: Palette["primary"];
+  swaggerFileBtnBg: Palette["primary"];
 }
 
 interface DashboardPaletteOptions {
@@ -209,33 +279,134 @@ interface DashboardPaletteOptions {
   apiBackgroundTextCardColor: PaletteOptions["primary"];
   modalBoxShadow: PaletteOptions["primary"];
   secondaryChatBg: PaletteOptions["primary"];
+  textOutlinedBorderColor: PaletteOptions["primary"];
+  operationPageBorderColor: PaletteOptions["primary"];
+  edgeColor: PaletteOptions["primary"];
+  backdropBg: PaletteOptions["primary"];
+  lightTooltipColor: PaletteOptions["primary"];
+  globalBtnBg: PaletteOptions["primary"];
+  createWorkflowBtnBg: PaletteOptions["primary"];
+  swaggerFileBtnBg: PaletteOptions["primary"];
 }
 
 const lightTheme = createTheme({
   palette: {
     // signInUp
     signInUpBackground: {
-      main: "#f0f9ff", // Add your custom color here
+      main: "#12121280",
     },
-    signInUpBlack: {
-      main: "#000", // Add your custom color here
+    signInUpSecondaryBackground: {
+      main: "#19181f",
     },
-    signInUpWhite: {
-      main: "#fff", // Add your custom color here
+    signInUpStepperContainerBg: {
+      main: "#121212BF",
     },
     signInUpPrimary: {
-      main: "#262626", // Add your custom color here
-    },
-    signInUpDimGray: {
-      main: "#525252", // Add your custom color here
-    },
-    signInUpLightGray: {
-      main: "#A3A3A3", // Add your custom color here
-    },
-    signInUpPurple: {
-      main: "#6B21A8", // Add your custom color here
+      main: "#fff",
     },
 
+    sigInUpStepperConnector: {
+      main: "#4F4F4F80",
+    },
+    sigInUpStepperTextDefault: {
+      main: "#9A9A9A",
+    },
+    sigInUpStepperTextActive: {
+      main: "#F3F3F3",
+    },
+    sigInUpStepperTextPrimary: {
+      main: "#F3F3F380",
+    },
+    sigInUpStepperTextSecondary: {
+      main: "#F3F3F3BF",
+    },
+    sigInUpStepperTextTertary: {
+      main: "#FFFFFFBF",
+    },
+    sigInUpStepperIconComplete: {
+      main: "#287444",
+    },
+    sigInUpStepperIconActive: {
+      main: "#7A43FE",
+    },
+    sigInUpStepperIconDefault: {
+      main: "#343434",
+    },
+    sigInUpButtonPrimary: {
+      main: "#37265C",
+    },
+    sigInUpButtonSecondary: {
+      main: "#F3F3F31A",
+    },
+    sigInUpButtonBorder: {
+      main: "#F3F3F340",
+    },
+    sigInUpButtonBorderSecondary: {
+      main: "#FFFFFF40",
+    },
+    backdrop: {
+      main: "#0c070f78",
+    },
+    skeletonDefault: {
+      main: "#473d51",
+    },
+    skeletonPrimary: {
+      main: "#2f2935",
+    },
+    helperText: {
+      main: "#d32f2f",
+    },
+    inputBg: {
+      main: "#7946FD40",
+    },
+    inputBg1: {
+      main: "#291e3b",
+    },
+    inputBg2: {
+      main: "#18151c",
+    },
+    inputBg3: {
+      main: "#c9c9c961",
+    },
+    inputBg4: {
+      main: "#31244F80",
+    },
+    gray: {
+      main: "#808080",
+    },
+    red: {
+      main: "#ff0000",
+    },
+    radioBg: {
+      main: "#D9D9D9",
+    },
+    radioBg1: {
+      main: "#D9D9D980",
+    },
+    radioBg2: {
+      main: "#ced9e0",
+    },
+    radioBg3: {
+      main: "#30404d",
+    },
+    radioBg4: {
+      main: "#394b59",
+    },
+    radioBg5: {
+      main: "#394b59",
+    },
+    radioBg6: {
+      main: "#10161a66",
+    },
+    radioBg7: {
+      main: "#ffffff0d",
+    },
+    radioBg8: {
+      main: "#ffffff00",
+    },
+    link: {
+      main: "#327fb9",
+    },
     // dashboard
     primaryBlack: {
       main: "#000", // Add your custom color here
@@ -505,6 +676,30 @@ const lightTheme = createTheme({
     secondaryChatBg: {
       main: "#1b1b1b",
     },
+    textOutlinedBorderColor: {
+      main: "#f3f3f340",
+    },
+    operationPageBorderColor: {
+      main: "#ffffff40",
+    },
+    edgeColor: {
+      main: "#55CCFF",
+    },
+    backdropBg: {
+      main: "#00000066",
+    },
+    lightTooltipColor: {
+      main: "#000000de",
+    },
+    globalBtnBg: {
+      main: "#282F79",
+    },
+    createWorkflowBtnBg: {
+      main: "#7A43FE26",
+    },
+    swaggerFileBtnBg: {
+      main: "#EEEEEE",
+    },
   },
 });
 
@@ -512,27 +707,119 @@ const darkTheme = createTheme({
   palette: {
     // signInUp
     signInUpBackground: {
-      main: "#f0f9ff", // Add your custom color here
+      main: "#12121280",
     },
-    signInUpBlack: {
-      main: "#000", // Add your custom color here
+    signInUpSecondaryBackground: {
+      main: "#19181f",
     },
-    signInUpWhite: {
-      main: "#fff", // Add your custom color here
+    signInUpStepperContainerBg: {
+      main: "#121212BF",
     },
     signInUpPrimary: {
-      main: "#262626", // Add your custom color here
+      main: "#fff",
     },
-    signInUpDimGray: {
-      main: "#525252", // Add your custom color here
+    sigInUpStepperConnector: {
+      main: "#4F4F4F80",
     },
-    signInUpLightGray: {
-      main: "#A3A3A3", // Add your custom color here
+    sigInUpStepperTextDefault: {
+      main: "#9A9A9A",
     },
-    signInUpPurple: {
-      main: "#6B21A8", // Add your custom color here
+    sigInUpStepperTextActive: {
+      main: "#F3F3F3",
     },
-
+    sigInUpStepperTextPrimary: {
+      main: "#F3F3F380",
+    },
+    sigInUpStepperTextSecondary: {
+      main: "#F3F3F3BF",
+    },
+    sigInUpStepperTextTertary: {
+      main: "#FFFFFFBF",
+    },
+    sigInUpStepperIconComplete: {
+      main: "#287444",
+    },
+    sigInUpStepperIconActive: {
+      main: "#7A43FE",
+    },
+    sigInUpStepperIconDefault: {
+      main: "#343434",
+    },
+    sigInUpButtonPrimary: {
+      main: "#37265C",
+    },
+    sigInUpButtonSecondary: {
+      main: "#F3F3F31A",
+    },
+    sigInUpButtonBorder: {
+      main: "#F3F3F340",
+    },
+    sigInUpButtonBorderSecondary: {
+      main: "#FFFFFF40",
+    },
+    backdrop: {
+      main: "#0c070f78",
+    },
+    skeletonDefault: {
+      main: "#473d51",
+    },
+    skeletonPrimary: {
+      main: "#2f2935",
+    },
+    helperText: {
+      main: "#d32f2f",
+    },
+    inputBg: {
+      main: "#7946FD40",
+    },
+    inputBg1: {
+      main: "#291e3b",
+    },
+    inputBg2: {
+      main: "#18151c",
+    },
+    inputBg3: {
+      main: "#c9c9c961",
+    },
+    inputBg4: {
+      main: "#31244F80",
+    },
+    gray: {
+      main: "#808080",
+    },
+    red: {
+      main: "#ff0000",
+    },
+    radioBg: {
+      main: "#D9D9D9",
+    },
+    radioBg1: {
+      main: "#D9D9D980",
+    },
+    radioBg2: {
+      main: "#ced9e0",
+    },
+    radioBg3: {
+      main: "#30404d",
+    },
+    radioBg4: {
+      main: "#394b59",
+    },
+    radioBg5: {
+      main: "#394b59",
+    },
+    radioBg6: {
+      main: "#10161a66",
+    },
+    radioBg7: {
+      main: "#ffffff0d",
+    },
+    radioBg8: {
+      main: "#ffffff00",
+    },
+    link: {
+      main: "#327fb9",
+    },
     // dashboard
     primaryBlack: {
       main: "#000", // Add your custom color here
@@ -805,6 +1092,30 @@ const darkTheme = createTheme({
     },
     secondaryChatBg: {
       main: "#333232",
+    },
+    textOutlinedBorderColor: {
+      main: "#f3f3f340",
+    },
+    operationPageBorderColor: {
+      main: "#ffffff40",
+    },
+    edgeColor: {
+      main: "#55CCFF",
+    },
+    backdropBg: {
+      main: "#00000066",
+    },
+    lightTooltipColor: {
+      main: "#000000de",
+    },
+    globalBtnBg: {
+      main: "#282F79",
+    },
+    createWorkflowBtnBg: {
+      main: "#7A43FE26",
+    },
+    swaggerFileBtnBg: {
+      main: "#EEEEEE",
     },
   },
 });

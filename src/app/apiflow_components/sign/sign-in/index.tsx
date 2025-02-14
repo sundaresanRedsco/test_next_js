@@ -6,22 +6,18 @@ import {
   SecondarySignInUPTypography,
   TertiarySignInUPTypography,
 } from "@/app/Styles/signInUp";
-import { Email, Lock, PersonRounded, Phone } from "@mui/icons-material";
-import { Box, Divider, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Email, Lock } from "@mui/icons-material";
+import { Box, Divider, Stack } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import React, { useState } from "react";
+import React from "react";
 import GlobalButton from "../../global/GButton";
 import useSignIn from "@/app/hooks/sign/useSignIn";
-import {
-  GoogleLogin,
-  GoogleOAuthProvider,
-  useGoogleLogin,
-} from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import { AzureIcon, GoogleIcon } from "@/app/Assests/icons";
 import IconLayout from "../../global/IconLayout";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
-import { MuiOtpInput } from "mui-one-time-password-input";
 import GOtpField from "../../global/GOtpField";
+import theme from "@/Theme/theme";
 
 export default function SignIn({ clientSession }: any) {
   const {
@@ -42,7 +38,6 @@ export default function SignIn({ clientSession }: any) {
     errorRecoveryCode,
     errorOtp,
     enableRecovery,
-    setenableRecovery,
     handleEnableRecoveyCode,
   } = useSignIn();
   const { isTotpEnabled } = useSignUpStore();
@@ -53,7 +48,10 @@ export default function SignIn({ clientSession }: any) {
       label: "E-Mail",
       icon: (
         <Email
-          sx={{ fontSize: { xl: "25px", lg: "18px" }, color: "#FFFFFF80" }}
+          sx={{
+            fontSize: { xl: "25px", lg: "18px" },
+            color: theme.palette.iconSidebarIconColor.main,
+          }}
         />
       ),
       type: "email",
@@ -71,7 +69,10 @@ export default function SignIn({ clientSession }: any) {
       label: "Password",
       icon: (
         <Lock
-          sx={{ fontSize: { xl: "25px", lg: "18px" }, color: "#FFFFFF80" }}
+          sx={{
+            fontSize: { xl: "25px", lg: "18px" },
+            color: theme.palette.iconSidebarIconColor.main,
+          }}
         />
       ),
       type: "password",
@@ -88,7 +89,14 @@ export default function SignIn({ clientSession }: any) {
     {
       id: 5,
       label: "OTP",
-      icon: <Lock sx={{ fontSize: "18px", color: "#FFFFFF80" }} />,
+      icon: (
+        <Lock
+          sx={{
+            fontSize: "18px",
+            color: theme.palette.iconSidebarIconColor.main,
+          }}
+        />
+      ),
       type: "otp",
       name: "otp",
       value: otp,
@@ -105,7 +113,14 @@ export default function SignIn({ clientSession }: any) {
     {
       id: 5,
       label: "Recovary Code",
-      icon: <Lock sx={{ fontSize: "18px", color: "#FFFFFF80" }} />,
+      icon: (
+        <Lock
+          sx={{
+            fontSize: "18px",
+            color: theme.palette.iconSidebarIconColor.main,
+          }}
+        />
+      ),
       type: "code",
       name: "recoveryCode",
       value: recoveryCode,
@@ -176,7 +191,7 @@ export default function SignIn({ clientSession }: any) {
             >
               <PrimarySignInUPTypography
                 sx={{
-                  color: "white",
+                  color: theme.palette.signInUpPrimary.main,
                   fontSize: {
                     xs: "18px", // small screens
                     sm: "20px", // medium screens
@@ -192,7 +207,7 @@ export default function SignIn({ clientSession }: any) {
               </PrimarySignInUPTypography>
               <SecondarySignInUPTypography
                 sx={{
-                  color: "#F3F3F3BF",
+                  color: theme.palette.sigInUpStepperTextSecondary.main,
                   marginTop: 1,
                   fontSize: "14px",
                   "@media (min-width: 2120px)": {
@@ -240,7 +255,7 @@ export default function SignIn({ clientSession }: any) {
                         >
                           <Box
                             sx={{
-                              color: "#FFFFFF80",
+                              color: theme.palette.iconSidebarIconColor.main,
                               display: "flex",
                               alignItems: "center",
                               gap: "3px",
@@ -249,7 +264,7 @@ export default function SignIn({ clientSession }: any) {
                             {elem?.icon}
                             <SecondarySignInUPTypography
                               sx={{
-                                color: "white",
+                                color: theme.palette.signInUpPrimary.main,
                                 fontSize: "13px",
                               }}
                             >
@@ -264,7 +279,9 @@ export default function SignIn({ clientSession }: any) {
                             />
                           ) : (
                             <GInput
-                              background={"#31244F80"}
+                              background={
+                                theme.palette.sigInUpStepperTextSecondary.main
+                              }
                               name={elem.name}
                               type={"text"}
                               fullWidth={true}
@@ -291,7 +308,7 @@ export default function SignIn({ clientSession }: any) {
                             {elem.type == "otp" && (
                               <SecondarySignInUPTypography
                                 sx={{
-                                  color: "gray",
+                                  color: theme.palette.gray.main,
                                   fontSize: "12px",
                                   textAlign: "left",
                                 }}
@@ -302,7 +319,7 @@ export default function SignIn({ clientSession }: any) {
                             )}
                             <SecondarySignInUPTypography
                               sx={{
-                                color: "#327fb9",
+                                color: theme.palette.link.main,
                                 fontSize: "12px",
                                 cursor: "pointer",
                               }}
@@ -330,7 +347,7 @@ export default function SignIn({ clientSession }: any) {
                         >
                           <Box
                             sx={{
-                              color: "#FFFFFF80",
+                              color: theme.palette.iconSidebarIconColor.main,
                               display: "flex",
                               alignItems: "center",
                               gap: "3px",
@@ -339,7 +356,7 @@ export default function SignIn({ clientSession }: any) {
                             {elem?.icon}
                             <SecondarySignInUPTypography
                               sx={{
-                                color: "white",
+                                color: theme.palette.signInUpPrimary.main,
                                 fontSize: "13px",
                                 "@media (min-width: 2120px)": {
                                   fontSize: "20px",
@@ -350,7 +367,7 @@ export default function SignIn({ clientSession }: any) {
                             </SecondarySignInUPTypography>
                           </Box>
                           <GInput
-                            background={"#31244F80"}
+                            background={theme.palette.inputBg4.main}
                             name={elem.name}
                             type={elem.type}
                             fullWidth={true}
@@ -416,7 +433,7 @@ export default function SignIn({ clientSession }: any) {
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                      color: "white",
+                      color: theme.palette.signInUpPrimary.main,
                       width: "100%",
                       margin: "10px 0",
                     }}
@@ -424,7 +441,8 @@ export default function SignIn({ clientSession }: any) {
                     <Divider
                       variant="middle"
                       sx={{
-                        borderColor: "#FFFFFF40",
+                        borderColor:
+                          theme.palette.sigInUpButtonBorderSecondary.main,
                         borderWidth: "1px 100px 0px 100px",
                         borderStyle: "none solid",
                         height: "1px",
@@ -437,7 +455,7 @@ export default function SignIn({ clientSession }: any) {
                     >
                       <TertiarySignInUPTypography
                         sx={{
-                          color: "#FFFFFFBF",
+                          color: theme.palette.sigInUpStepperTextTertary.main,
                           fontSize: "12px",
                           top: 0,
                           "@media (min-width: 2120px)": {
@@ -455,7 +473,7 @@ export default function SignIn({ clientSession }: any) {
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                      color: "#F3F3F340",
+                      color: theme.palette.sigInUpButtonBorder.main,
                       width: "100%",
                       gap: { xs: 0, sm: 0, md: 2 },
                       flexDirection: { xs: "column", sm: "column", md: "row" },
@@ -475,12 +493,12 @@ export default function SignIn({ clientSession }: any) {
                           padding="13px 5px"
                           label={btn.label}
                           iconPosition="start"
-                          background="#7946FD40"
-                          color="white"
+                          background={theme.palette.inputBg.main}
+                          color={theme.palette.signInUpPrimary.main}
                           icon={<IconLayout>{btn.icon}</IconLayout>}
                           type={"button"}
                           sx={{
-                            boxShadow: "0px 0px 0px .3px #F3F3F340 inset",
+                            boxShadow: `0px 0px 0px .3px ${theme.palette.sigInUpButtonBorder.main} inset`,
                             width: "-webkit-fill-available",
                           }}
                           onClickHandler={btn.onClick}
