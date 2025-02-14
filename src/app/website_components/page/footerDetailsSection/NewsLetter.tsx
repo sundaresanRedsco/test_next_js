@@ -1,13 +1,14 @@
 "use client";
 
-import SurfaceButton from "@/components/layout/SurfaceButton";
+import SurfaceButton from "@/app/website_components/layout/SurfaceButton";
 import { Box, TextField, Typography } from "@mui/material";
 import React from "react";
-import Discord from "../../../../public/surface/footer/discord";
+
 import GitHubIcon from "@mui/icons-material/GitHub";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
 import YouTubeIcon from "@mui/icons-material/YouTube";
+import Discord from "../../../../../public/surface/footer/discord";
 
 type Props = {};
 
@@ -141,8 +142,8 @@ export default function NewsLetter({}: Props) {
 
       <Box
         sx={{
-          display: "flex", 
-          gap: "30px", 
+          display: "flex",
+          gap: "30px",
         }}
       >
         {iconsList?.map((val) => (
@@ -154,7 +155,7 @@ export default function NewsLetter({}: Props) {
               color: "#a9acac",
               transition: "color .2s ease-in-out",
               "&:hover": {
-                color: "#ffffff", 
+                color: "#ffffff",
               },
             }}
           >
