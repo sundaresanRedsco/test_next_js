@@ -161,7 +161,7 @@ function WorkspaceProjects() {
           Manage Projects
         </TextTypography>
 
-        <GButton
+        {/* <GButton
           background="#7A43FE"
           label="Create"
           color="#FFFFFF"
@@ -171,7 +171,7 @@ function WorkspaceProjects() {
           fontWeight="600"
           icon={<AddIcon />}
           iconPosition="start"
-        />
+        /> */}
       </div>
 
       {/* Mapping cardData to GlobalIntegartionData */}

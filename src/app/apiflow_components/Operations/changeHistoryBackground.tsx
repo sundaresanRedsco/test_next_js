@@ -77,11 +77,11 @@ const JsonComparisonList = (props: any) => {
               <Info style={{ marginRight: "5px" }} />
               <ListItemText
                 sx={{
-                  color: "white",
+                  "& .MuiTypography-body1": { color: "white" }, // Primary text color
+                  "& .MuiTypography-body2": { color: "lightgray" }, // Secondary text color
                 }}
-                primary={item.change_type}
                 secondary={`Created At: ${new Date(
-                  item?.createdAt
+                  item?.created_at
                 ).toLocaleString()}`}
               />
             </ListItem>

@@ -169,7 +169,7 @@ function WorkspaceEnvironments() {
           Manage Environments
         </TextTypography>
 
-        <GButton
+        {/* <GButton
           background="#7A43FE"
           label="Create"
           color="#FFFFFF"
@@ -179,7 +179,7 @@ function WorkspaceEnvironments() {
           fontWeight="600"
           icon={<AddIcon />}
           iconPosition="start"
-        />
+        /> */}
       </div>
 
       {/* Mapping cardData to GlobalIntegartionData */}

@@ -916,7 +916,7 @@ const ApiInsights = (props: any) => {
                           GetBackgroundChangeTracking({
                             back_id: value?.id,
                             operation_id: currentOperation?.operationId,
-                            offset: 1,
+                            offset: 0,
                             limit: 10,
                           })
                         );

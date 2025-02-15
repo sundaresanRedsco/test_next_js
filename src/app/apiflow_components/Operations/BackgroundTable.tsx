@@ -114,10 +114,12 @@ function BackgroundUrlsAccordion(props: {
                   {val?.connection_type || "-"}
                 </DataTypography>
                 <DataTypography>
-                  <strong>Updated At:</strong> {val?.updated_at || "-"}
+                  <strong>Updated At:</strong>{" "}
+                  {new Date(val?.updated_at).toLocaleString()}
                 </DataTypography>
                 <DataTypography>
                   <strong>Created At:</strong> {val?.created_at || "-"}
+                  {new Date(val?.Created_at).toLocaleString()}
                 </DataTypography>
               </Box>
             </AccordionDetails>
