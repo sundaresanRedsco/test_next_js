@@ -139,6 +139,10 @@ export default function DoumentPopup(props: any) {
             .unwrap()
             .then((res: any) => {
               setSwaggerDocs(res);
+              setErrorOtpdetails({});
+              setCrudDocs("");
+              setUrlData("");
+              setSelectOption("File");
             });
         } else {
           toast.success("File Imported");
@@ -150,6 +154,10 @@ export default function DoumentPopup(props: any) {
             .unwrap()
             .then((res: any) => {
               setSwaggerDocs(res);
+              setErrorOtpdetails({});
+              setCrudDocs("");
+              setUrlData("");
+              setSelectOption("File");
             });
         }
       })

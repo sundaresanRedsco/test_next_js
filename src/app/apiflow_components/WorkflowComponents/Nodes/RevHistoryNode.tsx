@@ -950,7 +950,7 @@ export default function RevHistoryNode({ data }: any) {
             sx={{
               zIndex: 9999,
               "& .MuiPaper-root": {
-                backgroundColor: "white",
+                backgroundColor: theme.palette.signInUpWhite.main,
                 width: "400px",
                 height: "350px",
                 position: "absolute",

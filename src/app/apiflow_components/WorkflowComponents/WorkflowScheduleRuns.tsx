@@ -235,26 +235,7 @@ const WorkflowScheduleRuns = (props: any) => {
                 {" "}
                 Run Frequency Type
               </PrimaryTypography> */}
-              <Box>
-                {/* <GSelect
-                  fullWidth={true}
-                  size={"small"}
-                  radius="4px"
-                  options={[
-                    {
-                      label: "Minute timer",
-                      value: "MINUTE_TIMER",
-                    },
-                    // { label: "Hour timer", value: "HOUR_TIMER" },
-                    // { label: "Week timer", value: "WEEK_TIMER" },
-                  ]}
-                  value={scheduleRunValues?.frequency_type}
-                  onChange={(val: any) => {
-                    setRunFrequencyValue(val);
-                    handleScheduleRunState("frequency_type", val);
-                  }}
-                /> */}
-              </Box>
+              <Box></Box>
             </Box>
 
             <Box
@@ -274,216 +255,35 @@ const WorkflowScheduleRuns = (props: any) => {
                     {" "}
                     Run Frequency
                   </PrimaryTypography>
-                  <GSelect
-                    fullWidth={true}
-                    size={"small"}
-                    radius="7px"
-                    options={[
-                      {
-                        label: "Every_5_MINUTES",
-                        value: "Every_5_MINUTES",
-                      },
-                      {
-                        label: "Every_10_MINUTES",
-                        value: "Every_10_MINUTES",
-                      },
-                      {
-                        label: "Every_15_MINUTES",
-                        value: "Every_15_MINUTES",
-                      },
-                      {
-                        label: "Every_20_MINUTES",
-                        value: "Every_20_MINUTES",
-                      },
-                      {
-                        label: "Every_30_MINUTES",
-                        value: "Every_30_MINUTES",
-                      },
-                      {
-                        label: "Every_40_MINUTES",
-                        value: "Every_40_MINUTES",
-                      },
-                      {
-                        label: "Every_50_MINUTES",
-                        value: "Every_50_MINUTES",
-                      },
-                    ]}
+
+                  <GInput
+                    disabled
                     value={scheduleRunValues?.repeat_schedule_w_m_d}
-                    onChange={(val: any) => {
-                      setScheduledRequestfrequencyDay(val);
-                      handleScheduleRunState("repeat_schedule_w_m_d", val);
+                    fullWidth={true}
+                    height="40px"
+                    padding="7px 10px"
+                    size="normal"
+                    onChangeHandler={(e: any) => {
+                      handleScheduleRunState(
+                        "repeat_schedule_w_m_d",
+                        e.target.value
+                      );
                     }}
+                    error={
+                      error?.repeat_schedule_w_m_d
+                        ? error?.repeat_schedule_w_m_d
+                        : ""
+                    }
+                    helperText={
+                      error?.repeat_schedule_w_m_d
+                        ? error?.repeat_schedule_w_m_d
+                        : ""
+                    }
                   />
                 </Box>
               )}
             </Box>
-            {/* <Box>
-              {scheduleRunValues?.frequency_type === "WEEK_TIMER" && (
-                <Box>
-                  <PrimaryTypography
-                    style={{
-                      fontSize: "14px",
-                      fontFamily: "FiraSans-regular",
-                      fontWeight: 900,
-                    }}
-                  >
-                    {" "}
-                    Run Frequency
-                  </PrimaryTypography>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "530px",
-                      marginTop: "10px",
-                      // marginLeft:'-45px'
-                    }}
-                  >
-                    <div>
-                      <GSelect
-                        fullWidth={false}
-                        size={"small"}
-                        radius="4px"
-                        width="260px"
-                        // borderColor={`${theme.palette.primaryBlack.main}`}
-                        options={[
-                          {
-                            label: "Every day",
-                            value: "EVERY_DAY",
-                          },
-                          {
-                            label: "Every weekday (Monday-Friday)",
-                            value: "WEEKDAY",
-                          },
-                          {
-                            label: "Every Monday",
-                            value: "MONDAY",
-                          },
-                          {
-                            label: "Every Tuesday",
-                            value: "TUESDAY",
-                          },
-                          {
-                            label: "Every Wednesday",
-                            value: "WEDNESDAY",
-                          },
-                          {
-                            label: "Every Thursday",
-                            value: "THURSDAY",
-                          },
-                          {
-                            label: "Every Friday",
-                            value: "FRIDAY",
-                          },
-                          {
-                            label: "Every Saturday",
-                            value: "SATURDAY",
-                          },
-                          {
-                            label: "Every Sunday",
-                            value: "SUNDAY",
-                          },
-                        ]}
-                        value={scheduledRequestfrequencyDay}
-                        onChange={(val: any) => {
-                          setScheduledRequestfrequencyDay(val);
-                        }}
-                      />
-                    </div>
-                    <div style={{ marginTop: "10px" }}>
-                      <SecondaryTypography style={{ fontSize: "14px" }}>
-                        at
-                      </SecondaryTypography>
-                    </div>
-                    <div style={{}}>
-                      <GSelect
-                        fullWidth={false}
-                        size={"small"}
-                        radius="4px"
-                        width="200px"
-                        borderColor={`${theme.palette.primaryBlack.main}`}
-                        options={[
-                          { label: "12:00 AM", value: "12:00 AM" },
-                          { label: "1:00 AM", value: "1:00 AM" },
-                          { label: "2:00 AM", value: "2:00 AM" },
-                          { label: "3:00 AM", value: "3:00 AM" },
-                          { label: "4:00 AM", value: "4:00 AM" },
-                          { label: "5:00 AM", value: "5:00 AM" },
-                          { label: "6:00 AM", value: "6:00 AM" },
-                          { label: "7:00 AM", value: "7:00 AM" },
-                          { label: "8:00 AM", value: "8:00 AM" },
-                          { label: "9:00 AM", value: "9:00 AM" },
-                          { label: "10:00 AM", value: "10:00 AM" },
-                          { label: "11:00 AM", value: "11:00 AM" },
-                          { label: "12:00 PM", value: "12:00 PM" },
-                          { label: "1:00 PM", value: "1:00 PM" },
-                          { label: "2:00 PM", value: "2:00 PM" },
-                          { label: "3:00 PM", value: "3:00 PM" },
-                          { label: "4:00 PM", value: "4:00 PM" },
-                          { label: "5:00 PM", value: "5:00 PM" },
-                          { label: "6:00 PM", value: "6:00 PM" },
-                          { label: "7:00 PM", value: "7:00 PM" },
-                          { label: "8:00 PM", value: "8:00 PM" },
-                          { label: "9:00 PM", value: "9:00 PM" },
-                          { label: "10:00 PM", value: "10:00 PM" },
-                          { label: "11:00 PM", value: "11:00 PM" },
-                        ]}
-                        value={
-                          // scheduledRequestfrequencyType
-                          scheduledRequestfrequencyTime
-                        }
-                        onChange={(val: any) => {
-                          setScheduledRequestfrequencyTime(val);
-                        }}
-                      />
-                    </div>
-                  </div>
-                </Box>
-              )}
-            </Box> */}
-            {/* <Box>
-              {scheduleRunValues?.frequency_type === "HOUR_TIMER" && (
-                <div style={{ marginTop: "10px" }}>
-                  <GSelect
-                    fullWidth={true}
-                    size={"small"}
-                    radius="4px"
-                    // width="530px"
-                    borderColor={`${theme.palette.primaryBlack.main}`}
-                    options={[
-                      {
-                        label: "Every hour",
-                        value: "EVERY_HOUR",
-                      },
-                      {
-                        label: "Every 2 hours",
-                        value: "EVERY_2_HOURS",
-                      },
-                      {
-                        label: "Every 3 hours",
-                        value: "EVERY_3_HOURS",
-                      },
-                      {
-                        label: "Every 4 hours",
-                        value: "EVERY_4_HOURS",
-                      },
-                      {
-                        label: "Every 6 hours",
-                        value: "EVERY_6_HOURS",
-                      },
-                      {
-                        label: "Every 12 hours",
-                        value: "EVERY_12_HOURS",
-                      },
-                    ]}
-                    value={scheduledRequestfrequencyHour}
-                    onChange={(val: any) => {
-                      setScheduledRequestfrequencyHour(val);
-                    }}
-                  />
-                </div>
-              )}
-            </Box> */}
+
             <div className="api_designFlow_description">
               <PrimaryTypography
                 style={{
