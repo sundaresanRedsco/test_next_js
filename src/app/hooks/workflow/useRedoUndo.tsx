@@ -22,7 +22,7 @@ const areObjectsDeeplyEqual = (obj1: any, obj2: any) => {
   );
 };
 
-export const deepEqual = (arr1: any[], arr2: any[]) => {
+const deepEqual = (arr1: any[], arr2: any[]) => {
   if (arr1.length !== arr2.length) return false;
 
   for (let i = 0; i < arr1.length; i++) {

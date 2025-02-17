@@ -3,7 +3,7 @@ import { adminUrl } from "../Services/auth";
 
 const threads = 5;
 let processedNodes = new Set();
-export async function runHandler(
+async function runHandler(
   doc: any,
   nodes: any,
   edges: any,
@@ -149,7 +149,7 @@ export async function runHandler(
   }
 }
 
-export function initializeRun(runMap: any, target: any) {
+function initializeRun(runMap: any, target: any) {
   if (runMap) {
     const updateData = runMap.get("run");
     if (updateData) {
@@ -162,7 +162,7 @@ export function initializeRun(runMap: any, target: any) {
   }
 }
 
-export async function processNode(
+async function processNode(
   doc: any,
   currentEdge: any,
   updatedNodes: any,
@@ -273,7 +273,7 @@ export async function processNode(
   };
 }
 
-export function updateRunStatus(runMap: any, target: any) {
+function updateRunStatus(runMap: any, target: any) {
   // Logging to indicate the function execution
 
   // Check if runMap is provided
@@ -310,7 +310,7 @@ export function updateRunStatus(runMap: any, target: any) {
   // Logging to indicate the function has completed execution
 }
 
-export function createRequestBody(
+function createRequestBody(
   currentNode: any,
   previousEdgeResponse: any,
   globalKeysArray: any,
@@ -403,7 +403,7 @@ export function createRequestBody(
   };
 }
 
-export function finalizeNode(
+function finalizeNode(
   runMap: any,
   target: any,
   nextEdges: any,
@@ -456,7 +456,7 @@ export function finalizeNode(
   }
 }
 
-export function finalizeRun(
+function finalizeRun(
   runMap: any,
   isQueueEmpty: any,
   globalResponse: any
@@ -474,7 +474,7 @@ export function finalizeRun(
   }
 }
 
-export function stopRun(runMap: any) {
+function stopRun(runMap: any) {
   if (runMap) {
     const updateData = runMap.get("run");
     if (updateData) {
@@ -488,7 +488,7 @@ export function stopRun(runMap: any) {
   }
 }
 
-export async function parallel(arr: any, apiLikeFunction: any, threads: any) {
+async function parallel(arr: any, apiLikeFunction: any, threads: any) {
   let index = 0;
   const results: any = [];
   const executing = new Set();
@@ -521,7 +521,7 @@ export async function parallel(arr: any, apiLikeFunction: any, threads: any) {
   return results;
 }
 
-export const updateKeys = (ydoc: any, value: any, id: any, keysArray: any) => {
+const updateKeys = (ydoc: any, value: any, id: any, keysArray: any) => {
   const newGlobalKeys = keysArray.map((item: any) =>
     item.id === id ? { ...item, value: value } : item
   );
@@ -538,7 +538,7 @@ export const updateKeys = (ydoc: any, value: any, id: any, keysArray: any) => {
   }
 };
 
-export function getNextEdges(
+function getNextEdges(
   edges: any,
   targetId: any,
   operationSuccess: any,
@@ -566,7 +566,7 @@ export function getNextEdges(
 
 // Other functions like getStartEdge, replacePlaceholders, performOperation, and shouldContinueFlow should be defined similarly
 
-export async function performOperation(
+async function performOperation(
   doc: any,
   targetId: any,
   flow_id: any,
@@ -607,7 +607,7 @@ async function changeManagement(data: any) {
   }
 }
 
-export function calculateSimilarityScore(nodeA: any, nodeB: any) {
+function calculateSimilarityScore(nodeA: any, nodeB: any) {
   // Ensure both inputs are objects
   if (
     typeof nodeA !== "object" ||
@@ -648,7 +648,7 @@ export function calculateSimilarityScore(nodeA: any, nodeB: any) {
   return finalScore;
 }
 
-export function compareGlobalResponse(globalResponse: any) {
+function compareGlobalResponse(globalResponse: any) {
   const nodeIds = Object.keys(globalResponse);
   const results = [];
 
@@ -677,7 +677,7 @@ export function compareGlobalResponse(globalResponse: any) {
 //   node_bd4qp501: { users: Array(30), total: 208, skip: 0, limit: 30 }
 // };
 
-export function getStartEdge(edges: any) {
+function getStartEdge(edges: any) {
   // Find the start edge based on your criteria
   return edges.find((edge: any) =>
     edge.sourceHandle?.endsWith("_start_startHandle")
@@ -777,7 +777,7 @@ export function replacePlaceholders(
 }
 
 //fql functions
-export function multipleFqlConditions(multipleCondition: any) {
+function multipleFqlConditions(multipleCondition: any) {
   let multiVal: any[] = [];
 
   multipleCondition?.forEach((pattern: any) => {
@@ -811,7 +811,7 @@ export function multipleFqlConditions(multipleCondition: any) {
   return multiValResult;
 }
 
-export function splitAndExtractPatterns(input: string) {
+function splitAndExtractPatterns(input: string) {
   if (input.startsWith("&appendArray")) {
     const patterns = input
       .replace(/^\&appendArray\(/, "")
@@ -868,7 +868,7 @@ export function splitAndExtractPatterns(input: string) {
   // return patterns;
 }
 
-export function extractCurlyBraceContent(str: any) {
+function extractCurlyBraceContent(str: any) {
   if (typeof str !== "string" || !str.startsWith("&")) {
     return { beforeCurly: null, curlyContent: null };
   }
@@ -895,7 +895,7 @@ function splitCommaSeparatedConditions(input: string): string[] {
   return matches ? matches.map((match) => match.trim()) : [];
 }
 
-export const upperCaseFunc = (str: string | number | object | null) => {
+const upperCaseFunc = (str: string | number | object | null) => {
   if (typeof str !== "string") {
     return str;
   }
@@ -923,7 +923,7 @@ export const upperCaseFunc = (str: string | number | object | null) => {
   return upperCaseValue;
 };
 
-export const lowerCaseFunc = (
+const lowerCaseFunc = (
   str: string | number | object | null
 ): string | number | object | null => {
   if (typeof str !== "string") {
@@ -948,7 +948,7 @@ export const lowerCaseFunc = (
   return lowerCaseValue;
 };
 
-export const stringToJsonFunc = (value: any) => {
+const stringToJsonFunc = (value: any) => {
   try {
     if (typeof value === "string") {
       if (
@@ -967,7 +967,7 @@ export const stringToJsonFunc = (value: any) => {
 
 //for array
 
-export function extractCommaSeperatedValues(input: any): any[] {
+function extractCommaSeperatedValues(input: any): any[] {
   // const arrays = input
   //   .replace(/^\[|\]$/g, "")
   //   .split(",")
@@ -1010,7 +1010,7 @@ export function extractCommaSeperatedValues(input: any): any[] {
   return multipleFqlArr;
 }
 
-export function appendArraysFunc(inputs: any) {
+function appendArraysFunc(inputs: any) {
   const commaSeperatedValues = extractCommaSeperatedValues(inputs);
   let resultArray: any[] = [];
 
@@ -1071,7 +1071,7 @@ function evaluateCondition(condition: ConditionParts): boolean {
   }
 }
 
-export function parseTernaryExpressionFunc(expression: string): string {
+function parseTernaryExpressionFunc(expression: string): string {
   if (!expression?.includes("?")) return expression;
 
   const ternaryPattern = /(.+?)\?(.+?):(.+)/;
@@ -1119,7 +1119,7 @@ export function parseTernaryExpressionFunc(expression: string): string {
   return expression;
 }
 
-export const updateArray = (
+const updateArray = (
   array: any,
   previousEdgeResponse: any,
   globalKeysArray: any
@@ -1273,13 +1273,13 @@ function dynamicFilter(data: any, queries: any) {
   return results.length === 1 ? results[0] : results;
 }
 
-export function generateUniqueNodeName() {
+function generateUniqueNodeName() {
   const prefix = "node_";
   const randomString = Math.random().toString(36).substring(2, 10); // Generates a random alphanumeric string
   return `${prefix}${randomString}`;
 }
 
-export function extractPlaceholdersFromPath(url: string) {
+function extractPlaceholdersFromPath(url: string) {
   if (!url) {
     return [];
   }
@@ -1315,7 +1315,7 @@ export function extractPlaceholdersFromPath(url: string) {
   }
 }
 
-export function getRandomColor() {
+function getRandomColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
   for (let i = 0; i < 6; i++) {
@@ -1324,7 +1324,7 @@ export function getRandomColor() {
   return color;
 }
 
-export const extractAllVariables = (inputString: any) => {
+const extractAllVariables = (inputString: any) => {
   const variablePattern = /\{response\.([^\}\.]+)(?:\.[^\}]*)?\}/g;
   const variables = [];
   let match;
@@ -1336,12 +1336,12 @@ export const extractAllVariables = (inputString: any) => {
   return variables;
 };
 
-export const validatePlaceholders = (str: any) => {
+const validatePlaceholders = (str: any) => {
   const regex = /\{[^}]*$/;
   return !regex.test(str);
 };
 
-export function prepareNodes(nodeMap: any) {
+function prepareNodes(nodeMap: any) {
   const nodeArray: any = [];
   const deleteNodeId: any = [];
   const nodeJson = nodeMap?.toJSON();
@@ -1369,7 +1369,7 @@ export function prepareNodes(nodeMap: any) {
 }
 
 // Helper function to prepare edges data
-export function prepareEdges(edgesMap: any) {
+function prepareEdges(edgesMap: any) {
   const edgesArray: any = [];
   const deleteEdgeId: any = [];
   const edgesJson = edgesMap?.toJSON();

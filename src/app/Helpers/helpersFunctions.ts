@@ -28,7 +28,7 @@ export const dateFormat = (val: string) => {
   return dateFormatValue;
 };
 
-export const dateFormatDateOnly = (val: string) => {
+const dateFormatDateOnly = (val: string) => {
   let dateFormat = "MMM DD, YYYY";
   const dateFormatValue = moment(val).format(dateFormat);
   return dateFormatValue;
@@ -127,7 +127,7 @@ function hasFilterCondition(query: any) {
 }
 
 // replace holders in apiflow designer
-export function replacePlaceholders(
+function replacePlaceholders(
   template: any,
   data: any,
   globalArrayKeys: any
@@ -432,7 +432,7 @@ export const getValueOrDefault = (value: any) => {
   return checkValue; // Ensure the returned value is always a string
 };
 
-export const extractAllVariables = (inputString: any) => {
+const extractAllVariables = (inputString: any) => {
   const variablePattern = /\{response\.([^\}\.]+)(?:\.[^\}]*)?\}/g;
   const variables = [];
   let match;
@@ -511,11 +511,11 @@ export function formatToTitleCase(str: string) {
   return formattedString;
 }
 
-export function getFirstThreeLetters(str: string) {
+function getFirstThreeLetters(str: string) {
   return str.substring(0, 3);
 }
 
-export function multipleFqlConditions(multipleCondition: any) {
+function multipleFqlConditions(multipleCondition: any) {
   let multiVal: any[] = [];
 
   multipleCondition?.forEach((pattern: any) => {
@@ -548,7 +548,7 @@ export function multipleFqlConditions(multipleCondition: any) {
   return multiValResult;
 }
 
-export function splitAndExtractPatterns(input: string) {
+function splitAndExtractPatterns(input: string) {
   if (input.startsWith("&appendArray")) {
     const patterns = input
       .replace(/^\&appendArray\(/, "")
@@ -604,7 +604,7 @@ export function splitAndExtractPatterns(input: string) {
   // return patterns;
 }
 
-export function extractCurlyBraceContent(str: any) {
+function extractCurlyBraceContent(str: any) {
   if (typeof str !== "string" || !str.startsWith("&")) {
     return { beforeCurly: null, curlyContent: null };
   }
@@ -631,7 +631,7 @@ function splitCommaSeparatedConditions(input: string): string[] {
   return matches ? matches.map((match) => match.trim()) : [];
 }
 
-export const upperCaseFunc = (str: string | number | object | null) => {
+const upperCaseFunc = (str: string | number | object | null) => {
   if (typeof str !== "string") {
     return str;
   }
@@ -659,7 +659,7 @@ export const upperCaseFunc = (str: string | number | object | null) => {
   return upperCaseValue;
 };
 
-export const lowerCaseFunc = (
+const lowerCaseFunc = (
   str: string | number | object | null
 ): string | number | object | null => {
   if (typeof str !== "string") {
@@ -684,7 +684,7 @@ export const lowerCaseFunc = (
   return lowerCaseValue;
 };
 
-export const stringToJsonFunc = (value: any) => {
+const stringToJsonFunc = (value: any) => {
   try {
     if (typeof value === "string") {
       if (
@@ -702,7 +702,7 @@ export const stringToJsonFunc = (value: any) => {
 
 //for array
 
-export function extractCommaSeperatedValues(input: any): any[] {
+function extractCommaSeperatedValues(input: any): any[] {
   // const arrays = input
   //   .replace(/^\[|\]$/g, "")
   //   .split(",")
@@ -744,7 +744,7 @@ export function extractCommaSeperatedValues(input: any): any[] {
   return multipleFqlArr;
 }
 
-export function appendArraysFunc(inputs: any) {
+function appendArraysFunc(inputs: any) {
   const commaSeperatedValues = extractCommaSeperatedValues(inputs);
   let resultArray: any[] = [];
 
@@ -805,7 +805,7 @@ function evaluateCondition(condition: ConditionParts): boolean {
   }
 }
 
-export function parseTernaryExpressionFunc(expression: string): string {
+function parseTernaryExpressionFunc(expression: string): string {
   if (!expression?.includes("?")) return expression;
 
   const ternaryPattern = /(.+?)\?(.+?):(.+)/;

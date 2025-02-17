@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AdminServices } from "../../Services/services";
 import { errorHandling } from "../../Services/errorHandling";
 
-export const GetRiskTableCount = createAsyncThunk(
+const GetRiskTableCount = createAsyncThunk(
   "riskapi/GetRiskTableCount",
   async () => {
     try {
@@ -18,7 +18,7 @@ export const GetRiskTableCount = createAsyncThunk(
   },
 );
 
-export const ScanCreate = createAsyncThunk(
+const ScanCreate = createAsyncThunk(
   "riskapi/scanCreate",
   async (value: any) => {
     try {
@@ -29,7 +29,7 @@ export const ScanCreate = createAsyncThunk(
   },
 );
 
-export const ScanSchduleCreate = createAsyncThunk(
+const ScanSchduleCreate = createAsyncThunk(
   "riskapi/scanschduleCreate",
   async (value: any) => {
     try {
@@ -45,7 +45,7 @@ export const ScanSchduleCreate = createAsyncThunk(
   },
 );
 
-export const ScanManualCreate = createAsyncThunk(
+const ScanManualCreate = createAsyncThunk(
   "riskapi/scanManualCreate",
   async (value: any) => {
     try {
@@ -61,7 +61,7 @@ export const ScanManualCreate = createAsyncThunk(
   },
 );
 
-export const GetScanPolicyDetailsById = createAsyncThunk(
+const GetScanPolicyDetailsById = createAsyncThunk(
   "riskapi/getScanPolicyDetailsById",
   async (user_policy_id: any) => {
     try {
@@ -91,7 +91,7 @@ const initialState: InitialStateType = {
   scanPolicyDetails: [],
 };
 
-export const projectSlice = createSlice({
+const projectSlice = createSlice({
   name: "riskapi",
   initialState,
   reducers: {},
@@ -164,6 +164,6 @@ export const projectSlice = createSlice({
   },
 });
 
-export type riskApiReducer = ReturnType<typeof projectSlice.reducer>;
+type riskApiReducer = ReturnType<typeof projectSlice.reducer>;
 
 export default projectSlice.reducer;

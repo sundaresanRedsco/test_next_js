@@ -60,7 +60,7 @@ const initialState: InitialStateType = {
   //   collectionsLists: [],
 };
 
-export const channelSlice = createSlice({
+const channelSlice = createSlice({
   name: "channel",
   initialState,
   reducers: {},

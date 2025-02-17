@@ -134,7 +134,7 @@ const initialState: InitialStateType = {
   testIntegrationLoading: false,
 };
 
-export const integrationSlice = createSlice({
+const integrationSlice = createSlice({
   name: "integration",
   initialState,
   reducers: {},

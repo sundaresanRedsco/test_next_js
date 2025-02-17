@@ -3,7 +3,7 @@ import { AdminServices } from "../../Services/services";
 import { errorHandling } from "../../Services/errorHandling";
 import { TeamMembersInterface } from "../../Utilities/interface/manageTeam";
 
-export const GetmembersbyTeamid = createAsyncThunk(
+const GetmembersbyTeamid = createAsyncThunk(
   "memebers/GetmembersbyTeamid",
   async (value: any) => {
     try {
@@ -19,7 +19,7 @@ export const GetmembersbyTeamid = createAsyncThunk(
   },
 );
 
-export const GetivitedMembersbyTeamid = createAsyncThunk(
+const GetivitedMembersbyTeamid = createAsyncThunk(
   "memebers/GetivitedMembersbyTeamid",
   async (value: any) => {
     try {
@@ -35,7 +35,7 @@ export const GetivitedMembersbyTeamid = createAsyncThunk(
   },
 );
 
-export const InviteMember = createAsyncThunk(
+const InviteMember = createAsyncThunk(
   "memeber/InviteMember",
   async (data: any) => {
     try {
@@ -46,7 +46,7 @@ export const InviteMember = createAsyncThunk(
   },
 );
 
-export const BulkInviteMember = createAsyncThunk(
+const BulkInviteMember = createAsyncThunk(
   "memeber/BulkInviteMember",
   async (value: any) => {
     try {
@@ -80,7 +80,7 @@ const initialState: InitialStateType = {
   inviteMemberList: [],
 };
 
-export const projectSlice = createSlice({
+const projectSlice = createSlice({
   name: "member",
   initialState,
   reducers: {},
@@ -141,6 +141,6 @@ export const projectSlice = createSlice({
   },
 });
 
-export type membersReducer = ReturnType<typeof projectSlice.reducer>;
+type membersReducer = ReturnType<typeof projectSlice.reducer>;
 
 export default projectSlice.reducer;

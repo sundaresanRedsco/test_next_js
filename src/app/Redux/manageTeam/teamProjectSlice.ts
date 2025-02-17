@@ -22,5 +22,5 @@ export const apiTeams = createApi({
 
 // export const { useLazyGetAllProjectByWorkspaceIdQuery, useGetAllProjectByWorkspaceIdQuery } = apiManagementProjects;
 
-export const { useLazyGetTeamsByUserIdQuery, useGetTeamsByUserIdQuery } =
+export const {   } =
   apiTeams;

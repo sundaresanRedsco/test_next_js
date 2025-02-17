@@ -3,7 +3,7 @@ import { AdminServices } from "../../Services/services";
 import { errorHandling } from "../../Services/errorHandling";
 import { apiMangeDahboardCountInterface } from "../../Utilities/interface/projectInterface";
 
-export const ImportSwaggerDocument = createAsyncThunk(
+const ImportSwaggerDocument = createAsyncThunk(
   "swaggerDoc/ImportSwaggerDocument",
   async (value: any) => {
     try {
@@ -22,7 +22,7 @@ export const ImportSwaggerDocument = createAsyncThunk(
   },
 );
 
-export const GetSwagerFileUrl = createAsyncThunk(
+const GetSwagerFileUrl = createAsyncThunk(
   "swaggerDoc/GetSwagerFileUrl",
   async (value: any) => {
     try {
@@ -55,7 +55,7 @@ const initialState: InitialStateType = {
   SwaggerDocs: [],
 };
 
-export const swaggerSlice = createSlice({
+const swaggerSlice = createSlice({
   name: "swaggerDoc",
   initialState,
   reducers: {},
@@ -95,6 +95,6 @@ export const swaggerSlice = createSlice({
   },
 });
 
-export type swaggerDocReducer = ReturnType<typeof swaggerSlice.reducer>;
+type swaggerDocReducer = ReturnType<typeof swaggerSlice.reducer>;
 
 export default swaggerSlice.reducer;

@@ -29,7 +29,7 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-export const verifyOtp = createAsyncThunk(
+const verifyOtp = createAsyncThunk(
   "signup/verifyOtp",
   async (value: any) => {
     try {
@@ -61,7 +61,7 @@ export const resendOtp = createAsyncThunk(
   }
 );
 
-export const signupOrganization = createAsyncThunk(
+const signupOrganization = createAsyncThunk(
   "signup/organization",
   async (value: any) => {
     try {
@@ -77,7 +77,7 @@ export const signupOrganization = createAsyncThunk(
   }
 );
 
-export const memberInviteActivation = createAsyncThunk(
+const memberInviteActivation = createAsyncThunk(
   "signup/memberInviteActivation",
   async (value: any) => {
     try {
@@ -103,7 +103,7 @@ const initialState: SignupInitialStateType = {
   loading: false,
 };
 
-export const signupSlice = createSlice({
+const signupSlice = createSlice({
   name: "signupage",
   initialState,
   reducers: {},

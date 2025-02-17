@@ -90,7 +90,7 @@ const initialState: InitialStateType = {
   },
 };
 
-export const prrmissionSlice = createSlice({
+const prrmissionSlice = createSlice({
   name: "account",
   initialState,
   reducers: {},

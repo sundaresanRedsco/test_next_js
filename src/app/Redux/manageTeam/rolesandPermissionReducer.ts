@@ -6,7 +6,7 @@ import {
   TeamRoleInterface,
 } from "../../Utilities/interface/manageTeam";
 
-export const GetTeamRoles = createAsyncThunk(
+const GetTeamRoles = createAsyncThunk(
   "permissions/getTeamRoles",
   async () => {
     try {
@@ -22,7 +22,7 @@ export const GetTeamRoles = createAsyncThunk(
   },
 );
 
-export const Getpermissions = createAsyncThunk(
+const Getpermissions = createAsyncThunk(
   "permissions/Getpermissions",
   async () => {
     try {
@@ -53,7 +53,7 @@ const initialState: InitialStateType = {
   getRoles: [],
 };
 
-export const prrmissionSlice = createSlice({
+const prrmissionSlice = createSlice({
   name: "permissions",
   initialState,
   reducers: {},
@@ -89,7 +89,7 @@ export const prrmissionSlice = createSlice({
   },
 });
 
-export type rolesandPermissionsReducer = ReturnType<
+type rolesandPermissionsReducer = ReturnType<
   typeof prrmissionSlice.reducer
 >;
 

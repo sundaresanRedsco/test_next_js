@@ -155,7 +155,7 @@ const DesignerImportPopup = dynamic(
   { ssr: false }
 );
 
-export const ItemTypes = {
+const ItemTypes = {
   CARD: "card",
 };
 

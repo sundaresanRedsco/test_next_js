@@ -23,10 +23,10 @@ export const edgeTypes = {
   changeEdge: ChangeEdge,
 };
 
-export type YDoc = Y.Doc;
+type YDoc = Y.Doc;
 
-export const threads = 5;
-export let processedNodes = new Set();
+const threads = 5;
+let processedNodes = new Set();
 export async function runHandler(
   doc: any,
   nodes: any,
@@ -158,7 +158,7 @@ export async function runHandler(
   }
 }
 
-export function initializeRun(runMap: any, target: any) {
+function initializeRun(runMap: any, target: any) {
   if (runMap) {
     const updateData = runMap.get("run");
     if (updateData) {
@@ -171,7 +171,7 @@ export function initializeRun(runMap: any, target: any) {
   }
 }
 
-export async function processNode(
+async function processNode(
   doc: any,
   currentEdge: any,
   updatedNodes: any,
@@ -276,7 +276,7 @@ export async function processNode(
   };
 }
 
-export function updateRunStatus(runMap: any, target: any) {
+function updateRunStatus(runMap: any, target: any) {
   // Logging to indicate the function execution
 
   // Check if runMap is provided
@@ -313,7 +313,7 @@ export function updateRunStatus(runMap: any, target: any) {
   // Logging to indicate the function has completed execution
 }
 
-export function createRequestBody(
+function createRequestBody(
   currentNode: any,
   previousEdgeResponse: any,
   globalKeysArray: any,
@@ -401,7 +401,7 @@ export function createRequestBody(
   };
 }
 
-export function finalizeNode(
+function finalizeNode(
   runMap: any,
   target: any,
   nextEdges: any,
@@ -454,7 +454,7 @@ export function finalizeNode(
   }
 }
 
-export function finalizeRun(
+function finalizeRun(
   runMap: any,
   isQueueEmpty: any,
   globalResponse: any
@@ -472,7 +472,7 @@ export function finalizeRun(
   }
 }
 
-export function stopRun(runMap: any) {
+function stopRun(runMap: any) {
   if (runMap) {
     const updateData = runMap.get("run");
     if (updateData) {
@@ -486,7 +486,7 @@ export function stopRun(runMap: any) {
   }
 }
 
-export async function parallel(arr: any, apiLikeFunction: any, threads: any) {
+async function parallel(arr: any, apiLikeFunction: any, threads: any) {
   let index = 0;
   const results: any = [];
   const executing = new Set();
@@ -519,7 +519,7 @@ export async function parallel(arr: any, apiLikeFunction: any, threads: any) {
   return results;
 }
 
-export const updateKeys = (ydoc: any, value: any, id: any, keysArray: any) => {
+const updateKeys = (ydoc: any, value: any, id: any, keysArray: any) => {
   const newGlobalKeys = keysArray.map((item: any) =>
     item.id === id ? { ...item, value: value } : item
   );
@@ -536,7 +536,7 @@ export const updateKeys = (ydoc: any, value: any, id: any, keysArray: any) => {
   }
 };
 
-export function getNextEdges(
+function getNextEdges(
   edges: any,
   targetId: any,
   operationSuccess: any,
@@ -564,7 +564,7 @@ export function getNextEdges(
 
 // Other functions like getStartEdge, replacePlaceholders, performOperation, and shouldContinueFlow should be defined similarly
 
-export async function performOperation(
+async function performOperation(
   doc: any,
   targetId: any,
   flow_id: any,
@@ -586,7 +586,7 @@ export async function performOperation(
   }
 }
 
-export async function changeManagement(data: any) {
+async function changeManagement(data: any) {
   try {
     // const apiUrl = `${adminUrl}/Api/Api_design_flow_service/update_node_chaneges_to_changesmanagement?Flow_id=${data?.flow_id}&node_id=${data?.node_id}&tenant_id=${data?.tenant_id}&workspace_id=${data?.workspace_id}&project_id=${data?.project_id}&operation_id=${data?.operation_id}`;
     const apiUrl = `Api/Api_design_flow_service/update_node_chaneges_to_changesmanagement?Flow_id=${data?.flow_id}&node_id=${data?.node_id}&tenant_id=${data?.tenant_id}&workspace_id=${data?.workspace_id}&project_id=${data?.project_id}&operation_id=${data?.operation_id}`;
@@ -599,7 +599,7 @@ export async function changeManagement(data: any) {
   }
 }
 
-export function calculateSimilarityScore(nodeA: any, nodeB: any) {
+function calculateSimilarityScore(nodeA: any, nodeB: any) {
   // Ensure both inputs are objects
   if (
     typeof nodeA !== "object" ||
@@ -640,7 +640,7 @@ export function calculateSimilarityScore(nodeA: any, nodeB: any) {
   return finalScore;
 }
 
-export function compareGlobalResponse(globalResponse: any) {
+function compareGlobalResponse(globalResponse: any) {
   const nodeIds = Object.keys(globalResponse);
   const results = [];
 
@@ -663,13 +663,13 @@ export function compareGlobalResponse(globalResponse: any) {
   results.forEach((result) => {});
 }
 
-export function getStartEdge(edges: any) {
+function getStartEdge(edges: any) {
   // Find the start edge based on your criteria
   return edges.find((edge: any) =>
     edge.sourceHandle?.endsWith("_start_startHandle")
   );
 }
-export const extractAllVariables = (inputString: any) => {
+const extractAllVariables = (inputString: any) => {
   const variablePattern = /\{response\.([^\}\.]+)(?:\.[^\}]*)?\}/g;
   const variables = [];
   let match;
@@ -727,7 +727,7 @@ export const checkConnections = (
   return { error: "" };
 };
 
-export const addEdges_new = (
+const addEdges_new = (
   ydoc: YDoc | null,
   target_node: any,
   source_node: any,

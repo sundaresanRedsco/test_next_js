@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AdminServices } from "../../Services/services";
 import { errorHandling } from "../../Services/errorHandling";
 
-export const AddViolatingKeys = createAsyncThunk(
+const AddViolatingKeys = createAsyncThunk(
   "compilance/AddViolatingKeys",
   async (value: any) => {
     try {
@@ -23,7 +23,7 @@ export const AddViolatingKeys = createAsyncThunk(
   }
 );
 
-export const GetStandards = createAsyncThunk(
+const GetStandards = createAsyncThunk(
   "compilance/GetStandards",
   async () => {
     try {
@@ -42,7 +42,7 @@ export const GetStandards = createAsyncThunk(
   }
 );
 
-export const GetViolatingKeysByStandards = createAsyncThunk(
+const GetViolatingKeysByStandards = createAsyncThunk(
   "compilance/GetViolatingKeysByStandards",
   async (value: any) => {
     try {
@@ -63,7 +63,7 @@ export const GetViolatingKeysByStandards = createAsyncThunk(
   }
 );
 
-export const UpdateViolatingKeys = createAsyncThunk(
+const UpdateViolatingKeys = createAsyncThunk(
   "compilance/UpdateViolatingKeys",
   async (value: any) => {
     try {
@@ -81,7 +81,7 @@ export const UpdateViolatingKeys = createAsyncThunk(
   }
 );
 
-export const DeleteViolatingKeys = createAsyncThunk(
+const DeleteViolatingKeys = createAsyncThunk(
   "compilance/DeleteViolatingKeys",
   async (value: any) => {
     try {
@@ -100,7 +100,7 @@ export const DeleteViolatingKeys = createAsyncThunk(
   }
 );
 
-export const BulkDeleteViolatingKeys = createAsyncThunk(
+const BulkDeleteViolatingKeys = createAsyncThunk(
   "compilance/BulkDeleteViolatingKeys",
   async (value: any) => {
     try {
@@ -120,7 +120,7 @@ export const BulkDeleteViolatingKeys = createAsyncThunk(
   }
 );
 
-export const BulkUpdateViolatingKeys = createAsyncThunk(
+const BulkUpdateViolatingKeys = createAsyncThunk(
   "compilance/BulkUpdateViolatingKeys",
   async (value: any) => {
     try {
@@ -157,7 +157,7 @@ const initialState: InitialStateType = {
   collectionsLists: [],
 };
 
-export const compilanceSlice = createSlice({
+const compilanceSlice = createSlice({
   name: "compilance",
   initialState,
   reducers: {},
@@ -250,7 +250,7 @@ export const compilanceSlice = createSlice({
   },
 });
 
-export type SecurityCompilanceReducer = ReturnType<
+type SecurityCompilanceReducer = ReturnType<
   typeof compilanceSlice.reducer
 >;
 

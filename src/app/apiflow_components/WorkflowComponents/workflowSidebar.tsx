@@ -32,14 +32,14 @@ import { useSideBarStore } from "@/app/hooks/sideBarStore";
 import { useGlobalStore } from "@/app/hooks/useGlobalStore";
 import { v4 as uuidv4 } from "uuid";
 
-export const SecondaryTypography = styled(Typography)`
+const SecondaryTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
   color: #eeeeee;
   font-size: 14px;
   font-weight: 500;
 `;
 
-export const TertiaryTypogrpahy = styled(Typography)`
+const TertiaryTypogrpahy = styled(Typography)`
   font-family: FiraSans-Regular !important;
   color: #eeeeee;
   font-size: 14px;

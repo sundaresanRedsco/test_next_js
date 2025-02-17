@@ -1,5 +1,5 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-// import { PackageType, UserDataType } from "../services/interfaces";
+
 import { login, logout } from "./loginReducer";
 import * as authService from "../Services/auth";
 import { AdminServices } from "../Services/services";
@@ -12,7 +12,6 @@ import {
   setCookies,
 } from "../Helpers/helpersFunctions";
 import { userInterface } from "../../interface/userInterface";
-// import errorHandling from "../services/errorHandling";
 
 type CommonInitialStateType = {
   isLoggedIn: boolean;
@@ -39,7 +38,7 @@ export const initializeSession = createAsyncThunk(
   }
 );
 
-export const getPackages = createAsyncThunk("commom/packages", async () => {
+const getPackages = createAsyncThunk("commom/packages", async () => {
   try {
     return await AdminServices(
       "get",
@@ -52,7 +51,7 @@ export const getPackages = createAsyncThunk("commom/packages", async () => {
   }
 });
 
-export const SendEmailOTPPassword = createAsyncThunk(
+const SendEmailOTPPassword = createAsyncThunk(
   "common/sendEmailOTPPassword",
   async (value: any) => {
     try {
@@ -68,7 +67,7 @@ export const SendEmailOTPPassword = createAsyncThunk(
   }
 );
 
-export const ForgetPasswordOTPverification = createAsyncThunk(
+const ForgetPasswordOTPverification = createAsyncThunk(
   "common/sendEmailOTPPassword",
   async (value: any) => {
     try {
@@ -141,7 +140,7 @@ export const UpdateCompanyDetails = createAsyncThunk(
   }
 );
 
-export const GetRefreshToken = createAsyncThunk(
+const GetRefreshToken = createAsyncThunk(
   "common/GetRefreshToken",
   async (value: any) => {
     try {
@@ -219,7 +218,7 @@ const initialState: CommonInitialStateType = {
   currentTreeActive: "",
 };
 
-export const commonSlice = createSlice({
+const commonSlice = createSlice({
   name: "common",
   initialState,
   reducers: {
@@ -413,10 +412,10 @@ export type CommonReducer = ReturnType<typeof commonSlice.reducer>;
 export const {
   selectContainer,
   updateTourStep,
-  updateTourStepValues,
+
   updateUserProfile,
   updateSessionPopup,
-  updateTheme,
+
   setCurrentTreeActive,
 } = commonSlice.actions;
 

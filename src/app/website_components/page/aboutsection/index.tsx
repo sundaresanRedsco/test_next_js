@@ -67,7 +67,7 @@ export default function AboutSection({}: Props) {
             wordBreak: "break-word",
             marginBlock: 0,
             fontSize: { md: "48px", sm: "32px", xs: "20px" },
-            lineHeight: { md: "56px", sm: "40px", xs: "40px" },
+            lineHeight: { md: "56px", sm: "30px", xs: "30px" },
             marginTop: "100px",
             textAlign: "center",
           }}

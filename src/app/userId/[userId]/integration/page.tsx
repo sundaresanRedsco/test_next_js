@@ -58,20 +58,8 @@ import jiraImage from "@/app/Assests/images/jira-log.png";
 import GInput from "@/app/apiflow_components/global/GInput";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
-// import {
-//   SoapIcon,
-//   JsonIcon,
-//   CloseIcon,
-//   // DeleteIcon,
-//   // EditIcon,
-//   // AwsIcon,
-//   ApacheApiSix,
-// } from "../../Assests/icons";
-
 import AwsIcon from "@/app/Assests/icons/AwsIcon.svg";
 import ApacheApiSix from "@/app/Assests/icons/ApacheApisixSvg.svg";
-// "./ApacheApisixSvg.svg"
-// "./AwsIcon.svg";
 
 import AzureImage from "@/app/Assests/images/azure-logo.png";
 import CloudImage from "@/app/Assests/images/google.png";

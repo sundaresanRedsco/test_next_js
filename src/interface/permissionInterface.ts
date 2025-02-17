@@ -1,6 +1,6 @@
 // types/permissions.ts
 
-export interface SubPermission {
+interface SubPermission {
   subModuleName: string;
   subPermissions: string[];
 }

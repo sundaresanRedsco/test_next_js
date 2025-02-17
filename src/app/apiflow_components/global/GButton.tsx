@@ -10,7 +10,7 @@ const StyledButton = styled(Button)`
   font-family: FiraSans-regular;
 `;
 
-export interface GlobalButtonProps {
+interface GlobalButtonProps {
   buttonType?: string | "primary" | "tertiary" | "secondary";
   fontSize?: any;
   dataTest?: string | undefined;

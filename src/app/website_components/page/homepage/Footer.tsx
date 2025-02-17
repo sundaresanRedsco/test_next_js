@@ -19,12 +19,12 @@ export default function Footer({}: Props) {
       id: 4,
       name: "",
     },
-    {
-      id: 5,
-      name: "English",
-      startIcon: <LanguageIcon sx={{ fontSize: "16px" }} />,
-      endIcon: <KeyboardArrowDownIcon sx={{ fontSize: "16px" }} />,
-    },
+    // {
+    //   id: 5,
+    //   name: "English",
+    //   startIcon: <LanguageIcon sx={{ fontSize: "16px" }} />,
+    //   endIcon: <KeyboardArrowDownIcon sx={{ fontSize: "16px" }} />,
+    // },
   ];
 
   return (
@@ -57,10 +57,10 @@ export default function Footer({}: Props) {
             color: "#a9acac",
             fontSize: "14px",
             lineHeight: "20px",
-            marginLeft: "20px",
+            marginLeft: "0px",
           }}
         >
-          © 2024 ApiFlow.
+          © 2024 Api Trail.
         </Typography>
       </Box>
       <Box

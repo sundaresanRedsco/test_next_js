@@ -1,7 +1,7 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AdminServices } from "../../Services/services";
 
-export const GetSenstiveDatacount = createAsyncThunk(
+const GetSenstiveDatacount = createAsyncThunk(
   "senstivedata/getsenstivedatacount",
   async () => {
     try {
@@ -17,7 +17,7 @@ export const GetSenstiveDatacount = createAsyncThunk(
   },
 );
 
-export const GetsenstivedataTypes = createAsyncThunk(
+const GetsenstivedataTypes = createAsyncThunk(
   "senstivedatatypes/getsenstivedatatypes",
   async () => {
     try {
@@ -33,7 +33,7 @@ export const GetsenstivedataTypes = createAsyncThunk(
   },
 );
 
-export const GetobservedSensitivity = createAsyncThunk(
+const GetobservedSensitivity = createAsyncThunk(
   "observedsenstivity/getobservedsensitivity",
   async () => {
     try {
@@ -49,7 +49,7 @@ export const GetobservedSensitivity = createAsyncThunk(
   },
 );
 
-export const GetsenstivedataTable = createAsyncThunk(
+const GetsenstivedataTable = createAsyncThunk(
   "senstiveratatable/getsenstivedatatable",
   async () => {
     try {
@@ -65,7 +65,7 @@ export const GetsenstivedataTable = createAsyncThunk(
   },
 );
 
-export const GetsenstiveDatatablePopup = createAsyncThunk(
+const GetsenstiveDatatablePopup = createAsyncThunk(
   "senstivedatatablepopup/getsenstivedatatablepopup",
   async () => {
     try {
@@ -81,7 +81,7 @@ export const GetsenstiveDatatablePopup = createAsyncThunk(
   },
 );
 
-export const GetsenstiveDataNestedPopup = createAsyncThunk(
+const GetsenstiveDataNestedPopup = createAsyncThunk(
   "senstivedatanestedpopup/getsenstivedatanestedpopup",
   async () => {
     try {
@@ -120,7 +120,7 @@ const initialState: InitialStateType = {
   nestedtablepopupcount: [],
 };
 
-export const senstiveDataSlice = createSlice({
+const senstiveDataSlice = createSlice({
   name: "senstivedata",
   initialState,
   reducers: {},
@@ -213,6 +213,6 @@ export const senstiveDataSlice = createSlice({
   },
 });
 
-export type senstiveDataReducer = ReturnType<typeof senstiveDataSlice.reducer>;
+type senstiveDataReducer = ReturnType<typeof senstiveDataSlice.reducer>;
 
 export default senstiveDataSlice.reducer;

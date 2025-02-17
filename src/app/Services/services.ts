@@ -15,16 +15,6 @@ export async function AdminServices(
       ...(headers && { headers: { Authorization: `Bearer ${headers}` } }),
     });
 
-    // const response = await axios({
-    //   method:"POST",
-    //   url: `/api/admin`,
-    //   data: {
-    //     method,   // Original HTTP method (GET, POST, etc.)
-    //     endpoint: url, // The actual API endpoint that is being masked
-    //     data,     // Payload for the request
-    //   },
-    //   headers
-    // })
     return response.data;
   } catch (error) {
     throw error;

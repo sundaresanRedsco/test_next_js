@@ -32,7 +32,7 @@ const TextTypography = styled(Typography)`
   margin-top: 0.7rem;
 `;
 
-export const PrimaryTypography = styled(Typography)`
+const PrimaryTypography = styled(Typography)`
   font-family: FiraSans-Regular;
   color: #ffffff;
   font-weight: 400;

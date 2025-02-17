@@ -14,7 +14,7 @@ const CardContainer = styled(Box)`
   width: 100%;
 `;
 
-export interface GlobalInfoCardProps {
+interface GlobalInfoCardProps {
   title: string;
   secondaryTitle: string;
   cardData: any;

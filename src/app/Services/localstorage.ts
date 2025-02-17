@@ -7,7 +7,6 @@ export const getItems = (key: string) => {
     }
     return null;
   } catch (error) {
-    console.error("Error reading from localStorage", error);
     return null;
   }
 };
@@ -18,9 +17,7 @@ export const setItem = (key: string, value: any) => {
     if (typeof window !== "undefined" && window.localStorage) {
       localStorage.setItem(key, JSON.stringify(value));
     }
-  } catch (error) {
-    console.error("Error writing to localStorage", error);
-  }
+  } catch (error) {}
 };
 
 export const removeItem = (key: string) => {
@@ -29,7 +26,5 @@ export const removeItem = (key: string) => {
     if (typeof window !== "undefined" && window.localStorage) {
       localStorage.removeItem(key);
     }
-  } catch (error) {
-    console.error("Error removing from localStorage", error);
-  }
+  } catch (error) {}
 };

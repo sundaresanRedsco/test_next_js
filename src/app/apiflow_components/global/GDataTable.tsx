@@ -39,7 +39,7 @@ const MenuProps = {
     },
   },
 };
-export const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "& .MuiTableCell-root": {
     fontFamily: "Firasans-light",
     color: theme.palette.signInUpPrimary.main,

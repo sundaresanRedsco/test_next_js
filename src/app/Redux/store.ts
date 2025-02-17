@@ -7,9 +7,6 @@ import commonReducer from "./commonReducer";
 import signupReducer from "./signupReducer";
 import apiManagementReducer from "./apiManagementReducer";
 import apiRiskReducer from "./apiRiskReducer";
-
-import apiInteligenceReducer from "./apiIntelligenceReducer";
-import apiTestingReducer from "./apiTestingReducer";
 import apiTeamReducer from "./apiTeamReducer";
 import settingsReducer from "./settingsReducer";
 import { socketMiddleware } from "../Services/WebSocket/middleware";
@@ -36,8 +33,6 @@ const store = configureStore({
     common: commonReducer,
     apiManagement: apiManagementReducer,
     apiRisk: apiRiskReducer,
-    apiIntelligence: apiInteligenceReducer,
-    apiTesting: apiTestingReducer,
     apiTeam: apiTeamReducer,
     settings: settingsReducer,
     reset: resetReducer,
@@ -60,4 +55,4 @@ export default store;
 
 export type RootStateType = ReturnType<typeof store.getState>;
 
-export type AppDispatchType = typeof store.dispatch;
+type AppDispatchType = typeof store.dispatch;

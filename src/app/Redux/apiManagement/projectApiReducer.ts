@@ -42,7 +42,7 @@ export const GetGroupsByWorkspaceIdOVerView = createAsyncThunk(
   }
 );
 
-export const GetProjectByWorkspaceIdOverView = createAsyncThunk(
+const GetProjectByWorkspaceIdOverView = createAsyncThunk(
   "projects/GetProjectByWorkspaceIdOverView",
   async (value: any) => {
     try {
@@ -61,7 +61,7 @@ export const GetProjectByWorkspaceIdOverView = createAsyncThunk(
   }
 );
 
-export const resetProjectstate = createAction("groups/resetState");
+const resetProjectstate = createAction("groups/resetState");
 
 type InitialStateType = {
   getProjectLoading: boolean;
@@ -94,7 +94,7 @@ const initialState: InitialStateType = {
   getGroupList: {},
 };
 
-export const projectApiSlice = createSlice({
+const projectApiSlice = createSlice({
   name: "groups",
   initialState,
   reducers: {
@@ -220,8 +220,8 @@ export type projectApiReducer = ReturnType<typeof projectApiSlice.reducer>;
 export const {
   setCurrentProject,
   resetProjectState,
-  updateProjectStartValue,
-  updateProjectEndValue,
+  
+  
   updateGroupOverViewEnd,
   updateGroupOverViewStart,
   setCurrentProjectDetails,

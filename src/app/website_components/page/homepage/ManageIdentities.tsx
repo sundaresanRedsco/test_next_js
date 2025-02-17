@@ -6,7 +6,7 @@ import { keyframes } from "@mui/system";
 
 type Props = {};
 
-export interface MenuItem {
+interface MenuItem {
   id: number;
   name: string;
   to: string;
@@ -70,7 +70,7 @@ export default function ManageIdentities({}: Props) {
         width: "100%",
         padding: "0 40px",
         // marginTop: "30px",
-        marginBottom: "100px",
+        marginBottom: { xs: "20px", md: "100px", sm: "20px", lg: "100px" },
         // backgroundColor: "#141420",
       }}
     >
@@ -87,14 +87,19 @@ export default function ManageIdentities({}: Props) {
           variant={"h2"}
           sx={{
             color: "white",
-            fontSize: { xs: "14px", sm: "32px", md: "40px", lg: "48px" },
+            fontSize: { xs: "18px", sm: "32px", md: "40px", lg: "48px" },
             fontWeight: 700,
             textWrap: "wrap",
             wordBreak: "break-word",
             textAlign: "center",
             marginBlock: 0,
             lineHeight: "56px",
-            margin: "100px 0 20px",
+            margin: {
+              xs: "20px 0 20px",
+              sm: "20px 0 20px",
+              md: "100px 0 20px",
+              lg: "100px 0 20px",
+            },
           }}
         >
           See API workflow in Action
@@ -131,6 +136,7 @@ export default function ManageIdentities({}: Props) {
             flexWrap: "wrap",
             alignItems: "center",
             justifyContent: "center",
+            marginTop: "10px",
             gap: 2,
           }}
         >

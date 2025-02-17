@@ -23,7 +23,7 @@ export const GetAllAcceptedInvitations = createAsyncThunk(
   }
 )
 
-export const resetGatewayStateLogin = createAction("Gateway/resetState");
+const resetGatewayStateLogin = createAction("Gateway/resetState");
 
 type InitialStateType = {
     getAcceptedInvitationLoading: boolean;
@@ -41,7 +41,7 @@ const initialState: InitialStateType = {
     acceptedInvitationTotalCount: 0
 }
 
-export const apiInvitationSlice = createSlice({
+const apiInvitationSlice = createSlice({
     name: "apiinvitation",
     initialState,
     reducers: {

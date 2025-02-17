@@ -7,7 +7,7 @@ const StyledButton = styled(Button)`
   font-size: 14px;
 `;
 
-export interface GButtonProps {
+interface GButtonProps {
   buttonType?: string;
   fontSize?: any;
   dataTest?: string | undefined;

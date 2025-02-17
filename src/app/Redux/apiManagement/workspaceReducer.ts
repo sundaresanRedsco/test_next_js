@@ -128,7 +128,7 @@ const initialState: InitialStateType = {
   totalCount: 0,
 };
 
-export const workspaceSlice = createSlice({
+const workspaceSlice = createSlice({
   name: "workspace",
   initialState,
   reducers: {

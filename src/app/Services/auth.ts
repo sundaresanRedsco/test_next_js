@@ -6,14 +6,14 @@ import {
   getCookies,
   setCookies,
 } from "../Helpers/helpersFunctions";
-export const environment = process.env.NODE_ENV;
+const environment = process.env.NODE_ENV;
 
 export let adminUrl: any;
-export let googleClientId: any;
+let googleClientId: any;
 adminUrl = process.env.NEXT_PUBLIC_BASE_URL;
 googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-export const DATE_FORMAT = "YYYY-MM-DD hh:mm:ss A";
+const DATE_FORMAT = "YYYY-MM-DD hh:mm:ss A";
 
 // Fetch user profile from cookies or session
 export async function getUserProfile(): Promise<any | null> {
@@ -103,7 +103,7 @@ export async function initSession({
 }
 
 // Login function, followed by session initialization
-export async function login(values: any): Promise<any> {
+async function login(values: any): Promise<any> {
   // Simulate API call or adjust based on real API response
   const data: any = await getSession(); // Fetch session data after login
 

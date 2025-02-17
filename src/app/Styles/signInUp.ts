@@ -3,7 +3,7 @@ import { styled } from "@mui/system";
 // import { Link } from "react-router-dom";
 import Link from "next/link";
 
-export const SignOuterContainer = styled(Box)`
+const SignOuterContainer = styled(Box)`
   height: 100vh;
   background: ${({ theme }) => theme.palette.signInUpBackground.main};
   background-repeat: no-repeat;
@@ -36,7 +36,7 @@ export const TertiarySignInUPTypography = styled(Typography)`
   line-height: normal;
 `;
 
-export const QuarternarySignInUPTypography = styled(Typography)`
+const QuarternarySignInUPTypography = styled(Typography)`
   color: ${({ theme }) => theme.palette.signInUpPrimary.main};
   font-family: FiraSans-light;
   font-style: normal;
@@ -44,7 +44,7 @@ export const QuarternarySignInUPTypography = styled(Typography)`
   line-height: normal;
 `;
 
-export const LinkSignInUPTypography = styled(Link)`
+const LinkSignInUPTypography = styled(Link)`
   color: ${({ theme }) => theme.palette.signInUpPrimary.main};
   font-family: FiraSans-light;
   font-style: normal;
@@ -63,13 +63,13 @@ export const HeadingTypography = styled(Typography)`
   font-weight: 600;
 `;
 
-export const FormHeadingTypography = styled(Typography)`
+const FormHeadingTypography = styled(Typography)`
   font-family: FiraSans-semibold;
   color: #fff;
   font-weight: 600;
 `;
 
-export const SignupMicrosoft = styled(Typography)`
+const SignupMicrosoft = styled(Typography)`
   color: ${({ theme }) => theme.palette.signInUpPrimary.main};
   font-family: FiraSans-light;
   font-style: normal;
@@ -87,7 +87,7 @@ export const PrimaryTypography = styled(Typography)`
   font-size: 0.8rem;
 `;
 
-export const CardImage = styled(Typography)`
+const CardImage = styled(Typography)`
   font-family: FiraSans-light !important;
   color: #fff;
   font-size: 0.8rem;
@@ -103,7 +103,7 @@ export const SecondaryTypography = styled(Typography)`
   font-size: 0.6rem;
 `;
 
-export const TableHeading = styled(Typography)`
+const TableHeading = styled(Typography)`
   font-family: FiraSans-medium !important;
   color: ${({ theme }) => theme.palette.primaryText.main};
   font-size: 14px;
@@ -114,7 +114,7 @@ export const TableHeading = styled(Typography)`
 // fontFamily: "Inter-regular",
 // fontWeight: "600",
 
-export const LinkTypography = styled(Link)`
+const LinkTypography = styled(Link)`
   font-family: FiraSans-Medium;
   color: ${({ theme }) => theme.palette.linkColor.main};
   text-decoration: none;
@@ -122,7 +122,7 @@ export const LinkTypography = styled(Link)`
 `;
 
 // pricing
-export const PricingBox = styled(Box)`
+const PricingBox = styled(Box)`
   position: relative;
   height: 85vh;
   width: 75%;
@@ -156,7 +156,7 @@ export const PricingBox = styled(Box)`
   }
 `;
 
-export const PricingCovImage = styled("img")`
+const PricingCovImage = styled("img")`
   position: absolute;
   width: 600px;
   height: 400px;
@@ -164,7 +164,7 @@ export const PricingCovImage = styled("img")`
   left: 0%;
 `;
 
-export const LoginLink = styled(Link)`
+const LoginLink = styled(Link)`
   color: ${({ theme }) => theme.palette.primaryText.main};
   font-family: FiraSans-light;
   font-style: normal;

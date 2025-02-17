@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AdminServices } from "../../Services/services";
 import { errorHandling } from "../../Services/errorHandling";
 
-export const GetChanelByWorkspaceId = createAsyncThunk(
+const GetChanelByWorkspaceId = createAsyncThunk(
   "posts/GetWorkspacesByUserId",
   async (data: any) => {
     try {
@@ -21,7 +21,7 @@ export const GetChanelByWorkspaceId = createAsyncThunk(
   },
 );
 
-export const GetChanelById = createAsyncThunk(
+const GetChanelById = createAsyncThunk(
   "posts/GetChanelById",
   async (value: any) => {
     try {
@@ -49,7 +49,7 @@ const initialState: InitialStateType = {
   getChannel: [],
 };
 
-export const postSlice = createSlice({
+const postSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {},
@@ -82,6 +82,6 @@ export const postSlice = createSlice({
   },
 });
 
-export type postReducer = ReturnType<typeof postSlice.reducer>;
+type postReducer = ReturnType<typeof postSlice.reducer>;
 
 export default postSlice.reducer;

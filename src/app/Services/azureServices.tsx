@@ -42,6 +42,6 @@ export const loginRequest = {
   scopes: ["openid", "profile"],
 };
 
-export const graphConfig = {
+const graphConfig = {
   graphMeEndpoint: "https://graph.microsoft.com/v1.0/me",
 };

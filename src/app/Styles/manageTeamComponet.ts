@@ -1,7 +1,7 @@
 import { Grid, Typography, Box } from "@mui/material";
 import { styled } from "@mui/system";
 
-export const ManageTeamsHeading = styled(Typography)`
+const ManageTeamsHeading = styled(Typography)`
   color: ${({ theme }) => theme.palette.primaryBlack.main};
   font-family: Inter-Regular;
   font-style: normal;
@@ -10,7 +10,7 @@ export const ManageTeamsHeading = styled(Typography)`
   font-size: 1.2rem;
 `;
 
-export const ManageTeamsText = styled(Typography)`
+const ManageTeamsText = styled(Typography)`
 color: ${({ theme }) => theme.palette.primaryBlack.main};
 font-family: Inter-Regular;
 font-style: normal;
@@ -22,7 +22,7 @@ color: gray;
 font-size: 0.8rem;
 `;
 
-export const ManageTeamsTableHeading = styled(Typography)`
+const ManageTeamsTableHeading = styled(Typography)`
   color: ${({ theme }) => theme.palette.primaryBlack.main};
   font-family: Inter-Regular;
   font-style: normal;
@@ -34,7 +34,7 @@ export const ManageTeamsTableHeading = styled(Typography)`
   font-size: 0.8rem;
 `;
 
-export const TeamMembersAddFile = styled(Typography)`
+const TeamMembersAddFile = styled(Typography)`
   color: ${({ theme }) => theme.palette.signInUpBlack.main};
   font-family: Inter-Regular;
   font-style: normal;
@@ -43,7 +43,7 @@ export const TeamMembersAddFile = styled(Typography)`
   margin-top: 0.3rem;
 `;
 
-export const ManageTeamsNoData = styled(Typography)`
+const ManageTeamsNoData = styled(Typography)`
   color: ${({ theme }) => theme.palette.signInUpBlack.main};
   font-family: Inter-Regular;
   font-style: normal;
@@ -51,7 +51,7 @@ export const ManageTeamsNoData = styled(Typography)`
   line-height: normal;
 `;
 
-export const TeamDiscoveryText = styled(Typography)`
+const TeamDiscoveryText = styled(Typography)`
   color: ${({ theme }) => theme.palette.signInUpBlack.main};
   font-family: Inter-Regular;
   font-style: normal;
@@ -59,7 +59,7 @@ export const TeamDiscoveryText = styled(Typography)`
   font-size: 0.8rem;
 `;
 
-export const TeamDiscoveryHeading = styled(Typography)`
+const TeamDiscoveryHeading = styled(Typography)`
 color: ${({ theme }) => theme.palette.signInUpBlack.main};
 font-family: Inter-Regular;
 font-style: normal;
@@ -79,14 +79,14 @@ export const TeamProfileHeading = styled(Typography)`
   margin-bottom: 10px;
 `;
 
-export const MembersText = styled(Typography)`
+const MembersText = styled(Typography)`
   color: ${({ theme }) => theme.palette.signInUpBlack.main};
   font-family: Inter-Regular;
   font-style: normal;
   line-height: normal;
   font-size: 0.8rem;
 `;
-export const AcceptedText = styled(Typography)`
+const AcceptedText = styled(Typography)`
   color: ${({ theme }) => theme.palette.signInUpBlack.main};
   font-family: Inter-Regular;
   font-style: normal;
@@ -95,7 +95,7 @@ export const AcceptedText = styled(Typography)`
   color: green;
 `;
 
-export const RolesHeading = styled(Typography)`
+const RolesHeading = styled(Typography)`
   color: ${({ theme }) => theme.palette.primaryBlack.main};
   font-family: Inter-Regular;
   font-style: normal;
@@ -105,7 +105,7 @@ export const RolesHeading = styled(Typography)`
   margin-bottom: 10px;
 `;
 
-export const RolesText = styled(Typography)`
+const RolesText = styled(Typography)`
   color: ${({ theme }) => theme.palette.signInUpBlack.main};
   font-family: Inter-Regular;
   font-style: normal;

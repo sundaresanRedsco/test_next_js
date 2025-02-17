@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AdminServices } from "../../Services/services";
 import { errorHandling } from "../../Services/errorHandling";
 
-export const GetAllPolicyDetails = createAsyncThunk(
+const GetAllPolicyDetails = createAsyncThunk(
   "policy/getAllPolicyDetails",
   async () => {
     try {
@@ -18,7 +18,7 @@ export const GetAllPolicyDetails = createAsyncThunk(
   },
 );
 
-export const CreatePolicyGroup = createAsyncThunk(
+const CreatePolicyGroup = createAsyncThunk(
   "policy/createPolicyGroup",
   async (data: any) => {
     try {
@@ -34,7 +34,7 @@ export const CreatePolicyGroup = createAsyncThunk(
   },
 );
 
-export const GetAllPolicyGroup = createAsyncThunk(
+const GetAllPolicyGroup = createAsyncThunk(
   "policy/getAllPolicyGroup",
   async () => {
     try {
@@ -59,7 +59,7 @@ export const GetAllPolicyGroup = createAsyncThunk(
   },
 );
 
-export const GetAllPolicyGroupbyWorkspaceId = createAsyncThunk(
+const GetAllPolicyGroupbyWorkspaceId = createAsyncThunk(
   "policy/getAllPolicyGroupbyWorkspaceId",
   async (workspace_id: string) => {
     try {
@@ -75,7 +75,7 @@ export const GetAllPolicyGroupbyWorkspaceId = createAsyncThunk(
   },
 );
 
-export const GetpolicybyUserpolicyid = createAsyncThunk(
+const GetpolicybyUserpolicyid = createAsyncThunk(
   "policy/GetpolicybyUserpolicyid",
   async (value: any) => {
     try {
@@ -86,7 +86,7 @@ export const GetpolicybyUserpolicyid = createAsyncThunk(
   },
 );
 
-export const ShowPolicygroupByWorkspaceid = createAsyncThunk(
+const ShowPolicygroupByWorkspaceid = createAsyncThunk(
   "policy/ShowPolicygroupByWorkspaceid",
   async (value: any) => {
     try {
@@ -102,7 +102,7 @@ export const ShowPolicygroupByWorkspaceid = createAsyncThunk(
   },
 );
 
-export const UpdateScanPolicy = createAsyncThunk(
+const UpdateScanPolicy = createAsyncThunk(
   "policy/UpdateScanPolicy",
   async (data: any) => {
     try {
@@ -118,7 +118,7 @@ export const UpdateScanPolicy = createAsyncThunk(
   },
 );
 
-export const DeleteUserpolicy = createAsyncThunk(
+const DeleteUserpolicy = createAsyncThunk(
   "userpolicy/DeleteUserpolicy",
   async (value: any) => {
     try {
@@ -145,7 +145,7 @@ export const DeleteUserpolicy = createAsyncThunk(
 //   }
 // );
 
-export const GetPolicyOffset = createAsyncThunk(
+const GetPolicyOffset = createAsyncThunk(
   "policy/GetPolicyOffset",
   async (data: any) => {
     try {
@@ -185,7 +185,7 @@ const initialState: InitialStateType = {
   policyOffset: [],
 };
 
-export const policySlice = createSlice({
+const policySlice = createSlice({
   name: "policy",
   initialState,
   reducers: {},
@@ -315,6 +315,6 @@ export const policySlice = createSlice({
   },
 });
 
-export type policyReducer = ReturnType<typeof policySlice.reducer>;
+type policyReducer = ReturnType<typeof policySlice.reducer>;
 
 export default policySlice.reducer;

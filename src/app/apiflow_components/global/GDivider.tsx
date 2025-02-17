@@ -1,6 +1,6 @@
 import { Divider } from "@mui/material";
 
-export interface GDividerProps {
+interface GDividerProps {
   color?: string;
   margin?: string;
 }

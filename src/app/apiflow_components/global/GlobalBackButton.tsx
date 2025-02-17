@@ -2,7 +2,7 @@ import React from "react";
 import { Typography } from "@mui/material";
 import BackV2 from "@/app/Assests/icons/BackNew.svg";
 
-export interface GlobalBackButtonProps {
+interface GlobalBackButtonProps {
   label?: string;
   onClick?: () => void;
   color?: string;

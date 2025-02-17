@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent, Typography } from "@mui/material";
 import GButton from "@/app/apiflow_components/global/GButtonV1";
 import { styled } from "@mui/system";
-export const HeadingTypography = styled(Typography)(({ theme }) => ({
+const HeadingTypography = styled(Typography)(({ theme }) => ({
   fontFamily: "FiraSans-regular !important",
   color: theme.palette.textPrimaryColor.main,
   fontWeight: 600,
@@ -24,7 +24,7 @@ export const HeadingTypography = styled(Typography)(({ theme }) => ({
   },
 }));
 
-export const SubHeadingTypography = styled(Typography)(({ theme }) => ({
+const SubHeadingTypography = styled(Typography)(({ theme }) => ({
   fontFamily: "FiraSans-regular !important",
   color: theme.palette.textSecondaryColor.main,
   fontSize: "0.7rem",
@@ -35,7 +35,7 @@ export const SubHeadingTypography = styled(Typography)(({ theme }) => ({
   },
 }));
 
-export const BodyTextTypography = styled(Typography)(({ theme }) => ({
+const BodyTextTypography = styled(Typography)(({ theme }) => ({
   fontFamily: "FiraSans-regular !important",
   color: theme.palette.textTertiaryColor.main,
   fontSize: "0.7rem",
@@ -46,7 +46,7 @@ export const BodyTextTypography = styled(Typography)(({ theme }) => ({
   },
 }));
 
-export const RiskTextTypography = styled(Typography)(({ theme }) => ({
+const RiskTextTypography = styled(Typography)(({ theme }) => ({
   fontFamily: "FiraSans-regular !important",
   color: "#E50001",
   fontWeight: 600,
@@ -56,7 +56,7 @@ export const RiskTextTypography = styled(Typography)(({ theme }) => ({
   },
 }));
 
-export const SuccessTextTypography = styled(Typography)(({ theme }) => ({
+const SuccessTextTypography = styled(Typography)(({ theme }) => ({
   fontFamily: "FiraSans-regular !important",
   color: "#34C468",
   fontSize: "0.8rem",

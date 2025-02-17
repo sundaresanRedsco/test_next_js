@@ -29,9 +29,6 @@ export function errorHandling(error: any) {
       errorData = JSON.stringify(data); // Serialize if it's an object
     }
   }
-  // else if (error?.status == 401) {
-  //   errorData={message:error.error}
-  // }
 
   return errorData;
 }

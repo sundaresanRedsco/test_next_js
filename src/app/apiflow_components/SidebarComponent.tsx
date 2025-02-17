@@ -2,20 +2,12 @@ import { Box } from "@mui/material";
 import React, { ReactNode, useEffect, useState } from "react";
 import { styled } from "@mui/system";
 import theme from "@/Theme/theme";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import DarkThemeV2Icon from "../Assests/icons/v2DarkThemeIcon.svg";
-import NounV2Integration from "../Assests/icons/v2noun-integration.svg";
-import NounV2Menu from "../Assests/icons/v2noun-menu.svg";
 import { translate } from "../Helpers/helpersFunctions";
-import NounV2Chat from "../Assests/icons/v2noun-chat.svg";
 import ApiTraceLogo from "../Assests/icons/logoNew.svg";
 import MenuImage from "../Assests/icons/VectorNew.svg";
-import MenuExpand from "../Assests/icons/SidebarMenu.svg";
-import MenuSearch from "../Assests/icons/sidebarSearch.svg";
-import MenuMessage from "../Assests/icons/SidebarMessage.svg";
+
 import MenuSettings from "../Assests/icons/SidebarSettings.svg";
 import MenuMaximize from "../Assests/icons/SidebarMaximize.svg";
-import MenuAccount from "../Assests/icons/SidebarAccount.svg";
 import MenuLogout from "../Assests/icons/SidebarLogout.svg";
 import { HeaderTextTypography } from "../Styles/signInUp";
 
@@ -40,18 +32,13 @@ import { resetGatewayStateProjectRisk } from "../Redux/apiRisk/projectRiskreduce
 import { resetGatewayStateRiskApi } from "../Redux/apiRisk/riskApiReducer";
 import { resetGatewayStateSensitiveData } from "../Redux/apiRisk/senstiveDataReducer";
 import { resetGatewayStateVulnerability } from "../Redux/apiRisk/vulnerabilityReducer";
-import { resetGatewayStateApiTestingDash } from "../Redux/apiTesting/apiTestingDashboardReducer";
-import { resetGatewayStateTestRunner } from "../Redux/apiTesting/testRunnerReducer";
 import { resetGatewayStateMembers } from "../Redux/manageTeam/membersReducer";
 import { resetGatewayStateRolesPermisssion } from "../Redux/manageTeam/rolesandPermissionReducer";
 import { resetGatewayStateTeam } from "../Redux/manageTeam/teamReducer";
 import { resetGatewayStateAccount } from "../Redux/settings/accountReducer";
-import { resetGatewayStateApiKey } from "../Redux/settings/apikeyReducer";
 import { logout, resetGatewayStateLogin } from "../Redux/loginReducer";
-import { resendOtp, resetGatewayStateSignUp } from "../Redux/signupReducer";
-import { resetGatewayStateApiActivity } from "../Redux/apiIntelligence/apiActivityReducer";
-import { resetGatewayStateApiAnalytics } from "../Redux/apiIntelligence/apiAnalyticsReducer";
-import { resetGatewayStateApiEndpoint } from "../Redux/apiIntelligence/apiEndPointReducer";
+import { resetGatewayStateSignUp } from "../Redux/signupReducer";
+
 import { resetGatewaySensibleMetrics } from "../Redux/apiRisk/sensibleMetricsReducer";
 import { CommonReducer, resetGatewayStateCommon } from "../Redux/commonReducer";
 import store, { RootStateType } from "../Redux/store";
@@ -68,7 +55,6 @@ import useMuiBreakpoints from "../hooks/useMuiBreakpoints";
 import IconLayout from "./global/IconLayout";
 import { useGlobalStore } from "../hooks/useGlobalStore";
 import { resetProjectList } from "../Redux/apiManagement/projectApiReducer";
-import { resetCollOperTreeData } from "../Redux/apiManagement/endpointReducer";
 import SettingsSidebar from "./SidebarSubComponent/SettingsSidebar";
 import { usePostStore } from "../store/usePostStore";
 import toast from "react-hot-toast";
@@ -377,20 +363,13 @@ function SidebarComponent(props: any) {
     dispatch(resetGatewayStateRiskApi());
     dispatch(resetGatewayStateSensitiveData());
     dispatch(resetGatewayStateVulnerability());
-    dispatch(resetGatewayStateApiTestingDash());
-    dispatch(resetGatewayStateTestRunner());
     dispatch(resetGatewayStateMembers());
     dispatch(resetGatewayStateRolesPermisssion());
     dispatch(resetGatewayStateTeam());
     dispatch(resetGatewayStateAccount());
-
-    dispatch(resetGatewayStateApiKey());
     dispatch(resetGatewayStateCommon());
     dispatch(resetGatewayStateLogin());
     dispatch(resetGatewayStateSignUp());
-    dispatch(resetGatewayStateApiActivity());
-    dispatch(resetGatewayStateApiAnalytics());
-    dispatch(resetGatewayStateApiEndpoint());
     dispatch(logout()).then((res: any) => {
       Cookies.remove(process.env.NEXT_PUBLIC_COOKIE_STAGEID ?? "");
 

@@ -8,7 +8,7 @@ import {
   PermissionsState,
 } from "../../../interface/permissionInterface";
 
-export const fetchPermissions = createAsyncThunk(
+const fetchPermissions = createAsyncThunk(
   "permissions/fetchPermissions",
   async (role_id: string): Promise<ModulePermission[]> => {
     try {
@@ -56,7 +56,7 @@ const permissionsSlice = createSlice({
   },
 });
 
-export const selectPermissions = (state: { permissions: PermissionsState }) =>
+const selectPermissions = (state: { permissions: PermissionsState }) =>
   state.permissions.permissions;
 export const { setPermissionState } = permissionsSlice.actions;
 

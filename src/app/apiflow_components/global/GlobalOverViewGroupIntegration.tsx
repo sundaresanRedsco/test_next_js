@@ -5,7 +5,7 @@ import { DeleteEnvironment, EditEnvironment } from "@/app/Assests/icons";
 import { styled } from "@mui/system";
 import { PrimaryTypography } from "@/app/Styles/signInUp";
 
-export interface GlobalOverViewGroupIntegrationProps {
+interface GlobalOverViewGroupIntegrationProps {
   data: any[];
 }
 

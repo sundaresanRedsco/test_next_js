@@ -12,7 +12,7 @@ export interface TeamListInterface {
   workspace_id: string;
 }
 
-export interface CurrentTeamInterface {
+interface CurrentTeamInterface {
   id: string;
   team_name: string;
   workspace_id: string;
@@ -45,7 +45,7 @@ export interface TeamMembersInterface {
   first_name: string;
 }
 
-export interface TeamInviteMembersInterface {
+interface TeamInviteMembersInterface {
   created_at?: string;
   email_id: string;
   expiry_at?: string;

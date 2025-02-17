@@ -1,4 +1,4 @@
-export interface ApiDesignNodeInterface {
+interface ApiDesignNodeInterface {
   id: string;
   width: number;
   height: number;
@@ -21,7 +21,7 @@ export interface ApiDesignNodeInterface {
   dragging: boolean;
 }
 
-export interface ApiDesignEdgeInterface {
+interface ApiDesignEdgeInterface {
   id: string;
   source: string;
   sourceHandle: string;

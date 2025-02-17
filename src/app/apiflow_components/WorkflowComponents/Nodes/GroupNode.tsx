@@ -14,7 +14,7 @@ import useReusableFunctions from "@/app/hooks/workflow/useReusableFunctions";
 import { BiLock } from "react-icons/bi";
 import { HiOutlineLockOpen } from "react-icons/hi2";
 
-export const TextTypography = styled(Typography)`
+const TextTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
   color: ${theme.palette.DarkBlack.main};
   font-size: 20px;

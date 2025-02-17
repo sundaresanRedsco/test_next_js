@@ -32,7 +32,7 @@ export const login = createAsyncThunk(
   }
 );
 
-export const resetPassword = createAsyncThunk(
+const resetPassword = createAsyncThunk(
   "login/reset",
   async (value: any) => {
     try {
@@ -90,7 +90,7 @@ const initialState: LoginInitialStateType = {
   status: "NOT-VERIFIED",
 };
 
-export const loginSlice = createSlice({
+const loginSlice = createSlice({
   name: "login",
   initialState,
   reducers: {},

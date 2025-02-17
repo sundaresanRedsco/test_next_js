@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AdminServices } from "../../Services/services";
 import { errorHandling } from "../../Services/errorHandling";
 
-export const GetAllSensitiveDataCount = createAsyncThunk(
+const GetAllSensitiveDataCount = createAsyncThunk(
   "sensibleMetrics/getAllSensitiveDataCount",
   async (value: any) => {
     try {
@@ -19,7 +19,7 @@ export const GetAllSensitiveDataCount = createAsyncThunk(
   },
 );
 
-export const GetAllSensitiveDataKeyCounts = createAsyncThunk(
+const GetAllSensitiveDataKeyCounts = createAsyncThunk(
   "sensibleMetrics/getAllSensitiveDataKeyCounts",
   async (value: any) => {
     try {
@@ -36,7 +36,7 @@ export const GetAllSensitiveDataKeyCounts = createAsyncThunk(
   },
 );
 
-export const GetAllSensitiveDateKeyInOperations = createAsyncThunk(
+const GetAllSensitiveDateKeyInOperations = createAsyncThunk(
   "sensibleMetrics/getAllSensitiveDateKeyInOperations",
   async (values: any) => {
     try {
@@ -63,7 +63,7 @@ const initialState: InitialStateType = {
   loading: false,
 };
 
-export const sensibleMetricSlice = createSlice({
+const sensibleMetricSlice = createSlice({
   name: "sensibleMetric",
   initialState,
   reducers: {},
@@ -119,7 +119,7 @@ export const sensibleMetricSlice = createSlice({
   },
 });
 
-export type sensibleMetricsReducer = ReturnType<
+type sensibleMetricsReducer = ReturnType<
   typeof sensibleMetricSlice.reducer
 >;
 

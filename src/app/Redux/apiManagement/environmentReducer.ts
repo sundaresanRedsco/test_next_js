@@ -73,7 +73,7 @@ export const GetProjectById = createAsyncThunk(
   }
 );
 
-export const GetNewProjectByWorkspaceIdSolrOffset = createAsyncThunk(
+const GetNewProjectByWorkspaceIdSolrOffset = createAsyncThunk(
   "projects/GetNewProjectByWorkspaceIdSolrOffset",
   async (values: any) => {
     try {
@@ -178,9 +178,9 @@ export const UpdateGroups = createAsyncThunk(
   }
 );
 
-export const resetGatewayStateSwaggerDoc = createAction("Gateway/resetState");
+const resetGatewayStateSwaggerDoc = createAction("Gateway/resetState");
 
-export const resetSwaggerState = createAction("swaggerDoc/resetState");
+const resetSwaggerState = createAction("swaggerDoc/resetState");
 
 type InitialStateType = {
   getProjectWsidLoading: boolean;
@@ -224,7 +224,7 @@ const initialState: InitialStateType = {
   getUpdateGroupLoading: false,
 };
 
-export const environmentSlice = createSlice({
+const environmentSlice = createSlice({
   name: "environments",
   initialState,
   reducers: {
@@ -470,7 +470,7 @@ export const environmentSlice = createSlice({
 export type environmentReducer = ReturnType<typeof environmentSlice.reducer>;
 export const {
   setCurrentEnvironment,
-  setCurrentEnvironmentDetails,
+  
   resetEnvironmentState,
   updateProjectStartValue,
   updateProjectEndValue,

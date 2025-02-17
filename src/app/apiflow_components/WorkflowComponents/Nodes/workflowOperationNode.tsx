@@ -82,7 +82,7 @@ const dataTypes = [
   { id: "FLOAT", label: "Float" },
 ];
 
-export const HeadingTypography = styled(Typography)`
+const HeadingTypography = styled(Typography)`
   font-family: FiraSans-Regular;
   color: black;
   font-weight: 600;
@@ -90,7 +90,7 @@ export const HeadingTypography = styled(Typography)`
   wordwrap: break-word;
 `;
 
-export const SecondaryTypography = styled(Typography)`
+const SecondaryTypography = styled(Typography)`
   font-family: FiraSans-Regular !important;
   color: #ffffff;
   font-size: 10px;
@@ -104,7 +104,7 @@ export const TextTypography = styled(Typography)`
   font-weight: 500;
 `;
 
-export const TertiaryTypogrpahy = styled(Typography)`
+const TertiaryTypogrpahy = styled(Typography)`
   font-family: FiraSans-Regular !important;
   color: #ffffff;
   font-size: 12px;

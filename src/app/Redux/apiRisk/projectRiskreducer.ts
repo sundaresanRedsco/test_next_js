@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AdminServices } from "../../Services/services";
 import { errorHandling } from "../../Services/errorHandling";
 
-export const GetRiskdashboardCount = createAsyncThunk(
+const GetRiskdashboardCount = createAsyncThunk(
   "riskdashboardcount/getriskdashboardcount",
   async () => {
     try {
@@ -18,7 +18,7 @@ export const GetRiskdashboardCount = createAsyncThunk(
   },
 );
 
-export const GetDashboardtable = createAsyncThunk(
+const GetDashboardtable = createAsyncThunk(
   "apiEndpoint/GetEndpointSummaryList",
   async () => {
     try {
@@ -29,7 +29,7 @@ export const GetDashboardtable = createAsyncThunk(
   },
 );
 
-export const ScanedDatabyWorkspaceid = createAsyncThunk(
+const ScanedDatabyWorkspaceid = createAsyncThunk(
   "scannedendpints/ScanedDatabyWorkspaceid",
   async (value: any) => {
     try {
@@ -45,7 +45,7 @@ export const ScanedDatabyWorkspaceid = createAsyncThunk(
   },
 );
 
-export const CreateScanTest = createAsyncThunk(
+const CreateScanTest = createAsyncThunk(
   "scan/CreateScanTest",
   async (value: any) => {
     try {
@@ -80,7 +80,7 @@ const initialState: InitialStateType = {
   scannedEndpoints: [],
 };
 
-export const projectSlice = createSlice({
+const projectSlice = createSlice({
   name: "apirisk",
   initialState,
   reducers: {},
@@ -142,6 +142,6 @@ export const projectSlice = createSlice({
   },
 });
 
-export type projectRiskreducer = ReturnType<typeof projectSlice.reducer>;
+type projectRiskreducer = ReturnType<typeof projectSlice.reducer>;
 
 export default projectSlice.reducer;

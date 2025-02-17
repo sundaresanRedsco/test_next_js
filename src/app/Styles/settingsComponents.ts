@@ -1,4 +1,4 @@
-import { Grid, Typography, Box } from "@mui/material";
+import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
 
 export const SettingsHeading = styled(Typography)`

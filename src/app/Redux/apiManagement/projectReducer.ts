@@ -20,7 +20,7 @@ import {
   singleProjectInterface,
 } from "../../Utilities/interface/projectInterface";
 
-export const GetDashboardCount = createAsyncThunk(
+const GetDashboardCount = createAsyncThunk(
   "project/getDashboardCount",
   async (workspace_id: any) => {
     try {
@@ -40,7 +40,7 @@ export const GetDashboardCount = createAsyncThunk(
   }
 );
 
-export const GetProjects = createAsyncThunk("project/getProjects", async () => {
+const GetProjects = createAsyncThunk("project/getProjects", async () => {
   try {
     return await AdminServices(
       "get",
@@ -75,7 +75,7 @@ export const GetProjects = createAsyncThunk("project/getProjects", async () => {
 //   }
 // );
 
-export const GetProjectByWorkspaceIdOffset = createAsyncThunk(
+const GetProjectByWorkspaceIdOffset = createAsyncThunk(
   "projects/GetProjectByWorkspaceIdOffset",
   async (values: any) => {
     try {
@@ -94,7 +94,7 @@ export const GetProjectByWorkspaceIdOffset = createAsyncThunk(
   }
 );
 
-export const CreateProjects = createAsyncThunk(
+const CreateProjects = createAsyncThunk(
   "project/createProjects",
   async (value: any) => {
     try {
@@ -113,7 +113,7 @@ export const CreateProjects = createAsyncThunk(
   }
 );
 
-export const GetProjectById = createAsyncThunk(
+const GetProjectById = createAsyncThunk(
   "project/getProjectById",
   async (value: any) => {
     try {
@@ -132,7 +132,7 @@ export const GetProjectById = createAsyncThunk(
   }
 );
 
-export const UpdateProjectById = createAsyncThunk(
+const UpdateProjectById = createAsyncThunk(
   "project/updateProjectById",
   async (value: any) => {
     try {
@@ -151,7 +151,7 @@ export const UpdateProjectById = createAsyncThunk(
   }
 );
 
-export const DeleteProject = createAsyncThunk(
+const DeleteProject = createAsyncThunk(
   "project/deleteProject",
   async (value: any) => {
     try {
@@ -170,7 +170,7 @@ export const DeleteProject = createAsyncThunk(
   }
 );
 
-export const GetCollections = createAsyncThunk(
+const GetCollections = createAsyncThunk(
   "project/getCollections",
   async () => {
     try {
@@ -184,7 +184,7 @@ export const GetCollections = createAsyncThunk(
   }
 );
 
-export const CreateCollections = createAsyncThunk(
+const CreateCollections = createAsyncThunk(
   "project/createCollections",
   async (value: any) => {
     try {
@@ -203,7 +203,7 @@ export const CreateCollections = createAsyncThunk(
   }
 );
 
-export const GetCollectionById = createAsyncThunk(
+const GetCollectionById = createAsyncThunk(
   "projects/getCollectionsById",
   async (value: any) => {
     try {
@@ -221,7 +221,7 @@ export const GetCollectionById = createAsyncThunk(
     }
   }
 );
-export const UpdateCollectionsById = createAsyncThunk(
+const UpdateCollectionsById = createAsyncThunk(
   "projects/updateCollectionsById",
   async (value: any) => {
     try {
@@ -241,7 +241,7 @@ export const UpdateCollectionsById = createAsyncThunk(
   }
 );
 
-export const DeleteCollections = createAsyncThunk(
+const DeleteCollections = createAsyncThunk(
   "projects/deleteCollections",
   async (value: any) => {
     try {
@@ -377,7 +377,7 @@ export const SoapOperationById = createAsyncThunk(
   }
 );
 
-export const DeleteOperation = createAsyncThunk(
+const DeleteOperation = createAsyncThunk(
   "projects/deleteOperation",
   async (value: any) => {
     try {
@@ -396,7 +396,7 @@ export const DeleteOperation = createAsyncThunk(
   }
 );
 
-export const PublishProject = createAsyncThunk(
+const PublishProject = createAsyncThunk(
   "projects/PublishProject",
   async (value: any) => {
     try {
@@ -410,7 +410,7 @@ export const PublishProject = createAsyncThunk(
   }
 );
 
-export const GetProjectPublishLogByProjectId = createAsyncThunk(
+const GetProjectPublishLogByProjectId = createAsyncThunk(
   "projects/projectPublishlogByProjectId",
   async (value: any) => {
     try {
@@ -429,7 +429,7 @@ export const GetProjectPublishLogByProjectId = createAsyncThunk(
   }
 );
 
-export const GetChangeHistoryByProjectPublishLogId = createAsyncThunk(
+const GetChangeHistoryByProjectPublishLogId = createAsyncThunk(
   "projects/getChangeHistoryByProjectPublishLogId",
   async (value: any) => {
     try {
@@ -448,7 +448,7 @@ export const GetChangeHistoryByProjectPublishLogId = createAsyncThunk(
   }
 );
 
-export const GetProjectByProjectId = createAsyncThunk(
+const GetProjectByProjectId = createAsyncThunk(
   "projects/getProjectByProjectId",
   async (value: any) => {
     try {
@@ -468,7 +468,7 @@ get_project_by_id?project_id=${value}`,
   }
 );
 
-export const ImportFromPostman = createAsyncThunk(
+const ImportFromPostman = createAsyncThunk(
   "projects/importFromPostman",
   async (value: any) => {
     try {
@@ -487,7 +487,7 @@ export const ImportFromPostman = createAsyncThunk(
   }
 );
 
-export const UpdateApiScanResponse = createAsyncThunk(
+const UpdateApiScanResponse = createAsyncThunk(
   "projects/updateApiScanResponse",
   async (value: any) => {
     try {
@@ -506,7 +506,7 @@ export const UpdateApiScanResponse = createAsyncThunk(
   }
 );
 
-export const ImportFromUrl = createAsyncThunk(
+const ImportFromUrl = createAsyncThunk(
   "projects/ImportFromUrl",
   async (value: any) => {
     try {
@@ -525,7 +525,7 @@ export const ImportFromUrl = createAsyncThunk(
   }
 );
 
-export const CloneCollection = createAsyncThunk(
+const CloneCollection = createAsyncThunk(
   "projects/cloneCollection",
   async (value: any) => {
     try {
@@ -547,7 +547,7 @@ export const CloneCollection = createAsyncThunk(
   }
 );
 
-export const CloneOperation = createAsyncThunk(
+const CloneOperation = createAsyncThunk(
   "projects/cloneOperation",
   async (value: any) => {
     try {
@@ -569,7 +569,7 @@ export const CloneOperation = createAsyncThunk(
   }
 );
 
-export const GetCollectionsByProjectId = createAsyncThunk(
+const GetCollectionsByProjectId = createAsyncThunk(
   "projects/getCollectionsByProjectId",
   async (value: any) => {
     try {
@@ -601,7 +601,7 @@ export const GetApiStatusByOpperationId = createAsyncThunk(
   }
 );
 
-export const ApiStageCreation = createAsyncThunk(
+const ApiStageCreation = createAsyncThunk(
   "projects/apiStageCreation",
   async (value: any) => {
     try {
@@ -617,7 +617,7 @@ export const ApiStageCreation = createAsyncThunk(
   }
 );
 
-export const GetAllStagesByWorkspaceId = createAsyncThunk(
+const GetAllStagesByWorkspaceId = createAsyncThunk(
   "projects/getAllStagesByWorkspaceId",
   async (value: any) => {
     try {
@@ -633,7 +633,7 @@ export const GetAllStagesByWorkspaceId = createAsyncThunk(
   }
 );
 
-export const GetAllStagesByProjectId = createAsyncThunk(
+const GetAllStagesByProjectId = createAsyncThunk(
   "projects/getAllStagesByProjectId",
   async (value: any) => {
     try {
@@ -649,7 +649,7 @@ export const GetAllStagesByProjectId = createAsyncThunk(
   }
 );
 
-export const GetAllAwsImportDataByTeamWsId = createAsyncThunk(
+const GetAllAwsImportDataByTeamWsId = createAsyncThunk(
   "projects/getAllAwsImportDataByTeamWsId",
   async (value: any) => {
     try {
@@ -666,7 +666,7 @@ export const GetAllAwsImportDataByTeamWsId = createAsyncThunk(
   }
 );
 
-export const UpdateAwsImport = createAsyncThunk(
+const UpdateAwsImport = createAsyncThunk(
   "projects/updateAwsImport",
   async (value: any) => {
     try {
@@ -698,7 +698,7 @@ export const GetProjectByWorkspaceIdSolrOffset = createAsyncThunk(
   }
 );
 
-export const GetProjectByWorkspaceIdSolrOffsetPagination = createAsyncThunk(
+const GetProjectByWorkspaceIdSolrOffsetPagination = createAsyncThunk(
   "projects/getProjectByWorkspaceIdSolrOffsetPagination",
   async (values: any) => {
     try {
@@ -778,7 +778,7 @@ export const SensitiveOffsetClickHouse = createAsyncThunk(
   }
 );
 
-export const UpdateOrphanLimit = createAsyncThunk(
+const UpdateOrphanLimit = createAsyncThunk(
   "projects/UpdateOrphanLimit",
   async (data: any) => {
     try {
@@ -825,7 +825,7 @@ export const BackgroundUrlList = createAsyncThunk(
   }
 );
 
-export const GetWsdlOperByCollId = createAsyncThunk(
+const GetWsdlOperByCollId = createAsyncThunk(
   "projects/GetWsdlOperByCollId",
   async (value: any) => {
     try {
@@ -841,7 +841,7 @@ export const GetWsdlOperByCollId = createAsyncThunk(
   }
 );
 
-export const CreateSoapOperations = createAsyncThunk(
+const CreateSoapOperations = createAsyncThunk(
   "projects/CreateSoapOperations",
   async (values: any) => {
     try {
@@ -857,7 +857,7 @@ export const CreateSoapOperations = createAsyncThunk(
   }
 );
 
-export const GetCollectionOperationTree = createAsyncThunk(
+const GetCollectionOperationTree = createAsyncThunk(
   "projects/GetCollectionOperationTree",
   async (values: any) => {
     try {
@@ -1301,7 +1301,7 @@ const initialState: InitialStateType = {
   testLoading: false,
 };
 
-export const projectSlice = createSlice({
+const projectSlice = createSlice({
   name: "project",
   initialState,
   reducers: {

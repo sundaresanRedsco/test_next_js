@@ -23,7 +23,7 @@ export const GetDesignflowMinamlInfoFlowoffset = createAsyncThunk(
     }
   }
 );
-export const GetApiDesignFlowByWorkspaceId = createAsyncThunk(
+const GetApiDesignFlowByWorkspaceId = createAsyncThunk(
   "apiFlowDesign/GetApiDesignFlowByWorkspaceId",
   async (value: any) => {
     try {
@@ -42,7 +42,7 @@ export const GetApiDesignFlowByWorkspaceId = createAsyncThunk(
   }
 );
 
-export const GetApiDesignFlowByProjectIdStageId = createAsyncThunk(
+const GetApiDesignFlowByProjectIdStageId = createAsyncThunk(
   "apiFlowDesign/GetApiDesignFlowByProjectIdStageId",
   async (values: any) => {
     try {
@@ -81,7 +81,7 @@ export const CreateApiDesignFlow = createAsyncThunk(
   }
 );
 
-export const UpdateApiDesignFlow = createAsyncThunk(
+const UpdateApiDesignFlow = createAsyncThunk(
   "apiFlowDesign/UpdateApiDesignFlow",
   async (value: any) => {
     try {
@@ -100,7 +100,7 @@ export const UpdateApiDesignFlow = createAsyncThunk(
   }
 );
 
-export const DeleteApiDesignFlow = createAsyncThunk(
+const DeleteApiDesignFlow = createAsyncThunk(
   "apiFlowDesign/DeleteApiDesignFlow",
   async (value: any) => {
     try {
@@ -119,7 +119,7 @@ export const DeleteApiDesignFlow = createAsyncThunk(
   }
 );
 
-export const DesignApiFlow = createAsyncThunk(
+const DesignApiFlow = createAsyncThunk(
   "apiFlowDesign/designApiFlow",
   async (value: any) => {
     try {
@@ -165,7 +165,7 @@ export const GetDesignApiFlow = createAsyncThunk(
   }
 );
 
-export const DeleteNodeEdges = createAsyncThunk(
+const DeleteNodeEdges = createAsyncThunk(
   "apiFlowDesign/deleteNodeEdges",
   async (value: any) => {
     try {
@@ -184,7 +184,7 @@ export const DeleteNodeEdges = createAsyncThunk(
   }
 );
 
-export const RunDesignFlow = createAsyncThunk(
+const RunDesignFlow = createAsyncThunk(
   "apiFlowDesign/RunDesignFlow",
   async (flow_id: any) => {
     try {
@@ -268,7 +268,7 @@ export const GetRunScheduleDetailsByFlowId = createAsyncThunk(
   }
 );
 
-export const GetApiScheduleRunDetailsByScheduleId = createAsyncThunk(
+const GetApiScheduleRunDetailsByScheduleId = createAsyncThunk(
   "apiFlowDesign/GetApiScheduleRunDetailsByScheduleId",
   async (scheduleId: any) => {
     try {
@@ -287,7 +287,7 @@ export const GetApiScheduleRunDetailsByScheduleId = createAsyncThunk(
   }
 );
 
-export const GetApiScheduleRunDnsDetailsResponseById = createAsyncThunk(
+const GetApiScheduleRunDnsDetailsResponseById = createAsyncThunk(
   "apiFlowDesign/GetApiScheduleRunDnsDetailsResponseById",
   async (id: any) => {
     try {
@@ -306,7 +306,7 @@ export const GetApiScheduleRunDnsDetailsResponseById = createAsyncThunk(
   }
 );
 
-export const ScheduleRunDesignApi = createAsyncThunk(
+const ScheduleRunDesignApi = createAsyncThunk(
   "apiFlowDesign/ScheduleRunDesignApi",
   async (data: any) => {
     try {
@@ -365,7 +365,7 @@ export const UpdateScheduleRunDesignApi = createAsyncThunk(
   }
 );
 
-export const GetByScheduleRunId = createAsyncThunk(
+const GetByScheduleRunId = createAsyncThunk(
   "apiFlowDesign/GetByScheduleRunId",
   async (data: any) => {
     try {
@@ -384,7 +384,7 @@ export const GetByScheduleRunId = createAsyncThunk(
   }
 );
 
-export const GetByScheduleResponseByRunAtId = createAsyncThunk(
+const GetByScheduleResponseByRunAtId = createAsyncThunk(
   "apiFlowDesign/GetByScheduleResponseByRunAtId",
   async (data: any) => {
     try {
@@ -403,7 +403,7 @@ export const GetByScheduleResponseByRunAtId = createAsyncThunk(
   }
 );
 
-export const GetCollecctionAndOpeartions = createAsyncThunk(
+const GetCollecctionAndOpeartions = createAsyncThunk(
   "apiFlowDesign/GetCollecctionAndOpeartions",
   async (data: any) => {
     try {
@@ -557,7 +557,7 @@ export const CreateGlobalKeys = createAsyncThunk(
     }
   }
 );
-export const UpdatelobalKeys = createAsyncThunk(
+const UpdatelobalKeys = createAsyncThunk(
   "apiFlowDesign/GetGlobalKeys",
   async (data: any) => {
     try {
@@ -595,7 +595,7 @@ export const GetNodeChangeManByFlowNodeId = createAsyncThunk(
   }
 );
 
-export const GetDesignFlowOffset = createAsyncThunk(
+const GetDesignFlowOffset = createAsyncThunk(
   "apiFlowDesign/GetDesignFlowOffset",
   async (data: any) => {
     try {
@@ -779,7 +779,7 @@ const initialState: InitialStateType = {
   getFlowVersionLockLoading: false,
 };
 
-export const flowSlice = createSlice({
+const flowSlice = createSlice({
   name: "apiFlowDesign",
   initialState,
   reducers: {

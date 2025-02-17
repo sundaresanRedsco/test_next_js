@@ -10,7 +10,7 @@ const initialState: InitialStateType = {
   tabs: ["get_started"],
 };
 
-export const tabsSlice = createSlice({
+const tabsSlice = createSlice({
   name: "tabs",
   initialState,
   reducers: {

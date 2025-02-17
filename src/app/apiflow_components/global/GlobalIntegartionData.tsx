@@ -21,7 +21,7 @@ import {
 import { styled } from "@mui/system";
 import { PrimaryTypography } from "@/app/Styles/signInUp";
 
-export interface GlobalIntegartionDataProps {
+interface GlobalIntegartionDataProps {
   data: any[];
 }
 

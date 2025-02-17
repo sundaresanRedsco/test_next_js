@@ -4,7 +4,7 @@ import { errorHandling } from "../../Services/errorHandling";
 import { operationInterface } from "../../Utilities/interface/endpointInterface";
 import { GetCollecOperTreeInterface } from "../../../interface/endpointInterface";
 
-export const GetOperations = createAsyncThunk(
+const GetOperations = createAsyncThunk(
   "projects/getOperations",
   async (value: any) => {
     try {
@@ -85,7 +85,7 @@ export const GetCollectionOperationTreeFlow = createAsyncThunk(
     }
   }
 );
-export const GetOperationTagsCountbyProjectAndStageId = createAsyncThunk(
+const GetOperationTagsCountbyProjectAndStageId = createAsyncThunk(
   "endpoint/GetOperationTagsCountbyProjectAndStageId",
   async (value: any) => {
     try {
@@ -104,7 +104,7 @@ export const GetOperationTagsCountbyProjectAndStageId = createAsyncThunk(
   }
 );
 
-export const GetOperationTagsCountbyCollectionId = createAsyncThunk(
+const GetOperationTagsCountbyCollectionId = createAsyncThunk(
   "projects/GetOperationTagsCountbyCollectionId",
   async (collection_id: any) => {
     try {
@@ -123,7 +123,7 @@ export const GetOperationTagsCountbyCollectionId = createAsyncThunk(
   }
 );
 
-export const GetOperationCountbyStageId = createAsyncThunk(
+const GetOperationCountbyStageId = createAsyncThunk(
   "endpoint/GetOperationCountbyStageId",
   async (value: any) => {
     try {
@@ -142,7 +142,7 @@ export const GetOperationCountbyStageId = createAsyncThunk(
   }
 );
 
-export const GetOperationCountbyCollectionId = createAsyncThunk(
+const GetOperationCountbyCollectionId = createAsyncThunk(
   "projects/GetOperationCountbyCollectionId",
   async (collection_id: any) => {
     try {
@@ -277,9 +277,9 @@ export const GetBackgroundChangeTracking = createAsyncThunk(
   }
 );
 
-export const resetGatewayStateSwaggerDoc = createAction("Gateway/resetState");
+const resetGatewayStateSwaggerDoc = createAction("Gateway/resetState");
 
-export const resetSwaggerState = createAction("swaggerDoc/resetState");
+const resetSwaggerState = createAction("swaggerDoc/resetState");
 type Endpoint = {
   name: string;
   id: string;
@@ -320,7 +320,7 @@ const initialState: InitialStateType = {
   changeHistoryBackground: [],
 };
 
-export const endpointSlice = createSlice({
+const endpointSlice = createSlice({
   name: "endpoints",
   initialState,
   reducers: {

@@ -3,7 +3,7 @@ import { AdminServices } from "../../Services/services";
 import { errorHandling } from "../../Services/errorHandling";
 import { TeamListInterface } from "../../Utilities/interface/manageTeam";
 
-export const CreateNewteam = createAsyncThunk(
+const CreateNewteam = createAsyncThunk(
   "teams/CreateNewteam",
   async (data: any) => {
     try {
@@ -14,7 +14,7 @@ export const CreateNewteam = createAsyncThunk(
   },
 );
 
-export const GetTeamsbyUserid = createAsyncThunk(
+const GetTeamsbyUserid = createAsyncThunk(
   "teams/GetteamsbyUserid",
   async (value: any) => {
     try {
@@ -30,7 +30,7 @@ export const GetTeamsbyUserid = createAsyncThunk(
   },
 );
 
-export const TeamProfileUpdate = createAsyncThunk(
+const TeamProfileUpdate = createAsyncThunk(
   "teams/TeamProfileUpdate",
   async (data: any) => {
     try {
@@ -41,7 +41,7 @@ export const TeamProfileUpdate = createAsyncThunk(
   },
 );
 
-export const GetTeamsByWorkspaceId = createAsyncThunk(
+const GetTeamsByWorkspaceId = createAsyncThunk(
   "teams/GetTeamsByWorkspaceId",
   async (wsid: any) => {
     try {
@@ -71,7 +71,7 @@ const initialState: InitialStateType = {
   currentTeam: {},
 };
 
-export const teamSlice = createSlice({
+const teamSlice = createSlice({
   name: "teams",
   initialState,
   reducers: {
@@ -129,6 +129,6 @@ export const teamSlice = createSlice({
 });
 
 export type createTeamreducer = ReturnType<typeof teamSlice.reducer>;
-export const { selectCurrentTeam } = teamSlice.actions;
+export const {  } = teamSlice.actions;
 
 export default teamSlice.reducer;

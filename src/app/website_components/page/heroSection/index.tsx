@@ -78,7 +78,7 @@ export default function HeroSection({}: Props) {
               wordBreak: "break-word",
               marginBlock: 0,
               fontSize: { xs: "32px", sm: "32px", md: "40px", lg: "48px" },
-              lineHeight: "52px",
+              lineHeight: { xs: "36px", sm: "36px", md: "52px", lg: "52px" },
             }}
           >
             The best Api's visibility tool for organization
@@ -86,8 +86,8 @@ export default function HeroSection({}: Props) {
           <Typography
             sx={{
               color: "#ffffffb3",
-              fontSize: "16px",
-              lineHeight: "26px",
+              fontSize: { xs: "13px", sm: "13px", md: "16px", lg: "16px" },
+              lineHeight: { xs: "22px", sm: "22px", md: "26px", lg: "26px" },
             }}
           >
             Every api needs authentication and authorization. Api flow make sure

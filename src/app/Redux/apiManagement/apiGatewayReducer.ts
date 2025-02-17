@@ -101,7 +101,7 @@ export const GetAuthkeyById = createAsyncThunk(
   }
 );
 
-export const UpdateApiGateway = createAsyncThunk(
+const UpdateApiGateway = createAsyncThunk(
   "Gateway/UpdateApiGateway",
   async (data: any) => {
     try {
@@ -327,7 +327,7 @@ const initialState: InitialStateType = {
   // apiGatewayKeys: null || [],
 };
 
-export const gatewaySlice = createSlice({
+const gatewaySlice = createSlice({
   name: "gateway",
   initialState,
   reducers: {},

@@ -32,19 +32,19 @@ const CustomizedAccSummary = styled(AccordionSummary)(({ theme }) => ({
   },
 }));
 
-export const PrimaryTypography = styled(Typography)`
+const PrimaryTypography = styled(Typography)`
   font-family: FiraSans-medium !important;
   color: #eeeeee;
   font-size: 12px;
 `;
 
-export const SecondaryTypography = styled(Typography)`
+const SecondaryTypography = styled(Typography)`
   font-family: FiraSans-medium !important;
   color: #eeeeee;
   font-size: 12px;
 `;
 
-export const TertiaryTypogrpahy = styled(Typography)`
+const TertiaryTypogrpahy = styled(Typography)`
   font-family: FiraSans-light !important;
   color: #eeeeee;
   font-size: 0.6rem;
