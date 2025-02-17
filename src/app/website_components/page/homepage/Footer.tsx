@@ -94,7 +94,7 @@ export default function Footer({}: Props) {
               marginBottom: { xs: "8px", md: "0" }, // Add margin for vertical spacing on smaller screens
             }}
           >
-            {item.startIcon && (
+            {/* {item.startIcon && (
               <Box
                 sx={{
                   color: "#a9acac",
@@ -103,7 +103,7 @@ export default function Footer({}: Props) {
               >
                 {item.startIcon}
               </Box>
-            )}
+            )} */}
             <Typography
               sx={{
                 color: "#a9acac",
