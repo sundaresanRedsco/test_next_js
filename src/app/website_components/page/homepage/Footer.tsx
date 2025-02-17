@@ -114,7 +114,7 @@ export default function Footer({}: Props) {
             >
               {item.name}
             </Typography>
-            {item.endIcon && (
+            {/* {item.endIcon && (
               <Box
                 sx={{
                   color: "#a9acac",
@@ -122,7 +122,7 @@ export default function Footer({}: Props) {
               >
                 {item.endIcon}
               </Box>
-            )}
+            )} */}
           </Box>
         ))}
       </Box>
