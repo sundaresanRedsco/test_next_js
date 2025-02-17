@@ -8,14 +8,13 @@ import React, { useEffect, useState } from "react";
 
 type Props = {};
 
-export default function SignInPage({}: Props) {
+export default function SignInPage() {
   const { CLIENT_ID } = useSignIn();
-  const { setFormDataStore, setIsLoading } = useSignUpStore();
+  const { setFormDataStore } = useSignUpStore();
   const [isClient, setisClient] = useState(false);
   useEffect(() => {
     setFormDataStore("currentPage", "Login");
     setisClient(true);
-    setIsLoading(false);
   }, []);
 
   return (

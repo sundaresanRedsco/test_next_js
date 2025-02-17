@@ -22,6 +22,7 @@ import { login } from "@/app/Redux/loginReducer";
 import { loginRequest } from "@/app/Services/azureServices";
 import useSignIn from "./useSignIn";
 import { useSignUpStore } from "./signZustand";
+import theme from "@/Theme/theme";
 
 interface userDataType {
   first_name: string;
@@ -229,12 +230,12 @@ export default function useSignUp() {
     const style = document.createElement("style");
     style.innerHTML = `
         .nsm7Bb-HzV7m-LgbsSe {
-          background-color: #d0dee71f !important; /* White background color */
-          color: #000000 !important;           /* Black text color */
+          background-color: ${theme.palette.signInUpBlackSecondary.main} !important; /* White background color */
+          color: ${theme.palette.signInUpBlack.main} !important;           /* Black text color */
           border-radius: 5px !important;       /* Rounded corners */
           padding:10px !important;       /* Add padding */
         
-          border: 1px solid #000000 !important; /* Black border */
+          border: 1px solid ${theme.palette.signInUpBlack.main} !important; /* Black border */
           box-shadow: none !important;         /* Remove the shadow */
           font-size: 10px !important;          /* Font size */
           display: flex !important;
@@ -247,7 +248,7 @@ export default function useSignUp() {
         // }
   
         .nsm7Bb-HzV7m-LgbsSe:hover {
-          background-color: #f0f0f0 !important; /* Light grey on hover */
+          background-color: ${theme.palette.signInUpWhiteSecondary.main} !important; /* Light grey on hover */
         }
       `;
     document.head.appendChild(style);

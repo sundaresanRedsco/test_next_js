@@ -14,6 +14,7 @@ import GDataTable from "../../global/GDataTable";
 import useInvites from "@/app/hooks/sign/useInvites";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 type Props = {
   clientSession: any;
@@ -39,14 +40,14 @@ export default function InvitedUsers({
   } = useInvites(clientSession?.data);
   const { isxs, issm, ismd, isxl } = useMuiBreakpoints();
   const [columnLabels, setColumnLabels] = useState({
-    email: "E-Mail ID",
-    role_name: "Role",
-    action: "Action",
+    email: `${translate("common.EMAIL_ID")}`,
+    role_name: `${translate("common.ROLE")}`,
+    action: `${translate("common.ACTION")}`,
   });
   const inputs = [
     {
       id: 1,
-      label: "E-Mail ID",
+      label: `${translate("common.EMAIL_ID")}`,
       icon: "",
       type: "text",
       onChange: handleChange,
@@ -57,7 +58,7 @@ export default function InvitedUsers({
     },
     {
       id: 2,
-      label: "Role",
+      label: `${translate("common.ROLE")}`,
       type: "select",
       onChange: (value: any) => handleInviteUserFormData("role", value),
       isErr: errMsg?.role != "",
@@ -73,14 +74,14 @@ export default function InvitedUsers({
   const InputArray = [
     {
       id: 1,
-      title: "Invite Users",
-      description: "Invite your team members",
+      title: `${translate("signUp.INVITE_USERS")}`,
+      description: `${translate("signUp.INVITE_USERS_DESC")}`,
       inputs: inputs,
     },
     {
       id: 1,
-      title: "Invited Users",
-      description: "List of invited users",
+      title: `${translate("signUp.INVITED_USERS")}`,
+      description: `${translate("signUp.INVITED_USERS_DESC")}`,
       inputs: [],
       type: "cards",
     },
@@ -171,7 +172,7 @@ export default function InvitedUsers({
                           <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                             <Box
                               sx={{
-                                color: theme.palette.iconSidebarIconColor.main,
+                                color: theme.palette.SignInUpBorder.main,
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "3px",
@@ -218,7 +219,7 @@ export default function InvitedUsers({
                           <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                             <Box
                               sx={{
-                                color: theme.palette.iconSidebarIconColor.main,
+                                color: theme.palette.SignInUpBorder.main,
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "3px",
@@ -270,7 +271,7 @@ export default function InvitedUsers({
                     >
                       <GButton
                         buttonType="primary"
-                        label="Invite"
+                        label={`${translate("button.INVITE")}`}
                         width={"100%"}
                         sx={{
                           height: "47px",

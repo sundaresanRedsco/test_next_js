@@ -9,12 +9,14 @@ import {
   TertiarySignInUPTypography,
 } from "@/app/Styles/signInUp";
 
-import { gatewayList } from "../Workspace";
+// import { gatewayList } from "../Workspace";
+import { gatewayList } from "@/app/Constants/DropdownOptions";
 import ResourceCard from "./ResourceCard";
 import SelectedCountButton from "./SelectedCountButton";
 import useCatalogue from "@/app/hooks/sign/useCatalogue";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 type Props = {
   clientSession?: any;
@@ -25,7 +27,7 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
   const { isxs, issm, ismd } = useMuiBreakpoints();
   const { activeStep, handleBack, handleStep, formDataStore, apiDataStore } =
     useSignUpStore();
-  const { fetchData, updateProject, updateGroup } = useCatalogue(
+  const { fetchData, updateProject, updateGroup, isUpdating } = useCatalogue(
     clientSession?.data
   );
   const projectDetails = apiDataStore?.projectDetails
@@ -82,13 +84,13 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
   const dynamicTitle = () => {
     switch (formDataStore?.gateway) {
       case "AWS":
-        return "AWS Projects & Environments";
+        return `${translate("gatewayList.AWS_DESC")}`;
       // case "Azure Gateway":
       //   return "API discovery via Integration";
       case "SWAGGER":
-        return "API discovery via Swagger Import";
+        return `${translate("gatewayList.SWAGGER_DESC")}`;
       default:
-        return "Discovered Projects & Environments";
+        return `${translate("gatewayList.DEFAULT_DESC")}`;
     }
   };
   // const showSelectedCount = formDataStore?.gateway == "AWS";
@@ -152,8 +154,14 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
       </Grid>
       {projectDetails?.length != 0 ? (
         projectDetails?.groups?.map((elem: any, index: number) => {
-          // if (elem.isVisible) {
-          // if (elem.type == "card") {
+          const isLoadingEnabled =
+            elem.group_id == isUpdating ||
+            (elem.project?.length > 0
+              ? elem.project
+                  .map((project: any) => project.project_id)
+                  ?.includes(isUpdating)
+              : false);
+
           return (
             <Grid size={{ md: 12, sm: 12, xs: 12 }} key={index}>
               <Stack sx={{ width: "100%", marginBottom: 1 }}>
@@ -164,166 +172,11 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
                   environments={elem?.project}
                   handleSaveProject={updateGroup}
                   handleSaveEnv={updateProject}
+                  isLoading={isLoadingEnabled}
                 />
               </Stack>
             </Grid>
           );
-          // }
-          // if (elem.type == "multi-inputs") {
-          //   return (
-          //     <Grid key={index} size={{ md: 12, sm: 12, xs: 12 }}>
-          //       <Grid
-          //         container
-          //         sx={{ width: "100%" }}
-          //         columnGap={1.5}
-          //         rowGap={1}
-          //       >
-          //         <Grid
-          //           sx={{
-          //             width: { xs: "100%", sm: "100%", md: "100%" },
-          //           }}
-          //         >
-          //           <PrimarySignInUPTypography
-          //             sx={{
-          //               color: theme.palette.signInUpPrimary.main,
-          //               fontSize: "15px",
-          //             }}
-          //           >
-          //             {elem?.title}
-          //           </PrimarySignInUPTypography>
-          //         </Grid>
-          //         {elem?.inputs?.map((input: any, inputIndex: number) => {
-          //           return (
-          //             <Grid
-          //               sx={{
-          //                 width: { xs: "100%", sm: "100%", md: "49%" },
-          //               }}
-          //               key={inputIndex}
-          //             >
-          //               <Stack sx={{ gap: 1, marginBottom: "15px" }}>
-          //                 <Box
-          //                   sx={{
-          //                     color: "#FFFFFF80",
-          //                     display: "flex",
-          //                     alignItems: "center",
-          //                     gap: "3px",
-          //                   }}
-          //                 >
-          //                   <SecondarySignInUPTypography
-          //                     sx={{
-          //                       color: theme.palette.signInUpPrimary.main,
-          //                       fontSize: "12px",
-          //                     }}
-          //                   >
-          //                     {input?.label}
-          //                   </SecondarySignInUPTypography>
-          //                 </Box>
-          //                 <GInput
-          //                   name={input.name}
-          //                   type={input.type}
-          //                   fullWidth={true}
-          //                   onChangeHandler={(value: any) => {}}
-          //                   // value={input.value}
-          //                 />
-          //               </Stack>
-          //             </Grid>
-          //           );
-          //         })}
-          //       </Grid>
-          //     </Grid>
-          //   );
-          // } else if (elem.type == "radio") {
-          //   return (
-          //     <Grid key={index} size={{ md: 12, sm: 12, xs: 12 }}>
-          //       <Box
-          //         sx={{
-          //           width: "100%",
-          //           display: "flex",
-          //           alignItems: {
-          //             xs: "flex-start",
-          //             sm: "flex-start",
-          //             md: "center",
-          //           },
-          //           borderBottom: "1px solid #FFFFFF80",
-          //           position: "relative",
-          //           justifyContent: "center",
-          //           marginBottom: 2,
-          //           flexDirection: { xs: "column", sm: "column", md: "row" },
-          //         }}
-          //       >
-          //         <PrimarySignInUPTypography
-          //           sx={{
-          //             color: theme.palette.signInUpPrimary.main,
-          //             fontSize: "15px",
-          //             position: { xs: "static", sm: "static", md: "absolute" },
-          //             left: 0,
-          //           }}
-          //         >
-          //           {elem?.title}
-          //         </PrimarySignInUPTypography>
-          //         <Box
-          //           sx={{
-          //             display: "flex",
-          //             justifyContent: "center",
-          //             alignItems: "center",
-          //             width: { xs: "100%", sm: "100%", md: "auto" },
-          //           }}
-          //         >
-          //           <GRadioGroup
-          //             name={elem.name}
-          //             value={elem.value}
-          //             inputs={elem.inputs}
-          //             onChange={elem.onChange}
-          //           />
-          //         </Box>
-          //         {elem?.inputs?.map((input: any, inputIndex: number) => {
-          //           return null;
-          //         })}
-          //       </Box>
-          //     </Grid>
-          //   );
-          // } else if (elem.type == "button") {
-          //   return (
-          //     <Grid size={{ md: 12, sm: 12, xs: 12 }} key={index}>
-          //       <Stack sx={{ gap: 1 }}>
-          //         <GUploadButton label="" fileHandler={() => {}} />
-          //       </Stack>
-          //     </Grid>
-          //   );
-          // }
-          // else {
-          //   return (
-          //     <Grid size={{ md: 6, sm: 6, xs: 12 }} key={index}>
-          //       <Stack sx={{ gap: 1, marginBottom: "15px" }}>
-          //         <Box
-          //           sx={{
-          //             color: "#FFFFFF80",
-          //             display: "flex",
-          //             alignItems: "center",
-          //             gap: "3px",
-          //           }}
-          //         >
-          //           <SecondarySignInUPTypography
-          //             sx={{
-          //               color: theme.palette.signInUpPrimary.main,
-          //               fontSize: "12px",
-          //             }}
-          //           >
-          //             {elem?.label}
-          //           </SecondarySignInUPTypography>
-          //         </Box>
-          //         <GInput
-          //           name={elem.name}
-          //           type={elem.type}
-          //           fullWidth={true}
-          //           onChangeHandler={(value: any) => {}}
-          //           // value={elem.value}
-          //         />
-          //       </Stack>
-          //     </Grid>
-          //   );
-          // }
-          // }
         })
       ) : (
         <Box
@@ -337,7 +190,7 @@ export default function Resources({ clientSession, isWorkflowModal }: Props) {
           }}
         >
           <SecondarySignInUPTypography sx={{ color: theme.palette.gray.main }}>
-            No data available
+            {translate("noDataDescription.NO_DATA_AVAILABLE")}
           </SecondarySignInUPTypography>
         </Box>
       )}

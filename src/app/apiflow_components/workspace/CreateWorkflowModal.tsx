@@ -15,6 +15,7 @@ import Resources from "../sign/resources";
 import InvitedUsers from "../sign/inviteUsers";
 import GIconButton from "../global/GIconButton";
 import { Close } from "@mui/icons-material";
+import theme from "@/Theme/theme";
 
 type Props = {
   height?: string;
@@ -37,26 +38,47 @@ export default function CreateWorkflowModal({ height, width }: Props) {
     resetAllSignStoreData,
   } = useSignUpStore();
 
-  const [completed, setCompleted] = React.useState({});
   const steps = isImportAws
     ? [
         {
           id: 1,
           label: "Discovery",
-          icon: <DiscoverySvg color={activeStep == 1 ? "white" : "#9A9A9A"} />,
+          icon: (
+            <DiscoverySvg
+              color={
+                activeStep == 1
+                  ? theme.palette.signInUpPrimary.main
+                  : theme.palette.sigInUpStepperTextDefault.main
+              }
+            />
+          ),
           description: "Discover your API",
         },
         {
           id: 2,
           label: "Resources Catalog",
-          icon: <CatalogSvg color={activeStep == 2 ? "white" : "#9A9A9A"} />,
+          icon: (
+            <CatalogSvg
+              color={
+                activeStep == 2
+                  ? theme.palette.signInUpPrimary.main
+                  : theme.palette.sigInUpStepperTextDefault.main
+              }
+            />
+          ),
           description: "Catalog API",
         },
         {
           id: 3,
           label: "Invite Users",
           icon: (
-            <InvitedUsersSvg color={activeStep == 3 ? "white" : "#9A9A9A"} />
+            <InvitedUsersSvg
+              color={
+                activeStep == 3
+                  ? theme.palette.signInUpPrimary.main
+                  : theme.palette.sigInUpStepperTextDefault.main
+              }
+            />
           ),
           description: "Manage your team",
         },
@@ -65,26 +87,56 @@ export default function CreateWorkflowModal({ height, width }: Props) {
         {
           id: 0,
           label: "Workspace",
-          icon: <WorkspaceSvg color={activeStep == 0 ? "white" : "#9A9A9A"} />,
+          icon: (
+            <WorkspaceSvg
+              color={
+                activeStep == 0
+                  ? theme.palette.signInUpPrimary.main
+                  : theme.palette.sigInUpStepperTextDefault.main
+              }
+            />
+          ),
           description: "Create workspace",
         },
         {
           id: 1,
           label: "Discovery",
-          icon: <DiscoverySvg color={activeStep == 1 ? "white" : "#9A9A9A"} />,
+          icon: (
+            <DiscoverySvg
+              color={
+                activeStep == 1
+                  ? theme.palette.signInUpPrimary.main
+                  : theme.palette.sigInUpStepperTextDefault.main
+              }
+            />
+          ),
           description: "Discover your API",
         },
         {
           id: 2,
           label: "Resources Catalog",
-          icon: <CatalogSvg color={activeStep == 2 ? "white" : "#9A9A9A"} />,
+          icon: (
+            <CatalogSvg
+              color={
+                activeStep == 2
+                  ? theme.palette.signInUpPrimary.main
+                  : theme.palette.sigInUpStepperTextDefault.main
+              }
+            />
+          ),
           description: "Catalog API",
         },
         {
           id: 3,
           label: "Invite Users",
           icon: (
-            <InvitedUsersSvg color={activeStep == 3 ? "white" : "#9A9A9A"} />
+            <InvitedUsersSvg
+              color={
+                activeStep == 3
+                  ? theme.palette.signInUpPrimary.main
+                  : theme.palette.sigInUpStepperTextDefault.main
+              }
+            />
           ),
           description: "Manage your team",
         },
@@ -111,7 +163,6 @@ export default function CreateWorkflowModal({ height, width }: Props) {
   const Wrapper = activeStep == -1 ? "div" : OnBoardLayout;
   const commonProps = {
     steps,
-    completed,
     isWorkflowModal: true,
   };
   const renderComponent = () => {

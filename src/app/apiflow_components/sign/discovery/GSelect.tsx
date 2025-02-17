@@ -233,7 +233,7 @@ export default function GSelect(props: Props) {
               PaperProps: {
                 sx: {
                   fontFamily: "FiraSans-Regular ! important",
-                  backgroundColor: "#211c27",
+                  backgroundColor: theme.palette.signInUpLGrayishBlue.main,
 
                   color: theme.palette.signInUpPrimary.main,
                   ...additionalMenuItemsStyle,

@@ -1,3 +1,4 @@
+import { translate } from "@/app/Helpers/helpersFunctions";
 import {
   PrimarySignInUPTypography,
   TertiarySignInUPTypography,
@@ -49,7 +50,7 @@ export default function SelectedCountButton({ count }: Props) {
           },
         }}
       >
-        Selected
+        {translate("common.SELECTED")}
       </TertiarySignInUPTypography>
     </Box>
   );

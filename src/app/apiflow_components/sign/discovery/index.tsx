@@ -9,13 +9,15 @@ import {
 } from "@/app/Styles/signInUp";
 import GInput from "@/app/apiflow_components/global/GInput";
 import GSelect from "@/app/apiflow_components/sign/discovery/GSelect";
-import { gatewayList } from "../Workspace";
+// import { gatewayList } from "../Workspace";
+import { gatewayList } from "@/app/Constants/DropdownOptions";
 import GUploadButton from "../../global/GUploadButton";
 import useDiscovery from "@/app/hooks/sign/useDiscovery";
 import useCatalogue from "@/app/hooks/sign/useCatalogue";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import GRadioGroup from "../../global/GRadioGroup";
 import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 type Props = {
   clientSession: any;
@@ -46,8 +48,8 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
       id: 1,
       label:
         formDataStore?.gateway == "SWAGGER"
-          ? "Project Name"
-          : "Configuration Name",
+          ? `${translate("common.PROJECT_NAME")}`
+          : `${translate("common.CONFIGURATION_NAME")}`,
       type: "text",
       onChange: discoveryhandleChange,
       isErr: errorMsg?.name != "",
@@ -58,7 +60,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
     },
     {
       id: 2,
-      label: "Description",
+      label: `${translate("common.DESCRIPTION")}`,
       type: "text",
       onChange: discoveryhandleChange,
       isErr: "",
@@ -69,7 +71,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
     },
     {
       id: 5,
-      label: "Access Key",
+      label: `${translate("common.ACCESS_KEY")}`,
       type: "text",
       onChange: discoveryhandleChange,
       isErr: errorMsg?.accessKey != "",
@@ -77,11 +79,12 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
       name: "accessKey",
       value: discoveryFormDatas.accessKey,
       isVisible:
-        formDataStore?.gateway == "AWS" || formDataStore?.gateway == "AZURE",
+        formDataStore?.gateway == `${translate("gatewayList.AWS1")}` ||
+        formDataStore?.gateway == `${translate("gatewayList.AZURE1")}`,
     },
     {
       id: 6,
-      label: "Secret Key",
+      label: `${translate("common.SECRET_KEY")}`,
       type: "text",
       onChange: discoveryhandleChange,
       isErr: errorMsg?.secretKey != "",
@@ -89,11 +92,12 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
       name: "secretKey",
       value: discoveryFormDatas.secretKey,
       isVisible:
-        formDataStore?.gateway == "AWS" || formDataStore?.gateway == "AZURE",
+        formDataStore?.gateway == `${translate("gatewayList.AWS1")}` ||
+        formDataStore?.gateway == `${translate("gatewayList.AZURE1")}`,
     },
     {
       id: 6,
-      label: "Region",
+      label: `${translate("common.REGION")}`,
       type: "select",
       onChange: (value: any) => {
         handleFormData("region", value);
@@ -102,7 +106,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
       errMsg: errorMsg?.region,
       name: "region",
       value: discoveryFormDatas.region,
-      isVisible: formDataStore?.gateway == "AWS",
+      isVisible: formDataStore?.gateway == `${translate("gatewayList.AWS1")}`,
       menus: awsRegions.map((region) => ({
         value: region.region,
         label: region.region,
@@ -110,29 +114,29 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
     },
     {
       id: 6,
-      label: "Subscription ID",
+      label: `${translate("common.SUBSCRIPTION_ID")}`,
       type: "text",
       onChange: discoveryhandleChange,
       isErr: "",
       errMsg: "",
       name: "subcription_id",
       value: discoveryFormDatas.subscription_id,
-      isVisible: formDataStore?.gateway == "AZURE",
+      isVisible: formDataStore?.gateway == `${translate("gatewayList.AZURE1")}`,
     },
     {
       id: 6,
-      label: "Tenant ID",
+      label: `${translate("common.TENANT_ID")}`,
       type: "text",
       onChange: discoveryhandleChange,
       isErr: "",
       errMsg: "",
       name: "azure_tenat_id",
       value: discoveryFormDatas.azure_tenat_id,
-      isVisible: formDataStore?.gateway == "AZURE",
+      isVisible: formDataStore?.gateway == `${translate("gatewayList.AZURE1")}`,
     },
     {
       id: 3,
-      label: "Sync Interval",
+      label: `${translate("common.SYNC_INTERVAL")}`,
       type: "select",
       onChange: (value: any) => {
         handleFormData("interval", value);
@@ -141,7 +145,8 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
       errMsg: errorMsg?.interval,
       name: "interval",
       value: discoveryFormDatas.interval,
-      isVisible: formDataStore?.gateway != "SWAGGER",
+      isVisible:
+        formDataStore?.gateway != `${translate("gatewayList.SWAGGER1")}`,
       menus: timesData.map((times) => ({
         value: times.name,
         label: times.name,
@@ -150,15 +155,16 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
     {
       id: 5,
       type: "radio",
-      isVisible: formDataStore?.gateway == "SWAGGER",
-      title: "Import Type",
+      isVisible:
+        formDataStore?.gateway == `${translate("gatewayList.SWAGGER1")}`,
+      title: `${translate("common.IMPORT_TYPE")}`,
       name: "doc_type",
       value: formDataStore?.doc_type,
       onChange: handleChange,
       inputs: [
         {
           id: 1,
-          label: "Swagger URL",
+          label: `${translate("common.SWAGGER_URL")}`,
           type: "radio",
           onChange: "",
           isErr: "",
@@ -168,7 +174,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
         },
         {
           id: 2,
-          label: "Swagger File",
+          label: `${translate("common.SWAGGER_FILE")}`,
           type: "radio",
           onChange: "",
           isErr: "",
@@ -180,7 +186,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
     },
     {
       id: 6,
-      label: "Swagger URL",
+      label: `${translate("common.SWAGGER_URL")}`,
       type: "text",
       onChange: discoveryhandleChange,
       isErr: errorMsg?.url != "",
@@ -188,12 +194,13 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
       name: "url",
       value: discoveryFormDatas.url,
       isVisible:
-        formDataStore?.gateway == "SWAGGER" && formDataStore?.doc_type == "URL",
+        formDataStore?.gateway == `${translate("gatewayList.SWAGGER1")}` &&
+        formDataStore?.doc_type == "URL",
       fullWidth: true,
     },
     {
       id: 4,
-      label: "File",
+      label: `${translate("common.FILE")}`,
       type: "file",
       onChange: (file: any) => {
         handleFormData("file_store", file);
@@ -203,7 +210,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
       name: "file_store",
       value: discoveryFormDatas.file_store,
       isVisible:
-        formDataStore?.gateway == "SWAGGER" &&
+        formDataStore?.gateway == `${translate("gatewayList.SWAGGER1")}` &&
         formDataStore?.doc_type == "FILE",
       fullWidth: true,
     },
@@ -287,7 +294,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
               },
             }}
           >
-            API discovery via Integration
+            {translate("signUp.DISCOVERY_HEADER")}
           </PrimarySignInUPTypography>
           <GSelect
             options={menus}
@@ -319,7 +326,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                 <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                   <Box
                     sx={{
-                      color: theme.palette.iconSidebarIconColor.main,
+                      color: theme.palette.SignInUpBorder.main,
                       display: "flex",
                       alignItems: "center",
                       gap: "3px",
@@ -365,7 +372,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                 <Stack sx={{ gap: 1 }}>
                   <Box
                     sx={{
-                      color: theme.palette.iconSidebarIconColor.main,
+                      color: theme.palette.SignInUpBorder.main,
                       display: "flex",
                       alignItems: "center",
                       gap: "3px",
@@ -384,7 +391,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                     </SecondarySignInUPTypography>
                   </Box>
                   <GUploadButton
-                    label="Select File"
+                    label={`${translate("common.SELECT_FILE")}`}
                     fileHandler={elem.onChange}
                     helperText={elem.errMsg}
                   />
@@ -403,7 +410,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                       sm: "flex-start",
                       md: "center",
                     },
-                    borderBottom: `1px solid ${theme.palette.iconSidebarIconColor.main}`,
+                    borderBottom: `1px solid ${theme.palette.SignInUpBorder.main}`,
                     position: "relative",
                     justifyContent: "center",
                     marginBottom: 2,
@@ -454,7 +461,7 @@ export default function Discovery({ clientSession, isWorkflowModal }: Props) {
                 <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                   <Box
                     sx={{
-                      color: theme.palette.iconSidebarIconColor.main,
+                      color: theme.palette.SignInUpBorder.main,
                       display: "flex",
                       alignItems: "center",
                       gap: "3px",

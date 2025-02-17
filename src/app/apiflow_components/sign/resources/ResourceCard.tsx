@@ -3,12 +3,13 @@ import {
   SecondarySignInUPTypography,
   TertiarySignInUPTypography,
 } from "@/app/Styles/signInUp";
-import { Box, IconButton, Stack } from "@mui/material";
+import { Box, CircularProgress, IconButton, Stack } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import GIconButton from "../../global/GIconButton";
 import { Edit } from "@mui/icons-material";
 import GInput from "../../global/GInput";
 import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 type Props = {
   name: string | undefined;
@@ -17,6 +18,7 @@ type Props = {
   handleSaveProject: (data: any) => void;
   handleSaveEnv: (data: any) => void;
   data: any;
+  isLoading?: any;
 };
 
 const ItemCard = ({ title, about, handleSaveEnv, data }: any) => {
@@ -169,6 +171,7 @@ export default function ResourceCard({
   handleSaveProject,
   handleSaveEnv,
   data,
+  isLoading,
 }: Props) {
   const [isEdit, setisEdit] = useState(false);
   const [formData, setformData] = useState<any>({
@@ -231,14 +234,38 @@ export default function ResourceCard({
         width: "100%",
         borderRadius: "10px",
         background: theme.palette.summaryBgColor.main,
+        position: "relative",
       }}
     >
+      {isLoading && (
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            borderRadius: "10px",
+            backdropFilter: "blur(3px)",
+            zIndex: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress
+            style={{
+              height: "30px",
+              width: "30px",
+              color: theme.palette.signInUpLoader.main,
+            }}
+          />
+        </Box>
+      )}
       <Box
         sx={{
           display: "flex",
           gap: 1,
           height: "60px",
-          border: `1px solid ${theme.palette.iconSidebarIconColor.main}`,
+          border: `1px solid ${theme.palette.SignInUpBorder.main}`,
           borderRadius: "10px",
           position: "relative",
           alignItems: "center",
@@ -251,7 +278,7 @@ export default function ResourceCard({
             alignItems: "center",
             padding: "15px",
             background: theme.palette.summaryCardColor.main,
-            borderRight: `1px solid ${theme.palette.iconSidebarIconColor.main}`,
+            borderRight: `1px solid ${theme.palette.SignInUpBorder.main}`,
             borderRadius: "10px 0 0 10px",
             height: "100%",
           }}
@@ -262,7 +289,7 @@ export default function ResourceCard({
               fontSize: "15px",
             }}
           >
-            Project
+            {translate("common.PROJECT")}
           </PrimarySignInUPTypography>
         </Box>
         <Stack
@@ -324,7 +351,7 @@ export default function ResourceCard({
             fontSize: "15px",
           }}
         >
-          Environments
+          {translate("common.ENVIRONMENTS")}
         </PrimarySignInUPTypography>
         <Stack sx={{ width: "100%", paddingLeft: 5, gap: "8px" }}>
           {environments.length > 0 ? (
@@ -351,7 +378,7 @@ export default function ResourceCard({
               <SecondarySignInUPTypography
                 sx={{ color: theme.palette.gray.main }}
               >
-                No environments available
+                {translate("noDataDescription.NO_ENVI_AVAILABLE")}
               </SecondarySignInUPTypography>
             </Box>
           )}

@@ -25,6 +25,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import { DeleteTableIcon } from "@/app/Assests/icons";
 import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 // ** Custom CSS
 
@@ -527,7 +528,7 @@ const GDataTable = ({
                   }}
                   colSpan={Object.keys(columnLabels).length}
                 >
-                  There is no data available to display in the table.
+                  {translate("noDataDescription.NO_DATA_TABLE")}
                 </TableCell>
               </StyledTableRow>
             </TableBody>

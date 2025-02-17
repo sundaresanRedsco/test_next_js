@@ -21,17 +21,13 @@ import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import useSignIn from "@/app/hooks/sign/useSignIn";
 import SignUp from "@/app/apiflow_components/sign/sign-up";
+import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 export default function SignUpPage() {
   const clientSession = useSession();
-  const {
-    setFormDataStore,
-    activeStep,
-    formDataStore,
-    resetApiData,
-    resetForm,
-    setIsLoading,
-  } = useSignUpStore();
+  const { activeStep, formDataStore, resetApiData, resetForm, setIsLoading } =
+    useSignUpStore();
   const { CLIENT_ID } = useSignIn();
   const [completed, setCompleted] = React.useState({});
   const [isClient, setisClient] = useState(false);
@@ -39,33 +35,73 @@ export default function SignUpPage() {
   const steps = [
     {
       id: 1,
-      label: "Signup",
-      icon: <UserSvg color={activeStep == 0 ? "white" : "#9A9A9A"} />,
-      description: "Provide an email and password",
+      label: `${translate("signUp.SIGNUP")}`,
+      icon: (
+        <UserSvg
+          color={
+            activeStep == 0
+              ? theme.palette.signInUpPrimary.main
+              : theme.palette.sigInUpStepperTextDefault.main
+          }
+        />
+      ),
+      description: `${translate("signUp.SIGNUP_DESCRIPTION")}`,
     },
     {
       id: 2,
-      label: "Workspace",
-      icon: <WorkspaceSvg color={activeStep == 1 ? "white" : "#9A9A9A"} />,
-      description: "Create workspace",
+      label: `${translate("signUp.WORKSPACE")}`,
+      icon: (
+        <WorkspaceSvg
+          color={
+            activeStep == 1
+              ? theme.palette.signInUpPrimary.main
+              : theme.palette.sigInUpStepperTextDefault.main
+          }
+        />
+      ),
+      description: `${translate("signUp.WORKSPACE")}`,
     },
     {
       id: 3,
-      label: "Discovery",
-      icon: <DiscoverySvg color={activeStep == 2 ? "white" : "#9A9A9A"} />,
-      description: "Discover your API",
+      label: `${translate("signUp.DISCOVERY")}`,
+      icon: (
+        <DiscoverySvg
+          color={
+            activeStep == 2
+              ? theme.palette.signInUpPrimary.main
+              : theme.palette.sigInUpStepperTextDefault.main
+          }
+        />
+      ),
+      description: `${translate("signUp.DISCOVERY_DESCRIPTION")}`,
     },
     {
       id: 4,
-      label: "Resources Catalog",
-      icon: <CatalogSvg color={activeStep == 3 ? "white" : "#9A9A9A"} />,
-      description: "Catalog API",
+      label: `${translate("signUp.RESOURCES")}`,
+      icon: (
+        <CatalogSvg
+          color={
+            activeStep == 3
+              ? theme.palette.signInUpPrimary.main
+              : theme.palette.sigInUpStepperTextDefault.main
+          }
+        />
+      ),
+      description: `${translate("signUp.RESOURCES_DESCRIPTION")}`,
     },
     {
       id: 5,
-      label: "Invite Users",
-      icon: <InvitedUsersSvg color={activeStep == 4 ? "white" : "#9A9A9A"} />,
-      description: "Manage your team",
+      label: `${translate("signUp.INVITE_USERS")}`,
+      icon: (
+        <InvitedUsersSvg
+          color={
+            activeStep == 4
+              ? theme.palette.signInUpPrimary.main
+              : theme.palette.sigInUpStepperTextDefault.main
+          }
+        />
+      ),
+      description: `${translate("signUp.INVITE_USERS_DESCRIPTION")}`,
     },
   ];
 
@@ -90,7 +126,6 @@ export default function SignUpPage() {
     //   :
     {
       steps,
-      completed,
     };
   const renderComponent = () => {
     {

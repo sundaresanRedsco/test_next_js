@@ -58,6 +58,7 @@ import UnionMinimizedIcon from "./UnionMinimized.svg";
 import ChipCloseIcon from "./ChipCloseIcon.svg";
 import ChannelPlusIcon from "./ChannelPlusIcon.svg";
 import LogStash from "./logstash.svg";
+import Profile from "./profile.svg";
 
 export {
   InfoIcon,
@@ -66,6 +67,7 @@ export {
   DeleteIcon,
   // IntegrationIcon,
   Collbrate,
+  Profile,
   SettingNew,
   InfoNew,
   Integration,

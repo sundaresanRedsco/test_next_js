@@ -1,23 +1,12 @@
-import {
-  apiGatewayReducer,
-  ImportFromSwagerGateway,
-} from "@/app/Redux/apiManagement/apiGatewayReducer";
-import { environmentReducer } from "@/app/Redux/apiManagement/environmentReducer";
-import { workspaceReducer } from "@/app/Redux/apiManagement/workspaceReducer";
-import { CommonReducer } from "@/app/Redux/commonReducer";
-import { RootStateType } from "@/app/Redux/store";
+import React, { useState } from "react";
 import { useAlert } from "@/context/alertContext";
-import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
-import Ajv from "ajv";
-import { GetProjectByWorkspaceIdSolrOffset } from "@/app/Redux/apiManagement/projectReducer";
-import { setRemoveTabs } from "@/app/Redux/tabReducer";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useSignUpStore } from "./signZustand";
-import Workspace from "@/app/apiflow_components/sign/Workspace";
 import useGPopup from "../useGPopup";
+import { awsRegions, timesData } from "@/app/Constants/DropdownOptions";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 type ApiGatewayType = {
   id?: string;
@@ -42,38 +31,6 @@ type ApiGatewayType = {
   url?: string;
 };
 
-const timesData = [
-  { id: 0, name: "5 mins" },
-  { id: 1, name: "10 mins" },
-  { id: 2, name: "15 mins" },
-  { id: 3, name: "20 mins" },
-];
-const awsRegions = [
-  { id: 1, region: "us-east-1" },
-  { id: 2, region: "us-east-2" },
-  { id: 3, region: "us-west-1" },
-  { id: 4, region: "us-west-2" },
-  { id: 5, region: "ca-central-1" },
-  { id: 6, region: "sa-east-1" },
-  { id: 7, region: "eu-west-1" },
-  { id: 8, region: "eu-west-2" },
-  { id: 9, region: "eu-central-1" },
-  { id: 10, region: "eu-west-3" },
-  { id: 11, region: "eu-north-1" },
-  { id: 12, region: "ap-south-1" },
-  { id: 13, region: "ap-southeast-1" },
-  { id: 14, region: "ap-southeast-2" },
-  { id: 15, region: "ap-northeast-1" },
-  { id: 16, region: "ap-northeast-2" },
-  { id: 17, region: "ap-northeast-3" },
-  { id: 18, region: "ap-east-1" },
-  { id: 19, region: "me-south-1" },
-  { id: 20, region: "af-south-1" },
-];
-const SwagerData = [
-  { id: 0, name: "File" },
-  { id: 1, name: "Url" },
-];
 export default function useDiscovery(userData?: any, fetchData?: any) {
   const { showAlert } = useAlert();
   // const userData: any = useSession();
@@ -113,75 +70,75 @@ export default function useDiscovery(userData?: any, fetchData?: any) {
   const validationMsgs: any = {
     AWS: {
       name: {
-        regular: "Configuration Name is required",
+        regular: `${translate("signupValidation.CONFIG_NAME")}`,
       },
       accessKey: {
-        regular: "Access key is required",
+        regular: `${translate("signupValidation.ACCESS_KEY")}`,
       },
       secretKey: {
-        regular: "Secret key is required",
+        regular: `${translate("signupValidation.SECRET_KEY")}`,
       },
       region: {
-        regular: "Region key is required",
+        regular: `${translate("signupValidation.REGION_KEY")}`,
       },
       interval: {
-        regular: "Interval key is required",
+        regular: `${translate("signupValidation.INTERVAL_KEY")}`,
       },
     },
     AZURE: {
       name: {
-        regular: "Configuration Name is required",
+        regular: `${translate("signupValidation.CONFIG_NAME")}`,
       },
       accessKey: {
-        regular: "Access key is required",
+        regular: `${translate("signupValidation.ACCESS_KEY")}`,
       },
       secretKey: {
-        regular: "Secret key is required",
+        regular: `${translate("signupValidation.SECRET_KEY")}`,
       },
       interval: {
-        regular: "Interval key is required",
+        regular: `${translate("signupValidation.INTERVAL_KEY")}`,
       },
     },
     GCP: {
       name: {
-        regular: "Configuration Name is required",
+        regular: `${translate("signupValidation.CONFIG_NAME")}`,
       },
       interval: {
-        regular: "Interval key is required",
+        regular: `${translate("signupValidation.INTERVAL_KEY")}`,
       },
     },
     SWAGGER: {
       URL: {
         name: {
-          regular: "Configuration Name is required",
+          regular: `${translate("signupValidation.CONFIG_NAME")}`,
         },
         url: {
-          regular: "Swagger URL is required",
+          regular: `${translate("signupValidation.SWAGGER_URL")}`,
         },
       },
       FILE: {
         name: {
-          regular: "Configuration Name is required",
+          regular: `${translate("signupValidation.CONFIG_NAME")}`,
         },
         file_store: {
-          regular: "Swagger File is required",
+          regular: `${translate("signupValidation.SWAGGER_FILE")}`,
         },
       },
     },
     HTTP: {
       name: {
-        regular: "Configuration Name is required",
+        regular: `${translate("signupValidation.CONFIG_NAME")}`,
       },
       interval: {
-        regular: "Interval key is required",
+        regular: `${translate("signupValidation.INTERVAL_KEY")}`,
       },
     },
     APISIX: {
       name: {
-        regular: "Configuration Name is required",
+        regular: `${translate("signupValidation.CONFIG_NAME")}`,
       },
       interval: {
-        regular: "Interval key is required",
+        regular: `${translate("signupValidation.INTERVAL_KEY")}`,
       },
     },
   };

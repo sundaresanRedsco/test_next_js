@@ -16,6 +16,7 @@ import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import useSignIn from "@/app/hooks/sign/useSignIn";
 import { set } from "lodash";
 import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 type Props = {
   handleAuthentication?: any;
@@ -57,8 +58,8 @@ export default function AccountCreation({
         setFormDataStore("authType", formDataStore?.authType.split("_")[0]);
       }}
       height={"100%"}
-      title={"Create your account"}
-      description={"Account creation using SSO or Email"}
+      title={`${translate("signUp.CREATE_YOUR_ACCOUNT")}`}
+      description={`${translate("signUp.CREATE_YOUR_ACCOUNT_DESCRIPTION")}`}
     >
       <Stack
         sx={{
@@ -104,13 +105,13 @@ export default function AccountCreation({
             >
               {[
                 {
-                  label: "Sign up with Google",
+                  label: `${translate("signUp.SIGNUP_WITH_GOOGLE")}`,
                   icon: <GoogleIcon />,
                   onClick: googleLogin,
                   isSelected: formDataStore?.authType == "google_back",
                 },
                 // {
-                //   label: "Sign up with Microsoft",
+                //   label:`${translate("signUp.SIGNUP_WITH_MICROSOFT")}`,
                 //   icon: <MicrosoftIcon />,
                 //   onClick: () => {
                 //     setFormDataStore("authType", "microsoft");
@@ -118,7 +119,7 @@ export default function AccountCreation({
                 //   isSelected: formDataStore?.authType == "microsoft_back",
                 // },
                 // {
-                //   label: "Sign up with Github",
+                //   label: `${translate("signUp.SIGNUP_WITH_GITHUB")}`,
                 //   icon: <GitHub sx={{ color: "black" }} />,
                 //   onClick: () => {
                 //     setFormDataStore("authType", "github");
@@ -192,7 +193,7 @@ export default function AccountCreation({
                     },
                   }}
                 >
-                  {"(OR)"}
+                  {translate("common.OR")}
                 </TertiarySignInUPTypography>
               </Divider>
             </Box>
@@ -210,7 +211,7 @@ export default function AccountCreation({
             >
               {[
                 {
-                  label: "Sign up with Email",
+                  label: `${translate("signUp.SIGNUP_WITH_EMAIL")}`,
                   icon: <EmailIcon />,
                   onClick: () => {
                     setcurrentPage(1);

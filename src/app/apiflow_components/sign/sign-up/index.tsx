@@ -15,6 +15,7 @@ import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import AccountCreation from "./AccountCreation";
 import ScrollableLayout from "../ScrollableLayout";
 import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 export default function SignUp() {
   const {
@@ -57,12 +58,12 @@ export default function SignUp() {
   const InputArray = [
     {
       id: 1,
-      label: "Email *",
+      label: `${translate("signUp.EMAIL")}`,
       icon: (
         <Email
           sx={{
             fontSize: "18px",
-            color: theme.palette.iconSidebarIconColor.main,
+            color: theme.palette.SignInUpBorder.main,
             "@media (min-width: 2120px)": {
               fontSize: "25px",
             },
@@ -83,7 +84,7 @@ export default function SignUp() {
     // {
     //   id: 2,
     //   label: "Mobile Number *",
-    //   icon: <Phone sx={{ fontSize: "14px", color: theme.palette.iconSidebarIconColor.main }} />,
+    //   icon: <Phone sx={{ fontSize: "14px", color: theme.palette.SignInUpBorder.main }} />,
     //   type: "number",
     //   onChange: handleChange,
 
@@ -92,12 +93,12 @@ export default function SignUp() {
     // },
     {
       id: 2,
-      label: "User Name *",
+      label: `${translate("signUp.USER_NAME")}`,
       icon: (
         <PersonRounded
           sx={{
             fontSize: "18px",
-            color: theme.palette.iconSidebarIconColor.main,
+            color: theme.palette.SignInUpBorder.main,
             "@media (min-width: 2120px)": {
               fontSize: "25px",
             },
@@ -118,12 +119,12 @@ export default function SignUp() {
     },
     {
       id: 3,
-      label: "First Name *",
+      label: `${translate("signUp.FIRST_NAME")}`,
       icon: (
         <PersonRounded
           sx={{
             fontSize: "18px",
-            color: theme.palette.iconSidebarIconColor.main,
+            color: theme.palette.SignInUpBorder.main,
             "@media (min-width: 2120px)": {
               fontSize: "25px",
             },
@@ -143,7 +144,7 @@ export default function SignUp() {
     },
     {
       id: 4,
-      label: "Last Name *",
+      label: `${translate("signUp.LAST_NAME")}`,
       icon: "",
       type: "text",
       onChange: handleChange,
@@ -158,12 +159,12 @@ export default function SignUp() {
     },
     {
       id: 5,
-      label: "New Password *",
+      label: `${translate("signUp.NEW_PASSWORD")}`,
       icon: (
         <Lock
           sx={{
             fontSize: "18px",
-            color: theme.palette.iconSidebarIconColor.main,
+            color: theme.palette.SignInUpBorder.main,
             "@media (min-width: 2120px)": {
               fontSize: "25px",
             },
@@ -184,7 +185,7 @@ export default function SignUp() {
     },
     {
       id: 6,
-      label: "Confirm Password *",
+      label: `${translate("signUp.CONFIRM_PASSWORD")}`,
       icon: "",
       type: "password",
       onChange: handleChange,
@@ -212,8 +213,8 @@ export default function SignUp() {
     case 1:
       return (
         <ScrollableLayout
-          title={"Create your account"}
-          description={"Account creation using SSO or Email"}
+          title={`${translate("signUp.CREATE_YOUR_ACCOUNT")}`}
+          description={`${translate("signUp.CREATE_YOUR_ACCOUNT_DESCRIPTION")}`}
           showBackButton={true}
           handleBack={() => {
             setAuthPage(0);
@@ -221,7 +222,11 @@ export default function SignUp() {
               setFormDataStore("authType", formDataStore?.authType + "_back");
             }
           }}
-          showNextButton={formDataStore?.isRegisterd ? "Next" : "Create"}
+          showNextButton={
+            formDataStore?.isRegisterd
+              ? `${translate("button.NEXT")}`
+              : `${translate("button.CREATE")}`
+          }
           handleNext={async () => {
             try {
               if (!formDataStore?.isRegisterd) {
@@ -263,7 +268,7 @@ export default function SignUp() {
                   <Stack sx={{ gap: 1.5, marginBottom: "15px" }}>
                     <Box
                       sx={{
-                        color: theme.palette.iconSidebarIconColor.main,
+                        color: theme.palette.SignInUpBorder.main,
                         display: "flex",
                         alignItems: "center",
                         gap: "3px",

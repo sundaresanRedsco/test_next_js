@@ -46,6 +46,12 @@ interface signInUpPalette {
   sigInUpButtonBorderSecondary: Palette["primary"];
   sigInUpStepperTextTertary: Palette["primary"];
   link: Palette["primary"];
+  signInUpBlack: Palette["primary"];
+  signInUpWhiteSecondary: Palette["primary"];
+  signInUpBlackSecondary: Palette["primary"];
+  signInUpLGrayishBlue: Palette["primary"];
+  SignInUpBorder: Palette["primary"];
+  signInUpLoader: Palette["primary"];
 }
 
 interface signInUpPaletteOptions {
@@ -87,6 +93,12 @@ interface signInUpPaletteOptions {
   sigInUpButtonBorderSecondary: PaletteOptions["primary"];
   sigInUpStepperTextTertary: PaletteOptions["primary"];
   link: PaletteOptions["primary"];
+  signInUpBlack: PaletteOptions["primary"];
+  signInUpBlackSecondary: PaletteOptions["primary"];
+  signInUpWhiteSecondary: PaletteOptions["primary"];
+  signInUpLGrayishBlue: PaletteOptions["primary"];
+  SignInUpBorder: PaletteOptions["primary"];
+  signInUpLoader: PaletteOptions["primary"];
 }
 
 interface DashboardPalette {
@@ -292,6 +304,15 @@ interface DashboardPaletteOptions {
 const lightTheme = createTheme({
   palette: {
     // signInUp
+    signInUpBlack: {
+      main: "#000",
+    },
+    signInUpWhiteSecondary: {
+      main: "#f0f0f0",
+    },
+    signInUpBlackSecondary: {
+      main: "#d0dee71f",
+    },
     signInUpBackground: {
       main: "#12121280",
     },
@@ -304,7 +325,9 @@ const lightTheme = createTheme({
     signInUpPrimary: {
       main: "#fff",
     },
-
+    SignInUpBorder: {
+      main: "#FFFFFF80",
+    },
     sigInUpStepperConnector: {
       main: "#4F4F4F80",
     },
@@ -343,6 +366,9 @@ const lightTheme = createTheme({
     },
     sigInUpButtonBorderSecondary: {
       main: "#FFFFFF40",
+    },
+    signInUpLoader: {
+      main: "#1976d2",
     },
     backdrop: {
       main: "#0c070f78",
@@ -407,6 +433,10 @@ const lightTheme = createTheme({
     link: {
       main: "#327fb9",
     },
+    signInUpLGrayishBlue: {
+      main: "#211c27",
+    },
+
     // dashboard
     primaryBlack: {
       main: "#000", // Add your custom color here
@@ -706,6 +736,15 @@ const lightTheme = createTheme({
 const darkTheme = createTheme({
   palette: {
     // signInUp
+    signInUpBlack: {
+      main: "#000",
+    },
+    signInUpWhiteSecondary: {
+      main: "#f0f0f0",
+    },
+    signInUpBlackSecondary: {
+      main: "#d0dee71f",
+    },
     signInUpBackground: {
       main: "#12121280",
     },
@@ -754,8 +793,14 @@ const darkTheme = createTheme({
     sigInUpButtonBorder: {
       main: "#F3F3F340",
     },
+    SignInUpBorder: {
+      main: "#FFFFFF80",
+    },
     sigInUpButtonBorderSecondary: {
       main: "#FFFFFF40",
+    },
+    signInUpLoader: {
+      main: "#1976d2",
     },
     backdrop: {
       main: "#0c070f78",
@@ -819,6 +864,9 @@ const darkTheme = createTheme({
     },
     link: {
       main: "#327fb9",
+    },
+    signInUpLGrayishBlue: {
+      main: "#211c27",
     },
     // dashboard
     primaryBlack: {

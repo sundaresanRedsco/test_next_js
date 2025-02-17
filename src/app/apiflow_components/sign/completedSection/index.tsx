@@ -4,21 +4,22 @@ import {
   PrimarySignInUPTypography,
   SecondarySignInUPTypography,
 } from "@/app/Styles/signInUp";
-import { Box, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React from "react";
 import GlobalButton from "../../global/GButton";
 import Cookies from "js-cookie";
 import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 export default function CompletedSection({ clientSession }: any) {
   const router = useRouter();
   const { resetAllSignStoreData } = useSignUpStore();
   const handleSubmit = () => {
     if (clientSession) {
+      router.push("/userId/" + clientSession?.user?.user_id);
       Cookies.remove(clientSession?.user?.user_id);
       resetAllSignStoreData();
-      router.push("/userId/" + clientSession?.user?.user_id);
     }
   };
   return (
@@ -42,7 +43,7 @@ export default function CompletedSection({ clientSession }: any) {
           },
         }}
       >
-        Successful
+        {translate("signUp.SUCCESSFULL")}
       </PrimarySignInUPTypography>
       <SecondarySignInUPTypography
         sx={{
@@ -54,12 +55,12 @@ export default function CompletedSection({ clientSession }: any) {
           },
         }}
       >
-        Your account has successfully created, Now Re-directing to application
+        {translate("signUp.SUCCESS_DESC")}
       </SecondarySignInUPTypography>
       <GlobalButton
         className="bigButton"
         padding="10px 40px"
-        label={"Go to Dashboard"}
+        label={`${translate("button.GO_TO_DASHBOARD")}`}
         iconPosition="end"
         background={theme.palette.sigInUpStepperIconActive.main}
         color={theme.palette.signInUpPrimary.main}

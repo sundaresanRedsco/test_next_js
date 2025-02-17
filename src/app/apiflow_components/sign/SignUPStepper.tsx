@@ -41,7 +41,7 @@ const defaultStyle = (isActive: boolean) => {
     "& .MuiStepLabel-label.Mui-active": {
       color: isActive
         ? theme.palette.signInUpPrimary.main
-        : theme.palette.iconSidebarIconColor.main,
+        : theme.palette.SignInUpBorder.main,
     },
     marginTop: { sm: 7, md: 0, lg: 5 },
   };
@@ -78,7 +78,7 @@ const defaultButtonStyle = (activeStep: number, index: number) => {
       color:
         activeStep >= index
           ? theme.palette.signInUpPrimary.main
-          : theme.palette.iconSidebarIconColor.main,
+          : theme.palette.SignInUpBorder.main,
       fontFamily: activeStep == index ? "FiraSans-medium" : "FiraSans-regular",
       fontSize: "12px",
       "@media (min-width: 2120px)": {
@@ -96,7 +96,7 @@ const smallScreenButtonStyle = (activeStep: number, index: number) => {
       color:
         activeStep == index
           ? theme.palette.signInUpPrimary.main
-          : theme.palette.iconSidebarIconColor.main,
+          : theme.palette.SignInUpBorder.main,
       fontFamily: "FiraSans !important",
       fontSize: "12px",
     },

@@ -1,3 +1,4 @@
+import { translate } from "@/app/Helpers/helpersFunctions";
 import { PrimarySignInUPTypography } from "@/app/Styles/signInUp";
 import { Box } from "@mui/material";
 import Image from "next/image";
@@ -40,7 +41,7 @@ export default function Logo({}: Props) {
           },
         }}
       >
-        API Trail
+        {translate("common.LOGO")}
       </PrimarySignInUPTypography>
     </Box>
   );

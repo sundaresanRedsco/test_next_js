@@ -13,19 +13,18 @@ import React from "react";
 import GlobalButton from "../../global/GButton";
 import useSignIn from "@/app/hooks/sign/useSignIn";
 import { useGoogleLogin } from "@react-oauth/google";
-import { AzureIcon, GoogleIcon } from "@/app/Assests/icons";
+import { GoogleIcon } from "@/app/Assests/icons";
 import IconLayout from "../../global/IconLayout";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import GOtpField from "../../global/GOtpField";
 import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 export default function SignIn({ clientSession }: any) {
   const {
     handleSuccess,
-    handleAuthentication,
     handleInputChange,
     loginHandler,
-    handleRememberMe,
     errorPassword,
     errorEmail,
     setErrorMail,
@@ -45,12 +44,12 @@ export default function SignIn({ clientSession }: any) {
   const InputArray = [
     {
       id: 1,
-      label: "E-Mail",
+      label: `${translate("signin.EMAIL")}`,
       icon: (
         <Email
           sx={{
             fontSize: { xl: "25px", lg: "18px" },
-            color: theme.palette.iconSidebarIconColor.main,
+            color: theme.palette.SignInUpBorder.main,
           }}
         />
       ),
@@ -66,12 +65,12 @@ export default function SignIn({ clientSession }: any) {
     },
     {
       id: 5,
-      label: "Password",
+      label: `${translate("signin.PASSWORD")}`,
       icon: (
         <Lock
           sx={{
             fontSize: { xl: "25px", lg: "18px" },
-            color: theme.palette.iconSidebarIconColor.main,
+            color: theme.palette.SignInUpBorder.main,
           }}
         />
       ),
@@ -88,12 +87,12 @@ export default function SignIn({ clientSession }: any) {
     },
     {
       id: 5,
-      label: "OTP",
+      label: `${translate("signin.OTP")}`,
       icon: (
         <Lock
           sx={{
             fontSize: "18px",
-            color: theme.palette.iconSidebarIconColor.main,
+            color: theme.palette.SignInUpBorder.main,
           }}
         />
       ),
@@ -112,12 +111,12 @@ export default function SignIn({ clientSession }: any) {
     },
     {
       id: 5,
-      label: "Recovary Code",
+      label: `${translate("signin.RECOVERY_CODE")}`,
       icon: (
         <Lock
           sx={{
             fontSize: "18px",
-            color: theme.palette.iconSidebarIconColor.main,
+            color: theme.palette.SignInUpBorder.main,
           }}
         />
       ),
@@ -203,7 +202,9 @@ export default function SignIn({ clientSession }: any) {
                   },
                 }}
               >
-                {isTotpEnabled ? "Two-Factor Authentication" : "Login"}
+                {isTotpEnabled
+                  ? `${translate("signin.TWO_FACTOR_AUTHENTICATION")}`
+                  : `${translate("button.LOGIN")}`}
               </PrimarySignInUPTypography>
               <SecondarySignInUPTypography
                 sx={{
@@ -216,8 +217,8 @@ export default function SignIn({ clientSession }: any) {
                 }}
               >
                 {isTotpEnabled
-                  ? "Enter Authenticator app OTP"
-                  : "Login with your credentials"}
+                  ? `${translate("signin.ENTER_OTP")}`
+                  : `${translate("signin.LOGIN_WITH_CREDENTIALS")}`}
               </SecondarySignInUPTypography>
             </Stack>
             <Box
@@ -255,7 +256,7 @@ export default function SignIn({ clientSession }: any) {
                         >
                           <Box
                             sx={{
-                              color: theme.palette.iconSidebarIconColor.main,
+                              color: theme.palette.SignInUpBorder.main,
                               display: "flex",
                               alignItems: "center",
                               gap: "3px",
@@ -313,8 +314,7 @@ export default function SignIn({ clientSession }: any) {
                                   textAlign: "left",
                                 }}
                               >
-                                If you are unable to access the authenticator
-                                app,
+                                {translate("signin.OTP_TEXT1")}
                               </SecondarySignInUPTypography>
                             )}
                             <SecondarySignInUPTypography
@@ -326,8 +326,8 @@ export default function SignIn({ clientSession }: any) {
                               onClick={handleEnableRecoveyCode}
                             >
                               {elem.type == "otp"
-                                ? "use your Recovery Key"
-                                : "Use OTP instead?"}
+                                ? `${translate("signin.USE_RECOVERY_KEY")}`
+                                : `${translate("signin.USE_OTP_INSTEAD")}`}
                             </SecondarySignInUPTypography>
                           </Box>
                         </Stack>
@@ -347,7 +347,7 @@ export default function SignIn({ clientSession }: any) {
                         >
                           <Box
                             sx={{
-                              color: theme.palette.iconSidebarIconColor.main,
+                              color: theme.palette.SignInUpBorder.main,
                               display: "flex",
                               alignItems: "center",
                               gap: "3px",
@@ -393,7 +393,11 @@ export default function SignIn({ clientSession }: any) {
                   }}
                 >
                   <GlobalButton
-                    label={isTotpEnabled ? "Verify" : "Login"}
+                    label={
+                      isTotpEnabled
+                        ? `${translate("button.VERIFY")}`
+                        : `${translate("button.LOGIN")}`
+                    }
                     iconPosition="end"
                     fontWeight={500}
                     type={"submit"}
@@ -463,7 +467,7 @@ export default function SignIn({ clientSession }: any) {
                           },
                         }}
                       >
-                        {"(OR)"}
+                        {translate("common.OR")}
                       </TertiarySignInUPTypography>
                     </Divider>
                   </Box>
@@ -481,7 +485,7 @@ export default function SignIn({ clientSession }: any) {
                   >
                     {[
                       {
-                        label: "Continue with Google",
+                        label: `${translate("signin.CONTINUE_WITH_GOOGLE")}`,
                         icon: <GoogleIcon />,
                         onClick: googleLogin,
                       },

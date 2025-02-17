@@ -78,7 +78,7 @@ const DashboardLayout = ({ children }: any) => {
   const [isClient, setisClient] = useState(false);
   const { data: session, status } = useSession(); // Get session data and status
   useSecuredRoutes();
-
+  const { isLoading } = useSignUpStore();
   const isMounted = useRef(true);
   const pathname = usePathname();
 
@@ -156,11 +156,9 @@ const DashboardLayout = ({ children }: any) => {
     }
   }, [currentWorkspace, pathname, userProfile]);
 
-  const { resetAllSignStoreData } = useSignUpStore();
   useEffect(() => {
     setisClient(true);
     dispatch(initializeSession());
-    resetAllSignStoreData();
   }, []);
   const { isPageLoading } = useGlobalStore();
   if (isClient) {
@@ -207,6 +205,7 @@ const DashboardLayout = ({ children }: any) => {
     } else {
       return (
         <QueryClientProvider client={queryClient}>
+          {isLoading && <GLoader />}
           {children}
         </QueryClientProvider>
       );

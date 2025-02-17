@@ -11,6 +11,7 @@ import useMuiBreakpoints from "@/app/hooks/useMuiBreakpoints";
 import useGPopup from "@/app/hooks/useGPopup";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 type Props = {
   children: any;
@@ -93,8 +94,8 @@ export default function ScrollableLayout({
           {title
             ? title
             : isWorkflowModal
-            ? "Create Workspace"
-            : " API Trail Onboarding"}
+            ? `${translate("signUp.CREATE_WORKSPACE")}`
+            : `${translate("signUp.APITRAIL_ONBOARDING")}`}
         </PrimarySignInUPTypography>
         {description && (
           <SecondarySignInUPTypography
@@ -171,7 +172,7 @@ export default function ScrollableLayout({
           >
             {[
               {
-                name: "Back",
+                name: `${translate("button.BACK")}`,
                 onClick: handleBack,
                 isVisible: showBackButton,
                 isDisabled:
@@ -180,7 +181,9 @@ export default function ScrollableLayout({
               },
               {
                 name:
-                  typeof showNextButton == "string" ? showNextButton : "Next",
+                  typeof showNextButton == "string"
+                    ? showNextButton
+                    : `${translate("button.NEXT")}`,
                 onClick: handleNext,
                 isVisible: showNextButton,
                 isDisabled: false,

@@ -20,7 +20,13 @@ export const login = createAsyncThunk(
         // return rejectWithValue(errorHandling(response));
       }
       const userId: any = session?.user?.user_id;
-      if (userId) {
+      const isExistingUser: any = session?.user?.user_registered;
+      if (
+        userId &&
+        (!isExistingUser ||
+          isExistingUser != "EXISTING_USER" ||
+          value.invitations_token)
+      ) {
         Cookies.set(userId, "onboarding");
       }
       return session;

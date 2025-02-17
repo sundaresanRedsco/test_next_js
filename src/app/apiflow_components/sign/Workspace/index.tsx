@@ -28,51 +28,54 @@ import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import useWorkspace from "@/app/hooks/sign/useWorkspace";
 import axios from "axios";
 import { setItem } from "@/app/Services/localstorage";
+import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
+import { gatewayList } from "@/app/Constants/DropdownOptions";
 
 type Props = {
   clientSession: any;
   isWorkflowModal?: boolean;
 };
-export const gatewayList = [
-  {
-    name: "AWS Gateway",
-    icon: <AwsWhite height={"40px"} />,
-    clickable: "AWS",
-    label: "AWS Gateway",
-  },
-  {
-    name: "Azure Gateway",
-    label: "Azure Gateway",
-    icon: <AzureSignUp height={"40px"} />,
-    clickable: "AZURE",
-  },
-  {
-    name: "GCP Gateway",
-    label: "GCP Gateway",
-    icon: <GCPSignUp height={"40px"} />,
-    clickable: "GCP",
-  },
+// export const gatewayList = [
+//   {
+//     name: `${translate("gatewayList.AWS")}`,
+//     label: `${translate("gatewayList.AWS")}`,
+//     icon: <AwsWhite height={"40px"} />,
+//     clickable: "AWS",
+//   },
+//   {
+//     name: `${translate("gatewayList.AZURE")}`,
+//     label: `${translate("gatewayList.AZURE")}`,
+//     icon: <AzureSignUp height={"40px"} />,
+//     clickable: "AZURE",
+//   },
+//   {
+//     name: `${translate("gatewayList.GCP")}`,
+//     label: `${translate("gatewayList.GCP")}`,
+//     icon: <GCPSignUp height={"40px"} />,
+//     clickable: "GCP",
+//   },
 
-  {
-    name: "API Discovery via Swagger URL",
-    label: "Swagger",
-    icon: <SwaggerSignUp height={"40px"} />,
-    clickable: "SWAGGER",
-  },
+//   {
+//     name: `${translate("gatewayList.SWAGGER_NAME")}`,
+//     label: `${translate("gatewayList.SWAGGER")}`,
+//     icon: <SwaggerSignUp height={"40px"} />,
+//     clickable: "SWAGGER",
+//   },
 
-  // {
-  //   name: "HTTP, RESTful, SOAP and WSDL",
-  //   label: "HTTP",
-  //   icon: <RestAPISignUp height={"40px"} />,
-  //   clickable: "HTTP",
-  // },
-  // {
-  //   name: "API Discovery via traffic monitoring",
-  //   label: "Load Balancer",
-  //   icon: <LoadBalancerSignUp height={"40px"} />,
-  //   clickable: "APISIX",
-  // },
-];
+//   // {
+//   //   name: "HTTP, RESTful, SOAP and WSDL",
+//   //   label: "HTTP",
+//   //   icon: <RestAPISignUp height={"40px"} />,
+//   //   clickable: "HTTP",
+//   // },
+//   // {
+//   //   name: "API Discovery via traffic monitoring",
+//   //   label: "Load Balancer",
+//   //   icon: <LoadBalancerSignUp height={"40px"} />,
+//   //   clickable: "APISIX",
+//   // },
+// ];
 export default function Workspace({ clientSession, isWorkflowModal }: Props) {
   const { userData, setFormDataStore, formDataStore, setactiveStep } =
     useSignUpStore();
@@ -110,7 +113,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
   const inputs = [
     {
       id: 1,
-      label: "Name",
+      label: `${translate("common.NAME")}`,
       icon: "",
       type: "text",
       onChange: (e: any) =>
@@ -122,7 +125,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
     },
     {
       id: 2,
-      label: "Description",
+      label: `${translate("common.DESCRIPTION")}`,
       icon: "",
       type: "text",
       onChange: (e: any) =>
@@ -135,10 +138,9 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
     {
       id: 3,
       type: "switch",
-      title:
-        "Create channel for this environment and invite all the team members",
+      title: `${translate("signUp.SWITCH_TITLE")}`,
       link: {
-        label: "Details",
+        label: `${translate("signUp.SWITCH_NAME")}`,
         to: "",
       },
       onChange: handleVisibilityChange,
@@ -149,14 +151,14 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
   const InputArray = [
     {
       id: 1,
-      title: "Workspace",
-      description: "Create workspace",
+      title: `${translate("signUp.WORKSPACE")}`,
+      description: `${translate("signUp.WORSKAPCE_DESCRIPTION")}`,
       inputs: inputs,
     },
     {
       id: 1,
-      title: "Discovery Type",
-      description: "Choose discovery method",
+      title: `${translate("signUp.DISCOVERY_TYPE")}`,
+      description: `${translate("signUp.DISCOVERY_TYPE_DESCRITPION")}`,
       inputs: gatewayList,
       type: "cards",
       helperText: formErrors?.method,
@@ -219,7 +221,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                 </PrimarySignInUPTypography>
                 <SecondarySignInUPTypography
                   sx={{
-                    color: "#F3F3F3BF",
+                    color: theme.palette.sigInUpStepperTextSecondary.main,
                     fontSize: "10px",
                     "@media (min-width: 2120px)": {
                       fontSize: "18px",
@@ -234,7 +236,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                       fontSize: "10px",
                       margin: "0px",
                       fontFamily: "Firasans-regular",
-                      color: "#d32f2f",
+                      color: theme.palette.helperText.main,
                       "@media (min-width: 2120px)": {
                         fontSize: "18px",
                       },
@@ -251,11 +253,11 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                   <Grid size={{ md: 12, sm: 12, xs: 12 }} key={inputIndex}>
                     <Box
                       sx={{
-                        color: "#FFFFFF80",
+                        color: theme.palette.SignInUpBorder.main,
                         display: "flex",
                         alignItems: "center",
                         gap: "3px",
-                        borderBottom: "1px solid #F3F3F340",
+                        borderBottom: `1px solid ${theme.palette.sigInUpButtonBorder.main}`,
                         paddingBottom: "15px",
                         width: "100%",
                         justifyContent: "space-between",
@@ -263,7 +265,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                     >
                       <Box
                         sx={{
-                          color: "#FFFFFF80",
+                          color: theme.palette.SignInUpBorder.main,
                           display: "flex",
                           alignItems: "center",
                           gap: "3px",
@@ -348,7 +350,7 @@ export default function Workspace({ clientSession, isWorkflowModal }: Props) {
                     <Stack sx={{ gap: 1, marginBottom: "15px" }}>
                       <Box
                         sx={{
-                          color: "#FFFFFF80",
+                          color: theme.palette.SignInUpBorder.main,
                           display: "flex",
                           alignItems: "center",
                           gap: "3px",

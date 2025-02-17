@@ -10,6 +10,7 @@ import { login, LoginReducer, TwoFactorLogin } from "@/app/Redux/loginReducer";
 import { EncrouptionLogic } from "@/app/Helpers/helpersFunctions";
 import { loginRequest } from "@/app/Services/azureServices";
 import { useSignUpStore } from "./signZustand";
+import theme from "@/Theme/theme";
 
 interface loginInfoType {
   email: string;
@@ -21,13 +22,11 @@ export default function useSignIn() {
   const router = useRouter();
   const pathName = usePathname();
   const {
-    handleStep,
     setIsLoading,
     setactiveStep,
     setFormDataStore,
     setIsTotpEnabled,
     formDataStore,
-    resetAllSignStoreData,
   } = useSignUpStore();
 
   const { instance, accounts } = useMsal();
@@ -41,7 +40,6 @@ export default function useSignIn() {
   });
   const [user, setUser] = useState<any>(null);
   const [errorPassword, setErrorPassword] = useState<string>("");
-  const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [userData, setuserData] = useState(null);
   const [checkBoxVal, setCheckBoxVal] = useState(false);
 
@@ -54,8 +52,7 @@ export default function useSignIn() {
 
   let dev =
     "292411272101-9bpkf47ohttlift4u1n25tfk4e3u1fgp.apps.googleusercontent.com";
-  // "790333692787-pr3muri10h4quj2iqf9hlqi9olgerfck.apps.googleusercontent.com";
-  // "268390974719-rmi6c0pursdrl5qrndf3ejmejir17iip.apps.googleusercontent.com";
+
   let stage =
     "292411272101-9bpkf47ohttlift4u1n25tfk4e3u1fgp.apps.googleusercontent.com";
 
@@ -74,12 +71,12 @@ export default function useSignIn() {
     const style = document.createElement("style");
     style.innerHTML = `
         .nsm7Bb-HzV7m-LgbsSe {
-          background-color: #d0dee71f !important; /* White background color */
-          color: #000000 !important;           /* Black text color */
+          background-color: ${theme.palette.signInUpBlackSecondary.main} !important; /* White background color */
+          color: ${theme.palette.signInUpBlack.main} !important;           /* Black text color */
           border-radius: 5px !important;       /* Rounded corners */
           padding:10px !important;       /* Add padding */
 
-          border: 1px solid #000000 !important; /* Black border */
+          border: 1px solid ${theme.palette.signInUpBlack.main} !important; /* Black border */
           box-shadow: none !important;         /* Remove the shadow */
           font-size: 10px !important;          /* Font size */
           display: flex !important;
@@ -92,7 +89,7 @@ export default function useSignIn() {
         // }
 
         .nsm7Bb-HzV7m-LgbsSe:hover {
-          background-color: #f0f0f0 !important; /* Light grey on hover */
+          background-color:${theme.palette.signInUpWhiteSecondary.main} !important; /* Light grey on hover */
         }
       `;
     document.head.appendChild(style);
@@ -165,6 +162,7 @@ export default function useSignIn() {
               secure: true,
             }
           );
+          setIsLoading(false);
         } else {
           if (res == "TWO FACTOR:Enable") {
             setIsTotpEnabled(true);
@@ -190,7 +188,6 @@ export default function useSignIn() {
             router.push(`/userId/${res?.user?.user_id}`);
           }
         }
-        setIsLoading(false);
       })
       .catch((err: any) => {
         if (err?.message === '"TWO FACTOR:Enable"') {
@@ -304,7 +301,7 @@ export default function useSignIn() {
     if (Email && Password) {
       let token_type = "null";
       let token = "null";
-      let invitations_token = "null";
+      let invitations_token = formDataStore?.invite_token || "null";
       dispatch(
         login({
           email: Email,
@@ -316,18 +313,20 @@ export default function useSignIn() {
       )
         .unwrap()
         .then((res: any) => {
-          const userId: any = res?.user?.user_id;
-          setuserData(res);
-          setFormDataStore("user_id", res?.user?.user_id);
-          Cookies.set(userId, "onboarding");
-          setIsLoading(false);
-          if (!formDataStore?.invite_token) {
-            setactiveStep(1);
-          } else {
-            setactiveStep(5);
-            router.push(`/sign/signup`);
+          if (res) {
+            const userId: any = res?.user?.user_id;
+            setuserData(res);
+            setFormDataStore("user_id", userId);
+            setIsLoading(false);
+            setFormDataStore("token", res?.user?.token);
+            if (!formDataStore?.invite_token) {
+              setactiveStep(1);
+            } else {
+              setFormDataStore("currentPage", "SignUp");
+              setactiveStep(5);
+              router.replace(`/sign/signup`);
+            }
           }
-          setFormDataStore("token", res?.user?.token);
         })
         .catch((err: any) => {
           setIsLoading(false);
@@ -359,8 +358,6 @@ export default function useSignIn() {
             if (res == "TWO FACTOR:Enable") {
               setIsTotpEnabled(true);
             } else {
-              setIsLoading(false);
-              resetAllSignStoreData();
               router.push(`/userId/${res?.user?.user_id}`);
             }
           })
@@ -376,7 +373,6 @@ export default function useSignIn() {
               setErrorMail(err?.message);
               setErrorPassword(err?.message);
             }
-
             setIsLoading(false);
           });
       }
@@ -421,7 +417,6 @@ export default function useSignIn() {
           if (res == "TWO FACTOR:Enable") {
             setIsTotpEnabled(true);
           } else {
-            resetAllSignStoreData();
             router.push(`/userId/${res?.user?.user_id}`);
           }
         })
@@ -494,7 +489,6 @@ export default function useSignIn() {
     pathName,
     accounts,
     loading,
-    passwordVisibility,
     errorPassword,
     errorEmail,
     setErrorMail,

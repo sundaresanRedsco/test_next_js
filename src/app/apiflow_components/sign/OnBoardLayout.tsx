@@ -1,45 +1,29 @@
-import { Box, Button, Container, Stack } from "@mui/material";
+import { Box, Container, Stack } from "@mui/material";
 import React from "react";
 import Logo from "../global/Logo";
 import SignUPStepper from "./SignUPStepper";
-import GToggleButton from "../global/GToggleButton";
 import { ArrowBackIosNewRounded } from "@mui/icons-material";
-import GLoader from "../global/GLoader";
 import GlobalButton from "../global/GButton";
 import { AlertProvider } from "@/context/alertContext";
 import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 import useMuiBreakpoints from "@/app/hooks/useMuiBreakpoints";
 import theme from "@/Theme/theme";
+import { translate } from "@/app/Helpers/helpersFunctions";
 
 type Props = {
   children: any;
-  completed?: any;
   steps: any;
   isWorkflowModal?: boolean;
 };
 
 export default function OnBoardLayout({
   children,
-  completed,
   steps,
   isWorkflowModal,
 }: Props) {
-  const {
-    activeStep,
-    handleBack,
-    setFormDataStore,
-    formDataStore,
-    setactiveStep,
-  } = useSignUpStore();
-  const handleChange = (
-    event: React.MouseEvent<HTMLElement>,
-    newAlignment: string
-  ) => {
-    setFormDataStore("currentPage", newAlignment);
-  };
-  const buttons = ["Login", "Sign Up"];
-  const { isLoading } = useSignUpStore();
-  const { issm, isxs } = useMuiBreakpoints();
+  const { activeStep, handleBack, formDataStore } = useSignUpStore();
+
+  const { isxs } = useMuiBreakpoints();
   return (
     <AlertProvider>
       <Stack
@@ -105,8 +89,6 @@ export default function OnBoardLayout({
               },
             }}
           >
-            {isLoading && <GLoader />}
-
             <Box
               sx={{
                 display: "flex",
@@ -160,35 +142,7 @@ export default function OnBoardLayout({
                     marginTop: { xs: 2, sm: 0 },
                   }}
                 >
-                  {activeStep == 0 || activeStep == -1 ? (
-                    !isWorkflowModal && (
-                      <Box
-                        sx={{
-                          width: "135px",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          "@media (min-width: 2120px)": {
-                            width: "100%",
-                          },
-                        }}
-                      >
-                        {/* {!formDataStore?.isRegisterd && (
-                        <GToggleButton
-                          handleChange={handleChange}
-                          alignment={formDataStore?.currentPage}
-                          buttons={buttons}
-                          customStyle={{
-                            width: "160px",
-                            "@media (min-width: 2120px)": {
-                              width: "200px",
-                            },
-                          }}
-                        />
-                      )} */}
-                      </Box>
-                    )
-                  ) : (
+                  {activeStep > 0 && (
                     <GlobalButton
                       disabled={
                         isWorkflowModal
@@ -198,7 +152,10 @@ export default function OnBoardLayout({
                           : activeStep == 3 || activeStep == 1
                       }
                       padding="5px 15px"
-                      label={"Back to " + steps[activeStep - 1]?.label}
+                      label={
+                        `${translate("button.BACK_TO")} ` +
+                        steps[activeStep - 1]?.label
+                      }
                       iconPosition="start"
                       background={"none"}
                       color="white"
@@ -275,22 +232,6 @@ export default function OnBoardLayout({
             </Box>
           )}
         </Container>
-        {/* <Box sx={{ position: "absolute", bottom: 0 }}>
-          <Button
-            onClick={() => {
-              setactiveStep(activeStep - 1);
-            }}
-          >
-            Prev
-          </Button>
-          <Button
-            onClick={() => {
-              setactiveStep(activeStep + 1);
-            }}
-          >
-            Next
-          </Button>
-        </Box> */}
       </Stack>
     </AlertProvider>
   );
