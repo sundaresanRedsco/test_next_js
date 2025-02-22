@@ -1,4 +1,4 @@
-import { errorHandling } from "@/app/Services/errorHandling";
+import { errorHandling } from "@/services/errorHandling";
 import { getApi, postApi } from "../../services/requests";
 
 export async function POST(req: Request) {

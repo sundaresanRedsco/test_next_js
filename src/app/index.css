@@ -1,58 +1,45 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "inter", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
-
 /* font-family */
 /* FiraSans */
+
 @font-face {
   font-family: "FiraSans-extrabold";
-  src: url("../app/Assests/fonts/FiraSans-ExtraBold.ttf") format("truetype");
+  src: url("../assests/fonts/FiraSans-ExtraBold.ttf") format("truetype");
   font-weight: 800;
   font-style: normal;
 }
 @font-face {
   font-family: "FiraSans-bold";
-  src: url("../app/Assests/fonts/FiraSans-Bold.ttf") format("truetype");
+  src: url("../assests/fonts/FiraSans-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
 @font-face {
   font-family: "FiraSans-semibold";
-  src: url("../app/Assests/fonts/FiraSans-SemiBold.ttf") format("truetype");
+  src: url("../assests/fonts/FiraSans-SemiBold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
 }
 @font-face {
   font-family: "FiraSans-medium";
-  src: url("../app/Assests/fonts/FiraSans-Medium.ttf") format("truetype");
+  src: url("../assests/fonts/FiraSans-Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
 }
 @font-face {
   font-family: "FiraSans-regular";
-  src: url("../app/Assests/fonts/FiraSans-Regular.ttf") format("truetype");
+  src: url("../assests/fonts/FiraSans-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
   font-family: "FiraSans-extralight";
-  src: url("../app/Assests/fonts/FiraSans-ExtraLight.ttf") format("truetype");
+  src: url("../assests/fonts/FiraSans-ExtraLight.ttf") format("truetype");
   font-weight: 200;
   font-style: normal;
 }
 @font-face {
   font-family: "FiraSans-light";
-  src: url("../app/Assests/fonts/FiraSans-Light.ttf") format("truetype");
+  src: url("../assests/fonts/FiraSans-Light.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
 }
@@ -71,7 +58,7 @@ input[type="password"]::-ms-clear {
 body {
   height: 100vh;
   overflow: hidden;
-  background: url("../../public/global/Bg.png");
+  /* background: url("../../public/global/Bg.png"); */
   background-repeat: no-repeat;
   background-size: cover;
 }

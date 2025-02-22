@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { setCookie } from "nookies";
-import { EncrouptionLogic } from "@/app/Helpers/helpersFunctions";
+import { EncrouptionLogic } from "@/helpers/helpersFunctions";
 
 export async function POST(req: Request) {
   const { token, expires_in, user_profile } = await req.json();

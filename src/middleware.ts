@@ -37,25 +37,6 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // if (
-  //   !token &&
-  //   pathname != "/sign" &&
-  //   pathname != "/sign/signup" &&
-  //   pathname != "/"
-  // ) {
-  //   url.pathname = "/";
-  //   return NextResponse.redirect(url);
-  // }
-  // if (token && pathname) {
-  //   if (isOnboarding && pathname != "/sign/signup") {
-  //     url.pathname = "/sign/signup";
-  //     return NextResponse.redirect(url);
-  //   } else if (!isOnboarding && !pathname.includes("/userId")) {
-  //     url.pathname = "/userId/" + tokenData?.user_id;
-  //     return NextResponse.redirect(url);
-  //   }
-  // }
-
   const tokenExpiresAt: any = tokenData?.expiration_time?.toString();
   const expirationDate = new Date(parseInt(tokenExpiresAt) * 1000);
   const currentDate = new Date();

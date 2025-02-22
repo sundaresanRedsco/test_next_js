@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
-import { adminUrl } from "@/app/Services/auth";
+import { adminUrl } from "@/services/auth";
 
 export async function POST(req: NextRequest) {
   const { method, endpoint, data } = await req.json();

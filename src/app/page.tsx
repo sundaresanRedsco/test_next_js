@@ -1,6 +1,12 @@
-import WelcomePage from "./apiflow_components/sign/Welcome-page";
+import React from "react";
+import LandingPage from "@/components/landingComponents/index";
 
-export default async function Home() {
-  // If none of the above conditions are met, render the App component
-  return <WelcomePage />;
+type Props = {};
+
+export default function Home() {
+  return (
+    <div>
+      <LandingPage />
+    </div>
+  );
 }
