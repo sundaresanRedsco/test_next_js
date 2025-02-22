@@ -1,5 +1,5 @@
 import { landingPageTranslate } from "@/helpers/helpersFunctions";
-import { CustomButtonTypography } from "@/Styles/landingPage";
+import { CustomButtonTypography } from "@/styles/landingPage";
 import theme from "@/Theme/theme";
 import { Box, Button } from "@mui/material";
 

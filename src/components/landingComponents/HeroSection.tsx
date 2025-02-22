@@ -5,7 +5,7 @@ import {
   authButtonStyles,
   HeroSectionDescriptionTypography,
   HeroSectionTitleTypography,
-} from "@/Styles/landingPage";
+} from "@/styles/landingPage";
 import { CustomButton } from "./CustomButtons";
 import { landingPageTranslate } from "@/helpers/helpersFunctions";
 

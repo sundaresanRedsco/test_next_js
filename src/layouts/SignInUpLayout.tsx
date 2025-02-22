@@ -44,7 +44,7 @@ const LoginForm = styled(Box)({
   justifyContent: "center",
   alignItems: "center",
   height: "100%",
-  width: "50%",
+  width: "60%",
   [theme.breakpoints.down("sm")]: {
     width: "90%", // hide on mobile
   },
@@ -60,7 +60,7 @@ export default function SignInUpLayout({ children, type }: Props) {
 
   return (
     <div
-      className="w-full h-screen flex flex-row justify-between items-center relative"
+      className="w-full h-screen flex flex-row justify-between items-center relative overflow-x-hidden overflow-y-auto"
       style={{ background: theme.palette.signInUpBg.main }}
     >
       {/* Left section: Login Form */}

@@ -16,7 +16,7 @@ import {
   navLinkStyles,
   NavLinkTypography,
   topBarStyles,
-} from "@/Styles/landingPage";
+} from "@/styles/landingPage";
 import { NavButtons } from "./NavButtons";
 import LogoWhite from "@/assests/svgs/LogoWhite";
 import { landingPageTranslate } from "@/helpers/helpersFunctions";
