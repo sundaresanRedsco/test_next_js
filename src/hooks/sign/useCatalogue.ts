@@ -1,13 +1,11 @@
-import { useAlert } from "@/context/alertContext";
+// import { useAlert } from "@/context/alertContext";
 import React, { useEffect, useState } from "react";
-
 import axios from "axios";
 
-import { useSignUpStore } from "./signZustand";
 import useGPopup from "../useGPopup";
+import { useSignUpStore } from "@/store/useSignUpStore";
 
 export default function useCatalogue(userData?: any, handleStep?: any) {
-  const { showAlert } = useAlert();
   const { handleOpen } = useGPopup();
   const [isUpdating, setisUpdating] = useState("");
   // const userData: any = useSession();
