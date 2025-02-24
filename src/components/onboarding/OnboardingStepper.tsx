@@ -71,7 +71,7 @@ const smallScreenStyle = (isSlider: boolean, theme: any) => {
     },
   };
 };
-const defaultButtonStyle = (activeStep: number, index: number) => {
+const defaultButtonStyle = (activeStep: number, index: number, theme: any) => {
   return {
     "& .MuiStepLabel-label": {
       color:
@@ -89,7 +89,11 @@ const defaultButtonStyle = (activeStep: number, index: number) => {
     },
   };
 };
-const smallScreenButtonStyle = (activeStep: number, index: number) => {
+const smallScreenButtonStyle = (
+  activeStep: number,
+  index: number,
+  theme: any
+) => {
   return {
     "& .MuiStepLabel-label": {
       color:
@@ -200,8 +204,8 @@ export default function OnboardingStepper({ steps, variant }: Props) {
             <StepButton
               sx={
                 isxs
-                  ? smallScreenButtonStyle(activeStep, index)
-                  : defaultButtonStyle(activeStep, index)
+                  ? smallScreenButtonStyle(activeStep, index, theme)
+                  : defaultButtonStyle(activeStep, index, theme)
               }
               icon={
                 <StepperIcon
