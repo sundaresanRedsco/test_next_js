@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material";
 
 import CssBaseline from "@mui/material/CssBaseline";
 import { darkTheme, lightTheme } from "@/app/theme/theme";
