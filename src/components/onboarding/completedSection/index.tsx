@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 // import GlobalButton from "../../global/GButton";
 import Cookies from "js-cookie";
+import { useSignUpStore } from "@/store/useSignUpStore";
 // import { translate } from "@/app/Helpers/helpersFunctions";
 
 export default function CompletedSection({ clientSession }: any) {
