@@ -16,7 +16,8 @@ export async function middleware(req: NextRequest) {
   });
   const token = tokenData?.token;
   const userId = tokenData?.user_id;
-  const isOnboarding = userId && req.cookies.get(userId)?.value ? true : false;
+  const isOnboarding =
+    userId && req.cookies.get(String(userId))?.value ? true : false;
   const publicRoutes: any = ["/", "/sign", "/sign/signup"];
 
   if (pathname) {
