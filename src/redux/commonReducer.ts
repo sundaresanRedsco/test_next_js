@@ -11,12 +11,12 @@ import {
   decryptData,
   setCookies,
 } from "../helpers/helpersFunctions";
-import { userInterface } from "../../interface/userInterface";
+// import { userInterface } from "../../interface/userInterface";
 
 type CommonInitialStateType = {
   isLoggedIn: boolean;
   userProfile: {
-    user: userInterface;
+    user: any;
   };
   sessionExpireTime: any | null;
   packages: any | any;
