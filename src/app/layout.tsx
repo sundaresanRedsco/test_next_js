@@ -6,9 +6,9 @@ import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ClientProvider from "@/provider/clientProvider";
 import { Suspense } from "react";
-import ConsoleLogProvider from "@/provider/consoleLogProvider";
-import SessionWrapper from "@/provider/sessionProvider";
-import ThemeProvider from "@/provider/themeProvider";
+import ConsoleLogProvider from "../provider/consoleLogProvider";
+import SessionWrapper from "../provider/sessionProvider";
+import ThemeProvider from "../provider/themeProvider";
 
 export default function RootLayout({
   children,
