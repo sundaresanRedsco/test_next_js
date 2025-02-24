@@ -11,55 +11,55 @@ declare module "@mui/material/styles" {
 }
 
 interface landingPagePalette {
-  landingPrimary: Palette["primary"];
-  landingBg: Palette["primary"];
-  landingLogInBtnText: Palette["primary"];
-  landingNavBg: Palette["primary"];
-  landingNavLink: Palette["primary"];
-  landingStartWithFreeBtn: Palette["primary"];
-  landingContactUsBtn: Palette["primary"];
-  landingContactUsBtnBg: Palette["primary"];
-  landingHeroSectionDesc: Palette["primary"];
-  landingNavLinkHighlight: Palette["primary"];
+  landingPrimary: { main: string };
+  landingBg: { main: string };
+  landingLogInBtnText: { main: string };
+  landingNavBg: { main: string };
+  landingNavLink: { main: string };
+  landingStartWithFreeBtn: { main: string };
+  landingContactUsBtn: { main: string };
+  landingContactUsBtnBg: { main: string };
+  landingHeroSectionDesc: { main: string };
+  landingNavLinkHighlight: { main: string };
 }
 
 interface landingPagePaletteOptions {
-  landingPrimary: PaletteOptions["primary"];
-  landingBg: PaletteOptions["primary"];
-  landingLogInBtnText: PaletteOptions["primary"];
-  landingNavBg: PaletteOptions["primary"];
-  landingNavLink: PaletteOptions["primary"];
-  landingStartWithFreeBtn: PaletteOptions["primary"];
-  landingContactUsBtn: PaletteOptions["primary"];
-  landingContactUsBtnBg: PaletteOptions["primary"];
-  landingHeroSectionDesc: PaletteOptions["primary"];
-  landingNavLinkHighlight: PaletteOptions["primary"];
+  landingPrimary?: { main: string };
+  landingBg?: { main: string };
+  landingLogInBtnText?: { main: string };
+  landingNavBg?: { main: string };
+  landingNavLink?: { main: string };
+  landingStartWithFreeBtn?: { main: string };
+  landingContactUsBtn?: { main: string };
+  landingContactUsBtnBg?: { main: string };
+  landingHeroSectionDesc?: { main: string };
+  landingNavLinkHighlight?: { main: string };
 }
 
 interface signInUpPalette {
-  signInUpBg: Palette["primary"];
-  signInButtonPrimary: Palette["primary"];
-  signInButtonSecondary: Palette["primary"];
-  signInTextPrimary: Palette["primary"];
-  signInTextSecondary: Palette["primary"];
-  signInTextTertiary: Palette["primary"];
-  signInTextLink: Palette["primary"];
-  signInTextPlaceholder: Palette["primary"];
-  signInTextLable: Palette["primary"];
-  signInBorder: Palette["primary"];
+  signInUpBg: { main: string };
+  signInButtonPrimary: { main: string };
+  signInButtonSecondary: { main: string };
+  signInTextPrimary: { main: string };
+  signInTextSecondary: { main: string };
+  signInTextTertiary: { main: string };
+  signInTextLink: { main: string };
+  signInTextPlaceholder: { main: string };
+  signInTextLable: { main: string };
+  signInBorder: { main: string };
 }
 
 interface signInUpPaletteOptions {
-  signInUpBg: PaletteOptions["primary"];
-  signInButtonPrimary: PaletteOptions["primary"];
-  signInButtonSecondary: PaletteOptions["primary"];
-  signInTextPrimary: PaletteOptions["primary"];
-  signInTextSecondary: PaletteOptions["primary"];
-  signInTextTertiary: PaletteOptions["primary"];
-  signInTextLink: PaletteOptions["primary"];
-  signInTextPlaceholder: PaletteOptions["primary"];
-  signInTextLable: PaletteOptions["primary"];
-  signInBorder: PaletteOptions["primary"];
+  signInUpBg?: { main: string };
+  signInButtonPrimary?: { main: string };
+  signInButtonSecondary?: { main: string };
+  signInTextPrimary?: { main: string };
+  signInTextSecondary?: { main: string };
+  signInTextTertiary?: { main: string };
+  signInTextLink?: { main: string };
+  signInTextPlaceholder?: { main: string };
+  signInTextLable?: { main: string };
+  signInBorder?: { main: string };
 }
 
 interface DashboardPalette {}
