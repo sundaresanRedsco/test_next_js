@@ -10,7 +10,8 @@ export default function useSecuredRoutes() {
   const router = useRouter();
   const pathname = usePathname();
   const { data, status } = useSession();
-  const userId: any = data?.user?.user_id;
+  // const userId: any = data?.user?.user_id;
+  const userId: any = "";
 
   const {
     setactiveStep,
@@ -27,10 +28,13 @@ export default function useSecuredRoutes() {
   useEffect(() => {
     if (status === "loading") return;
 
-    const token = data?.user?.token;
+    // const token = data?.user?.token;
+    const token = "";
 
     const publicRoutes = ["/", "/sign", "/sign/signup"];
-    const tokenExpiresAt: any = data?.user?.expiration_time?.toString();
+    // const tokenExpiresAt: any = data?.user?.expiration_time?.toString();
+    const tokenExpiresAt: any = "";
+
     const expirationDate = new Date(parseInt(tokenExpiresAt) * 1000);
     const currentDate = new Date();
 
@@ -41,10 +45,12 @@ export default function useSecuredRoutes() {
     } else {
       setisTokenExpired(false);
     }
-    const invite_token = searchParams.get("invite_token");
-    if (!formDataStore?.authType && token && !pathname.includes("/userId")) {
+    const invite_token = searchParams?.get("invite_token");
+    if (!formDataStore?.authType && token && !pathname?.includes("/userId")) {
       Cookies.remove(userId);
-      router.push("/userId/" + data?.user?.user_id);
+      // router.push("/userId/" + data?.user?.user_id);
+      router.push("/userId/" + "");
+
       // resetAllSignStoreData();
     }
 
