@@ -23,6 +23,8 @@ import { useForm } from "react-hook-form";
 import useSignIn from "./useSignIn";
 import { useSignUpStore } from "@/store/useSignUpStore";
 import { useTheme } from "@mui/material";
+import { RootStateType } from "@/redux/store";
+import { SignupReducer } from "@/redux/signupReducer";
 // import { useSignUpStore } from "./signZustand";
 
 interface userDataType {
