@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootStateType } from "../Redux/store";
-import { CommonReducer, updateUserProfile } from "../Redux/commonReducer";
+import { RootStateType } from "../redux/store";
+import { CommonReducer, updateUserProfile } from "../redux/commonReducer";
 import { signIn } from "next-auth/react";
 
 export default function useSessionUpdate() {

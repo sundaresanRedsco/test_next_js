@@ -1,6 +1,6 @@
 import { queryClient } from "@/app/apiflow_Pages/layout/dashboardLayout";
-import { CommonReducer } from "@/app/Redux/commonReducer";
-import { RootStateType } from "@/app/Redux/store";
+import { CommonReducer } from "@/redux/commonReducer";
+import { RootStateType } from "@/redux/store";
 import { AdminServices } from "@/app/Services/services";
 import { usePostStore } from "@/app/store/usePostStore";
 import { useMutation, useQuery } from "@tanstack/react-query";

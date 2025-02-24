@@ -1,5 +1,5 @@
 import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
-import { RootStateType } from "@/app/Redux/store";
+import { RootStateType } from "@/redux/store";
 import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 import React from "react";
 import { useSelector } from "react-redux";

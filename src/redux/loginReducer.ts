@@ -1,5 +1,4 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import * as authService from "../services/auth";
 import { AdminServices } from "../services/services";
 import { errorHandling } from "../services/errorHandling";
 import { getSession, signIn } from "next-auth/react";
@@ -77,7 +76,7 @@ export const TwoFactorLogin = createAsyncThunk(
 export const resetGatewayStateLogin = createAction("Gateway/resetState");
 
 export const logout = createAsyncThunk("logout", async () => {
-  return await authService.logout();
+  // return await authService.logout();
 });
 
 type LoginInitialStateType = {

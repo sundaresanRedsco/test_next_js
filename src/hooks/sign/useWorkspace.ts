@@ -3,8 +3,8 @@ import {
   CreateWorkspace,
   workspaceReducer,
 } from "@/app/Redux/apiManagement/workspaceReducer";
-import { CommonReducer } from "@/app/Redux/commonReducer";
-import { RootStateType } from "@/app/Redux/store";
+import { CommonReducer } from "@/redux/commonReducer";
+import { RootStateType } from "@/redux/store";
 import { setRemoveTabs } from "@/app/Redux/tabReducer";
 import { initSession } from "@/app/Services/auth";
 import { useAlert } from "@/context/alertContext";

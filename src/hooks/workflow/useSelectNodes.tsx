@@ -1,9 +1,9 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useSelector } from "react-redux";
-import { RootStateType } from "@/app/Redux/store";
+import { RootStateType } from "@/redux/store";
 import { FlowReducer } from "@/app/Redux/apiManagement/flowReducer";
-import { CommonReducer } from "@/app/Redux/commonReducer";
+import { CommonReducer } from "@/redux/commonReducer";
 import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 import { useReactFlow } from "reactflow";
 import useReusableFunctions from "./useReusableFunctions";

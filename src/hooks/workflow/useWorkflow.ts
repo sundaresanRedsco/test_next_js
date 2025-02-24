@@ -9,8 +9,8 @@ import {
   setIsEditable,
   setNextNode,
 } from "@/app/Redux/apiManagement/flowReducer";
-import { CommonReducer, updateSessionPopup } from "@/app/Redux/commonReducer";
-import { RootStateType } from "@/app/Redux/store";
+import { CommonReducer, updateSessionPopup } from "@/redux/commonReducer";
+import { RootStateType } from "@/redux/store";
 import { useWorkflowStore } from "@/app/store/useWorkflowStore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
