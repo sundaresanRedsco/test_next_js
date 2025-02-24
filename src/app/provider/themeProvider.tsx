@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { darkTheme, lightTheme } from "@/app/theme/theme";
-export default function ThemeProvider({
+export default function APIThemeProvider({
   children,
 }: {
   children: React.ReactNode;
@@ -27,13 +27,13 @@ export default function ThemeProvider({
   };
 
   return (
-    <MuiThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
       <CssBaseline />
       {/* Provide toggleTheme function to children */}
       <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
         {children}
       </ThemeContext.Provider>
-    </MuiThemeProvider>
+    </ThemeProvider>
   );
 }
 

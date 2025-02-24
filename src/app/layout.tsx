@@ -8,7 +8,7 @@ import ClientProvider from "./provider/clientProvider";
 import { Suspense } from "react";
 import ConsoleLogProvider from "./provider/consoleLogProvider";
 import SessionWrapper from "./provider/sessionProvider";
-import ThemeProvider from "./provider/themeProvider";
+import APIThemeProvider from "./provider/themeProvider";
 
 export default function RootLayout({
   children,
@@ -25,9 +25,9 @@ export default function RootLayout({
           <ConsoleLogProvider>
             <ClientProvider>
               <SessionWrapper>
-                <ThemeProvider>
+                <APIThemeProvider>
                   <Suspense>{children}</Suspense>
-                </ThemeProvider>
+                </APIThemeProvider>
               </SessionWrapper>
             </ClientProvider>
           </ConsoleLogProvider>
