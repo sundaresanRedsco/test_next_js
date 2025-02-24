@@ -1,4 +1,70 @@
-import { createTheme, Palette, PaletteOptions, Theme } from "@mui/material";
+// import { createTheme, Palette, PaletteOptions, Theme } from "@mui/material";
+import { createTheme, PaletteOptions } from "@mui/material/styles";
+
+declare module "@mui/material/styles" {
+  interface Palette extends landingPagePalette {}
+  interface PaletteOptions extends landingPagePaletteOptions {}
+  interface Palette extends signInUpPalette {}
+  interface PaletteOptions extends signInUpPaletteOptions {}
+  interface Palette extends DashboardPalette {}
+  interface PaletteOptions extends DashboardPaletteOptions {}
+}
+
+interface landingPagePalette {
+  landingPrimary: Palette["primary"];
+  landingBg: Palette["primary"];
+  landingLogInBtnText: Palette["primary"];
+  landingNavBg: Palette["primary"];
+  landingNavLink: Palette["primary"];
+  landingStartWithFreeBtn: Palette["primary"];
+  landingContactUsBtn: Palette["primary"];
+  landingContactUsBtnBg: Palette["primary"];
+  landingHeroSectionDesc: Palette["primary"];
+  landingNavLinkHighlight: Palette["primary"];
+}
+
+interface landingPagePaletteOptions {
+  landingPrimary: PaletteOptions["primary"];
+  landingBg: PaletteOptions["primary"];
+  landingLogInBtnText: PaletteOptions["primary"];
+  landingNavBg: PaletteOptions["primary"];
+  landingNavLink: PaletteOptions["primary"];
+  landingStartWithFreeBtn: PaletteOptions["primary"];
+  landingContactUsBtn: PaletteOptions["primary"];
+  landingContactUsBtnBg: PaletteOptions["primary"];
+  landingHeroSectionDesc: PaletteOptions["primary"];
+  landingNavLinkHighlight: PaletteOptions["primary"];
+}
+
+interface signInUpPalette {
+  signInUpBg: Palette["primary"];
+  signInButtonPrimary: Palette["primary"];
+  signInButtonSecondary: Palette["primary"];
+  signInTextPrimary: Palette["primary"];
+  signInTextSecondary: Palette["primary"];
+  signInTextTertiary: Palette["primary"];
+  signInTextLink: Palette["primary"];
+  signInTextPlaceholder: Palette["primary"];
+  signInTextLable: Palette["primary"];
+  signInBorder: Palette["primary"];
+}
+
+interface signInUpPaletteOptions {
+  signInUpBg: PaletteOptions["primary"];
+  signInButtonPrimary: PaletteOptions["primary"];
+  signInButtonSecondary: PaletteOptions["primary"];
+  signInTextPrimary: PaletteOptions["primary"];
+  signInTextSecondary: PaletteOptions["primary"];
+  signInTextTertiary: PaletteOptions["primary"];
+  signInTextLink: PaletteOptions["primary"];
+  signInTextPlaceholder: PaletteOptions["primary"];
+  signInTextLable: PaletteOptions["primary"];
+  signInBorder: PaletteOptions["primary"];
+}
+
+interface DashboardPalette {}
+
+interface DashboardPaletteOptions {}
 
 const lightTheme = createTheme({
   palette: {

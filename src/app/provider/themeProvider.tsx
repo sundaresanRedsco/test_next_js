@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
+
 import CssBaseline from "@mui/material/CssBaseline";
 import { darkTheme, lightTheme } from "@/app/theme/theme";
 export default function APIThemeProvider({
