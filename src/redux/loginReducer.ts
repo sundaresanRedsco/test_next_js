@@ -19,8 +19,10 @@ export const login = createAsyncThunk(
         throw response.error;
         // return rejectWithValue(errorHandling(response));
       }
-      const userId: any = session?.user?.user_id;
-      const isExistingUser: any = session?.user?.user_registered;
+      // const userId: any = session?.user?.user_id;
+      // const isExistingUser: any = session?.user?.user_registered;
+      const userId: string = "";
+      const isExistingUser = false;
       if (
         userId &&
         (!isExistingUser ||
