@@ -11,7 +11,7 @@ import { StyledLink } from "@/styles/signInUp";
 import SignInUpButton from "../SignInUpButton";
 import { emailPattern } from "@/utilities/regex";
 import { useDispatch } from "react-redux";
-import { login } from "@/Redux/loginReducer";
+import { login } from "@/redux/loginReducer";
 
 // And then use it like this:
 
