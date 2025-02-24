@@ -2,20 +2,27 @@
 import { Box, useTheme } from "@mui/material";
 import { useState } from "react";
 import SignInUpTypography from "@/components/signInUp/SignInUpTypography";
+
 import SignInUpLayout from "@/layouts/SignInUpLayout";
 import { globalTranslate, signInUpTranslate } from "@/helpers/helpersFunctions";
 import SignInUpInputField from "../SignInUpInputField";
 import SignInUpCheckBox from "../SignInUpCheckBox";
+import { StyledLink } from "@/styles/signInUp";
 import SignInUpButton from "../SignInUpButton";
 import { emailPattern } from "@/utilities/regex";
-export default function SignUp() {
+import { useDispatch } from "react-redux";
+import { login } from "@/redux/loginReducer";
+
+// And then use it like this:
+
+export default function SignIn() {
   const theme = useTheme();
+  const dispatch = useDispatch<any>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailErr, setEmailErr] = useState("");
   const [passwordErr, setPasswordErr] = useState("");
-  const [acceptTerms, setAcceptTerms] = useState(false);
-
+  const [rememberMe, setRememberMe] = useState(false);
   const inputFields = [
     {
       label: globalTranslate(`EMAIL_LABEL`, "sigInUpConstants"),
@@ -29,7 +36,7 @@ export default function SignUp() {
     {
       label: globalTranslate(`PASSWORD_LABEL`, "sigInUpConstants"),
       placeholder: globalTranslate(
-        `signup.PASSWORD_PLACEHOLDER`,
+        `signin.PASSWORD_PLACEHOLDER`,
         "sigInUpConstants"
       ),
       value: password,
@@ -64,42 +71,44 @@ export default function SignUp() {
     return isValid;
   };
 
-  function signUpHandler(): any {
+  function loginHandler(): any {
     if (!validateForm()) return;
     // setIsLoading(true);
 
     let token_type = "null";
     let token = "null";
     let invitations_token = "null";
-    // dispatch(
-    //   login({
-    //     email: email,
-    //     password: password,
-    //     token_type,
-    //     token,
-    //     invitations_token,
-    //   })
-    // )
-    //   .unwrap()
-    //   .then((res: any) => {
-    //     if (res) {
-    //     }
-    //   })
-    //   .catch((err: any) => {
-    //     setEmailErr("");
-    //     setPasswordErr("");
-    //   });
+    dispatch(
+      login({
+        email: email,
+        password: password,
+        token_type,
+        token,
+        invitations_token,
+      })
+    )
+      .unwrap()
+      .then((res: any) => {
+        if (res) {
+        }
+      })
+      .catch((err: any) => {
+        setEmailErr("");
+        setPasswordErr("");
+      });
   }
 
   return (
-    <SignInUpLayout type="signup">
+    <SignInUpLayout
+      type={globalTranslate(`signin.LAYOUT_TYPE`, "sigInUpConstants")}
+    >
       {inputFields.map((elem, index) => {
         return (
           <SignInUpInputField
             key={index}
             label={elem.label}
             placeholder={elem.placeholder}
-            value={email}
+            value={elem.value}
             onChange={elem.onChange}
             type={elem.type}
             error={elem.error}
@@ -118,56 +127,44 @@ export default function SignUp() {
           alignItems: "center",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "start" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           <SignInUpCheckBox
-            checked={acceptTerms}
-            onChange={() => setAcceptTerms(!acceptTerms)}
-            sx={{
-              mt: 0.2,
-            }}
+            checked={rememberMe}
+            onChange={() => setRememberMe(!rememberMe)}
           />
           <SignInUpTypography
-            text={""}
+            text={globalTranslate(`signin.REMEMBER_ME`, "sigInUpConstants")}
             // variant="sm"
-            color={theme.apiTrail.signInUp.TextTertiary}
-            fontWeight="xs"
             fontSize={{
               xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
               xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
             }}
-            isMixedText={{
-              start: globalTranslate(
-                `signup.MIXED_TEXT.start`,
-                "sigInUpConstants"
-              ),
-              between: globalTranslate(
-                `signup.MIXED_TEXT.between`,
-                "sigInUpConstants"
-              ),
-              text1: globalTranslate(
-                `signup.MIXED_TEXT.text1`,
-                "sigInUpConstants"
-              ),
-              text2: globalTranslate(
-                `signup.MIXED_TEXT.text2`,
-                "sigInUpConstants"
-              ),
-              link1: globalTranslate(
-                `signup.MIXED_TEXT.link1`,
-                "sigInUpConstants"
-              ),
-              link2: globalTranslate(
-                `signup.MIXED_TEXT.link2`,
-                "sigInUpConstants"
-              ),
-            }}
+            color={theme.apiTrail.signInUp.TextTertiary}
+            fontWeight="xs"
           />
         </Box>
+        <StyledLink
+          href={globalTranslate(`signin.CHECK_BOX_ROUTE`, "sigInUpConstants")}
+          sx={{
+            fontSize: {
+              xl: "1.25rem",
+              xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+            },
+          }}
+        >
+          {globalTranslate(`signin.FORGOT_PASSWORD`, "sigInUpConstants")}
+        </StyledLink>
       </Box>
+
       <SignInUpButton
-        text={signInUpTranslate(`signup.BUTTON`, "sigInUpConstants")}
+        text={signInUpTranslate(`signin.BUTTON`, "sigInUpConstants")}
         onClick={() => {
-          signUpHandler();
+          loginHandler();
         }}
       />
     </SignInUpLayout>

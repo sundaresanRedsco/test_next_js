@@ -7,12 +7,13 @@ import { globalTranslate, signInUpTranslate } from "@/helpers/helpersFunctions";
 import SignInUpInputField from "../SignInUpInputField";
 import SignInUpCheckBox from "../SignInUpCheckBox";
 import SignInUpButton from "../SignInUpButton";
+import { emailPattern } from "@/utilities/regex";
 export default function SignUp() {
   const theme = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [emailErr, setemailErr] = useState("");
-  const [passwordErr, setpasswordErr] = useState("");
+  const [emailErr, setEmailErr] = useState("");
+  const [passwordErr, setPasswordErr] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
 
   const inputFields = [
@@ -39,6 +40,30 @@ export default function SignUp() {
     },
   ];
 
+  const validateForm = () => {
+    let isValid = true;
+    if (!email) {
+      setEmailErr("Email is required");
+      isValid = false;
+    } else if (!emailPattern.test(email)) {
+      setEmailErr("Please enter a valid email address");
+      isValid = false;
+    } else {
+      setEmailErr("");
+    }
+
+    if (!password) {
+      setPasswordErr("Password is required");
+      isValid = false;
+    } else if (password.length < 6) {
+      setPasswordErr("Password must be at least 6 characters");
+      isValid = false;
+    } else {
+      setPasswordErr("");
+    }
+    return isValid;
+  };
+
   function signUpHandler(): any {
     if (!validateForm()) return;
     // setIsLoading(true);
@@ -46,24 +71,24 @@ export default function SignUp() {
     let token_type = "null";
     let token = "null";
     let invitations_token = "null";
-    dispatch(
-      login({
-        email: email,
-        password: password,
-        token_type,
-        token,
-        invitations_token,
-      })
-    )
-      .unwrap()
-      .then((res: any) => {
-        if (res) {
-        }
-      })
-      .catch((err: any) => {
-        setEmailErr("");
-        setPasswordErr("");
-      });
+    // dispatch(
+    //   login({
+    //     email: email,
+    //     password: password,
+    //     token_type,
+    //     token,
+    //     invitations_token,
+    //   })
+    // )
+    //   .unwrap()
+    //   .then((res: any) => {
+    //     if (res) {
+    //     }
+    //   })
+    //   .catch((err: any) => {
+    //     setEmailErr("");
+    //     setPasswordErr("");
+    //   });
   }
 
   return (
