@@ -1,4 +1,4 @@
-import theme from "@/Theme/theme";
+import theme from "@/theme/theme";
 import { Theme, Typography, SxProps } from "@mui/material";
 import { styled } from "@mui/system";
 

@@ -5,10 +5,10 @@ import {
   InputAdornment,
   Box,
   FormHelperText,
+  useTheme,
 } from "@mui/material";
 import { KeyboardArrowDownRounded } from "@mui/icons-material";
-import theme from "@/Theme/theme";
-import GSkeletonLoader from "@/app/apiflow_components/global/GSkeletonLoader";
+// import GSkeletonLoader from "@/app/apiflow_components/global/GSkeletonLoader";
 type Props = {
   fullWidth?: boolean;
   width?: any;
@@ -80,6 +80,7 @@ export default function GSelect(props: Props) {
     setisMenuItemsLoading,
     sx,
   } = props;
+  const theme = useTheme();
   const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const selectedValue = event.target.value;
 
@@ -157,9 +158,8 @@ export default function GSelect(props: Props) {
             display: "flex",
             alignItems: "center",
             paddingLeft: "10px",
-            boxShadow: border
-              ? border
-              : `0 0 0 1.3px ${theme.palette.sigInUpButtonBorder.main}`,
+            boxShadow: border ? border : "",
+            // : `0 0 0 1.3px ${theme.palette.sigInUpButtonBorder.main}`,
             "@media (min-width: 2120px)": {
               height: "80px",
             },
@@ -167,14 +167,14 @@ export default function GSelect(props: Props) {
           "& .MuiOutlinedInput-notchedOutline": {
             border: "none",
           },
-          borderColor: borderColor || theme.palette.sigInUpButtonBorder.main,
+          // borderColor: borderColor || theme.palette.sigInUpButtonBorder.main,
           borderRadius: borderRadius || "7px",
           "& .MuiOutlinedInput-notchedOutline:hover": {
-            borderColor: borderColor || theme.palette.sigInUpButtonBorder.main,
+            // borderColor: borderColor || theme.palette.sigInUpButtonBorder.main,
           },
           "& .MuiSelect-select.MuiSelect-select": {
             fontFamily: "FiraSans-medium",
-            color: color || theme.palette.signInUpPrimary.main,
+            // color: color || theme.palette.signInUpPrimary.main,
             fontSize: fontSize || "0.8rem",
             fontWeight: fontWeight,
             height: "100%",
@@ -188,12 +188,12 @@ export default function GSelect(props: Props) {
           },
           "& .MuiInputLabel-root": {
             fontFamily: "FiraSans-regular",
-            color: color || theme.palette.signInUpPrimary.main,
+            // color: color || theme.palette.signInUpPrimary.main,
             fontSize: fontSize || "0.8rem",
             fontWeight: fontWeight,
           },
           "& .MuiSvgIcon-root": {
-            color: color || theme.palette.signInUpPrimary.main,
+            // color: color || theme.palette.signInUpPrimary.main,
           },
           "& .MuiSelect-icon": {
             display: "none",
@@ -207,7 +207,7 @@ export default function GSelect(props: Props) {
                 style={{
                   fontSize: "20px",
                   fontFamily: "FiraSans-Regular ! important",
-                  fill: theme.palette.sidebarWorkspaceColor.main,
+                  // fill: theme.palette.sidebarWorkspaceColor.main,
                 }}
               />
             </InputAdornment>
@@ -233,9 +233,9 @@ export default function GSelect(props: Props) {
               PaperProps: {
                 sx: {
                   fontFamily: "FiraSans-Regular ! important",
-                  backgroundColor: theme.palette.signInUpLGrayishBlue.main,
+                  // backgroundColor: theme.palette.signInUpLGrayishBlue.main,
 
-                  color: theme.palette.signInUpPrimary.main,
+                  // color: theme.palette.signInUpPrimary.main,
                   ...additionalMenuItemsStyle,
                 },
                 ref: selectMenuRef,
@@ -272,7 +272,7 @@ export default function GSelect(props: Props) {
                   marginTop: elem == 1 ? "5px" : 0,
                 }}
               >
-                <GSkeletonLoader secondary={true} open={true} width="90%" />
+                {/* <GSkeletonLoader secondary={true} open={true} width="90%" /> */}
               </MenuItem>
             );
           })}
@@ -289,7 +289,7 @@ export default function GSelect(props: Props) {
           sx={{
             fontSize: "0.6rem",
             margin: "4px",
-            color: theme.palette.helperText.main,
+            // color: theme.palette.helperText.main,
           }}
         >
           {helperText}

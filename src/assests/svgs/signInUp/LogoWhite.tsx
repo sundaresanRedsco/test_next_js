@@ -4,11 +4,11 @@ type Props = {
   size?: number;
 };
 
-export default function LogoWhite({ size = 105 }: Props) {
+export default function LogoWhite({ size = 80 }: Props) {
   return (
     <svg
-      width={size}
-      height={size}
+      // width={size}
+      // height={size}
       viewBox="0 0 105 105"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

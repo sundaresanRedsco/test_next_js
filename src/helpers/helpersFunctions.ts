@@ -1,5 +1,9 @@
 import moment from "moment";
-import { sigInUpConstants, textConstants } from "../constants/appTexts";
+import {
+  onboardingConstants,
+  sigInUpConstants,
+  textConstants,
+} from "../constants/appTexts";
 import CryptoJS from "crypto-js";
 import Cookies from "js-cookie";
 import { signInUpStyleConstants } from "../constants/styleConstants";
@@ -10,6 +14,7 @@ const SECRET_KEYS = process.env.REACT_APP_SECRET_KEY;
 const constants = {
   signInUpStyleConstants,
   sigInUpConstants,
+  onboardingConstants,
 };
 
 export const translate = (key: string) => {

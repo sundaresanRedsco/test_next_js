@@ -55,13 +55,7 @@ input[type="password"]::-ms-clear {
   box-sizing: border-box;
   margin: 0;
 }
-body {
-  height: 100vh;
-  overflow: hidden;
-  /* background: url("../../public/global/Bg.png"); */
-  background-repeat: no-repeat;
-  background-size: cover;
-}
+
 /* .ace_scroller {
   width: 100%;
   overflow: unset;

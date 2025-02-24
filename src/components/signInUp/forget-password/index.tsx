@@ -3,6 +3,7 @@ import SignInUpLayout from "@/layouts/SignInUpLayout";
 import React, { useState } from "react";
 import SignInUpInputField from "../SignInUpInputField";
 import { globalTranslate } from "@/helpers/helpersFunctions";
+import ReCAPTCHAForm from "../ReCaptcha";
 
 type Props = {};
 
@@ -20,6 +21,7 @@ export default function ForgetPassword({}: Props) {
         type={"email"}
         error={emailErr}
       />
+      <ReCAPTCHAForm />
     </SignInUpLayout>
   );
 }

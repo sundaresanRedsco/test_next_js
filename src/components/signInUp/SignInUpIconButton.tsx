@@ -31,6 +31,10 @@ export default function SignInUpIconButton({
     fontSize: globalTranslate("fontSize.md", "signInUpStyleConstants"),
     fontFamily: "Firasans-medium",
     border: `1px solid ${theme.apiTrail.signInUp.Border}`,
+    svg: {
+      width: { xs: "25px", xl: "30px" },
+      height: { xs: "25px", xl: "30px" },
+    },
   };
   const secondaryButtonStyle = {
     background: theme.apiTrail.signInUp.ButtonSecondary,

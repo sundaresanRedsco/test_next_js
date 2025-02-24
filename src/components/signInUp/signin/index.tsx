@@ -1,15 +1,18 @@
 "use client";
-import { Box, TextField } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { useState } from "react";
-import Link from "next/link";
 import SignInUpTypography from "@/components/signInUp/SignInUpTypography";
-import theme from "@/theme/theme";
+
 import SignInUpLayout from "@/layouts/SignInUpLayout";
 import { globalTranslate } from "@/helpers/helpersFunctions";
 import SignInUpInputField from "../SignInUpInputField";
 import SignInUpCheckBox from "../SignInUpCheckBox";
+import { StyledLink } from "@/styles/signInUp";
+
+// And then use it like this:
 
 export default function SignIn() {
+  const theme = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailErr, setemailErr] = useState("");
@@ -79,22 +82,26 @@ export default function SignIn() {
           />
           <SignInUpTypography
             text={globalTranslate(`signin.REMEMBER_ME`, "sigInUpConstants")}
-            variant="sm"
+            // variant="sm"
+            fontSize={{
+              xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+              xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+            }}
             color={theme.apiTrail.signInUp.TextTertiary}
             fontWeight="xs"
           />
         </Box>
-        <Link
+        <StyledLink
           href={globalTranslate(`signin.CHECK_BOX_ROUTE`, "sigInUpConstants")}
-          style={{
-            color: theme.apiTrail.signInUp.TextLink,
-            textDecoration: "none",
-            fontFamily: "FiraSans-medium",
-            fontSize: "1.25rem",
+          sx={{
+            fontSize: {
+              xl: "1.25rem",
+              xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+            },
           }}
         >
           {globalTranslate(`signin.FORGOT_PASSWORD`, "sigInUpConstants")}
-        </Link>
+        </StyledLink>
       </Box>
     </SignInUpLayout>
   );

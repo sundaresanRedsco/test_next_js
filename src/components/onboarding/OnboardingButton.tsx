@@ -1,8 +1,9 @@
 import React from "react";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import theme from "@/theme/theme";
 import { globalTranslate } from "@/helpers/helpersFunctions";
+import { Box } from "@mui/material";
 
 const LoginButton = styled(motion.button)({
   transition: "background 0.3s ease",
@@ -14,6 +15,8 @@ type Props = {
   onClick?: () => void;
   sx?: any;
   disabled?: boolean;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
 };
 
 export default function OnboardingButton({
@@ -22,7 +25,10 @@ export default function OnboardingButton({
   onClick,
   sx,
   disabled,
+  startIcon,
+  endIcon,
 }: Props) {
+  const theme = useTheme();
   const primaryButtonStyle = {
     background: theme.apiTrail.signInUp.ButtonPrimary,
     color: theme.apiTrail.signInUp.TextPrimary,
@@ -32,6 +38,10 @@ export default function OnboardingButton({
     fontFamily: "Firasans-medium",
     borderRadius: "12px",
     padding: "12px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
   };
   const secondaryButtonStyle = {
     background: theme.apiTrail.signInUp.ButtonSecondary,
@@ -42,6 +52,10 @@ export default function OnboardingButton({
     fontFamily: "Firasans-bold",
     borderRadius: "10px",
     padding: "8px 24px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
   };
   return (
     <LoginButton
@@ -68,7 +82,9 @@ export default function OnboardingButton({
         ...sx,
       }}
     >
-      {text}
+      {startIcon && <Box component="span">{startIcon}</Box>}
+      <Box component="span">{text}</Box>
+      {endIcon && <Box component="span">{endIcon}</Box>}
     </LoginButton>
   );
 }

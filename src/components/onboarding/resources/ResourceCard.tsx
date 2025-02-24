@@ -1,15 +1,15 @@
-import {
-  PrimarySignInUPTypography,
-  SecondarySignInUPTypography,
-  TertiarySignInUPTypography,
-} from "@/app/Styles/signInUp";
+// import {
+//   PrimarySignInUPTypography,
+//   SecondarySignInUPTypography,
+//   TertiarySignInUPTypography,
+// } from "@/app/Styles/signInUp";
 import { Box, CircularProgress, IconButton, Stack } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import GIconButton from "../../global/GIconButton";
+// import GIconButton from "../../global/GIconButton";
 import { Edit } from "@mui/icons-material";
-import GInput from "../../global/GInput";
-import theme from "@/Theme/theme";
-import { translate } from "@/app/Helpers/helpersFunctions";
+// import GInput from "../../global/GInput";
+import theme from "@/theme/theme";
+// import { translate } from "@/app/Helpers/helpersFunctions";
 
 type Props = {
   name: string | undefined;
@@ -84,7 +84,7 @@ const ItemCard = ({ title, about, handleSaveEnv, data }: any) => {
     <Box
       sx={{ display: "flex", gap: 1, alignItems: "flex-start", width: "100%" }}
     >
-      <Box
+      {/* <Box
         sx={{
           height: "16px",
           width: "16px",
@@ -159,7 +159,7 @@ const ItemCard = ({ title, about, handleSaveEnv, data }: any) => {
             {formDatas?.description}
           </TertiarySignInUPTypography>
         )}
-      </Stack>
+      </Stack> */}
     </Box>
   );
 };
@@ -229,161 +229,163 @@ export default function ResourceCard({
     setisClicked(true);
   };
   return (
-    <Stack
-      sx={{
-        width: "100%",
-        borderRadius: "10px",
-        background: theme.palette.summaryBgColor.main,
-        position: "relative",
-      }}
-    >
-      {isLoading && (
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-            borderRadius: "10px",
-            backdropFilter: "blur(3px)",
-            zIndex: 1,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <CircularProgress
-            style={{
-              height: "30px",
-              width: "30px",
-              color: theme.palette.signInUpLoader.main,
-            }}
-          />
-        </Box>
-      )}
-      <Box
-        sx={{
-          display: "flex",
-          gap: 1,
-          height: "60px",
-          border: `1px solid ${theme.palette.SignInUpBorder.main}`,
-          borderRadius: "10px",
-          position: "relative",
-          alignItems: "center",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "15px",
-            background: theme.palette.summaryCardColor.main,
-            borderRight: `1px solid ${theme.palette.SignInUpBorder.main}`,
-            borderRadius: "10px 0 0 10px",
-            height: "100%",
-          }}
-        >
-          <PrimarySignInUPTypography
-            sx={{
-              color: theme.palette.signInUpPrimary.main,
-              fontSize: "15px",
-            }}
-          >
-            {translate("common.PROJECT")}
-          </PrimarySignInUPTypography>
-        </Box>
-        <Stack
-          ref={componentRef}
-          sx={{ padding: "3px", justifyContent: "center", width: "75%" }}
-        >
-          {isEdit ? (
-            <GInput
-              smallInput={true}
-              width={"100%"}
-              value={formData?.group_name}
-              height={"28px"}
-              onChangeHandler={handleOnchange}
-              name={"group_name"}
-            />
-          ) : (
-            <PrimarySignInUPTypography
-              sx={{
-                color: theme.palette.signInUpPrimary.main,
-                fontSize: "15px",
-              }}
-            >
-              {formData?.group_name}
-            </PrimarySignInUPTypography>
-          )}
-          {/* {isEdit ? (
-            <GInput
-              smallInput={true}
-              width={"100%"}
-              value={formData?.description}
-              height={"28px"}
-              onChangeHandler={handleOnchange}
-              name={"description"}
-            />
-          ) : (
-            <TertiarySignInUPTypography
-              sx={{
-                color: theme.palette.signInUpPrimary.main,
-                fontSize: "10px",
-              }}
-            >
-              {description}
-            </TertiarySignInUPTypography>
-          )} */}
-        </Stack>
-        <GIconButton
-          icon={<Edit fontSize="small" />}
-          onClick={handleEdit}
-          customStyle={{
-            position: "absolute",
-            right: 14,
-          }}
-        />
-      </Box>
-      <Stack sx={{ padding: "15px", gap: 2 }}>
-        <PrimarySignInUPTypography
-          sx={{
-            color: theme.palette.signInUpPrimary.main,
-            fontSize: "15px",
-          }}
-        >
-          {translate("common.ENVIRONMENTS")}
-        </PrimarySignInUPTypography>
-        <Stack sx={{ width: "100%", paddingLeft: 5, gap: "8px" }}>
-          {environments.length > 0 ? (
-            environments?.map((env: any, index: number) => {
-              return (
-                <ItemCard
-                  data={env}
-                  key={index}
-                  title={env?.name}
-                  about={env?.about}
-                  handleSaveEnv={handleSaveEnv}
-                />
-              );
-            })
-          ) : (
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <SecondarySignInUPTypography
-                sx={{ color: theme.palette.gray.main }}
-              >
-                {translate("noDataDescription.NO_ENVI_AVAILABLE")}
-              </SecondarySignInUPTypography>
-            </Box>
-          )}
-        </Stack>
-      </Stack>
-    </Stack>
+    // <Stack
+    //   sx={{
+    //     width: "100%",
+    //     borderRadius: "10px",
+    //     background: theme.palette.summaryBgColor.main,
+    //     position: "relative",
+    //   }}
+    // >
+    //   {isLoading && (
+    //     <Box
+    //       sx={{
+    //         width: "100%",
+    //         height: "100%",
+    //         position: "absolute",
+    //         borderRadius: "10px",
+    //         backdropFilter: "blur(3px)",
+    //         zIndex: 1,
+    //         display: "flex",
+    //         justifyContent: "center",
+    //         alignItems: "center",
+    //       }}
+    //     >
+    //       <CircularProgress
+    //         style={{
+    //           height: "30px",
+    //           width: "30px",
+    //           color: theme.palette.signInUpLoader.main,
+    //         }}
+    //       />
+    //     </Box>
+    //   )}
+    //   <Box
+    //     sx={{
+    //       display: "flex",
+    //       gap: 1,
+    //       height: "60px",
+    //       border: `1px solid ${theme.palette.SignInUpBorder.main}`,
+    //       borderRadius: "10px",
+    //       position: "relative",
+    //       alignItems: "center",
+    //     }}
+    //   >
+    //     <Box
+    //       sx={{
+    //         display: "flex",
+    //         justifyContent: "center",
+    //         alignItems: "center",
+    //         padding: "15px",
+    //         background: theme.palette.summaryCardColor.main,
+    //         borderRight: `1px solid ${theme.palette.SignInUpBorder.main}`,
+    //         borderRadius: "10px 0 0 10px",
+    //         height: "100%",
+    //       }}
+    //     >
+    //       <PrimarySignInUPTypography
+    //         sx={{
+    //           color: theme.palette.signInUpPrimary.main,
+    //           fontSize: "15px",
+    //         }}
+    //       >
+    //         {translate("common.PROJECT")}
+    //       </PrimarySignInUPTypography>
+    //     </Box>
+    //     <Stack
+    //       ref={componentRef}
+    //       sx={{ padding: "3px", justifyContent: "center", width: "75%" }}
+    //     >
+    //       {isEdit ? (
+    //         <GInput
+    //           smallInput={true}
+    //           width={"100%"}
+    //           value={formData?.group_name}
+    //           height={"28px"}
+    //           onChangeHandler={handleOnchange}
+    //           name={"group_name"}
+    //         />
+    //       ) : (
+    //         <PrimarySignInUPTypography
+    //           sx={{
+    //             color: theme.palette.signInUpPrimary.main,
+    //             fontSize: "15px",
+    //           }}
+    //         >
+    //           {formData?.group_name}
+    //         </PrimarySignInUPTypography>
+    //       )}
+    //       {/* {isEdit ? (
+    //         <GInput
+    //           smallInput={true}
+    //           width={"100%"}
+    //           value={formData?.description}
+    //           height={"28px"}
+    //           onChangeHandler={handleOnchange}
+    //           name={"description"}
+    //         />
+    //       ) : (
+    //         <TertiarySignInUPTypography
+    //           sx={{
+    //             color: theme.palette.signInUpPrimary.main,
+    //             fontSize: "10px",
+    //           }}
+    //         >
+    //           {description}
+    //         </TertiarySignInUPTypography>
+    //       )} */}
+    //     </Stack>
+    //     <GIconButton
+    //       icon={<Edit fontSize="small" />}
+    //       onClick={handleEdit}
+    //       customStyle={{
+    //         position: "absolute",
+    //         right: 14,
+    //       }}
+    //     />
+    //   </Box>
+    //   <Stack sx={{ padding: "15px", gap: 2 }}>
+    //     <PrimarySignInUPTypography
+    //       sx={{
+    //         color: theme.palette.signInUpPrimary.main,
+    //         fontSize: "15px",
+    //       }}
+    //     >
+    //       {translate("common.ENVIRONMENTS")}
+    //     </PrimarySignInUPTypography>
+    //     <Stack sx={{ width: "100%", paddingLeft: 5, gap: "8px" }}>
+    //       {environments.length > 0 ? (
+    //         environments?.map((env: any, index: number) => {
+    //           return (
+    //             <ItemCard
+    //               data={env}
+    //               key={index}
+    //               title={env?.name}
+    //               about={env?.about}
+    //               handleSaveEnv={handleSaveEnv}
+    //             />
+    //           );
+    //         })
+    //       ) : (
+    //         <Box
+    //           sx={{
+    //             width: "100%",
+    //             display: "flex",
+    //             justifyContent: "center",
+    //             alignItems: "center",
+    //           }}
+    //         >
+    //           <SecondarySignInUPTypography
+    //             sx={{ color: theme.palette.gray.main }}
+    //           >
+    //             {translate("noDataDescription.NO_ENVI_AVAILABLE")}
+    //           </SecondarySignInUPTypography>
+    //         </Box>
+    //       )}
+    //     </Stack>
+    //   </Stack>
+    // </Stack>
+
+    <></>
   );
 }

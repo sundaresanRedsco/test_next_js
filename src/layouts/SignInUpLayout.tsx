@@ -12,7 +12,8 @@ import LogoWhite from "@/assests/svgs/signInUp/LogoWhite";
 import GitIcon from "@/assests/svgs/signInUp/GitIcon";
 import GoogleIcon from "@/assests/svgs/signInUp/GoogleIcon";
 import theme from "@/theme/theme";
-import { signInUpTranslate } from "@/helpers/helpersFunctions";
+import { globalTranslate, signInUpTranslate } from "@/helpers/helpersFunctions";
+import { ROUTES } from "../routes/routes";
 
 // Adjust the RightSection to include a z-index so it layers correctly
 const RightSection = styled(Box)({
@@ -25,14 +26,28 @@ const RightSection = styled(Box)({
   position: "absolute",
   overflow: "hidden",
   borderRadius: "50%",
-  height: "110vh",
-  width: "110vh",
-  right: "-16vw",
-  paddingRight: "18vw",
+  height: "115vh",
+  width: "115vh",
+  right: "-15vw",
+  paddingRight: "16vw",
   gap: "1rem",
   alignItems: "start",
   zIndex: 1, // ensures this section layers above the background image
-  [theme.breakpoints.down("sm")]: {
+  border: "12px solid rgba(198, 136, 234, 0.35)",
+
+  [theme.breakpoints.down("xl")]: {
+    svg: {
+      width: "80px",
+      height: "80px",
+    },
+  },
+  [theme.breakpoints.up("xl")]: {
+    svg: {
+      width: "105px",
+      height: "105px",
+    },
+  },
+  [theme.breakpoints.down("md")]: {
     display: "none", // hide on mobile
   },
 });
@@ -44,7 +59,18 @@ const LoginForm = styled(Box)({
   justifyContent: "center",
   alignItems: "center",
   height: "100%",
-  width: "60%",
+  width: "55%",
+  [theme.breakpoints.up("xl")]: {
+    width: "40%", // hide on mobile
+  },
+  [theme.breakpoints.down("lg")]: {
+    width: "70%", // hide on mobile
+  },
+
+  [theme.breakpoints.down("md")]: {
+    width: "70%", // hide on mobile
+  },
+
   [theme.breakpoints.down("sm")]: {
     width: "90%", // hide on mobile
   },
@@ -60,16 +86,28 @@ export default function SignInUpLayout({ children, type }: Props) {
 
   return (
     <div
-      className="w-full h-screen flex flex-row justify-between items-center relative overflow-x-hidden overflow-y-auto"
+      className="w-full h-screen flex flex-row justify-between items-center relative overflow-x-hidden md:overflow-y-auto  lg:overflow-y-hidden  "
       style={{ background: theme.palette.signInUpBg.main }}
     >
       {/* Left section: Login Form */}
-      <div className="h-full w-full md:w-[60%] flex flex-col items-center justify-center">
+      <div className="h-full w-full sm:w-full lg:w-[60%] flex flex-col items-center justify-center">
         <LoginForm>
-          <Box sx={{ mb: 4 }}>
+          <Box
+            sx={{
+              mb: {
+                xl: 4,
+                lg: 4,
+                xs: 2,
+              },
+            }}
+          >
             <SignInUpTypography
               text={signInUpTranslate(`${type}.TITLE`, "sigInUpConstants")}
-              variant="lg"
+              // variant="lg"
+              fontSize={{
+                xl: globalTranslate("fontSize.lg", "signInUpStyleConstants"),
+                xs: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+              }}
               color={theme.palette.signInTextSecondary.main}
               fontWeight="md"
             />
@@ -82,43 +120,80 @@ export default function SignInUpLayout({ children, type }: Props) {
             {children}
             <SignInUpButton
               text={signInUpTranslate(`${type}.BUTTON`, "sigInUpConstants")}
+              onClick={() => {
+                if (type === "signin") {
+                  router.push(ROUTES.ONBOARDING);
+                } else if (type === "signup") {
+                  router.push(ROUTES.ONBOARDING_EMAIL_VERIFICATION);
+                }
+              }}
             />
-            <Box sx={{ textAlign: "center", mt: 3 }}>
-              <SignInUpTypography
-                text={signInUpTranslate(`OR_CONNECT_WITH`, "sigInUpConstants")}
-                variant="sm"
-                color={theme.palette.signInTextTertiary.main}
-                fontWeight="md"
-              />
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 2,
-                  justifyContent: "center",
-                  mt: 2,
-                }}
-              >
-                <SignInUpIconButton icon={<GitIcon />} />
-                <SignInUpIconButton icon={<GoogleIcon />} />
-              </Box>
-            </Box>
+            {type !== "forgot-password" && (
+              <>
+                <Box sx={{ textAlign: "center", mt: 3 }}>
+                  <SignInUpTypography
+                    text={signInUpTranslate(
+                      `OR_CONNECT_WITH`,
+                      "sigInUpConstants"
+                    )}
+                    // variant="sm"
+                    fontSize={{
+                      xl: globalTranslate(
+                        "fontSize.sm",
+                        "signInUpStyleConstants"
+                      ),
+                      xs: globalTranslate(
+                        "fontSize.xs1",
+                        "signInUpStyleConstants"
+                      ),
+                    }}
+                    color={theme.palette.signInTextTertiary.main}
+                    fontWeight="md"
+                  />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 2,
+                      justifyContent: "center",
+                      mt: 2,
+                    }}
+                  >
+                    <SignInUpIconButton icon={<GitIcon />} />
+                    <SignInUpIconButton icon={<GoogleIcon />} />
+                  </Box>
+                </Box>
+              </>
+            )}
+
             <Box
               sx={{
                 display: "flex",
                 gap: 1,
                 justifyContent: "center",
-                mt: 2,
+                mt: {
+                  xl: 2,
+                  lg: 5,
+                  xs: 2,
+                },
               }}
             >
               <SignInUpTypography
                 text={signInUpTranslate(`${type}.TEXT`, "sigInUpConstants")}
-                variant="sm"
+                // variant="sm"
+                fontSize={{
+                  xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+                  xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+                }}
                 color={theme.palette.signInTextTertiary.main}
                 fontWeight="sm"
               />
               <SignInUpTypography
                 text={signInUpTranslate(`${type}.LINK`, "sigInUpConstants")}
-                variant="sm"
+                // variant="sm"
+                fontSize={{
+                  xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+                  xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+                }}
                 color={theme.palette.signInTextLink.main}
                 fontWeight="lg"
                 sx={{
@@ -127,11 +202,11 @@ export default function SignInUpLayout({ children, type }: Props) {
                 }}
                 onClick={() => {
                   if (type === "signin") {
-                    router.push("/signup");
+                    router.push(ROUTES.SIGNUP);
                   } else if (type === "signup") {
-                    router.push("/signin");
+                    router.push(ROUTES.SIGNIN);
                   } else if (type === "forgot-password") {
-                    router.push("/forgot-password");
+                    router.push(ROUTES.FORGOT_PASSWORD);
                   }
                 }}
               />
@@ -161,12 +236,21 @@ export default function SignInUpLayout({ children, type }: Props) {
           <LogoWhite />
           <SignInUpTypography
             fontWeight="lg"
+            fontSize={{
+              xl: globalTranslate("fontSize.xl", "signInUpStyleConstants"),
+              xs: globalTranslate("fontSize.xl2", "signInUpStyleConstants"),
+            }}
             variant="xl"
             text={signInUpTranslate(`LOGO`, "sigInUpConstants")}
           />
         </div>
         <SignInUpTypography
-          variant="xs"
+          // variant="xs"
+          fontSize={{
+            xl: globalTranslate("fontSize.xs", "signInUpStyleConstants"),
+            xs: globalTranslate("fontSize.xs3", "signInUpStyleConstants"),
+          }}
+          lineHeight="1.7rem"
           text={signInUpTranslate(
             `${type}.RIGHT_SIDE_CONTENT`,
             "sigInUpConstants"

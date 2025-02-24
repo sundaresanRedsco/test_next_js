@@ -1,19 +1,19 @@
-import { SuccessSignUp } from "@/app/Assests/icons";
-import { useSignUpStore } from "@/app/hooks/sign/signZustand";
-import {
-  PrimarySignInUPTypography,
-  SecondarySignInUPTypography,
-} from "@/app/Styles/signInUp";
-import { Stack } from "@mui/material";
+// import { SuccessSignUp } from "@/app/Assests/icons";
+// import { useSignUpStore } from "@/app/hooks/sign/signZustand";
+// import {
+//   PrimarySignInUPTypography,
+//   SecondarySignInUPTypography,
+// } from "@/app/Styles/signInUp";
+import { Stack, useTheme } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React from "react";
-import GlobalButton from "../../global/GButton";
+// import GlobalButton from "../../global/GButton";
 import Cookies from "js-cookie";
-import theme from "@/Theme/theme";
-import { translate } from "@/app/Helpers/helpersFunctions";
+// import { translate } from "@/app/Helpers/helpersFunctions";
 
 export default function CompletedSection({ clientSession }: any) {
   const router = useRouter();
+  const theme = useTheme();
   const { resetAllSignStoreData } = useSignUpStore();
   const handleSubmit = () => {
     if (clientSession) {
@@ -32,7 +32,7 @@ export default function CompletedSection({ clientSession }: any) {
         position: "relative",
       }}
     >
-      <SuccessSignUp />
+      {/* <SuccessSignUp />
       <PrimarySignInUPTypography
         sx={{
           color: theme.palette.signInUpPrimary.main,
@@ -56,8 +56,8 @@ export default function CompletedSection({ clientSession }: any) {
         }}
       >
         {translate("signUp.SUCCESS_DESC")}
-      </SecondarySignInUPTypography>
-      <GlobalButton
+      </SecondarySignInUPTypography> */}
+      {/* <GlobalButton
         className="bigButton"
         padding="10px 40px"
         label={`${translate("button.GO_TO_DASHBOARD")}`}
@@ -70,7 +70,7 @@ export default function CompletedSection({ clientSession }: any) {
         onClickHandler={handleSubmit}
         fontFamily="Firasans-medium !important"
         radius="10px"
-      />
+      /> */}
     </Stack>
   );
 }

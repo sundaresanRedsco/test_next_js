@@ -24,6 +24,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 
 const TopBar = () => {
+  const theme = useTheme();
   const navLinks = [
     { label: `${landingPageTranslate("HOME")}`, id: 1 },
     { label: `${landingPageTranslate("PRICING")}`, id: 2 },
@@ -32,7 +33,6 @@ const TopBar = () => {
 
   const [selectedNavLink, setSelectedNavLink] = useState("Home");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const toggleMobileMenu = () => {

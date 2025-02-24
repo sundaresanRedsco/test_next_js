@@ -1,6 +1,6 @@
 import { globalTranslate } from "@/helpers/helpersFunctions";
 import theme from "@/theme/theme";
-import { Typography } from "@mui/material";
+import { Typography, useTheme } from "@mui/material";
 import Link from "next/link";
 import React from "react";
 
@@ -34,6 +34,7 @@ export default function OnboardingTypography({
   onClick,
   isMixedText,
 }: Props) {
+  const theme = useTheme();
   return (
     <Typography
       onClick={onClick}

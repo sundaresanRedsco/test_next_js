@@ -1,6 +1,8 @@
 export const signInUpStyleConstants = {
   fontSize: {
     xl: "3.75rem", // 60px
+    xl1: "3rem", // 60px
+    xl2: "2.5rem", // 60px
     lg: "1.88rem", //30px
     md: "1.57rem", //25px
     sm: "1.25rem", //20px

@@ -1,12 +1,13 @@
 import { landingPageTranslate } from "@/helpers/helpersFunctions";
-import { NavButtonTypography } from "@/Styles/landingPage";
-import theme from "@/Theme/theme";
-import { Box, Button } from "@mui/material";
+import { NavButtonTypography } from "@/styles/landingPage";
+import { Box, Button, useTheme } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { ROUTES } from "../../routes/routes";
 
 export const NavButtons = () => {
   const router = useRouter();
 
+  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -50,7 +51,7 @@ export const NavButtons = () => {
           },
         }}
         onClick={() => {
-          router.push("/signin");
+          router.push(ROUTES.SIGNIN);
         }}
       >
         <NavButtonTypography>
@@ -73,7 +74,7 @@ export const NavButtons = () => {
           },
         }}
         onClick={() => {
-          router.push("/signup");
+          router.push(ROUTES.SIGNUP);
         }}
       >
         <NavButtonTypography>

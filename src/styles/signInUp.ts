@@ -1,6 +1,6 @@
+import { globalTranslate } from "@/helpers/helpersFunctions";
 import { Grid, Typography, Box } from "@mui/material";
 import { styled } from "@mui/system";
-// import { Link } from "react-router-dom";
 import Link from "next/link";
 
 export const PrimarySignInUPTypography = styled(Typography)`
@@ -20,7 +20,7 @@ export const SecondarySignInUPTypography = styled(Typography)`
 `;
 
 export const TertiarySignInUPTypography = styled(Typography)`
-  color: ${({ theme }) => theme.palette.signInUpPrimary.main};
+  color: #ffffff;
   font-family: FiraSans-light;
   font-style: normal;
   font-weight: 300;
@@ -70,3 +70,15 @@ export const TeritaryTextTypography = styled(Typography)`
   color: ${({ theme }) => theme.palette.primaryBlack.main};
   line-height: normal;
 `;
+
+export const StyledLink = styled(Link)(({ theme }) => ({
+  color: theme.apiTrail.signInUp.TextLink,
+  textDecoration: "none",
+  fontFamily: "FiraSans-medium",
+  // Set a default font size (this will be applied for sizes below 'xl')
+  fontSize: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+  // At the 'xl' breakpoint, use a different font size
+  [theme.breakpoints.up("xl")]: {
+    fontSize: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+  },
+}));

@@ -1,13 +1,13 @@
 "use client";
-import { Box } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { useState } from "react";
 import SignInUpTypography from "@/components/signInUp/SignInUpTypography";
-import theme from "@/theme/theme";
 import SignInUpLayout from "@/layouts/SignInUpLayout";
 import { globalTranslate } from "@/helpers/helpersFunctions";
 import SignInUpInputField from "../SignInUpInputField";
 import SignInUpCheckBox from "../SignInUpCheckBox";
 export default function SignUp() {
+  const theme = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailErr, setemailErr] = useState("");
@@ -74,9 +74,13 @@ export default function SignUp() {
           />
           <SignInUpTypography
             text={""}
-            variant="sm"
+            // variant="sm"
             color={theme.apiTrail.signInUp.TextTertiary}
             fontWeight="xs"
+            fontSize={{
+              xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+              xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+            }}
             isMixedText={{
               start: globalTranslate(
                 `signup.MIXED_TEXT.start`,

@@ -22,7 +22,7 @@ import { login } from "@/app/Redux/loginReducer";
 import { loginRequest } from "@/app/Services/azureServices";
 import useSignIn from "./useSignIn";
 import { useSignUpStore } from "./signZustand";
-import theme from "@/Theme/theme";
+import theme from "@/theme/theme";
 
 interface userDataType {
   first_name: string;
@@ -234,19 +234,19 @@ export default function useSignUp() {
           color: ${theme.palette.signInUpBlack.main} !important;           /* Black text color */
           border-radius: 5px !important;       /* Rounded corners */
           padding:10px !important;       /* Add padding */
-        
+
           border: 1px solid ${theme.palette.signInUpBlack.main} !important; /* Black border */
           box-shadow: none !important;         /* Remove the shadow */
           font-size: 10px !important;          /* Font size */
           display: flex !important;
-          
-         
+
+
         }
-  
+
         // .nsm7Bb-HzV7m-LgbsSe-MJoBVe {
         //   margin-right: 8px !important;
         // }
-  
+
         .nsm7Bb-HzV7m-LgbsSe:hover {
           background-color: ${theme.palette.signInUpWhiteSecondary.main} !important; /* Light grey on hover */
         }

@@ -114,6 +114,7 @@ export const StepperIcon = ({
   variant,
   sx,
 }: any) => {
+  const theme = useTheme();
   return (
     <>
       {/* {variant == "slider" ? (

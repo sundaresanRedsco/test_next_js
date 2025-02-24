@@ -1,6 +1,8 @@
 import { globalTranslate } from "@/helpers/helpersFunctions";
+import { StyledLink } from "@/styles/signInUp";
 import theme from "@/theme/theme";
 import { Typography } from "@mui/material";
+import { styled } from "@mui/system";
 import Link from "next/link";
 import React from "react";
 
@@ -12,6 +14,7 @@ type Props = {
   fontWeight?: "lg" | "md" | "sm" | "xs";
   fontSize?: any;
   fontFamily?: any;
+  lineHeight?: any;
   onClick?: () => void;
   isMixedText?: {
     start: string;
@@ -31,6 +34,7 @@ export default function SignInUpTypography({
   fontWeight,
   fontSize,
   fontFamily,
+  lineHeight,
   onClick,
   isMixedText,
 }: Props) {
@@ -60,40 +64,15 @@ export default function SignInUpTypography({
           : variant === "sm"
           ? globalTranslate("fontSize.sm", "signInUpStyleConstants")
           : globalTranslate("fontSize.xs", "signInUpStyleConstants"),
+        lineHeight: lineHeight ?? "inherit",
       }}
     >
       {isMixedText ? (
         <>
           {isMixedText.start}
-          <Link
-            href={isMixedText.link1}
-            style={{
-              color: theme.apiTrail.signInUp.TextLink,
-              textDecoration: "none",
-              fontFamily: "FiraSans-medium",
-              fontSize: globalTranslate(
-                "fontSize.sm",
-                "signInUpStyleConstants"
-              ),
-            }}
-          >
-            {isMixedText.text1}
-          </Link>
+          <StyledLink href={isMixedText.link1}>{isMixedText.text1}</StyledLink>
           {isMixedText.between}
-          <Link
-            href={isMixedText.link2}
-            style={{
-              color: theme.apiTrail.signInUp.TextLink,
-              textDecoration: "none",
-              fontFamily: "FiraSans-medium",
-              fontSize: globalTranslate(
-                "fontSize.sm",
-                "signInUpStyleConstants"
-              ),
-            }}
-          >
-            {isMixedText.text2}
-          </Link>
+          <StyledLink href={isMixedText.link2}>{isMixedText.text2}</StyledLink>
         </>
       ) : (
         text

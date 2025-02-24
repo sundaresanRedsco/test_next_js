@@ -4,12 +4,12 @@ import React from "react";
 
 import TopBar from "./TopBar";
 import Image from "next/image";
-import { Box, Container } from "@mui/material";
+import { Box, Container, useTheme } from "@mui/material";
 import LandingPageBg from "../../../public/page/heroSection/LandingPageBg.png";
 import HeroSection from "./HeroSection";
-import theme from "@/Theme/theme";
 
 const LandingPage = () => {
+  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -17,7 +17,7 @@ const LandingPage = () => {
         height: "100vh",
         width: "100%",
         overflowX: "hidden",
-        overflowY: { xs: "scroll", sm: "scroll", md: "hidden", lg: "hidden" },
+        overflowY: { xs: "auto" },
       }}
     >
       <Box

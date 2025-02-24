@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { globalTranslate } from "@/helpers/helpersFunctions";
-import theme from "@/theme/theme";
 import { useSignUpStore } from "@/store/useSignUpStore";
 import OnBoardLayout from "@/layouts/OnboardLayout";
 import OnboardingButton from "./OnboardingButton";
@@ -19,9 +18,10 @@ import WorkspaceSvg from "@/assests/svgs/onboard/WorkspaceSvg";
 import DiscoverySvg from "@/assests/svgs/onboard/DiscoverySvg";
 import CatalogSvg from "@/assests/svgs/onboard/CatalogSvg";
 import InviteUsersSvg from "@/assests/svgs/onboard/InviteUsersSvg";
-import { Stack } from "@mui/material";
+import { Stack, useTheme } from "@mui/material";
 
 export default function WelcomePage() {
+  const theme = useTheme();
   const clientSession = useSession();
   const { activeStep, formDataStore, setIsLoading, setactiveStep } =
     useSignUpStore();

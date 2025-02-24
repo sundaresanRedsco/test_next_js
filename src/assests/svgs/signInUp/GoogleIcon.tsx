@@ -4,13 +4,7 @@ type Props = {};
 
 export default function GoogleIcon({}: Props) {
   return (
-    <svg
-      width="31"
-      height="33"
-      viewBox="0 0 31 33"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 31 33" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M31 16.6625C31 15.5279 30.8994 14.437 30.7124 13.3897H15.8163V19.5861H24.3284C23.9545 21.5788 22.833 23.2661 21.1507 24.4006V28.4297H26.2839C29.2746 25.637 31 21.5352 31 16.6625Z"
         fill="#4285F4"

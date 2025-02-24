@@ -1,8 +1,9 @@
 import Onboarding from "@/components/onboarding";
+import WelcomePage from "@/pages/onboarding/WelcomePage";
 import React from "react";
 
 type Props = {};
 
 export default function OnboardingPage({}: Props) {
-  return <Onboarding />;
+  return <WelcomePage />;
 }

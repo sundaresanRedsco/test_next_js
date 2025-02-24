@@ -1,9 +1,9 @@
 import { landingPageTranslate } from "@/helpers/helpersFunctions";
 import { CustomButtonTypography } from "@/styles/landingPage";
-import theme from "@/Theme/theme";
-import { Box, Button } from "@mui/material";
+import { Box, Button, useTheme } from "@mui/material";
 
 export const CustomButton = () => {
+  const theme = useTheme();
   return (
     <Box
       sx={{

@@ -1,7 +1,5 @@
-import { Box, Container, Stack } from "@mui/material";
+import { Box, Container, Stack, useTheme } from "@mui/material";
 import React from "react";
-import { ArrowBackIosNewRounded } from "@mui/icons-material";
-import theme from "@/theme/theme";
 import { globalTranslate } from "@/helpers/helpersFunctions";
 import OnboardingStepper from "@/components/onboarding/OnboardingStepper";
 import { useSignUpStore } from "@/store/useSignUpStore";
@@ -21,7 +19,7 @@ export default function OnBoardLayout({
   isWorkflowModal,
 }: Props) {
   const { activeStep, handleBack, formDataStore } = useSignUpStore();
-
+  const theme = useTheme();
   const { isxs } = useMuiBreakpoints();
   return (
     <Stack
