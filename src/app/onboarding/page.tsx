@@ -1,4 +1,4 @@
-import WelcomePage from "@/pages/onboarding/WelcomePage";
+import WelcomePage from "@/components/onboarding/onboardingPages/WelcomePage";
 import React from "react";
 
 type Props = {};

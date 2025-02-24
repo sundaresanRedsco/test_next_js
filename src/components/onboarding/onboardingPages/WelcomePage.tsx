@@ -14,8 +14,7 @@ export default function WelcomePage({}: Props) {
   const theme = useTheme();
   return (
     <OnboardingWrapper>
-      <></>
-      {/* <Stack
+      <Stack
         sx={{
           height: "100%",
           width: "100%",
@@ -53,7 +52,7 @@ export default function WelcomePage({}: Props) {
             endIcon={<RightArrowSvg />}
           />
         </div>
-      </Stack> */}
+      </Stack>
     </OnboardingWrapper>
   );
 }

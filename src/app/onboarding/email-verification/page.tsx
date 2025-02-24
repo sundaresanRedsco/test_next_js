@@ -1,4 +1,4 @@
-import EmailVerification from "@/pages/onboarding/EmailVerification";
+import EmailVerification from "@/components/onboarding/onboardingPages/EmailVerification";
 import React from "react";
 
 type Props = {};

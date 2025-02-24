@@ -13,8 +13,7 @@ export default function EmailVerification({}: Props) {
   const theme = useTheme();
   return (
     <OnboardingWrapper>
-      <></>
-      {/* <Stack
+      <Stack
         sx={{
           height: "100%",
           width: "100%",
@@ -116,7 +115,7 @@ export default function EmailVerification({}: Props) {
             </Box>
           </div>
         </Box>
-      </Stack> */}
+      </Stack>
     </OnboardingWrapper>
   );
 }
