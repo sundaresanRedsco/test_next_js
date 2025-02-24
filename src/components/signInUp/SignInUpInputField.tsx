@@ -1,7 +1,7 @@
 import { Box, FormHelperText, styled, TextField } from "@mui/material";
 import React from "react";
 import SignInUpTypography from "./SignInUpTypography";
-import theme from "@/theme/theme";
+import theme from "../../theme/theme";
 import EmailIcon from "@/assests/svgs/signInUp/EmailIcon";
 import PasswordIcon from "@/assests/svgs/signInUp/PasswordIcon";
 import { globalTranslate } from "@/helpers/helpersFunctions";
