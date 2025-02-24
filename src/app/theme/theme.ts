@@ -1,6 +1,4 @@
-import { createTheme, Palette, PaletteOptions } from "@mui/material/styles";
-
-import { Theme } from "@mui/material/styles";
+import { createTheme, Palette, PaletteOptions, Theme } from "@mui/material";
 
 declare module "@mui/material/styles" {
   interface Palette extends landingPagePalette {}
