@@ -1,12 +1,14 @@
 // import { useAlert } from "@/context/alertContext";
 import React, { useEffect, useState } from "react";
+
 import axios from "axios";
 
-import useGPopup from "../useGPopup";
+// import useGPopup from "../useGPopup";
 import { useSignUpStore } from "@/store/useSignUpStore";
 
 export default function useCatalogue(userData?: any, handleStep?: any) {
-  const { handleOpen } = useGPopup();
+  // const { showAlert } = useAlert();
+  // const { handleOpen } = useGPopup();
   const [isUpdating, setisUpdating] = useState("");
   // const userData: any = useSession();
   const { setApiDataStore, formDataStore, apiDataStore } = useSignUpStore();
@@ -50,7 +52,7 @@ export default function useCatalogue(userData?: any, handleStep?: any) {
       }
     } catch (error: any) {
       // console.error("Error Updation group data:", error);
-      handleOpen(error?.response?.data);
+      // handleOpen(error?.response?.data);
       fetchData();
       setisUpdating("");
       //   showAlert("Failed to fetch workspace data.", "error");
@@ -76,7 +78,7 @@ export default function useCatalogue(userData?: any, handleStep?: any) {
       }
     } catch (error: any) {
       //   showAlert("Failed to fetch workspace data.", "error");
-      handleOpen(error?.response?.data);
+      // handleOpen(error?.response?.data);
       fetchData();
       setisUpdating("");
     }

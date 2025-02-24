@@ -1,19 +1,20 @@
 "use client";
-import {
-  CreateWorkspace,
-  workspaceReducer,
-} from "@/app/Redux/apiManagement/workspaceReducer";
+// import {
+//   CreateWorkspace,
+//   workspaceReducer,
+// } from "@/app/Redux/apiManagement/workspaceReducer";
 import { CommonReducer } from "@/redux/commonReducer";
 import { RootStateType } from "@/redux/store";
-import { setRemoveTabs } from "@/app/Redux/tabReducer";
-import { initSession } from "@/app/Services/auth";
-import { useAlert } from "@/context/alertContext";
+// import { setRemoveTabs } from "@/app/Redux/tabReducer";
+// import { initSession } from "@/app/Services/auth";
+// import { useAlert } from "@/context/alertContext";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { useSignUpStore } from "./signZustand";
+
 import { errorHandling } from "@/services/errorHandling";
+import { useSignUpStore } from "@/store/useSignUpStore";
 
 interface userDataErrorsType {
   description?: string;
@@ -31,12 +32,12 @@ export default function useWorkspace(userData?: any) {
     formDataStore,
     setFormDataStore,
   } = useSignUpStore();
-  const { showAlert } = useAlert();
 
-  const { loading, workSpaceResponce } = useSelector<
-    RootStateType,
-    workspaceReducer
-  >((state) => state.apiManagement.workspace);
+  const loading = false;
+  // const { loading, workSpaceResponce } = useSelector<
+  //   RootStateType,
+  //   workspaceReducer
+  // >((state) => state.apiManagement.workspace);
 
   const { userProfile } = useSelector<RootStateType, CommonReducer>(
     (state) => state.common

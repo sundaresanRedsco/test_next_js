@@ -18,7 +18,7 @@ export default function useSecuredRoutes() {
     setIsLoading,
     formDataStore,
     isLoading,
-    resetAllSignStoreData,
+    // resetAllSignStoreData,
   } = useSignUpStore();
   const [isTokenExpired, setisTokenExpired] = useState(false);
   const searchParams = useSearchParams();
@@ -45,7 +45,7 @@ export default function useSecuredRoutes() {
     if (!formDataStore?.authType && token && !pathname.includes("/userId")) {
       Cookies.remove(userId);
       router.push("/userId/" + data?.user?.user_id);
-      resetAllSignStoreData();
+      // resetAllSignStoreData();
     }
 
     if (isOnboarding) {

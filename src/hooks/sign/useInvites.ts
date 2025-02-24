@@ -1,13 +1,12 @@
-import { useAlert } from "@/context/alertContext";
 import React, { useEffect, useState } from "react";
 
 import axios from "axios";
 
-import { useSignUpStore } from "./signZustand";
 import toast from "react-hot-toast";
+import { useSignUpStore } from "@/store/useSignUpStore";
 
 export default function useInvites(userData?: any) {
-  const { showAlert } = useAlert();
+  // const { showAlert } = useAlert();
   // const userData: any = useSession();
   const { setApiDataStore, formDataStore, apiDataStore, setIsLoading } =
     useSignUpStore();
