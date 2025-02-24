@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { FQL_FUNCTIONS } from "../Constants/JsonDatas";
+// import { FQL_FUNCTIONS } from "../Constants/JsonDatas";
 import { useWorkflowStore } from "../store/useWorkflowStore";
-import { validateFQLFunctionSyntax } from "../Helpers/helpersFunctions";
+import { validateFQLFunctionSyntax } from "@/helpers/helpersFunctions";
+// import { validateFQLFunctionSyntax } from "../Helpers/helpersFunctions";
 
 type Props = {};
 
@@ -91,6 +92,8 @@ export default function useTextEditor(
 
   //   return null; // Return success message if no unmatched braces
   // }
+
+  const FQL_FUNCTIONS: any = [];
   function handleBraces(input: any) {
     const stack: any = [];
     const quoteStack: any = []; // Stack to keep track of open quotes
