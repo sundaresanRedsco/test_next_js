@@ -2,7 +2,7 @@ import React from "react";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { globalTranslate } from "@/helpers/helpersFunctions";
-import theme from "../../theme/theme";
+import theme from "../../Theme/Theme";
 
 const LoginButton = styled(motion.button)({
   transition: "background 0.3s ease",

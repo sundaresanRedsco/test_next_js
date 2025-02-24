@@ -1,6 +1,6 @@
 import { Box, styled } from "@mui/system";
 import { TextareaAutosize, Typography } from "@mui/material";
-import theme from "@/theme/theme";
+import theme from "@/Theme/Theme";
 
 export const HeadingTypography = styled(Typography)`
   font-family: "FiraSans-regular";

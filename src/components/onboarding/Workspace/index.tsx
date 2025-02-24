@@ -26,7 +26,7 @@ import React, { useEffect, useState } from "react";
 
 import axios from "axios";
 // import { setItem } from "@/app/Services/localstorage";
-import theme from "@/theme/theme";
+import theme from "@/Theme/Theme";
 import useMuiBreakpoints from "@/hooks/useMuiBreakpoints";
 import { useSignUpStore } from "@/store/useSignUpStore";
 import useWorkspace from "@/hooks/sign/useWorkspace";

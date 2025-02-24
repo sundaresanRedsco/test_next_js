@@ -11,7 +11,7 @@ import SignInUpIconButton from "@/components/signInUp/SignInUpIconButton";
 import LogoWhite from "@/assests/svgs/signInUp/LogoWhite";
 import GitIcon from "@/assests/svgs/signInUp/GitIcon";
 import GoogleIcon from "@/assests/svgs/signInUp/GoogleIcon";
-import theme from "@/theme/theme";
+import theme from "@/Theme/Theme";
 import { globalTranslate, signInUpTranslate } from "@/helpers/helpersFunctions";
 import { ROUTES } from "../routes/routes";
 

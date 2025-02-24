@@ -10,7 +10,7 @@ import { login, LoginReducer, TwoFactorLogin } from "@/app/Redux/loginReducer";
 import { EncrouptionLogic } from "@/app/Helpers/helpersFunctions";
 import { loginRequest } from "@/app/Services/azureServices";
 import { useSignUpStore } from "./signZustand";
-import theme from "@/theme/theme";
+import theme from "@/Theme/Theme";
 
 interface loginInfoType {
   email: string;

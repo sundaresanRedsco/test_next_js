@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { styled } from "@mui/material/styles";
-import theme from "../../theme/theme";
+import theme from "../../Theme/Theme";
 import { globalTranslate } from "@/helpers/helpersFunctions";
 
 const AnimatedButton = styled(motion.button)({

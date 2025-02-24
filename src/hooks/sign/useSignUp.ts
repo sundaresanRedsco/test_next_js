@@ -22,7 +22,7 @@ import { login } from "@/app/Redux/loginReducer";
 import { loginRequest } from "@/app/Services/azureServices";
 import useSignIn from "./useSignIn";
 import { useSignUpStore } from "./signZustand";
-import theme from "@/theme/theme";
+import theme from "@/Theme/Theme";
 
 interface userDataType {
   first_name: string;

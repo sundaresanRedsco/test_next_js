@@ -1,4 +1,4 @@
-import theme from "../../theme/theme";
+import theme from "../../Theme/Theme";
 import React from "react";
 import { styled } from "@mui/material/styles";
 

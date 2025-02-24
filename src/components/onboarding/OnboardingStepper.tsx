@@ -6,7 +6,7 @@ import StepButton from "@mui/material/StepButton";
 import { DoneRounded } from "@mui/icons-material";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { useSignUpStore } from "@/store/useSignUpStore";
-import theme from "@/theme/theme";
+import theme from "@/Theme/Theme";
 
 type Props = {
   steps: any;
