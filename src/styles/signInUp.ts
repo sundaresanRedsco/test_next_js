@@ -72,7 +72,7 @@ export const TeritaryTextTypography = styled(Typography)`
 `;
 
 export const StyledLink = styled(Link)(({ theme }) => ({
-  color: theme.apiTrail.signInUp.TextLink,
+  color: theme.palette.signInTextLink.main,
   textDecoration: "none",
   fontFamily: "FiraSans-medium",
   // Set a default font size (this will be applied for sizes below 'xl')
