@@ -1,51 +1,50 @@
 import { Box, styled } from "@mui/system";
 import { TextareaAutosize, Typography } from "@mui/material";
-import theme from "@/Theme/Theme";
 
-export const HeadingTypography = styled(Typography)`
-  font-family: "FiraSans-regular";
-  color: ${theme.palette.textPrimaryColor.main};
-  font-weight: 700;
-  font-size: 16px;
-  wordwrap: break-word;
-`;
-export const PrimaryTypography = styled(Typography)`
-  font-family: "FiraSans-regular";
-  color: ${theme.palette.textPrimaryColor.main};
-  font-weight: 600;
-  font-size: 15px;
-  wordwrap: break-word;
-`;
+export const HeadingTypography = styled(Typography)(({ theme }) => ({
+  fontFamily: "FiraSans-regular",
+  color: theme.palette.textPrimaryColor.main,
+  fontWeight: 700,
+  fontSize: "16px",
+  wordWrap: "break-word",
+}));
 
-export const SecondaryTypography = styled(Typography)`
-  font-family: "FiraSans-regular";
-  color: ${theme.palette.textPrimaryColor.main};
-  font-weight: 600;
-  font-size: 15px;
-  wordwrap: break-word;
-`;
+export const PrimaryTypography = styled(Typography)(({ theme }) => ({
+  fontFamily: "FiraSans-regular",
+  color: theme.palette.textPrimaryColor.main,
+  fontWeight: 600,
+  fontSize: "15px",
+  wordWrap: "break-word",
+}));
 
-export const TextOutlinedInput = styled(TextareaAutosize)`
-  font-size: 0.7rem;
-  font-weight: 500;
-  line-height: 1.5;
-  font-family: "FiraSans-regular";
-  padding: 15px;
-  background: transparent;
-  border-radius: 10px;
-  border: 1.5px solid ${theme.palette.textOutlinedBorderColor.main};
-`;
-// color: ${theme.palette.textPrimaryColor.main};
+export const SecondaryTypography = styled(Typography)(({ theme }) => ({
+  fontFamily: "FiraSans-regular",
+  color: theme.palette.textPrimaryColor.main,
+  fontWeight: 600,
+  fontSize: "15px",
+  wordWrap: "break-word",
+}));
 
-export const CardContainer = styled(Box)`
-  box-sizing: border-box;
-  left: 0px;
-  top: 0px;
-  margin: 25px 15px 10px 0px;
-  border: 1px solid ${theme.palette.operationPageBorderColor.main};
-  border-radius: 20px;
-  background: ${theme.palette.apiInsightsBackgroundColor.main};
-`;
+export const TextOutlinedInput = styled(TextareaAutosize)(({ theme }) => ({
+  fontSize: "0.7rem",
+  fontWeight: 500,
+  lineHeight: 1.5,
+  fontFamily: "FiraSans-regular",
+  padding: "15px",
+  background: "transparent",
+  borderRadius: "10px",
+  border: `1.5px solid ${theme.palette.textOutlinedBorderColor.main}`,
+}));
+
+export const CardContainer = styled(Box)(({ theme }) => ({
+  boxSizing: "border-box",
+  left: "0px",
+  top: "0px",
+  margin: "25px 15px 10px 0px",
+  border: `1px solid ${theme.palette.operationPageBorderColor.main}`,
+  borderRadius: "20px",
+  background: theme.palette.apiInsightsBackgroundColor.main,
+}));
 
 export const operationSecrityLevelData = [
   "Authenticated App Users",

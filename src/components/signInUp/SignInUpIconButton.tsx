@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { styled } from "@mui/material/styles";
-import theme from "../../Theme/Theme";
+import { styled, useTheme } from "@mui/material/styles";
 import { globalTranslate } from "@/helpers/helpersFunctions";
 
 const AnimatedButton = styled(motion.button)({
@@ -25,6 +24,7 @@ export default function SignInUpIconButton({
   onClick,
   sx,
 }: Props) {
+  const theme = useTheme();
   const primaryButtonStyle = {
     background: "transparent",
     color: theme.apiTrail.signInUp.TextPrimary,

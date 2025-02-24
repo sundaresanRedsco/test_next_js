@@ -1,6 +1,8 @@
 import { globalTranslate } from "@/helpers/helpersFunctions";
 import { StyledLink } from "@/styles/signInUp";
 import { Typography } from "@mui/material";
+import { styled } from "@mui/system";
+import Link from "next/link";
 import React from "react";
 
 type Props = {

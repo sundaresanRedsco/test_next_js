@@ -4,7 +4,7 @@
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { ThemeProvider } from "@mui/material";
-import theme from "../Theme/Theme";
+import theme from "../theme/theme";
 import { Toaster } from "react-hot-toast";
 
 const ClientProvider = ({ children }: any) => {

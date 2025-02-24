@@ -2,7 +2,6 @@ import LogoWhite from "@/assests/svgs/signInUp/LogoWhite";
 import { Box, useTheme } from "@mui/material";
 import React from "react";
 import OnboardingTypography from "./OnboardingTypography";
-import theme from "@/Theme/Theme";
 import { globalTranslate } from "@/helpers/helpersFunctions";
 import InfoSvg from "@/assests/svgs/onboard/InfoSvg";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";

@@ -13,7 +13,7 @@ import GSelect from "../discovery/GSelect";
 // import GDataTable from "../../global/GDataTable";
 // import useInvites from "@/app/hooks/sign/useInvites";
 
-import theme from "@/Theme/Theme";
+// import theme from "@/theme/theme";
 import { useSignUpStore } from "@/store/useSignUpStore";
 import useInvites from "@/hooks/sign/useInvites";
 import useMuiBreakpoints from "@/hooks/useMuiBreakpoints";

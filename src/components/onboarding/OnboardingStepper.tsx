@@ -6,13 +6,12 @@ import StepButton from "@mui/material/StepButton";
 import { DoneRounded } from "@mui/icons-material";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { useSignUpStore } from "@/store/useSignUpStore";
-import theme from "@/Theme/Theme";
 
 type Props = {
   steps: any;
   variant?: "slider";
 };
-const defaultStyle = (isActive: boolean) => {
+const defaultStyle = (isActive: boolean, theme: any) => {
   return {
     "&.MuiStepper-root ": {
       width: "100% ",
@@ -46,7 +45,7 @@ const defaultStyle = (isActive: boolean) => {
     marginTop: { sm: 7, md: 0, lg: 5 },
   };
 };
-const smallScreenStyle = (isSlider: boolean) => {
+const smallScreenStyle = (isSlider: boolean, theme: any) => {
   return {
     width: "100%",
     "& .MuiStepConnector-root": {
@@ -191,8 +190,8 @@ export default function OnboardingStepper({ steps, variant }: Props) {
         orientation={isxs || variant == "slider" ? "horizontal" : "vertical"}
         sx={
           isxs || variant == "slider"
-            ? smallScreenStyle(variant == "slider")
-            : defaultStyle(isActive)
+            ? smallScreenStyle(variant == "slider", theme)
+            : defaultStyle(isActive, theme)
         }
         nonLinear
       >

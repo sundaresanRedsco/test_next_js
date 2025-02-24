@@ -16,7 +16,7 @@ import { Box, Stack } from "@mui/material";
 // import useCatalogue from "@/app/hooks/sign/useCatalogue";
 // import { useSignUpStore } from "@/app/hooks/sign/signZustand";
 // import GRadioGroup from "../../global/GRadioGroup";
-import theme from "@/Theme/Theme";
+// import theme from "@/theme/theme";
 import useMuiBreakpoints from "@/hooks/useMuiBreakpoints";
 import useDiscovery from "@/hooks/sign/useDiscovery";
 import useCatalogue from "@/hooks/sign/useCatalogue";

@@ -1,8 +1,7 @@
 import React from "react";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { globalTranslate } from "@/helpers/helpersFunctions";
-import theme from "../../Theme/Theme";
 
 const LoginButton = styled(motion.button)({
   transition: "background 0.3s ease",
@@ -16,6 +15,7 @@ type Props = {
 };
 
 export default function SignInUpButton({ variant, text, onClick, sx }: Props) {
+  const theme = useTheme();
   const primaryButtonStyle = {
     background: theme.apiTrail.signInUp.ButtonPrimary,
     color: theme.apiTrail.signInUp.TextPrimary,

@@ -1,7 +1,6 @@
 import React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
-import theme from "@/Theme/Theme";
 import { globalTranslate } from "@/helpers/helpersFunctions";
 import { Box } from "@mui/material";
 

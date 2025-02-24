@@ -39,7 +39,7 @@ export default function ThemeProvider({
 
 // Create Context for theme toggling
 import { createContext, useContext } from "react";
-import { darkTheme, lightTheme } from "@/Theme/Theme";
+import { darkTheme, lightTheme } from "@/theme/theme";
 export const ThemeContext = createContext({
   isDarkMode: false,
   toggleTheme: () => {},

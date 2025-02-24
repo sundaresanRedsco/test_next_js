@@ -1,8 +1,7 @@
-import theme from "../../Theme/Theme";
 import React from "react";
 import { styled } from "@mui/material/styles";
 
-const CustomCheckbox = styled("input")({
+const CustomCheckbox = styled("input")(({ theme }) => ({
   width: "25px",
   height: "25px",
   marginRight: "8px",
@@ -13,7 +12,6 @@ const CustomCheckbox = styled("input")({
   display: "grid",
   placeContent: "center",
   transition: "all 0.2s ease-in-out",
-
   "&:checked": {
     backgroundColor: theme.apiTrail.signInUp.CheckedCheckBox,
     transform: "scale(0.95)",
@@ -28,7 +26,6 @@ const CustomCheckbox = styled("input")({
       animation: "checkmark 0.2s ease-in-out forwards",
     },
   },
-
   "@keyframes checkmark": {
     "0%": {
       transform: "rotate(45deg) scale(0)",
@@ -40,15 +37,13 @@ const CustomCheckbox = styled("input")({
       transform: "rotate(45deg) scale(1)",
     },
   },
-
   "&:hover": {
     transform: "scale(1.05)",
   },
-
   "&:active": {
     transform: "scale(0.95)",
   },
-});
+}));
 
 type Props = {
   checked: boolean;

@@ -14,7 +14,7 @@ import { Box, Stack } from "@mui/material";
 import ResourceCard from "./ResourceCard";
 import SelectedCountButton from "./SelectedCountButton";
 
-import theme from "@/Theme/Theme";
+// import theme from "@/theme/theme";
 import useMuiBreakpoints from "@/hooks/useMuiBreakpoints";
 import { useSignUpStore } from "@/store/useSignUpStore";
 import useCatalogue from "@/hooks/sign/useCatalogue";

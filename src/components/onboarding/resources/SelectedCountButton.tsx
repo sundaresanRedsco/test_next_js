@@ -3,7 +3,7 @@
 //   PrimarySignInUPTypography,
 //   TertiarySignInUPTypography,
 // } from "@/app/Styles/signInUp";
-import theme from "@/Theme/Theme";
+// import theme from "@/theme/theme";
 import { Box } from "@mui/material";
 import React from "react";
 

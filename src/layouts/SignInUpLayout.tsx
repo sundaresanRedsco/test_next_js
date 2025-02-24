@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Box, styled } from "@mui/material";
+import { Box, styled, useTheme } from "@mui/material";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -11,12 +11,11 @@ import SignInUpIconButton from "@/components/signInUp/SignInUpIconButton";
 import LogoWhite from "@/assests/svgs/signInUp/LogoWhite";
 import GitIcon from "@/assests/svgs/signInUp/GitIcon";
 import GoogleIcon from "@/assests/svgs/signInUp/GoogleIcon";
-import theme from "@/Theme/Theme";
 import { globalTranslate, signInUpTranslate } from "@/helpers/helpersFunctions";
 import { ROUTES } from "../routes/routes";
 
 // Adjust the RightSection to include a z-index so it layers correctly
-const RightSection = styled(Box)({
+const RightSection = styled(Box)(({ theme }) => ({
   background: "linear-gradient(179.99deg, #ED634C 2.58%, #A049E1 97.23%)",
   display: "flex",
   flexDirection: "column",
@@ -50,10 +49,10 @@ const RightSection = styled(Box)({
   [theme.breakpoints.down("md")]: {
     display: "none", // hide on mobile
   },
-});
+}));
 
 // A container for the login form
-const LoginForm = styled(Box)({
+const LoginForm = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
@@ -61,20 +60,18 @@ const LoginForm = styled(Box)({
   height: "100%",
   width: "55%",
   [theme.breakpoints.up("xl")]: {
-    width: "40%", // hide on mobile
+    width: "40%",
   },
   [theme.breakpoints.down("lg")]: {
-    width: "70%", // hide on mobile
+    width: "70%",
   },
-
   [theme.breakpoints.down("md")]: {
-    width: "70%", // hide on mobile
+    width: "70%",
   },
-
   [theme.breakpoints.down("sm")]: {
-    width: "90%", // hide on mobile
+    width: "90%",
   },
-});
+}));
 
 type Props = {
   children: React.ReactNode;
@@ -83,6 +80,7 @@ type Props = {
 
 export default function SignInUpLayout({ children, type }: Props) {
   const router = useRouter();
+  const theme = useTheme();
 
   return (
     <div

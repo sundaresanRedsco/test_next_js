@@ -1,4 +1,4 @@
-import theme from "@/Theme/Theme";
+import theme from "@/theme/theme";
 import { Theme, Typography, SxProps } from "@mui/material";
 import { styled } from "@mui/system";
 
@@ -15,9 +15,9 @@ export const centeredBoxStyles = {
   width: "100%",
 };
 
-export const topBarStyles = {
+export const topBarStyles = (theme: any) => ({
   height: { xs: "60px", sm: "65px", md: "70px" },
-  background: `${theme.palette.landingNavBg.main}`,
+  background: theme.palette.landingNavBg.main,
   border: `1px solid ${theme.palette.landingPrimary.main}`,
   backdropFilter: "blur(1.5px)",
   borderRadius: { xs: "25px", sm: "35px", md: "50px" },
@@ -25,7 +25,7 @@ export const topBarStyles = {
   alignItems: "center",
   justifyContent: "center",
   margin: { xs: "20px 10px", sm: "30px 20px", md: "40px 30px" },
-};
+});
 
 export const navBarStyles = {
   width: "100%",

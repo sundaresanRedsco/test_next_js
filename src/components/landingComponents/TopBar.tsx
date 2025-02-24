@@ -86,7 +86,7 @@ const TopBar = () => {
 
   return (
     <Box sx={{ width: "100%", height: "100%" }}>
-      <Box sx={topBarStyles}>
+      <Box sx={topBarStyles(theme)}>
         <Box
           sx={{
             ...navBarStyles,

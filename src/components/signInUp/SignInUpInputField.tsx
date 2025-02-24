@@ -1,11 +1,16 @@
-import { Box, FormHelperText, styled, TextField } from "@mui/material";
+import {
+  Box,
+  FormHelperText,
+  styled,
+  TextField,
+  useTheme,
+} from "@mui/material";
 import React from "react";
 import SignInUpTypography from "./SignInUpTypography";
-import theme from "../../Theme/Theme";
 import EmailIcon from "@/assests/svgs/signInUp/EmailIcon";
 import PasswordIcon from "@/assests/svgs/signInUp/PasswordIcon";
 import { globalTranslate } from "@/helpers/helpersFunctions";
-const StyledTextField = styled(TextField)({
+const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
     backgroundColor: "transparent",
     borderRadius: "10px",
@@ -15,10 +20,8 @@ const StyledTextField = styled(TextField)({
       [theme.breakpoints.down("xl")]: {
         border: `1.5px solid`,
         borderColor: theme.apiTrail.signInUp.Border,
-        // boxSizing: "border-box", // Ensure padding is accounted for in the height
       },
     },
-
     "&:hover fieldset": {
       borderColor: theme.apiTrail.signInUp.ButtonPrimary,
     },
@@ -27,29 +30,25 @@ const StyledTextField = styled(TextField)({
     },
     [theme.breakpoints.up("lg")]: {
       borderRadius: "8px",
-      // boxSizing: "border-box", // Ensure padding is accounted for in the height
     },
   },
   marginBottom: "1rem",
-
   [theme.breakpoints.up("xl")]: {
     "& .MuiInputBase-input.MuiOutlinedInput-input": {
-      height: "1.4375em", // Set your desired height here
+      height: "1.4375em",
       padding: "16.5px 14px",
-      // boxSizing: "border-box", // Ensure padding is accounted for in the height
     },
   },
   [theme.breakpoints.down("xl")]: {
     "& .MuiInputBase-input::placeholder": {
-      fontSize: "0.75rem", // Adjust the value as needed
+      fontSize: "0.75rem",
     },
     "& .MuiInputBase-input.MuiOutlinedInput-input": {
-      height: "0.5375em", // Set your desired height here
+      height: "0.5375em",
       padding: "16.5px 14px",
-      // boxSizing: "border-box", // Ensure padding is accounted for in the height
     },
   },
-});
+}));
 
 type Props = {
   variant?: "primary" | "secondary";
@@ -70,6 +69,7 @@ export default function SignInUpInputField({
   type,
   error,
 }: Props) {
+  const theme = useTheme();
   return (
     <Box
       sx={{

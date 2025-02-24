@@ -1,5 +1,4 @@
 import { globalTranslate } from "@/helpers/helpersFunctions";
-import theme from "@/Theme/Theme";
 import { Typography, useTheme } from "@mui/material";
 import Link from "next/link";
 import React from "react";
