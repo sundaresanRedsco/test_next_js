@@ -15,12 +15,12 @@ import { useSignUpStore } from "@/store/useSignUpStore";
 export default function CompletedSection({ clientSession }: any) {
   const router = useRouter();
   const theme = useTheme();
-  const { resetAllSignStoreData } = useSignUpStore();
+  // const { resetAllSignStoreData } = useSignUpStore();
   const handleSubmit = () => {
     if (clientSession) {
       router.push("/userId/" + clientSession?.user?.user_id);
       Cookies.remove(clientSession?.user?.user_id);
-      resetAllSignStoreData();
+      // resetAllSignStoreData();
     }
   };
   return (

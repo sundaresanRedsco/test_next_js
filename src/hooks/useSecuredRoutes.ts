@@ -2,8 +2,9 @@
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { act, useEffect, useState } from "react";
-import { useSignUpStore } from "./sign/signZustand";
+// import { useSignUpStore } from "./sign/signZustand";
 import Cookies from "js-cookie";
+import { useSignUpStore } from "@/store/useSignUpStore";
 
 export default function useSecuredRoutes() {
   const router = useRouter();
