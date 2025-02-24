@@ -81,6 +81,7 @@ export default function OnboardingWrapper({ children }: Props) {
               borderLeft: "1px solid" + theme.apiTrail.onboarding.PrimaryText,
               pl: 2,
               ml: 2,
+              cursor: "pointer",
             }}
             onClick={() => {
               router.push(ROUTES.SIGNIN);

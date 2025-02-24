@@ -35,6 +35,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         try {
+          console.log("credentials", credentials);
           let response = null;
           // If user is provided as JSON string, parse it
           if (credentials?.user) {
@@ -64,6 +65,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           // Ensure valid response data
+          console.log("credentials", response);
           if (!response.data || !response.data.result) return null;
           response = { data: response.data.result };
 
@@ -86,6 +88,7 @@ export const authOptions: NextAuthOptions = {
             is_2fa_enable: response.data.is_2fa_enable,
           };
         } catch (error) {
+          console.log("error", error);
           throw new Error(errorHandling(error));
         }
       },

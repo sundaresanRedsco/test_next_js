@@ -15,6 +15,7 @@ export const login = createAsyncThunk(
         redirect: false,
       });
       const session = await getSession();
+      console.log(session, "session");
       if (response && response.error) {
         throw response.error;
         // return rejectWithValue(errorHandling(response));

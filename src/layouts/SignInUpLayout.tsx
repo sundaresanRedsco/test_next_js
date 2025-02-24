@@ -3,7 +3,6 @@
 import React from "react";
 import { Box, styled, useTheme } from "@mui/material";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 import SignInUpTypography from "@/components/signInUp/SignInUpTypography";
 import SignInUpButton from "@/components/signInUp/SignInUpButton";
@@ -116,7 +115,7 @@ export default function SignInUpLayout({ children, type }: Props) {
             onSubmit={(e) => e.preventDefault()}
           >
             {children}
-            <SignInUpButton
+            {/* <SignInUpButton
               text={signInUpTranslate(`${type}.BUTTON`, "sigInUpConstants")}
               onClick={() => {
                 if (type === "signin") {
@@ -125,7 +124,7 @@ export default function SignInUpLayout({ children, type }: Props) {
                   router.push(ROUTES.ONBOARDING_EMAIL_VERIFICATION);
                 }
               }}
-            />
+            /> */}
             {type !== "forgot-password" && (
               <>
                 <Box sx={{ textAlign: "center", mt: 3 }}>

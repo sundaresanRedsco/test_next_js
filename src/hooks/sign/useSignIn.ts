@@ -201,8 +201,8 @@ export default function useSignIn() {
     //       }
     //       setIsLoading(false);
     //     });
-    // };
-     const handleAuthentication = async () => {
+  };
+  const handleAuthentication = async () => {
     //   try {
     //     if (user) {
     //       setUser(null);
@@ -268,8 +268,8 @@ export default function useSignIn() {
     //   } catch (error) {
     //     console.error("Authentication failed:", error);
     //   }
-    };
-     const handleInputChange = (field: string, value: string) => {
+  };
+  const handleInputChange = (field: string, value: string) => {
     //   const updatedFormData = { ...formData, [field]: value };
     //   // If the email field is cleared, clear the password field as well
     //   if (field === "email" && value === "") {

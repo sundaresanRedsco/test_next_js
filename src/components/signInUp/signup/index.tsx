@@ -3,9 +3,10 @@ import { Box, useTheme } from "@mui/material";
 import { useState } from "react";
 import SignInUpTypography from "@/components/signInUp/SignInUpTypography";
 import SignInUpLayout from "@/layouts/SignInUpLayout";
-import { globalTranslate } from "@/helpers/helpersFunctions";
+import { globalTranslate, signInUpTranslate } from "@/helpers/helpersFunctions";
 import SignInUpInputField from "../SignInUpInputField";
 import SignInUpCheckBox from "../SignInUpCheckBox";
+import SignInUpButton from "../SignInUpButton";
 export default function SignUp() {
   const theme = useTheme();
   const [email, setEmail] = useState("");
@@ -37,6 +38,34 @@ export default function SignUp() {
       error: passwordErr,
     },
   ];
+
+  function signUpHandler(): any {
+    if (!validateForm()) return;
+    // setIsLoading(true);
+
+    let token_type = "null";
+    let token = "null";
+    let invitations_token = "null";
+    dispatch(
+      login({
+        email: email,
+        password: password,
+        token_type,
+        token,
+        invitations_token,
+      })
+    )
+      .unwrap()
+      .then((res: any) => {
+        if (res) {
+        }
+      })
+      .catch((err: any) => {
+        setEmailErr("");
+        setPasswordErr("");
+      });
+  }
+
   return (
     <SignInUpLayout type="signup">
       {inputFields.map((elem, index) => {
@@ -110,6 +139,12 @@ export default function SignUp() {
           />
         </Box>
       </Box>
+      <SignInUpButton
+        text={signInUpTranslate(`signup.BUTTON`, "sigInUpConstants")}
+        onClick={() => {
+          signUpHandler();
+        }}
+      />
     </SignInUpLayout>
   );
 }

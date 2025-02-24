@@ -2,8 +2,9 @@
 import SignInUpLayout from "@/layouts/SignInUpLayout";
 import React, { useState } from "react";
 import SignInUpInputField from "../SignInUpInputField";
-import { globalTranslate } from "@/helpers/helpersFunctions";
+import { globalTranslate, signInUpTranslate } from "@/helpers/helpersFunctions";
 import ReCAPTCHAForm from "../ReCaptcha";
+import SignInUpButton from "../SignInUpButton";
 
 type Props = {};
 
@@ -22,6 +23,11 @@ export default function ForgetPassword({}: Props) {
         error={emailErr}
       />
       <ReCAPTCHAForm />
+
+      <SignInUpButton
+        text={signInUpTranslate(`forgot-password.BUTTON`, "sigInUpConstants")}
+        onClick={() => {}}
+      />
     </SignInUpLayout>
   );
 }
