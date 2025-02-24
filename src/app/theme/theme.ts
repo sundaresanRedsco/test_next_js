@@ -1,71 +1,6 @@
 import { createTheme } from "@mui/material";
 import { PaletteOptions, Palette } from "@mui/material/styles";
 
-declare module "@mui/material/styles" {
-  interface Palette extends landingPagePalette {}
-  interface PaletteOptions extends landingPagePaletteOptions {}
-  interface Palette extends signInUpPalette {}
-  interface PaletteOptions extends signInUpPaletteOptions {}
-  interface Palette extends DashboardPalette {}
-  interface PaletteOptions extends DashboardPaletteOptions {}
-}
-
-interface landingPagePalette {
-  landingPrimary: { main: string };
-  landingBg: { main: string };
-  landingLogInBtnText: { main: string };
-  landingNavBg: { main: string };
-  landingNavLink: { main: string };
-  landingStartWithFreeBtn: { main: string };
-  landingContactUsBtn: { main: string };
-  landingContactUsBtnBg: { main: string };
-  landingHeroSectionDesc: { main: string };
-  landingNavLinkHighlight: { main: string };
-}
-
-interface landingPagePaletteOptions {
-  landingPrimary?: { main: string };
-  landingBg?: { main: string };
-  landingLogInBtnText?: { main: string };
-  landingNavBg?: { main: string };
-  landingNavLink?: { main: string };
-  landingStartWithFreeBtn?: { main: string };
-  landingContactUsBtn?: { main: string };
-  landingContactUsBtnBg?: { main: string };
-  landingHeroSectionDesc?: { main: string };
-  landingNavLinkHighlight?: { main: string };
-}
-
-interface signInUpPalette {
-  signInUpBg: { main: string };
-  signInButtonPrimary: { main: string };
-  signInButtonSecondary: { main: string };
-  signInTextPrimary: { main: string };
-  signInTextSecondary: { main: string };
-  signInTextTertiary: { main: string };
-  signInTextLink: { main: string };
-  signInTextPlaceholder: { main: string };
-  signInTextLable: { main: string };
-  signInBorder: { main: string };
-}
-
-interface signInUpPaletteOptions {
-  signInUpBg?: { main: string };
-  signInButtonPrimary?: { main: string };
-  signInButtonSecondary?: { main: string };
-  signInTextPrimary?: { main: string };
-  signInTextSecondary?: { main: string };
-  signInTextTertiary?: { main: string };
-  signInTextLink?: { main: string };
-  signInTextPlaceholder?: { main: string };
-  signInTextLable?: { main: string };
-  signInBorder?: { main: string };
-}
-
-interface DashboardPalette {}
-
-interface DashboardPaletteOptions {}
-
 const lightTheme = createTheme({
   palette: {
     // signInUP
@@ -98,36 +33,6 @@ const lightTheme = createTheme({
     },
     signInBorder: {
       main: "#12121240",
-    },
-    landingPrimary: {
-      main: "#FFFFFF",
-    },
-    landingBg: {
-      main: "#000000",
-    },
-    landingLogInBtnText: {
-      main: "#7448F4",
-    },
-    landingNavBg: {
-      main: "#ffffff40",
-    },
-    landingNavLink: {
-      main: "#ffffffbf",
-    },
-    landingStartWithFreeBtn: {
-      main: "#7448F4",
-    },
-    landingContactUsBtn: {
-      main: "#ffffff80",
-    },
-    landingContactUsBtnBg: {
-      main: "#FFFFFF33",
-    },
-    landingHeroSectionDesc: {
-      main: "#bfbfbf",
-    },
-    landingNavLinkHighlight: {
-      main: "#7946FD",
     },
   },
   apiTrail: {
@@ -237,36 +142,6 @@ const darkTheme = createTheme({
     },
     signInBorder: {
       main: "#12121240",
-    },
-    landingPrimary: {
-      main: "#FFFFFF",
-    },
-    landingBg: {
-      main: "#000000",
-    },
-    landingLogInBtnText: {
-      main: "#7448F4",
-    },
-    landingNavBg: {
-      main: "#ffffff40",
-    },
-    landingNavLink: {
-      main: "#ffffffbf",
-    },
-    landingStartWithFreeBtn: {
-      main: "#7448F4",
-    },
-    landingContactUsBtn: {
-      main: "#ffffff80",
-    },
-    landingContactUsBtnBg: {
-      main: "#ffffff33",
-    },
-    landingHeroSectionDesc: {
-      main: "#bfbfbf",
-    },
-    landingNavLinkHighlight: {
-      main: "#7946FD",
     },
   },
   apiTrail: {
