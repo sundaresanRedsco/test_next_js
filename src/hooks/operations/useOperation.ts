@@ -1,4 +1,4 @@
-import { translate } from "@/app/Helpers/helpersFunctions";
+// import { translate } from "@/app/Helpers/helpersFunctions";
 import React from "react";
 
 type Props = {
@@ -124,28 +124,29 @@ export default function useOperation({
     return null;
   };
 
-  const getNavLinks = (value: string) => [
-    {
-      label: translate("apiManagement.BODY"),
-      id: "body",
-      active: translate("apiManagement.BODY") === value,
-    },
-    {
-      label: translate("apiManagement.HEADER"),
-      id: "header",
-      active: translate("apiManagement.HEADER") === value,
-    },
-    {
-      label: translate("apiManagement.AUTHORIZATION"),
-      id: "authorization",
-      active: translate("apiManagement.AUTHORIZATION") === value,
-    },
-    {
-      label: translate("apiManagement.QUERY_PARAMETERS"),
-      id: "queryParameters",
-      active: translate("apiManagement.QUERY_PARAMETERS") === value,
-    },
-  ];
+  const getNavLinks = (value: string) => [];
+  // const getNavLinks = (value: string) => [
+  //   {
+  //     label: translate("apiManagement.BODY"),
+  //     id: "body",
+  //     active: translate("apiManagement.BODY") === value,
+  //   },
+  //   {
+  //     label: translate("apiManagement.HEADER"),
+  //     id: "header",
+  //     active: translate("apiManagement.HEADER") === value,
+  //   },
+  //   {
+  //     label: translate("apiManagement.AUTHORIZATION"),
+  //     id: "authorization",
+  //     active: translate("apiManagement.AUTHORIZATION") === value,
+  //   },
+  //   {
+  //     label: translate("apiManagement.QUERY_PARAMETERS"),
+  //     id: "queryParameters",
+  //     active: translate("apiManagement.QUERY_PARAMETERS") === value,
+  //   },
+  // ];
 
   const getFormattedData = (saveGetResponseData: any) => {
     const requestResponseStatus =

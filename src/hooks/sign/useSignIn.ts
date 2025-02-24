@@ -30,6 +30,9 @@ export default function useSignIn() {
     formDataStore,
   } = useSignUpStore();
 
+  const accounts: any = [];
+  const loading = false;
+
   // const { instance, accounts } = useMsal();
   // const { loading } = useSelector<RootStateType, LoginReducer>(
   //   (state) => state.login

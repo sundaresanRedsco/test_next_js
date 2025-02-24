@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { useAlert } from "@/context/alertContext";
+// import { useAlert } from "@/context/alertContext";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useSignUpStore } from "./signZustand";
+// import { useSignUpStore } from "./signZustand";
 import useGPopup from "../useGPopup";
-import { awsRegions, timesData } from "@/app/Constants/DropdownOptions";
-import { translate } from "@/app/Helpers/helpersFunctions";
+import { useSignUpStore } from "@/store/useSignUpStore";
+import { translate } from "@/helpers/helpersFunctions";
+// import { awsRegions, timesData } from "@/app/Constants/DropdownOptions";
+// import { translate } from "@/app/Helpers/helpersFunctions";
 
 type ApiGatewayType = {
   id?: string;
@@ -32,8 +34,10 @@ type ApiGatewayType = {
 };
 
 export default function useDiscovery(userData?: any, fetchData?: any) {
-  const { showAlert } = useAlert();
   // const userData: any = useSession();
+
+  const timesData: any = [];
+  const awsRegions: any = [];
   const {
     setApiDataStore,
     formDataStore,
