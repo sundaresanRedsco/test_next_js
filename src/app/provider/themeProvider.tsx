@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-
+import { darkTheme, lightTheme } from "@/app/theme/theme";
 export default function ThemeProvider({
   children,
 }: {
@@ -39,7 +39,7 @@ export default function ThemeProvider({
 
 // Create Context for theme toggling
 import { createContext, useContext } from "react";
-import { darkTheme, lightTheme } from "@/app/theme/theme";
+
 export const ThemeContext = createContext({
   isDarkMode: false,
   toggleTheme: () => {},
