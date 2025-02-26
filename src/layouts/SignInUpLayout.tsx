@@ -255,7 +255,7 @@ export default function SignInUpLayout({ children, type }: Props) {
           <SignInUpTypography
             fontWeight="lg"
             fontSize={{
-              xl: globalTranslate("fontSize.xl", "signInUpStyleConstants"),
+              // xl: globalTranslate("fontSize.xl", "signInUpStyleConstants"),
               xs: globalTranslate("fontSize.xl2", "signInUpStyleConstants"),
             }}
             variant="xl"
@@ -265,7 +265,7 @@ export default function SignInUpLayout({ children, type }: Props) {
         <SignInUpTypography
           // variant="xs"
           fontSize={{
-            xl: globalTranslate("fontSize.xs", "signInUpStyleConstants"),
+            // xl: globalTranslate("fontSize.xs", "signInUpStyleConstants"),
             xs: globalTranslate("fontSize.xs3", "signInUpStyleConstants"),
           }}
           lineHeight="1.7rem"
