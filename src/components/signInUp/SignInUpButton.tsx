@@ -32,7 +32,7 @@ export default function SignInUpButton({
       // xl: globalTranslate("fontSize.md", "signInUpStyleConstants"),
       xs: globalTranslate("fontSize.xs", "signInUpStyleConstants"),
     },
-    fontFamily: "Firasans-medium",
+    fontFamily: "FiraSans-medium",
     borderRadius: "12px",
     padding: "12px",
     svg: {
@@ -53,7 +53,7 @@ export default function SignInUpButton({
       // xl: globalTranslate("fontSize.xs", "signInUpStyleConstants"),
       xs: globalTranslate("fontSize.xs3", "signInUpStyleConstants"),
     },
-    fontFamily: "Firasans-bold",
+    fontFamily: "FiraSans-bold",
     borderRadius: "10px",
     padding: "8px 24px",
   };

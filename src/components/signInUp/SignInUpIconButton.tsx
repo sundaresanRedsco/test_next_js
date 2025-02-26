@@ -29,7 +29,7 @@ export default function SignInUpIconButton({
     background: "transparent",
     color: theme.apiTrail.signInUp.TextPrimary,
     fontSize: globalTranslate("fontSize.md", "signInUpStyleConstants"),
-    fontFamily: "Firasans-medium",
+    fontFamily: "FiraSans-medium",
     border: `1px solid ${theme.apiTrail.signInUp.Border}`,
     svg: {
       width: {
@@ -46,7 +46,7 @@ export default function SignInUpIconButton({
     background: theme.apiTrail.signInUp.ButtonSecondary,
     color: theme.apiTrail.signInUp.TextLink,
     fontSize: globalTranslate("fontSize.xs", "signInUpStyleConstants"),
-    fontFamily: "Firasans-medium",
+    fontFamily: "FiraSans-medium",
   };
   return (
     <AnimatedButton

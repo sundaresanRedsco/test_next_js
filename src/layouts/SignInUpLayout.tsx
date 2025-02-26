@@ -266,6 +266,7 @@ export default function SignInUpLayout({ children, type }: Props) {
         </div>
         <SignInUpTypography
           // variant="xs"
+          fontWeight="md"
           fontSize={{
             // xl: globalTranslate("fontSize.xs", "signInUpStyleConstants"),
             xs: globalTranslate("fontSize.xs3", "signInUpStyleConstants"),
