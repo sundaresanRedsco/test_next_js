@@ -49,6 +49,9 @@ const RightSection = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down("md")]: {
     display: "none", // hide on mobile
   },
+  [theme.breakpoints.between(1024, 1280)]: {
+    width: "80vh",
+  },
 }));
 
 // A container for the login form
