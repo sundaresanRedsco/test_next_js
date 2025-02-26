@@ -151,16 +151,16 @@ export default function SignInUpLayout({ children, type }: Props) {
                     )}
                     // variant="sm"
                     fontSize={{
-                      xl: globalTranslate(
-                        "fontSize.sm",
-                        "signInUpStyleConstants"
-                      ),
+                      // xl: globalTranslate(
+                      //   "fontSize.sm",
+                      //   "signInUpStyleConstants"
+                      // ),
                       xs: globalTranslate(
                         "fontSize.xs1",
                         "signInUpStyleConstants"
                       ),
                     }}
-                    color={theme.palette.signInTextTertiary.main}
+                    color={theme.apiTrail.signInUp.TextSecondary}
                     fontWeight="md"
                   />
                   <Box
@@ -190,7 +190,7 @@ export default function SignInUpLayout({ children, type }: Props) {
                 gap: 1,
                 justifyContent: "center",
                 mt: {
-                  xl: 2,
+                  // xl: 2,
                   lg: 5,
                   xs: 2,
                 },
@@ -200,17 +200,16 @@ export default function SignInUpLayout({ children, type }: Props) {
                 text={signInUpTranslate(`${type}.TEXT`, "sigInUpConstants")}
                 // variant="sm"
                 fontSize={{
-                  xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+                  // xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
                   xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
                 }}
-                color={theme.palette.signInTextTertiary.main}
-                fontWeight="sm"
+                color={theme.apiTrail.signInUp.TextTertiary}
               />
               <SignInUpTypography
                 text={signInUpTranslate(`${type}.LINK`, "sigInUpConstants")}
                 // variant="sm"
                 fontSize={{
-                  xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+                  // xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
                   xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
                 }}
                 color={theme.palette.signInTextLink.main}

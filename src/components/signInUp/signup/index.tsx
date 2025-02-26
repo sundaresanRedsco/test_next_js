@@ -137,7 +137,7 @@ export default function SignUp() {
           alignItems: "center",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "start" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <SignInUpCheckBox
             checked={acceptTerms}
             onChange={() => setAcceptTerms(!acceptTerms)}

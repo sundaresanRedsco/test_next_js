@@ -55,7 +55,7 @@ export default function EmailVerification({}: Props) {
                 "onboardingConstants"
               )}
               fontSize={{
-                xl: globalTranslate("fontSize.md", "signInUpStyleConstants"),
+                // xl: globalTranslate("fontSize.md", "signInUpStyleConstants"),
                 xs: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
               }}
               color={theme.apiTrail.onboarding.PrimaryText}
@@ -81,7 +81,7 @@ export default function EmailVerification({}: Props) {
                 "onboardingConstants"
               )}
               fontSize={{
-                xl: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+                // xl: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
                 xs: globalTranslate("fontSize.xs2", "signInUpStyleConstants"),
               }}
               color={theme.apiTrail.onboarding.PrimaryText}
@@ -93,7 +93,7 @@ export default function EmailVerification({}: Props) {
                 "onboardingConstants"
               )}
               fontSize={{
-                xl: globalTranslate("fontSize.xs3", "signInUpStyleConstants"),
+                // xl: globalTranslate("fontSize.xs3", "signInUpStyleConstants"),
                 xs: globalTranslate("fontSize.xs4", "signInUpStyleConstants"),
               }}
               color={theme.apiTrail.onboarding.SecondaryText}
@@ -110,10 +110,10 @@ export default function EmailVerification({}: Props) {
               <OnboardingButton
                 sx={{
                   fontSize: {
-                    xl: globalTranslate(
-                      "fontSize.xs1",
-                      "signInUpStyleConstants"
-                    ),
+                    // xl: globalTranslate(
+                    //   "fontSize.xs1",
+                    //   "signInUpStyleConstants"
+                    // ),
                     xs: globalTranslate(
                       "fontSize.xs2",
                       "signInUpStyleConstants"

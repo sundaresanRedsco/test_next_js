@@ -51,7 +51,7 @@ export default function OnboardingWrapper({ children }: Props) {
             text={globalTranslate("LOGO", "onboardingConstants")}
             // variant="lg"
             fontSize={{
-              xl: globalTranslate("fontSize.lg", "signInUpStyleConstants"),
+              // xl: globalTranslate("fontSize.lg", "signInUpStyleConstants"),
               xs: globalTranslate("fontSize.md", "signInUpStyleConstants"),
             }}
             color={theme.apiTrail.onboarding.PrimaryText}
@@ -66,11 +66,11 @@ export default function OnboardingWrapper({ children }: Props) {
             svg: {
               width: {
                 xs: "25px",
-                xl: "30px",
+                // xl: "30px",
               },
               height: {
                 xs: "25px",
-                xl: "30px",
+                // xl: "30px",
               },
             },
           }}

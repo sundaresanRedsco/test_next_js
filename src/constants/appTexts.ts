@@ -8,7 +8,7 @@ export const sigInUpConstants: any = {
     EMAIL_LABEL: "E-Mail Address",
     EMAIL_PLACEHOLDER: "E-Mail ID",
     PASSWORD_LABEL: "Password",
-    OR_CONNECT_WITH: "Or connect with",
+    OR_CONNECT_WITH: "Or Connect with",
     LEARN_MORE: "Learn More",
     signin: {
       PASSWORD_PLACEHOLDER: "Enter password",

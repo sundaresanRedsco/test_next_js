@@ -71,10 +71,10 @@ export default function OnboardingTypography({
               color: theme.apiTrail.signInUp.TextLink,
               textDecoration: "none",
               fontFamily: "FiraSans-medium",
-              fontSize: globalTranslate(
-                "fontSize.sm",
-                "signInUpStyleConstants"
-              ),
+              // fontSize: globalTranslate(
+              //   "fontSize.xs",
+              //   "signInUpStyleConstants"
+              // ),
             }}
           >
             {isMixedText.text1}
@@ -86,10 +86,10 @@ export default function OnboardingTypography({
               color: theme.apiTrail.signInUp.TextLink,
               textDecoration: "none",
               fontFamily: "FiraSans-medium",
-              fontSize: globalTranslate(
-                "fontSize.sm",
-                "signInUpStyleConstants"
-              ),
+              // fontSize: globalTranslate(
+              //   "fontSize.xs",
+              //   "signInUpStyleConstants"
+              // ),
             }}
           >
             {isMixedText.text2}

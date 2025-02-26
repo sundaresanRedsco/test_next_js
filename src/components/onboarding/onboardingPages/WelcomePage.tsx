@@ -36,7 +36,7 @@ export default function WelcomePage({}: Props) {
           <OnboardingButton
             sx={{
               fontSize: {
-                xl: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+                // xl: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
                 xs: globalTranslate("fontSize.xs2", "signInUpStyleConstants"),
               },
             }}

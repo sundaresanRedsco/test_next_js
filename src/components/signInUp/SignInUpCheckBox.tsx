@@ -4,7 +4,7 @@ import { styled } from "@mui/material/styles";
 const CustomCheckbox = styled("input")(({ theme }) => ({
   width: "25px",
   height: "25px",
-  marginRight: "8px",
+  marginRight: "5px",
   cursor: "pointer",
   appearance: "none",
   backgroundColor: theme.apiTrail.signInUp.CheckBox,

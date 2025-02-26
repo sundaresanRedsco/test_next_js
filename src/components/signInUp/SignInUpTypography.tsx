@@ -69,9 +69,43 @@ export default function SignInUpTypography({
       {isMixedText ? (
         <>
           {isMixedText.start}
-          <StyledLink href={isMixedText.link1}>{isMixedText.text1}</StyledLink>
+          <StyledLink
+            sx={{
+              fontSize: fontSize
+                ? fontSize
+                : variant === "xl"
+                ? globalTranslate("fontSize.xl", "signInUpStyleConstants")
+                : variant === "lg"
+                ? globalTranslate("fontSize.lg", "signInUpStyleConstants")
+                : variant === "md"
+                ? globalTranslate("fontSize.md", "signInUpStyleConstants")
+                : variant === "sm"
+                ? globalTranslate("fontSize.sm", "signInUpStyleConstants")
+                : globalTranslate("fontSize.xs", "signInUpStyleConstants"),
+            }}
+            href={isMixedText.link1}
+          >
+            {isMixedText.text1}
+          </StyledLink>
           {isMixedText.between}
-          <StyledLink href={isMixedText.link2}>{isMixedText.text2}</StyledLink>
+          <StyledLink
+            sx={{
+              fontSize: fontSize
+                ? fontSize
+                : variant === "xl"
+                ? globalTranslate("fontSize.xl", "signInUpStyleConstants")
+                : variant === "lg"
+                ? globalTranslate("fontSize.lg", "signInUpStyleConstants")
+                : variant === "md"
+                ? globalTranslate("fontSize.md", "signInUpStyleConstants")
+                : variant === "sm"
+                ? globalTranslate("fontSize.sm", "signInUpStyleConstants")
+                : globalTranslate("fontSize.xs", "signInUpStyleConstants"),
+            }}
+            href={isMixedText.link2}
+          >
+            {isMixedText.text2}
+          </StyledLink>
         </>
       ) : (
         text
