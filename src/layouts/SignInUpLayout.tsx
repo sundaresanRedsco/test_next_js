@@ -12,6 +12,7 @@ import GitIcon from "@/assests/svgs/signInUp/GitIcon";
 import GoogleIcon from "@/assests/svgs/signInUp/GoogleIcon";
 import { globalTranslate, signInUpTranslate } from "@/helpers/helpersFunctions";
 import { ROUTES } from "../routes/routes";
+import { signIn } from "next-auth/react";
 
 // Adjust the RightSection to include a z-index so it layers correctly
 const RightSection = styled(Box)(({ theme }) => ({
@@ -74,12 +75,24 @@ const LoginForm = styled(Box)(({ theme }) => ({
 
 type Props = {
   children: React.ReactNode;
-  type?: "signin" | "signup" | "forgot-password";
+  type?: "signin" | "signup" | "forgot-password" | "reset";
 };
 
 export default function SignInUpLayout({ children, type }: Props) {
   const router = useRouter();
   const theme = useTheme();
+
+  const handleSignIn = async (provider: string) => {
+    // Attempt sign-in with redirect disabled so we can handle errors
+    const result = await signIn(provider, { redirect: false });
+    if (result?.error) {
+      // Set the error to display
+      // setError(result.error);
+    } else {
+      // Optionally, you can handle successful sign-in here (e.g., redirect manually)
+      // setError(null);
+    }
+  };
 
   return (
     <div
@@ -125,7 +138,7 @@ export default function SignInUpLayout({ children, type }: Props) {
                 }
               }}
             /> */}
-            {type !== "forgot-password" && (
+            {type !== "forgot-password" && type !== "reset" && (
               <>
                 <Box sx={{ textAlign: "center", mt: 3 }}>
                   <SignInUpTypography
@@ -155,8 +168,14 @@ export default function SignInUpLayout({ children, type }: Props) {
                       mt: 2,
                     }}
                   >
-                    <SignInUpIconButton icon={<GitIcon />} />
-                    <SignInUpIconButton icon={<GoogleIcon />} />
+                    <SignInUpIconButton
+                      icon={<GitIcon />}
+                      onClick={() => handleSignIn("github")}
+                    />
+                    <SignInUpIconButton
+                      icon={<GoogleIcon />}
+                      onClick={() => handleSignIn("google")}
+                    />
                   </Box>
                 </Box>
               </>
@@ -203,6 +222,8 @@ export default function SignInUpLayout({ children, type }: Props) {
                   } else if (type === "signup") {
                     router.push(ROUTES.SIGNIN);
                   } else if (type === "forgot-password") {
+                    router.push(ROUTES.SIGNIN);
+                  } else if (type === "reset") {
                     router.push(ROUTES.FORGOT_PASSWORD);
                   }
                 }}
@@ -253,10 +274,12 @@ export default function SignInUpLayout({ children, type }: Props) {
             "sigInUpConstants"
           )}
         />
-        <SignInUpButton
-          variant="secondary"
-          text={signInUpTranslate(`LEARN_MORE`, "sigInUpConstants")}
-        />
+        <div className="flex justify-center w-full">
+          <SignInUpButton
+            variant="secondary"
+            text={signInUpTranslate(`LEARN_MORE`, "sigInUpConstants")}
+          />
+        </div>
       </RightSection>
     </div>
   );

@@ -7,6 +7,7 @@ declare module "@mui/material/styles" {
         Bg?: string;
         ButtonPrimary?: string;
         ButtonSecondary?: string;
+        ButtonPrimaryBoxShadow?: string;
         TextPrimary?: string;
         TextSecondary?: string;
         TextTertiary?: string;
@@ -83,6 +84,7 @@ declare module "@mui/material/styles" {
         Bg?: string;
         ButtonPrimary?: string;
         ButtonSecondary?: string;
+        ButtonPrimaryBoxShadow?: string;
         TextPrimary?: string;
         TextSecondary?: string;
         TextTertiary?: string;

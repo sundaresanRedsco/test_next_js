@@ -21,7 +21,7 @@ export const sigInUpConstants: any = {
       CHECK_BOX_ROUTE: "/forgot-password",
       LAYOUT_TYPE: "signin",
       RIGHT_SIDE_CONTENT:
-        "The best Api's visibility tool for organization. Every api needs authentication and authorization. Api flow make sure all your api's are secure in real time and with AI you get the all the security vulnerabilities covered all the time.",
+        "APIs drive modern businesses, but managing them efficiently while ensuring security and governance is complex.APITrail simplifies API lifecycle management with AI-powered automation, intelligent governance, and real-time visibility. Define what should and shouldn’t be exposed, enforce compliance, and secure your APIs effortlessly. With AI-driven insights, modular workflows, and seamless integrations with Jira and ServiceNow, APITrail  helps teams collaborate efficiently and scale with confidence",
     },
     signup: {
       PASSWORD_PLACEHOLDER: "Create a password",
@@ -39,13 +39,25 @@ export const sigInUpConstants: any = {
         link2: "/signin",
       },
       RIGHT_SIDE_CONTENT:
-        "The best Api's visibility tool for organization. Every api needs authentication and authorization. Api flow make sure all your api's are secure in real time and with AI you get the all the security vulnerabilities covered all the time.",
+        "APITrail solves the challenges of API complexity, security risks, and governance gaps. It eliminates fragmented management, helps prevent exposure of sensitive data, and ensures compliance with AI-driven automation. By providing real-time visibility, intelligent policy guidance, and seamless collaboration, APITrail helps teams manage APIs efficiently while reducing risks and operational overhead.",
     },
     "forgot-password": {
       TITLE: "Forgot Password",
       BUTTON: "Retrieve Password",
       LINK: "< Back to login page",
       LAYOUT_TYPE: "forgot-password",
+      RIGHT_SIDE_CONTENT:
+        "The best Api's visibility tool for organization. Every api needs authentication and authorization. Api flow make sure all your api's are secure in real time and with AI you get the all the security vulnerabilities covered all the time.",
+    },
+    reset: {
+      TITLE: "Reset Password",
+      BUTTON: "Reset Password",
+      NEW_PASSWORD_LABEL: "New Password",
+      CONFIRM_PASSWORD_LABEL: "Confirm Password",
+      NEW_PASSWORD_PLACEHOLDER: "Enter new password",
+      CONFIRM_PASSWORD_PLACEHOLDER: "Enter confirm password",
+      LINK: "< Back to forgot password page",
+      LAYOUT_TYPE: "reset",
       RIGHT_SIDE_CONTENT:
         "The best Api's visibility tool for organization. Every api needs authentication and authorization. Api flow make sure all your api's are secure in real time and with AI you get the all the security vulnerabilities covered all the time.",
     },
@@ -63,7 +75,7 @@ export const onboardingConstants: any = {
     },
     mailVerification: {
       TITLE: "Confirm your email address",
-      SEND_TO: "We sent an email to andrew.pepy@gmail.com",
+      SEND_TO: "We sent an email to ",
       DESCRIPTION:
         "Please confirm your email address by clicking the link we just sent to your inbox",
       BUTTON: "Resend verification email",

@@ -4,6 +4,7 @@ import React from "react";
 import OnboardingTypography from "./OnboardingTypography";
 import { globalTranslate } from "@/helpers/helpersFunctions";
 import InfoSvg from "@/assests/svgs/onboard/InfoSvg";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/routes/routes";
 

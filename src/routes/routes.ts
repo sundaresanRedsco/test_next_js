@@ -4,7 +4,8 @@ export const ROUTES = {
   SIGNIN: "/signin",
   FORGOT_PASSWORD: "/forgot-password", // Changed key from DASHBOARD to FORGOT_PASSWORD
   ONBOARDING: "/onboarding",
-  ONBOARDING_EMAIL_VERIFICATION: "/onboarding/email-verification",
+  EMAIL_VERIFICATION: "/onboarding/email-verification",
+  RESET: "/reset?resettoken=",
 };
 
 export const getPostUrl = (id: string) => `/posts/${id}`;

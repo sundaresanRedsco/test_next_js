@@ -4,17 +4,24 @@ import { motion } from "framer-motion";
 import { globalTranslate } from "@/helpers/helpersFunctions";
 
 const LoginButton = styled(motion.button)({
-  transition: "background 0.3s ease",
+  transition: "background 0.3s ease, opacity 0.3s ease",
 });
 
 type Props = {
   variant?: "primary" | "secondary";
   text: string;
-  onClick?: () => void;
+  onClick?: (e: any) => void;
   sx?: any;
+  disabled?: boolean;
 };
 
-export default function SignInUpButton({ variant, text, onClick, sx }: Props) {
+export default function SignInUpButton({
+  variant,
+  text,
+  onClick,
+  sx,
+  disabled,
+}: Props) {
   const theme = useTheme();
   const primaryButtonStyle = {
     background: theme.apiTrail.signInUp.ButtonPrimary,
@@ -30,10 +37,10 @@ export default function SignInUpButton({ variant, text, onClick, sx }: Props) {
     padding: "12px",
     svg: {
       width: {
-        lg: "1rem", // large screens
+        lg: "1rem",
       },
       height: {
-        lg: "1rem", // large screens
+        lg: "1rem",
       },
     },
   };
@@ -50,14 +57,18 @@ export default function SignInUpButton({ variant, text, onClick, sx }: Props) {
     borderRadius: "10px",
     padding: "8px 24px",
   };
+
   return (
     <LoginButton
       whileHover={{
         scale: 1.05,
-        boxShadow: "0px 4px 15px rgba(107, 71, 255, 0.3)",
+        boxShadow: disabled
+          ? "none"
+          : "0px 4px 15px " + theme.apiTrail.signInUp.ButtonPrimaryBoxShadow,
       }}
+      disabled={disabled || false}
       whileTap={{
-        scale: 0.95,
+        scale: disabled ? 1 : 0.95,
       }}
       transition={{
         type: "spring",
@@ -70,7 +81,8 @@ export default function SignInUpButton({ variant, text, onClick, sx }: Props) {
           ? secondaryButtonStyle
           : primaryButtonStyle),
         border: "none",
-        cursor: "pointer",
+        cursor: disabled ? "not-allowed" : "pointer",
+        opacity: disabled ? 0.5 : 1,
         ...sx,
       }}
     >

@@ -57,6 +57,7 @@ type Props = {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type: string;
+  fieldType?: string;
   error?: string;
 };
 
@@ -67,6 +68,7 @@ export default function SignInUpInputField({
   value,
   onChange,
   type,
+  fieldType,
   error,
 }: Props) {
   const theme = useTheme();
@@ -106,6 +108,7 @@ export default function SignInUpInputField({
       </Box>
       <StyledTextField
         fullWidth
+        type={fieldType ? fieldType : "text"}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
@@ -116,7 +119,7 @@ export default function SignInUpInputField({
               sx={{
                 fontSize: "10px",
                 margin: "0px",
-                fontFamily: "Firasans-medium",
+                fontFamily: "FiraSans-medium",
                 color: theme.apiTrail.signInUp.Error,
               }}
             >

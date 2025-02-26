@@ -39,6 +39,7 @@ const lightTheme = createTheme({
       Bg: "#F6F4FF",
       ButtonPrimary: "#7448F4",
       ButtonSecondary: "#FFFFFFBF",
+      ButtonPrimaryBoxShadow: "#6B47FF",
       TextPrimary: "#FFFFFF",
       TextSecondary: "#121212BF",
       TextTertiary: "#121212BF",
@@ -147,6 +148,8 @@ const darkTheme = createTheme({
     signInUp: {
       Bg: "#F6F4FF",
       ButtonPrimary: "#7448F4",
+      ButtonPrimaryBoxShadow: "#6B47FF",
+
       ButtonSecondary: "#FFFFFFBF",
       TextPrimary: "#FFFFFF",
       TextSecondary: "#121212BF",

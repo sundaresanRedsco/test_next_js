@@ -44,6 +44,7 @@ export default function SignInUpIconButton({
   };
   return (
     <AnimatedButton
+      onClick={onClick}
       whileHover={{
         scale: 1.05,
         boxShadow: "0px 4px 15px rgba(107, 71, 255, 0.3)",

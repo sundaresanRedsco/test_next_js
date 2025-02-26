@@ -4,6 +4,7 @@ import OnboardingButton from "@/components/onboarding/OnboardingButton";
 import OnboardingTypography from "@/components/onboarding/OnboardingTypography";
 import OnboardingWrapper from "@/components/onboarding/OnboardingWrapper";
 import { globalTranslate } from "@/helpers/helpersFunctions";
+import { CenteredStack } from "@/styles/onBoarding";
 import { Stack, useTheme } from "@mui/material";
 
 import React from "react";
@@ -14,15 +15,7 @@ export default function WelcomePage({}: Props) {
   const theme = useTheme();
   return (
     <OnboardingWrapper>
-      <Stack
-        sx={{
-          height: "100%",
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
-        }}
-      >
+      <CenteredStack>
         <OnboardingTypography
           text={globalTranslate("heroSection.TITLE", "onboardingConstants")}
           fontSize={globalTranslate("fontSize.xl1", "signInUpStyleConstants")}
@@ -52,7 +45,7 @@ export default function WelcomePage({}: Props) {
             endIcon={<RightArrowSvg />}
           />
         </div>
-      </Stack>
+      </CenteredStack>
     </OnboardingWrapper>
   );
 }

@@ -5,12 +5,16 @@ import SignInUpInputField from "../SignInUpInputField";
 import { globalTranslate, signInUpTranslate } from "@/helpers/helpersFunctions";
 import ReCAPTCHAForm from "../ReCaptcha";
 import SignInUpButton from "../SignInUpButton";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/routes/routes";
 
 type Props = {};
 
 export default function ForgetPassword({}: Props) {
   const [email, setEmail] = useState("");
   const [emailErr, setemailErr] = useState("");
+
+  const router = useRouter();
 
   return (
     <SignInUpLayout type="forgot-password">
@@ -26,7 +30,10 @@ export default function ForgetPassword({}: Props) {
 
       <SignInUpButton
         text={signInUpTranslate(`forgot-password.BUTTON`, "sigInUpConstants")}
-        onClick={() => {}}
+        onClick={(e: any) => {
+          e.preventDefault();
+          router.push(ROUTES.RESET + "cdddduhuwioedjbjjjjjjjjj");
+        }}
       />
     </SignInUpLayout>
   );

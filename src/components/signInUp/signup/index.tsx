@@ -3,18 +3,31 @@ import { Box, useTheme } from "@mui/material";
 import { useState } from "react";
 import SignInUpTypography from "@/components/signInUp/SignInUpTypography";
 import SignInUpLayout from "@/layouts/SignInUpLayout";
-import { globalTranslate, signInUpTranslate } from "@/helpers/helpersFunctions";
+import {
+  globalTranslate,
+  setCookies,
+  signInUpTranslate,
+} from "@/helpers/helpersFunctions";
 import SignInUpInputField from "../SignInUpInputField";
 import SignInUpCheckBox from "../SignInUpCheckBox";
 import SignInUpButton from "../SignInUpButton";
 import { emailPattern } from "@/utilities/regex";
+import { SignUpUser } from "@/redux/signupReducer";
+import { useDispatch } from "react-redux";
+import { ROUTES } from "@/routes/routes";
+import { useRouter } from "next/navigation";
+
 export default function SignUp() {
   const theme = useTheme();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailErr, setEmailErr] = useState("");
-  const [passwordErr, setPasswordErr] = useState("");
-  const [acceptTerms, setAcceptTerms] = useState(false);
+  const router = useRouter();
+  const dispatch = useDispatch<any>();
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [emailErr, setEmailErr] = useState<string>("");
+  const [passwordErr, setPasswordErr] = useState<string>("");
+  const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
+  const [disableButton, setDisableButton] = useState<boolean>(false);
 
   const inputFields = [
     {
@@ -40,7 +53,7 @@ export default function SignUp() {
     },
   ];
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
     let isValid = true;
     if (!email) {
       setEmailErr("Email is required");
@@ -61,34 +74,40 @@ export default function SignUp() {
     } else {
       setPasswordErr("");
     }
+
+    if (!acceptTerms) {
+      // You could set an error message here if needed.
+      isValid = false;
+    }
     return isValid;
   };
 
   function signUpHandler(): any {
     if (!validateForm()) return;
-    // setIsLoading(true);
+    setDisableButton(true);
 
-    let token_type = "null";
-    let token = "null";
-    let invitations_token = "null";
-    // dispatch(
-    //   login({
-    //     email: email,
-    //     password: password,
-    //     token_type,
-    //     token,
-    //     invitations_token,
-    //   })
-    // )
-    //   .unwrap()
-    //   .then((res: any) => {
-    //     if (res) {
-    //     }
-    //   })
-    //   .catch((err: any) => {
-    //     setEmailErr("");
-    //     setPasswordErr("");
-    //   });
+    dispatch(
+      SignUpUser({
+        email: email,
+        password: password,
+      })
+    )
+      .unwrap()
+      .then((res: any) => {
+        if (res) {
+          const key: string =
+            process.env.NEXT_PUBLIC_COOKIE_EMAIL_VERIFICATION ?? "";
+          setCookies(key, email, 1);
+          router.push(ROUTES.EMAIL_VERIFICATION);
+        }
+      })
+      .catch((err: any) => {
+        setEmailErr(err.message);
+        setPasswordErr(err.message);
+      })
+      .finally(() => {
+        setDisableButton(false);
+      });
   }
 
   return (
@@ -99,7 +118,7 @@ export default function SignUp() {
             key={index}
             label={elem.label}
             placeholder={elem.placeholder}
-            value={email}
+            value={elem.value}
             onChange={elem.onChange}
             type={elem.type}
             error={elem.error}
@@ -127,8 +146,7 @@ export default function SignUp() {
             }}
           />
           <SignInUpTypography
-            text={""}
-            // variant="sm"
+            text={globalTranslate(`signup.TERMS_TEXT`, "sigInUpConstants")}
             color={theme.apiTrail.signInUp.TextTertiary}
             fontWeight="xs"
             fontSize={{
@@ -166,9 +184,8 @@ export default function SignUp() {
       </Box>
       <SignInUpButton
         text={signInUpTranslate(`signup.BUTTON`, "sigInUpConstants")}
-        onClick={() => {
-          signUpHandler();
-        }}
+        onClick={signUpHandler}
+        disabled={disableButton || !acceptTerms || !email || !password}
       />
     </SignInUpLayout>
   );

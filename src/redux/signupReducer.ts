@@ -1,27 +1,16 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import * as authService from "../services/auth";
 import { AdminServices } from "../services/services";
 import { errorHandling } from "../services/errorHandling";
 
-export const signupUser = createAsyncThunk(
-  "signup/user",
+export const SignUpUser = createAsyncThunk(
+  "signup/SignUpUser",
   async (value: any) => {
-    try {
-      return await AdminServices("post", "api/auth/registration", value, null);
-    } catch (err: any) {
-      throw new Error(errorHandling(err));
-    }
-  }
-);
-export const updateUser = createAsyncThunk(
-  "signup/update_user",
-  async (data: any) => {
     try {
       return await AdminServices(
         "post",
-        "api/auth/update_user",
-        data?.value,
-        data?.token
+        "api/Signup/registration",
+        value,
+        null
       );
     } catch (err: any) {
       throw new Error(errorHandling(err));
@@ -29,27 +18,14 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-const verifyOtp = createAsyncThunk("signup/verifyOtp", async (value: any) => {
-  try {
-    return await AdminServices(
-      "post",
-      "api/auth/enter_registration_otp",
-      value,
-      null
-    );
-  } catch (err: any) {
-    throw new Error(errorHandling(err));
-  }
-});
-
-export const resendOtp = createAsyncThunk(
-  "signup/resendOtp",
+export const ResendEmailToken = createAsyncThunk(
+  "signup/ResendEmailToken",
   async (email: string) => {
     try {
       return await AdminServices(
         "post",
-        "api/auth/regenerate_registration_otp?email=" + email,
-        null,
+        "api/Signup/resend_email?email=",
+        email,
         null
       );
     } catch (err: any) {
@@ -57,40 +33,6 @@ export const resendOtp = createAsyncThunk(
     }
   }
 );
-
-const signupOrganization = createAsyncThunk(
-  "signup/organization",
-  async (value: any) => {
-    try {
-      return await AdminServices(
-        "post",
-        "api/auth/company_registration",
-        value,
-        null
-      );
-    } catch (err: any) {
-      throw new Error(errorHandling(err));
-    }
-  }
-);
-
-const memberInviteActivation = createAsyncThunk(
-  "signup/memberInviteActivation",
-  async (value: any) => {
-    try {
-      return await AdminServices(
-        "post",
-        "api/Team_/accept_invite?ActivationKey=" + value,
-        value,
-        null
-      );
-    } catch (err: any) {
-      throw new Error(errorHandling(err));
-    }
-  }
-);
-
-export const resetGatewayStateSignUp = createAction("Gateway/resetState");
 
 type SignupInitialStateType = {
   loading: boolean;
@@ -105,56 +47,27 @@ const signupSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(signupUser.pending, (state, action) => {
+    builder.addCase(SignUpUser.pending, (state, action) => {
       state.loading = true;
     });
 
-    builder.addCase(signupUser.fulfilled, (state, action) => {
+    builder.addCase(SignUpUser.fulfilled, (state, action) => {
       state.loading = false;
     });
 
-    builder.addCase(signupUser.rejected, (state, action) => {
+    builder.addCase(SignUpUser.rejected, (state, action) => {
       state.loading = false;
     });
-
-    builder.addCase(verifyOtp.pending, (state, action) => {
+    builder.addCase(ResendEmailToken.pending, (state, action) => {
       state.loading = true;
     });
 
-    builder.addCase(verifyOtp.fulfilled, (state, action) => {
+    builder.addCase(ResendEmailToken.fulfilled, (state, action) => {
       state.loading = false;
     });
 
-    builder.addCase(verifyOtp.rejected, (state, action) => {
+    builder.addCase(ResendEmailToken.rejected, (state, action) => {
       state.loading = false;
-    });
-
-    builder.addCase(signupOrganization.pending, (state, action) => {
-      state.loading = true;
-    });
-
-    builder.addCase(signupOrganization.fulfilled, (state, action) => {
-      state.loading = false;
-    });
-
-    builder.addCase(signupOrganization.rejected, (state, action) => {
-      state.loading = false;
-    });
-
-    builder.addCase(memberInviteActivation.pending, (state, action) => {
-      state.loading = true;
-    });
-
-    builder.addCase(memberInviteActivation.fulfilled, (state, action) => {
-      state.loading = false;
-    });
-
-    builder.addCase(memberInviteActivation.rejected, (state, action) => {
-      state.loading = false;
-    });
-
-    builder.addCase(resetGatewayStateSignUp, (state, action) => {
-      return initialState; // Reset state to initial values
     });
   },
 });

@@ -1,10 +1,15 @@
 "use client";
 import { Box, useTheme } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SignInUpTypography from "@/components/signInUp/SignInUpTypography";
-
 import SignInUpLayout from "@/layouts/SignInUpLayout";
-import { globalTranslate, signInUpTranslate } from "@/helpers/helpersFunctions";
+import {
+  globalTranslate,
+  signInUpTranslate,
+  setCookies,
+  clearCookies,
+  getCookies,
+} from "@/helpers/helpersFunctions";
 import SignInUpInputField from "../SignInUpInputField";
 import SignInUpCheckBox from "../SignInUpCheckBox";
 import { StyledLink } from "@/styles/signInUp";
@@ -12,17 +17,25 @@ import SignInUpButton from "../SignInUpButton";
 import { emailPattern } from "@/utilities/regex";
 import { useDispatch } from "react-redux";
 import { login } from "@/redux/loginReducer";
-
-// And then use it like this:
+import { ROUTES } from "@/routes/routes";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function SignIn() {
   const theme = useTheme();
   const dispatch = useDispatch<any>();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailErr, setEmailErr] = useState("");
-  const [passwordErr, setPasswordErr] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const router = useRouter();
+
+  // States for email and password
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  // States for errors and "remember me"
+  const [emailErr, setEmailErr] = useState<string>("");
+  const [passwordErr, setPasswordErr] = useState<string>("");
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [disableButton, setDisableButton] = useState<boolean>(false);
+
   const inputFields = [
     {
       label: globalTranslate(`EMAIL_LABEL`, "sigInUpConstants"),
@@ -73,73 +86,91 @@ export default function SignIn() {
 
   function loginHandler(): any {
     if (!validateForm()) return;
-    // setIsLoading(true);
+    setDisableButton(true);
 
-    let token_type = "null";
-    let token = "null";
-    let invitations_token = "null";
     dispatch(
       login({
         email: email,
         password: password,
-        token_type,
-        token,
-        invitations_token,
       })
     )
       .unwrap()
       .then((res: any) => {
         if (res) {
+          const emailKey = process.env.NEXT_PUBLIC_COOKIE_EMAIL_REMEMBER || "";
+          const passwordKey =
+            process.env.NEXT_PUBLIC_COOKIE_PASSWORD_REMEMBER || "";
+          // If "remember me" is enabled, store email (and password, if needed) in cookies.
+          if (rememberMe) {
+            // Store cookies for 30 days. (Consider security implications for password.)
+            setCookies(emailKey, email, 30);
+            setCookies(passwordKey, password, 30);
+          } else {
+            // Clear cookies if rememberMe is not checked.
+            clearCookies(emailKey);
+            clearCookies(passwordKey);
+          }
+          // Navigate to the desired route on success.
+          // router.push(ROUTES.DASHBOARD || );
         }
       })
       .catch((err: any) => {
-        setEmailErr("");
-        setPasswordErr("");
+        setEmailErr(err.message || "");
+        setPasswordErr(err.message || "");
+      })
+      .finally(() => {
+        setDisableButton(false);
       });
   }
+
+  // On component mount, try to load email and password from cookies
+  useEffect(() => {
+    const emailKey = process.env.NEXT_PUBLIC_COOKIE_EMAIL_REMEMBER || "";
+    const passwordKey = process.env.NEXT_PUBLIC_COOKIE_PASSWORD_REMEMBER || "";
+    const rememberedEmail = getCookies(emailKey);
+    const rememberedPassword = getCookies(passwordKey);
+    if (rememberedEmail) {
+      setEmail(rememberedEmail);
+      setRememberMe(true);
+    }
+    // Warning: Storing password in a cookie is not recommended.
+    if (rememberedPassword) {
+      setPassword(rememberedPassword);
+    }
+  }, []);
 
   return (
     <SignInUpLayout
       type={globalTranslate(`signin.LAYOUT_TYPE`, "sigInUpConstants")}
     >
-      {inputFields.map((elem, index) => {
-        return (
-          <SignInUpInputField
-            key={index}
-            label={elem.label}
-            placeholder={elem.placeholder}
-            value={elem.value}
-            onChange={elem.onChange}
-            type={elem.type}
-            error={elem.error}
-          />
-        );
-      })}
+      {inputFields.map((elem, index) => (
+        <SignInUpInputField
+          key={index}
+          label={elem.label}
+          placeholder={elem.placeholder}
+          value={elem.value}
+          onChange={elem.onChange}
+          type={elem.type}
+          error={elem.error}
+          fieldType={elem.type}
+        />
+      ))}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           mb: 3,
-          flexDirection: {
-            sm: "row",
-            xs: "column",
-          },
+          flexDirection: { sm: "row", xs: "column" },
           alignItems: "center",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <SignInUpCheckBox
             checked={rememberMe}
             onChange={() => setRememberMe(!rememberMe)}
           />
           <SignInUpTypography
             text={globalTranslate(`signin.REMEMBER_ME`, "sigInUpConstants")}
-            // variant="sm"
             fontSize={{
               xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
               xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
@@ -160,12 +191,10 @@ export default function SignIn() {
           {globalTranslate(`signin.FORGOT_PASSWORD`, "sigInUpConstants")}
         </StyledLink>
       </Box>
-
       <SignInUpButton
         text={signInUpTranslate(`signin.BUTTON`, "sigInUpConstants")}
-        onClick={() => {
-          loginHandler();
-        }}
+        onClick={loginHandler}
+        disabled={disableButton || !email || !password}
       />
     </SignInUpLayout>
   );

@@ -2,6 +2,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import loginReducer from "./loginReducer";
 import commonReducer from "./commonReducer";
 import signupReducer from "./signupReducer";
+import ForgetPasswordReducer from "./auth/forgetPasswordReducer";
+
 import { setupListeners } from "@reduxjs/toolkit/query";
 
 const store = configureStore({
@@ -9,6 +11,7 @@ const store = configureStore({
     login: loginReducer,
     signup: signupReducer,
     common: commonReducer,
+    forgetPassword: ForgetPasswordReducer,
   },
 });
 

@@ -7,15 +7,8 @@ import {
 import CryptoJS from "crypto-js";
 import Cookies from "js-cookie";
 import { signInUpStyleConstants } from "../constants/styleConstants";
-import { landingConstants } from "@/constants/landingTexts";
 
 const SECRET_KEYS = process.env.REACT_APP_SECRET_KEY;
-
-const constants = {
-  signInUpStyleConstants,
-  sigInUpConstants,
-  onboardingConstants,
-};
 
 export const translate = (key: string) => {
   let language: string = "en";
@@ -40,7 +33,12 @@ export const signInUpTranslate = (key: string, constanstName: string) => {
   }, dependency);
   return translatedText;
 };
-
+//import constants to use it in globalTranslate
+const constants = {
+  signInUpStyleConstants,
+  sigInUpConstants,
+  onboardingConstants,
+};
 export const globalTranslate = (key: string, constanstName: string) => {
   const keys = key.split(".");
   let language: string = "en";
@@ -57,16 +55,6 @@ export const globalTranslate = (key: string, constanstName: string) => {
   const translatedText = keys.reduce((acc: any, currentKey: any) => {
     return acc ? acc[currentKey] : undefined;
   }, dependency);
-  return translatedText;
-};
-
-export const landingPageTranslate = (key: string) => {
-  let language: string = "en";
-  const keys = key.split("."); // Split the keys by dot
-  // Using reduce to navigate through the nested structure
-  const translatedText = keys.reduce((acc: any, currentKey: any) => {
-    return acc ? acc[currentKey] : undefined;
-  }, landingConstants[language]);
   return translatedText;
 };
 
@@ -167,6 +155,10 @@ export const getCookies = (key: string) => {
   const cookieValue: any = Cookies.get(key ?? "");
   const decryptCookie = decryptData(cookieValue);
   return decryptCookie;
+};
+
+export const clearCookies = (key: string) => {
+  Cookies.remove(key);
 };
 
 function hasFilterCondition(query: any) {
