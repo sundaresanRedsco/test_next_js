@@ -29,7 +29,7 @@ export default function SignInUpButton({
     width: "100%",
     fontWeight: 500,
     fontSize: {
-      xl: globalTranslate("fontSize.md", "signInUpStyleConstants"),
+      // xl: globalTranslate("fontSize.md", "signInUpStyleConstants"),
       xs: globalTranslate("fontSize.xs", "signInUpStyleConstants"),
     },
     fontFamily: "Firasans-medium",
@@ -37,10 +37,10 @@ export default function SignInUpButton({
     padding: "12px",
     svg: {
       width: {
-        lg: "1rem",
+        xs: "1rem",
       },
       height: {
-        lg: "1rem",
+        xs: "1rem",
       },
     },
   };
@@ -50,7 +50,7 @@ export default function SignInUpButton({
     width: "auto",
     fontWeight: 500,
     fontSize: {
-      xl: globalTranslate("fontSize.xs", "signInUpStyleConstants"),
+      // xl: globalTranslate("fontSize.xs", "signInUpStyleConstants"),
       xs: globalTranslate("fontSize.xs3", "signInUpStyleConstants"),
     },
     fontFamily: "Firasans-bold",

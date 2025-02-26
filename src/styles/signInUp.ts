@@ -32,9 +32,11 @@ export const StyledLink = styled(Link)(({ theme }) => ({
   textDecoration: "none",
   fontFamily: "FiraSans-medium",
   // Set a default font size (this will be applied for sizes below 'xl')
-  fontSize: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+  // fontSize: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+  fontSize: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+
   // At the 'xl' breakpoint, use a different font size
   [theme.breakpoints.up("xl")]: {
-    fontSize: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+    // fontSize: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
   },
 }));

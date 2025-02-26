@@ -172,7 +172,7 @@ export default function SignIn() {
           <SignInUpTypography
             text={globalTranslate(`signin.REMEMBER_ME`, "sigInUpConstants")}
             fontSize={{
-              xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+              // xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
               xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
             }}
             color={theme.apiTrail.signInUp.TextTertiary}
@@ -183,7 +183,7 @@ export default function SignIn() {
           href={globalTranslate(`signin.CHECK_BOX_ROUTE`, "sigInUpConstants")}
           sx={{
             fontSize: {
-              xl: "1.25rem",
+              // xl: "1.25rem",
               xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
             },
           }}

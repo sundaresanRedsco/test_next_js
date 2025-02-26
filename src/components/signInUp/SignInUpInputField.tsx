@@ -75,13 +75,16 @@ export default function SignInUpInputField({
   return (
     <Box
       sx={{
-        mb: { xl: 2, xs: 1 },
+        mb: {
+          // xl: 2,
+          xs: 1,
+        },
         svg: {
           width: {
-            lg: "1rem", // large screens
+            xs: "1rem", // large screens
           },
           height: {
-            lg: "1rem", // large screens
+            xs: "1rem", // large screens
           },
         },
       }}
@@ -99,8 +102,8 @@ export default function SignInUpInputField({
           text={label}
           // variant="sm"
           fontSize={{
-            xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
-            lg: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
+            // xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+            xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
           }}
           color={theme.apiTrail.signInUp.TextLable}
           fontWeight="md"

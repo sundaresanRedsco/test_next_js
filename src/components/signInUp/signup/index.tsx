@@ -150,7 +150,7 @@ export default function SignUp() {
             color={theme.apiTrail.signInUp.TextTertiary}
             fontWeight="xs"
             fontSize={{
-              xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
+              // xl: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
               xs: globalTranslate("fontSize.xs1", "signInUpStyleConstants"),
             }}
             isMixedText={{

@@ -115,7 +115,7 @@ export default function SignInUpLayout({ children, type }: Props) {
               text={signInUpTranslate(`${type}.TITLE`, "sigInUpConstants")}
               // variant="lg"
               fontSize={{
-                xl: globalTranslate("fontSize.lg", "signInUpStyleConstants"),
+                // xl: globalTranslate("fontSize.lg", "signInUpStyleConstants"),
                 xs: globalTranslate("fontSize.sm", "signInUpStyleConstants"),
               }}
               color={theme.palette.signInTextSecondary.main}
