@@ -60,7 +60,7 @@ const LoginForm = styled(Box)(({ theme }) => ({
   height: "100%",
   width: "55%",
   [theme.breakpoints.up("xl")]: {
-    width: "40%",
+    width: "50%",
   },
   [theme.breakpoints.down("lg")]: {
     width: "70%",
